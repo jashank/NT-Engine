@@ -16,20 +16,20 @@
 String Compare functor used for std::map
 */
 struct strCmp {
-	bool operator()( const std::string& s1, const std::string& s2 ) const {
+	bool operator()( const std::string &s1, const std::string &s2 ) const {
 		return s1.compare( s2 ) < 0;
 	}
 };
 
 template< typename resource_t >
 struct ResourceLoader {
-	virtual void operator()( std::pair< const std::string, resource_t* >& resource );
+	virtual void operator()( std::pair< const std::string, resource_t* > &resource );
 	virtual resource_t* Load( const std::string& filename );
 };
 
 
 
-template< typename resource_t, typename loader_t=ResourceLoader<resource_t> >
+template< typename resource_t, typename loader_t=ResourceLoader< resource_t > >
 class ResourceManager {
 public:
 	ResourceManager();
@@ -51,5 +51,4 @@ private:
 };
 
 #include "ResourceManager.hpp"
-
 #endif

@@ -190,6 +190,22 @@
 				RelativePath=".\Header Files\Utilities.h"
 				>
 			</File>
+			<Filter
+				Name="States"
+				>
+				<File
+					RelativePath=".\Header Files\BaseState.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Header Files\StateManager.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Header Files\TitleState.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Resource Files"
@@ -210,6 +226,22 @@
 				RelativePath=".\Source Files\main.cpp"
 				>
 			</File>
+			<Filter
+				Name="States"
+				>
+				<File
+					RelativePath=".\Source Files\BaseState.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Source Files\StateManager.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Source Files\TitleState.cpp"
+					>
+				</File>
+			</Filter>
 		</Filter>
 	</Files>
 	<Globals>

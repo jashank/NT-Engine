@@ -3,9 +3,7 @@
 #include "App.h"
 
 
-int main()
-{
-	
+int main() {
 	std::auto_ptr<App> Game( App::CreateApp( "Kickle!", 800, 600, 60 ) );
 
 	Game->Run();

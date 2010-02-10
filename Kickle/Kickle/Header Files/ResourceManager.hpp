@@ -1,6 +1,7 @@
 
 template< typename resource_t >
-void ResourceLoader< resource_t >::operator()( std::pair< const std::string, resource_t* >& resource ) {
+void ResourceLoader< resource_t >::operator()( 
+	std::pair< const std::string, resource_t* > &resource ) {
 	DEBUG_STATEMENT( 
 		std::cout 
 		<< "Deleting Resource...\n-->Filename: " << resource.first 
@@ -11,7 +12,7 @@ void ResourceLoader< resource_t >::operator()( std::pair< const std::string, res
 }
 
 template< typename resource_t >
-resource_t* ResourceLoader< resource_t >::Load( const std::string& filename ) {
+resource_t* ResourceLoader< resource_t >::Load( const std::string &filename ) {
 	std::auto_ptr<resource_t> resource( new resource_t );
 	if( !resource->LoadFromFile( filename ) ) {
 		std::string err = "Unable to Load() resource: ";
@@ -42,7 +43,8 @@ void ResourceManager<resource_t, loader_t>::Clear() {
 }
 
 template< typename resource_t, typename loader_t >
-resource_t& ResourceManager< resource_t, loader_t >::Load( const std::string& filename ) {
+resource_t& ResourceManager< resource_t, loader_t >::Load( 
+	const std::string &filename ) {
 	DEBUG_STATEMENT( 
 		std::cout 
 		<< "Loading Resource...\n-->Filename: " << filename 
@@ -65,7 +67,9 @@ resource_t& ResourceManager< resource_t, loader_t >::Load( const std::string& fi
 	std::auto_ptr<resource_t> resource( m_loader.Load( filename ) );
 
 	//Insert it into map and return a reference to that resource.
-	DEBUG_STATEMENT( std::cout << "-->Address: " << resource.get() << std::endl; )
+	DEBUG_STATEMENT( 
+		std::cout << "-->Address: " << resource.get() << std::endl; 
+	)
 	m_resources.insert( std::make_pair( filename, resource.get() ) );
 
 	return *(resource.release());
