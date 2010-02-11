@@ -24,7 +24,7 @@ sf::Music* ResourceLoader<sf::Music>::Load( const std::string& filename );
 	-Calculates FPS
 	-Polls for events
 	-Loads Resources
-*************************************************/
+************************************************/
 class App {
 public:
 	static App* CreateApp( const std::string &title, 
@@ -50,7 +50,7 @@ private:
 		unsigned int width, 
 		unsigned int height, 
 		unsigned int framerate );
-	App( const App& app );
+	App( const App &app );
 
 	static App*			m_instance;
 

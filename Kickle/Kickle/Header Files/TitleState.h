@@ -6,7 +6,7 @@
 	TitleState
 	-Inherits from BaseState
 	-Contains all TitleState Content
-*************************************************/
+************************************************/
 class TitleState : public BaseState {
 public:
 	virtual ~TitleState();

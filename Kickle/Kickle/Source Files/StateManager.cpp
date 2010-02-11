@@ -6,71 +6,66 @@ StateManager::StateManager() {
 }
 
 StateManager::~StateManager() {
-	std::vector< BaseState* >::iterator i = m_states.end();
-	for( ; i != m_states.begin(); ++i ) {
-		(*i)->CleanUp();
-		SAFEDELETE( *i );
-	}
+	CleanUp();
 }
 
 BaseState* StateManager::operator->() {
-	return m_states.back();
+	return m_states.top();
 }
 
-//void StateManager::HandleEvents() {
-//	//calls the top state's handleEvents function
-//	m_states.back()->HandleEvents();
-//}
-//
-//void StateManager::Render() {
-//	//calls the top state's render function
-//	m_states.back()->Render();
-//}
-//
-//void StateManager::Update() {
-//	//calls the top state's update function
-//	m_states.back()->Update();
-//}
-
 void StateManager::ChangeState( BaseState *state ) {
-	//If the states aren't empty and state is initialized, 
-	//then cleanup the top state
-	if( !m_states.empty() && m_states.back()->IsInit() ) {
-		m_states.back()->CleanUp();
+	//If m_states isn't empty and state is initialized, 
+	//then cleanup the top state and pop it off
+	if( !m_states.empty() && m_states.top()->IsInit() ) {
+		m_states.top()->CleanUp();
+		m_states.pop();
 	}
 
 	//Add the passed in state to the stack, 
 	//and initialize it if necessary
-	m_states.push_back( state );
-	if( !m_states.back()->IsInit() ) {
-		m_states.back()->Init();
+	m_states.push( state );
+	if( !m_states.top()->IsInit() ) {
+		m_states.top()->Init();
 	}
 }
 void StateManager::PushState( BaseState *state ) {
-	//If the states aren't empty, pause the top state
+	//If the m_states isn't empty, pause the top state
 	if ( !m_states.empty() )  {
-		m_states.back()->Pause();
+		m_states.top()->Pause();
+		if( m_states.top()->IsInit() ) {
+			m_states.top()->CleanUp();
+		}
 	}
 
 	//Add the passed in state to the stack and initialize if necessary
-	m_states.push_back( state );
-	if( !m_states.back()->IsInit() ) {
-		m_states.back()->Init();
+	m_states.push( state );
+	if( !m_states.top()->IsInit() ) {
+		m_states.top()->Init();
 	}
 }
 
 void StateManager::PopState() {
-	//If the states aren't empty, 
+	//If m_states isn't empty, 
 	//cleanup the top state and take it off the stack
 	if ( !m_states.empty() ) {
-		if( m_states.back()->IsInit() ) {
-			m_states.back()->CleanUp();
+		if( m_states.top()->IsInit() ) {
+			m_states.top()->CleanUp();
 		}
-		m_states.pop_back();
+		m_states.pop();
 	}
 	
-	//Now, if states aren't empty, resume the top most state
+	//Now, if m_states isn't empty, resume the top most state
 	if ( !m_states.empty() ) {
-		m_states.back()->Resume();
+		if( !m_states.top()->IsInit() ) {
+			m_states.top()->Init();
+		}
+		m_states.top()->Resume();
+	}
+}
+
+void StateManager::CleanUp() {
+	while( !m_states.empty() ) {
+		m_states.top()->CleanUp();
+		m_states.pop();
 	}
 }

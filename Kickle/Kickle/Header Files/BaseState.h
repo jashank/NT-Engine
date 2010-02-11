@@ -3,11 +3,11 @@
 //#include"StateManager.h"
 
 /********************************************************
-	BaseState
-	-An abstract base class declarations for states
-	-Will be inherited from create game states
-	-All game states will be managed by the StateManager
-*********************************************************/
+BaseState
+-An abstract base class declarations for states
+-Will be inherited from create game states
+-All game states will be managed by the StateManager
+********************************************************/
 class BaseState {
 public:
 	virtual ~BaseState();

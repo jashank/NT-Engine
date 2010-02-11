@@ -37,6 +37,8 @@ App::App( const std::string &title,
 
 App::~App() {
 	DEBUG_STATEMENT( std::cout << "Closing App..." << std::endl; )
+	m_stateManager.CleanUp();
+	TitleState::DestroyInstance();
 }
 
 App* App::CreateApp( const std::string& title, 
