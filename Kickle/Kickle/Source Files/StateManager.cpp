@@ -2,70 +2,49 @@
 #include "BaseState.h"
 #include "Utilities.h"
 
-StateManager::StateManager() {
+/************************************************
+Public Methods
+************************************************/
+StateManager::StateManager( BaseState* initialState )
+ : m_activeState(0), 
+   m_nextState(0) {
+	   SetActiveState( initialState );
 }
 
-StateManager::~StateManager() {
-	CleanUp();
+void StateManager::HandleStateChange() {
+	//If a state change has been posted
+	if ( m_nextState )  {
+		CloseActiveState();
+		SetActiveState( m_nextState );
+
+		//Posted state change has been handled so clear the next state
+		m_nextState = 0;
+	}
 }
 
 BaseState* StateManager::operator->() {
-	return m_states.top();
+	return m_activeState;
 }
 
-void StateManager::ChangeState( BaseState *state ) {
-	//If m_states isn't empty and state is initialized, 
-	//then cleanup the top state and pop it off
-	if( !m_states.empty() && m_states.top()->IsInit() ) {
-		m_states.top()->CleanUp();
-		m_states.pop();
-	}
-
-	//Add the passed in state to the stack, 
-	//and initialize it if necessary
-	m_states.push( state );
-	if( !m_states.top()->IsInit() ) {
-		m_states.top()->Init();
-	}
+void StateManager::PostStateChange( BaseState *state ) {
+	m_nextState = state;
 }
-void StateManager::PushState( BaseState *state ) {
-	//If the m_states isn't empty, pause the top state
-	if ( !m_states.empty() )  {
-		m_states.top()->Pause();
-		if( m_states.top()->IsInit() ) {
-			m_states.top()->CleanUp();
-		}
-	}
 
-	//Add the passed in state to the stack and initialize if necessary
-	m_states.push( state );
-	if( !m_states.top()->IsInit() ) {
-		m_states.top()->Init();
+/************************************************
+Private Methods
+************************************************/
+void StateManager::CloseActiveState() {
+	//Pause active state and clean it up
+	m_activeState->Pause();
+	if( m_activeState->IsInit() ) {
+		m_activeState->CleanUp();
 	}
 }
 
-void StateManager::PopState() {
-	//If m_states isn't empty, 
-	//cleanup the top state and take it off the stack
-	if ( !m_states.empty() ) {
-		if( m_states.top()->IsInit() ) {
-			m_states.top()->CleanUp();
-		}
-		m_states.pop();
-	}
-	
-	//Now, if m_states isn't empty, resume the top most state
-	if ( !m_states.empty() ) {
-		if( !m_states.top()->IsInit() ) {
-			m_states.top()->Init();
-		}
-		m_states.top()->Resume();
-	}
-}
-
-void StateManager::CleanUp() {
-	while( !m_states.empty() ) {
-		m_states.top()->CleanUp();
-		m_states.pop();
+void StateManager::SetActiveState( BaseState* state ) {
+	//Assign the new state, initialize it, and resume the state
+	m_activeState = state;
+	if( !m_activeState->IsInit() ) {
+		m_activeState->Init();
 	}
 }

@@ -2,7 +2,6 @@
 #ifndef CSTATEMANAGER_H
 #define CSTATEMANAGER_H
 
-//#include<vector>
 #include <stack>
 
 
@@ -14,48 +13,28 @@ StateManager
 ************************************************/
 class StateManager {
 public:
-	StateManager();
-	~StateManager();
+	StateManager( BaseState* initialState );
 
 	/************************************************
-	ChangeState
-	-Replaces the top of the stack
+	HandleStateChange
+	-Applies state change post to the active state
+	-Should not be called in the middle of accessing
+	 methods of the currently active state.
 	************************************************/
-	void ChangeState( BaseState *state );
-
-	/************************************************
-	PushState
-	-Adds new active state, pausing last active state
-		*Pauses the active state
-		*Cleans Up active state
-		*Then adds a new active to top of m_states
-		*Initializes the new active state
-	************************************************/
-	void PushState( BaseState *state );
-
-	/************************************************
-	PopState
-	-Removes top state resuming state prior on stack
-		*Cleans up active state
-		*Removes it from top of stack
-		*ReInitializes the new active state
-		*Unpauses the new active state
-	************************************************/
-	void PopState();
-
+	void HandleStateChange();
 
 	/************************************************
 	operator->
-	-returns a pointer to the active state
+	-returns the active state
 	************************************************/
 	BaseState* operator->();
 
-
 	/************************************************
-	CleanUp()
-	-Cleans up all states on stack then pops them off
+	PostStateChange
+	-Sets the next state to switch to upon the
+	 next call to HandleStateChange()
 	************************************************/
-	void CleanUp();
+	void PostStateChange( BaseState *state );
 
 private:
 	//Restrict copying and assignment
@@ -63,9 +42,21 @@ private:
 	StateManager& operator=( const StateManager &stateMan );
 
 
-	//Stack that contains the states 
-	//The active state is always the top
-	std::stack< BaseState* > m_states;			
+	/************************************************
+	CloseActiveState
+	-Pauses and cleans up the active state
+	************************************************/
+	void CloseActiveState();
+
+	/************************************************
+	SetActiveState
+	-Assigns a new active state, initializes it, and
+	 resumes it
+	************************************************/
+	void SetActiveState( BaseState* state );
+
+	BaseState* m_activeState;			
+	BaseState* m_nextState;			
 };
 
 #endif

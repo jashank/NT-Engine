@@ -26,18 +26,15 @@ App::App( const std::string &title,
 		 unsigned int width, 
 		 unsigned int height, 
 		 unsigned int framerate ) 
-	: m_window( sf::VideoMode(width,height), title ), 
-	  m_deltaTime(0.0f), 
-	  m_fps(0.0f) 
-{
+ : m_window( sf::VideoMode(width,height), title ), 
+   m_deltaTime(0.0f), 
+   m_fps(0.0f) ,
+   m_stateManager( TitleState::GetInstance() ) {
 	m_window.SetFramerateLimit( framerate );
-
-	m_stateManager.PushState( TitleState::GetInstance() );
 }
 
 App::~App() {
 	DEBUG_STATEMENT( std::cout << "Closing App..." << std::endl; )
-	m_stateManager.CleanUp();
 	TitleState::DestroyInstance();
 }
 
@@ -85,6 +82,8 @@ void App::Run() {
 				m_window.Close();		
 			}
 		}
+
+		m_stateManager.HandleStateChange();
 
 		m_stateManager->HandleEvents();
 		m_stateManager->Update();

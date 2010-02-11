@@ -35,13 +35,24 @@ public:
 	ResourceManager();
 	~ResourceManager();
 
+	/************************************************
+	Clear
+	-Erases all contents of the ResourceManager
+	************************************************/
 	void Clear();
+
+	/************************************************
+	Load
+	-When give a filename it returns a resource
+	-Insures that no duplicate resources are loaded
+	into memory
+	************************************************/
 	resource_t& Load( const std::string& filename );
 
 private:
 	typedef std::map< const std::string, resource_t*, strCmp > map_t;
 	
-	//Can't be copied or assigned to
+	//Restrict copying and assignment
 	ResourceManager( const ResourceManager& );
 	ResourceManager& operator=( const ResourceManager& );
 
