@@ -91,7 +91,7 @@ void App::Run() {
 		m_window.Clear();
 
 		//Display FPS
-		sprintf( m_fpsStrBuff, "FPS: %4.2g", m_fps );
+		sprintf_s( m_fpsStrBuff, 50, "FPS: %4.2g", m_fps );
 		m_window.Draw( sf::String( m_fpsStrBuff )  );
 
 		//Render and Display
