@@ -61,7 +61,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="sfml-system-d.lib sfml-window-d.lib sfml-graphics-d.lib sfml-audio-d.lib"
+				AdditionalDependencies="sfml-system-d.lib sfml-window-d.lib sfml-graphics-d.lib sfml-audio-d.lib ticppd.lib"
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
 				SubSystem="1"
@@ -135,7 +135,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="sfml-system.lib sfml-window.lib sfml-graphics.lib sfml-audio.lib"
+				AdditionalDependencies="sfml-system.lib sfml-window.lib sfml-graphics.lib sfml-audio.lib ticpp.lib"
 				LinkIncremental="1"
 				GenerateDebugInformation="true"
 				SubSystem="1"

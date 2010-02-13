@@ -84,12 +84,10 @@ void App::Run() {
 		}
 
 		m_stateManager.RefreshState();
-
 		m_stateManager->HandleEvents();
 		m_stateManager->Update();
 
 		m_window.Clear();
-
 		//Display FPS
 		sprintf_s( m_fpsStrBuff, 50, "FPS: %4.2g", m_fps );
 		m_window.Draw( sf::String( m_fpsStrBuff )  );
@@ -97,7 +95,7 @@ void App::Run() {
 		//Render and Display
 		m_stateManager->Render();
 		m_window.Display();
-
+		
 		//Get the time it took to render the last frame and calculate the fps
 		m_deltaTime = m_window.GetFrameTime();
 		m_fps = 1.0f/m_deltaTime;
