@@ -11,22 +11,22 @@ StateManager::StateManager( BaseState* initialState )
 	   SetActiveState( initialState );
 }
 
-void StateManager::HandleStateChange() {
-	//If a state change has been posted
-	if ( m_nextState )  {
-		CloseActiveState();
-		SetActiveState( m_nextState );
-
-		//Posted state change has been handled so clear the next state
-		m_nextState = 0;
-	}
-}
-
 BaseState* StateManager::operator->() {
 	return m_activeState;
 }
 
-void StateManager::PostStateChange( BaseState *state ) {
+void StateManager::RefreshState() {
+	//If a state change is needed
+	if ( m_nextState )  {
+		CloseActiveState();
+		SetActiveState( m_nextState );
+
+		//State change has been handled so clear the next state
+		m_nextState = 0;
+	}
+}
+
+void StateManager::SetNextState( BaseState *state ) {
 	m_nextState = state;
 }
 

@@ -16,25 +16,25 @@ public:
 	StateManager( BaseState* initialState );
 
 	/************************************************
-	HandleStateChange
-	-Applies state change post to the active state
-	-Should not be called in the middle of accessing
-	 methods of the currently active state.
-	************************************************/
-	void HandleStateChange();
-
-	/************************************************
 	operator->
 	-returns the active state
 	************************************************/
 	BaseState* operator->();
 
 	/************************************************
-	PostStateChange
+	RefreshState
+	-Applies the state change
+	-Should not be called in the middle of accessing
+	 methods of the currently active state.
+	************************************************/
+	void RefreshState();
+
+	/************************************************
+	SetNextState
 	-Sets the next state to switch to upon the
 	 next call to HandleStateChange()
 	************************************************/
-	void PostStateChange( BaseState *state );
+	void SetNextState( BaseState *state );
 
 private:
 	//Restrict copying and assignment

@@ -83,7 +83,7 @@ void App::Run() {
 			}
 		}
 
-		m_stateManager.HandleStateChange();
+		m_stateManager.RefreshState();
 
 		m_stateManager->HandleEvents();
 		m_stateManager->Update();
