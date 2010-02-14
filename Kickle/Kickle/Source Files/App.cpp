@@ -28,8 +28,7 @@ App::App( const std::string &title,
 		 unsigned int framerate ) 
  : m_window( sf::VideoMode(width,height), title ), 
    m_deltaTime(0.0f), 
-   m_fps(0.0f) ,
-   m_stateManager( TitleState::GetInstance() ) {
+   m_fps(0.0f) {
 	m_window.SetFramerateLimit( framerate );
 }
 
@@ -76,8 +75,14 @@ void App::DestroyApp()
 }
 
 void App::Run() {
+	//Set the Initial State for the statemanager
+	m_stateManager.SetNextState( TitleState::GetInstance() );
+
+	//Game Loop
 	while ( m_window.IsOpened() ) {
+
 		if ( m_window.GetEvent( m_event ) ) {
+			//Handle Close Event
 			if ( m_event.Type == sf::Event::Closed ) {
 				m_window.Close();		
 			}

@@ -5,10 +5,9 @@
 /************************************************
 Public Methods
 ************************************************/
-StateManager::StateManager( BaseState* initialState )
+StateManager::StateManager()
  : m_activeState(0), 
    m_nextState(0) {
-	   SetActiveState( initialState );
 }
 
 BaseState* StateManager::operator->() {
@@ -34,10 +33,12 @@ void StateManager::SetNextState( BaseState *state ) {
 Private Methods
 ************************************************/
 void StateManager::CloseActiveState() {
-	//Pause active state and clean it up
-	m_activeState->Pause();
-	if( m_activeState->IsInit() ) {
-		m_activeState->CleanUp();
+	if( m_activeState ) {
+		//Pause active state and clean it up
+		m_activeState->Pause();
+		if( m_activeState->IsInit() ) {
+			m_activeState->CleanUp();
+		}
 	}
 }
 

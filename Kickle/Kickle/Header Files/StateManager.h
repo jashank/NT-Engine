@@ -13,7 +13,7 @@ StateManager
 ************************************************/
 class StateManager {
 public:
-	StateManager( BaseState* initialState );
+	StateManager();
 
 	/************************************************
 	operator->
