@@ -12,57 +12,57 @@ class TitleState : public BaseState {
  public:
   virtual ~TitleState();
 
-	static BaseState* GetInstance();
-	static void DestroyInstance();
+  static BaseState* GetInstance();
+  static void DestroyInstance();
 
-	/************************************************
-	Init
-	-Loads the resources required by TitleState
-	************************************************/
-	virtual void Init();
+  /************************************************
+  Init
+  -Loads the resources required by TitleState
+  ************************************************/
+  virtual void Init();
 
-	/************************************************
-	CleanUp
-	-Releases the resources acquired by TitleState
-	************************************************/
-	virtual void CleanUp();
+  /************************************************
+  CleanUp
+  -Releases the resources acquired by TitleState
+  ************************************************/
+  virtual void CleanUp();
 
-	/************************************************
-	Pause
-	-Pauses the TitleState
-	************************************************/
-	virtual void Pause();
+  /************************************************
+  Pause
+  -Pauses the TitleState
+  ************************************************/
+  virtual void Pause();
 
-	/************************************************
-	Resume
-	-Unpauses the TitleState
-	************************************************/
-	virtual void Resume();
+  /************************************************
+  Resume
+  -Unpauses the TitleState
+  ************************************************/
+  virtual void Resume();
 
-	/************************************************
-	HandleEvents
-	-Handle TitleState's user input events
-	************************************************/
-	virtual void HandleEvents();
+  /************************************************
+  HandleEvents
+  -Handle TitleState's user input events
+  ************************************************/
+  virtual void HandleEvents();
 
-	/************************************************
-	Update
-	-Update TitleState's frame
-	************************************************/
-	virtual void Update();
+  /************************************************
+  Update
+  -Update TitleState's frame
+  ************************************************/
+  virtual void Update();
 
-	/************************************************
-	Render
-	-Render TitleState's frame
-	************************************************/
-	virtual void Render();
+  /************************************************
+  Render
+  -Render TitleState's frame
+  ************************************************/
+  virtual void Render();
 
  private:	
-	TitleState();
-	TitleState( const TitleState &title );
-	TitleState& operator=( const TitleState &title );
+  TitleState();
+  TitleState( const TitleState &title );
+  TitleState& operator=( const TitleState &title );
 
-	static TitleState *m_instance;
+  static TitleState *m_instance;
 };
 
 #endif
