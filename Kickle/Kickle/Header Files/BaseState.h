@@ -9,7 +9,7 @@ BaseState
 -All game states will be managed by the StateManager
 ********************************************************/
 class BaseState {
-public:
+ public:
 	virtual ~BaseState();
 
 	virtual void Init() = 0;
@@ -24,12 +24,12 @@ public:
 
 	bool IsInit() const;
 
-protected:
+ protected:
 	BaseState();
 	void SetInit( bool initialized );
 
-private:
-	bool	m_initialized;
+ private:
+	bool m_initialized;
 };
 
 #endif

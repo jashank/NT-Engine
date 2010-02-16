@@ -1,10 +1,11 @@
 #ifndef RESOURCEMANAGER_H
 #define RESOURCEMANAGER_H
-#include <map>
-#include <utility>
-#include <string>
-#include <memory>
+
 #include <algorithm>
+#include <map>
+#include <memory>
+#include <string>
+#include <utility>
 
 #include "Utilities.h"
 
@@ -56,9 +57,8 @@ private:
 	ResourceManager( const ResourceManager& );
 	ResourceManager& operator=( const ResourceManager& );
 
-
-	loader_t	m_loader;
-	map_t		m_resources;
+	loader_t m_loader;
+	map_t	m_resources;
 };
 
 #include "ResourceManager.hpp"

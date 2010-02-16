@@ -1,5 +1,6 @@
 #ifndef TITLESTATE_H
 #define TITLESTATE_H
+
 #include "BaseState.h"
 
 /************************************************
@@ -8,8 +9,8 @@ TitleState
 -Contains all TitleState Content
 ************************************************/
 class TitleState : public BaseState {
-public:
-	virtual ~TitleState();
+ public:
+  virtual ~TitleState();
 
 	static BaseState* GetInstance();
 	static void DestroyInstance();
@@ -56,7 +57,7 @@ public:
 	************************************************/
 	virtual void Render();
 
-private:	
+ private:	
 	TitleState();
 	TitleState( const TitleState &title );
 	TitleState& operator=( const TitleState &title );

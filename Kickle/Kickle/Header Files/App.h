@@ -1,5 +1,6 @@
 #ifndef APP_H
 #define APP_H
+
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio/Music.hpp>
 #include <SFML/Audio/SoundBuffer.hpp>
@@ -26,11 +27,13 @@ App
 -Loads Resources
 ************************************************/
 class App {
-public:
-	static App* CreateApp( const std::string &title, 
+ public:
+	static App* CreateApp( 
+		const std::string &title, 
 		unsigned int width, 
 		unsigned int height, 
-		unsigned int framerate );
+		unsigned int framerate 
+	);
 	~App();
 
 	/************************************************
@@ -89,28 +92,29 @@ public:
 	************************************************/
 	float GetDeltaTime() const;
 
-private:
-	App( const std::string &title, 
+ private:
+	App( 
+		const std::string &title, 
 		unsigned int width, 
 		unsigned int height, 
-		unsigned int framerate );
+		unsigned int framerate 
+	);
 	App( const App &app );
 
-	static App*			m_instance;
+	static App *m_instance;
 
-	char				m_fpsStrBuff[50];
-	sf::Event			m_event;
-	float				m_deltaTime;
-	float				m_fps;
+	char m_fpsStrBuff[50];
+	sf::Event	m_event;
+	float	m_deltaTime;
+	float	m_fps;
 	sf::RenderWindow	m_window;
 
 	//Resource Managers
-	ResourceManager< sf::Image >		m_images;
-	ResourceManager< sf::SoundBuffer >	m_sounds;
-	ResourceManager< sf::Music >		m_music;
+	ResourceManager< sf::Image > m_images;
+	ResourceManager< sf::SoundBuffer > m_sounds;
+	ResourceManager< sf::Music > m_music;
 
-	StateManager						m_stateManager;
-
+	StateManager m_stateManager;
 };
 
 #endif

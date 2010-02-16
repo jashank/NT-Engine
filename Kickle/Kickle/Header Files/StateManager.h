@@ -2,9 +2,6 @@
 #ifndef CSTATEMANAGER_H
 #define CSTATEMANAGER_H
 
-#include <stack>
-
-
 class BaseState;
 
 /************************************************
@@ -12,7 +9,7 @@ StateManager
 -Handles switching states
 ************************************************/
 class StateManager {
-public:
+ public:
 	StateManager();
 
 	/************************************************
@@ -36,7 +33,7 @@ public:
 	************************************************/
 	void SetNextState( BaseState *state );
 
-private:
+ private:
 	//Restrict copying and assignment
 	StateManager( const StateManager &stateMan );
 	StateManager& operator=( const StateManager &stateMan );
@@ -53,10 +50,10 @@ private:
 	-Assigns a new active state, initializes it, and
 	 resumes it
 	************************************************/
-	void SetActiveState( BaseState* state );
+	void SetActiveState( BaseState *state );
 
-	BaseState* m_activeState;			
-	BaseState* m_nextState;			
+	BaseState *m_activeState;			
+	BaseState *m_nextState;			
 };
 
 #endif
