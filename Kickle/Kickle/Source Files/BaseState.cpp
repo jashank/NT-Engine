@@ -1,7 +1,7 @@
 #include "BaseState.h"
 
-BaseState::BaseState() {
-
+BaseState::BaseState()
+  : m_initialized( false ) {
 }
 
 BaseState::~BaseState() {

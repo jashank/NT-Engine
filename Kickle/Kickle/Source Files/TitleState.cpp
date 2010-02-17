@@ -34,16 +34,20 @@ void TitleState::DestroyInstance() {
 
 void TitleState::Init() {
 	SetInit( true );
+  App::GetApp()->SetClearColor( sf::Color(255,0,0) );
 
   m_font = new sf::Font();
-  m_font->LoadFromFile( "Resources/Fonts/MICKEY.ttf" );
-
+  m_font->LoadFromFile( "Resources\\Fonts\\MICKEY.TTF" );
+  
   m_title.SetFont( *m_font );
   m_play.SetFont( *m_font );
+
 }
 
 void TitleState::CleanUp() {
 	SetInit( false );
+  App::GetApp()->SetClearColor( sf::Color() );
+
   
   SAFEDELETE( m_font );
 }

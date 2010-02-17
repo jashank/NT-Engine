@@ -37,6 +37,18 @@ class App {
   ~App();
 
   /************************************************
+  DestroyApp
+  -Destroys the instance of App
+  ************************************************/
+  static void DestroyApp();
+
+  /************************************************
+  Draw
+  -Draws any Drawable object to the screen
+  ************************************************/
+  void Draw( const sf::Drawable &object );
+
+  /************************************************
   GetApp
   -Returns an instance of App
   -Insures that only one instance of App exists
@@ -45,23 +57,11 @@ class App {
   static App* GetApp();
 
   /************************************************
-  DestroyApp
-  -Destroys the instance of App
+  GetDeltaTime
+  -Returns the change in time since last frame
   ************************************************/
-  static void DestroyApp();
+  float GetDeltaTime() const;
   
-  /************************************************
-  Run
-  -Contains the main game loop
-  ************************************************/
-  void Run();
-
-  /************************************************
-  Draw
-  -Draws any Drawable object to the screen
-  ************************************************/
-  void Draw( const sf::Drawable &object );
-
   /************************************************
   LoadImage
   -Returns an Image given a filename
@@ -87,10 +87,16 @@ class App {
   sf::Music& LoadMusic( const std::string &filename );
 
   /************************************************
-  GetDeltaTime
-  -Returns the change in time since last frame
+  Run
+  -Contains the main game loop
   ************************************************/
-  float GetDeltaTime() const;
+  void Run();
+
+  /************************************************
+  SetClearColor
+  -Sets the screen's clear color
+  ************************************************/
+  void SetClearColor( const sf::Color& color );
 
  private:
   App( 
@@ -107,12 +113,15 @@ class App {
   sf::Event	m_event;
   float	m_deltaTime;
   float	m_fps;
-  sf::RenderWindow	m_window;
 
   //Resource Managers
   ResourceManager< sf::Image > m_images;
   ResourceManager< sf::SoundBuffer > m_sounds;
   ResourceManager< sf::Music > m_music;
+
+  sf::RenderWindow	m_window;
+  sf::Color m_clearColor;
+
 
   StateManager m_stateManager;
 };

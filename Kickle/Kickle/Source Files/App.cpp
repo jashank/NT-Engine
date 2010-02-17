@@ -64,6 +64,15 @@ App* App::CreateApp(
 	return m_instance;
 }
 
+void App::DestroyApp()
+{
+	SAFEDELETE( m_instance );
+}
+
+void App::Draw( const sf::Drawable &object ) {
+	m_window.Draw( object );
+}
+
 App* App::GetApp() {
 	if( m_instance != 0 ) {
 		return m_instance;
@@ -73,9 +82,20 @@ App* App::GetApp() {
 	}
 }
 
-void App::DestroyApp()
-{
-	SAFEDELETE( m_instance );
+float App::GetDeltaTime() const {
+	return m_deltaTime;
+}
+
+sf::Image& App::LoadImage( const std::string &filename ) {
+	return m_images.Load( filename );
+}
+
+sf::SoundBuffer& App::LoadSound( const std::string &filename ) {
+	return m_sounds.Load( filename );
+}
+
+sf::Music& App::LoadMusic( const std::string &filename ) {
+	return m_music.Load( filename );
 }
 
 void App::Run() {
@@ -96,7 +116,7 @@ void App::Run() {
 		m_stateManager->HandleEvents();
 		m_stateManager->Update();
 
-		m_window.Clear();
+		m_window.Clear( m_clearColor );
 		//Display FPS
 		sprintf_s( m_fpsStrBuff, 50, "FPS: %4.2g", m_fps );
 		m_window.Draw( sf::String( m_fpsStrBuff )  );
@@ -111,22 +131,6 @@ void App::Run() {
 	}
 }
 
-void App::Draw( const sf::Drawable &object ) {
-	m_window.Draw(object);
-}
-
-sf::Image& App::LoadImage( const std::string &filename ) {
-	return m_images.Load( filename );
-}
-
-sf::SoundBuffer& App::LoadSound( const std::string &filename ) {
-	return m_sounds.Load( filename );
-}
-
-sf::Music& App::LoadMusic( const std::string &filename ) {
-	return m_music.Load( filename );
-}
-
-float App::GetDeltaTime() const {
-	return m_deltaTime;
+void App::SetClearColor( const sf::Color& color ) {
+  m_clearColor = color;
 }
