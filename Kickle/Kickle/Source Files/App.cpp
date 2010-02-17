@@ -8,8 +8,8 @@
 //Template specialization to handle sf::Music's OpenFromFile() 
 //instead of the typical LoadFromFile()
 template<>
-sf::Music* ResourceLoader<sf::Music>::Load( const std::string &filename ) {
-	std::auto_ptr<sf::Music> resource( new sf::Music() );
+sf::Music* ResourceLoader< sf::Music >::Load( const std::string &filename ) {
+	std::auto_ptr< sf::Music > resource( new sf::Music() );
 	if( !resource->OpenFromFile( filename ) ) {
 		std::string err = "Unable to Load() resource: ";
 		err += filename;
@@ -22,11 +22,13 @@ sf::Music* ResourceLoader<sf::Music>::Load( const std::string &filename ) {
 
 App* App::m_instance = 0;
 
-App::App( const std::string &title, 
-		 unsigned int width, 
-		 unsigned int height, 
-		 unsigned int framerate ) 
- : m_window( sf::VideoMode(width,height), title ), 
+App::App( 
+  const std::string &title, 
+  unsigned int width, 
+  unsigned int height, 
+  unsigned int framerate 
+) 
+ : m_window( sf::VideoMode( width, height ), title ), 
    m_deltaTime(0.0f), 
    m_fps(0.0f) {
 	m_window.SetFramerateLimit( framerate );
@@ -37,10 +39,12 @@ App::~App() {
 	TitleState::DestroyInstance();
 }
 
-App* App::CreateApp( const std::string& title, 
-					unsigned int width, 
-					unsigned int height, 
-					unsigned int framerate ) {
+App* App::CreateApp( 
+  const std::string& title, 
+  unsigned int width, 
+  unsigned int height, 
+  unsigned int framerate 
+) {
 
 	if(  m_instance == 0 ) {
 		DEBUG_STATEMENT( 

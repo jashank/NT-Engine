@@ -6,8 +6,8 @@
 Public Methods
 ************************************************/
 StateManager::StateManager()
- : m_activeState(0), 
-   m_nextState(0) {
+ : m_activeState( 0 ), 
+   m_nextState( 0 ) {
 }
 
 BaseState* StateManager::operator->() {
@@ -42,7 +42,7 @@ void StateManager::CloseActiveState() {
 	}
 }
 
-void StateManager::SetActiveState( BaseState* state ) {
+void StateManager::SetActiveState( BaseState *state ) {
 	//Assign the new state, initialize it, and resume the state
 	m_activeState = state;
 	if( !m_activeState->IsInit() ) {
