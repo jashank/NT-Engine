@@ -1,10 +1,20 @@
 #include "TitleState.h"
+
+#include <SFML/Graphics/Font.hpp>
+
+#include "App.h"
 #include "Utilities.h"
 
 TitleState *TitleState::m_instance = 0;
 
-TitleState::TitleState() {
+TitleState::TitleState()
+  : m_title( "Kickle Cubicle" ),
+    m_play( "Play" ) {
+  m_title.SetSize( 60 );
+  m_play.SetSize( 48 );
 
+  m_title.Move( 256.f, 10.f );
+  m_play.Move( 384.f, 110.f );
 }
 
 TitleState::~TitleState() {
@@ -24,10 +34,18 @@ void TitleState::DestroyInstance() {
 
 void TitleState::Init() {
 	SetInit( true );
+
+  m_font = new sf::Font();
+  m_font->LoadFromFile( "Resources/Fonts/MICKEY.ttf" );
+
+  m_title.SetFont( *m_font );
+  m_play.SetFont( *m_font );
 }
 
 void TitleState::CleanUp() {
 	SetInit( false );
+  
+  SAFEDELETE( m_font );
 }
 
 void TitleState::Pause() {
@@ -47,5 +65,6 @@ void TitleState::Update() {
 }
 
 void TitleState::Render() {
-
+  App::GetApp()->Draw( m_title );
+  App::GetApp()->Draw( m_play );
 }

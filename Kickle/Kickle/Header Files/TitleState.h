@@ -3,6 +3,9 @@
 
 #include "BaseState.h"
 
+#include <SFML/Graphics/String.hpp>
+class sf::Font;
+
 /************************************************
 TitleState
 -Inherits from BaseState
@@ -58,11 +61,19 @@ class TitleState : public BaseState {
   virtual void Render();
 
  private:	
+  /************************************************
+  Restricts construction, copy construction, 
+  and assignment.
+  ************************************************/
   TitleState();
   TitleState( const TitleState &title );
   TitleState& operator=( const TitleState &title );
+  
+  sf::Font *m_font; // Font for the title menu
+  sf::String m_title; // Title string
+  sf::String m_play; // Play option string
 
-  static TitleState *m_instance;
+  static TitleState *m_instance; // TitleState has one instance
 };
 
 #endif
