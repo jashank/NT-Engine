@@ -179,6 +179,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Button.h"
+				>
+			</File>
+			<File
 				RelativePath=".\Header Files\ResourceManager.h"
 				>
 			</File>
