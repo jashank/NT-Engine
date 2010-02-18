@@ -41,7 +41,6 @@ void TitleState::Init() {
   
   m_title.SetFont( *m_font );
   m_play.SetFont( *m_font );
-
 }
 
 void TitleState::CleanUp() {
