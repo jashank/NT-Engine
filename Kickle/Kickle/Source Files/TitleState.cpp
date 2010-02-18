@@ -10,11 +10,11 @@ TitleState *TitleState::m_instance = 0;
 TitleState::TitleState()
   : m_title( "Kickle Cubicle" ),
     m_play( "Play" ) {
-  m_title.SetSize( 60 );
-  m_play.SetSize( 48 );
+  m_title.SetSize( 72 );
+  m_play.SetSize( 60 );
 
-  m_title.Move( 256.f, 10.f );
-  m_play.Move( 384.f, 110.f );
+  m_title.Move( 190.f, 10.f );
+  m_play.Move( 410.f, 240.f );
 }
 
 TitleState::~TitleState() {
@@ -34,7 +34,7 @@ void TitleState::DestroyInstance() {
 
 void TitleState::Init() {
 	SetInit( true );
-  App::GetApp()->SetClearColor( sf::Color(255,0,0) );
+  App::GetApp()->SetClearColor( sf::Color(0,0,0) );
 
   m_font = new sf::Font();
   m_font->LoadFromFile( "Resources\\Fonts\\MICKEY.TTF" );
