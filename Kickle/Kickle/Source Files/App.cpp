@@ -19,9 +19,15 @@ sf::Music* ResourceLoader< sf::Music >::Load( const std::string &filename ) {
 	return resource.release();
 }
 
-
+/************************************************
+Data Members
+************************************************/
 App* App::m_instance = 0;
 
+
+/************************************************
+Constructor and Destructor
+************************************************/
 App::App( 
   const std::string &title, 
   unsigned int width, 
@@ -34,18 +40,22 @@ App::App(
 	m_window.SetFramerateLimit( framerate );
 }
 
+
 App::~App() {
 	DEBUG_STATEMENT( std::cout << "Closing App..." << std::endl; )
 	TitleState::DestroyInstance();
 }
 
+
+/************************************************
+Public Member Functions
+************************************************/
 App* App::CreateApp( 
   const std::string& title, 
   unsigned int width, 
   unsigned int height, 
   unsigned int framerate 
 ) {
-
 	if(  m_instance == 0 ) {
 		DEBUG_STATEMENT( 
 			std::cout 
@@ -64,14 +74,17 @@ App* App::CreateApp(
 	return m_instance;
 }
 
+
 void App::DestroyApp()
 {
 	SAFEDELETE( m_instance );
 }
 
+
 void App::Draw( const sf::Drawable &object ) {
 	m_window.Draw( object );
 }
+
 
 App* App::GetApp() {
 	if( m_instance != 0 ) {
@@ -82,21 +95,36 @@ App* App::GetApp() {
 	}
 }
 
+
 float App::GetDeltaTime() const {
 	return m_deltaTime;
 }
+
+
+int App::GetMouseX() const {
+  return m_window.GetInput().GetMouseX();
+}
+
+
+int App::GetMouseY() const {
+  return m_window.GetInput().GetMouseY();
+}
+
 
 sf::Image& App::LoadImage( const std::string &filename ) {
 	return m_images.Load( filename );
 }
 
+
 sf::SoundBuffer& App::LoadSound( const std::string &filename ) {
 	return m_sounds.Load( filename );
 }
 
+
 sf::Music& App::LoadMusic( const std::string &filename ) {
 	return m_music.Load( filename );
 }
+
 
 void App::Run() {
 	//Set the Initial State for the statemanager
@@ -130,6 +158,7 @@ void App::Run() {
 		m_fps = 1.0f/m_deltaTime;
 	}
 }
+
 
 void App::SetClearColor( const sf::Color& color ) {
   m_clearColor = color;

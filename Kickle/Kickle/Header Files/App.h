@@ -61,6 +61,14 @@ class App {
   -Returns the change in time since last frame
   ************************************************/
   float GetDeltaTime() const;
+
+  /************************************************
+  GetMouseX, GetMouseY
+  - Returns mouse's current x position.
+  - Returns mouse's current y position.
+  ************************************************/
+  int GetMouseX() const;
+  int GetMouseY() const;
   
   /************************************************
   LoadImage

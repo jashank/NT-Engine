@@ -5,8 +5,15 @@
 #include "App.h"
 #include "Utilities.h"
 
+/************************************************
+Data Members
+************************************************/
 TitleState *TitleState::m_instance = 0;
 
+
+/************************************************
+Public Member Functions
+************************************************/
 TitleState::TitleState()
   : m_title( "Kickle Cubicle" ),
     m_play( "Play" ) {
@@ -17,9 +24,11 @@ TitleState::TitleState()
   m_play.Move( 410.f, 240.f );
 }
 
+
 TitleState::~TitleState() {
 	CleanUp();
 }
+
 
 BaseState* TitleState::GetInstance() {
 	if( !m_instance ) {
@@ -28,9 +37,11 @@ BaseState* TitleState::GetInstance() {
 	return m_instance;
 }
 
+
 void TitleState::DestroyInstance() {
 	SAFEDELETE( m_instance );
 }
+
 
 void TitleState::Init() {
 	SetInit( true );
@@ -43,6 +54,7 @@ void TitleState::Init() {
   m_play.SetFont( *m_font );
 }
 
+
 void TitleState::CleanUp() {
 	SetInit( false );
   App::GetApp()->SetClearColor( sf::Color() );
@@ -51,21 +63,26 @@ void TitleState::CleanUp() {
   SAFEDELETE( m_font );
 }
 
+
 void TitleState::Pause() {
 
 }
+
 
 void TitleState::Resume() {
 
 }
 
+
 void TitleState::HandleEvents() {
 
 }
 
+
 void TitleState::Update() {
 
 }
+
 
 void TitleState::Render() {
   App::GetApp()->Draw( m_title );

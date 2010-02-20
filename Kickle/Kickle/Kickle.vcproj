@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(ProjectDir)\Header Files\&quot;"
+				AdditionalIncludeDirectories="C:\boost_1_42;&quot;$(ProjectDir)\Header Files\&quot;"
 				PreprocessorDefinitions="SFML_DYNAMIC;WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -63,6 +63,7 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="sfml-system-d.lib sfml-window-d.lib sfml-graphics-d.lib sfml-audio-d.lib"
 				LinkIncremental="2"
+				AdditionalLibraryDirectories="C:\boost_1_42\lib"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				TargetMachine="1"
@@ -224,6 +225,10 @@
 			>
 			<File
 				RelativePath=".\Source Files\App.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Button.cpp"
 				>
 			</File>
 			<File
