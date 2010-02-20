@@ -46,7 +46,7 @@ bool Button::ContainsCursor( int cursorX, int cursorY ) const {
 }
 
 
-void Button::Activate() const {
+void Button::Activate() {
   m_action();
 }
 
@@ -54,12 +54,15 @@ void Button::Activate() const {
 void Button::SetText( const sf::String &text ) {
   m_text = text;
 
-  float centerTextX = 
-    ( GetSubRect().GetWidth() - m_text.GetRect().GetWidth() ) / 2.f;
-  float centerTextY = 
-    ( GetSubRect().GetHeight() - m_text.GetRect().GetHeight() ) / 2.f;
-  
-  m_text.SetPosition( centerTextX, centerTextY );
+  float buttonCenterX = GetSubRect().GetWidth()  / 2.f;
+  float buttonCenterY = GetSubRect().GetHeight() / 2.f;
+  SetCenter( buttonCenterX, buttonCenterY );
+
+  float textCenterX = m_text.GetRect().GetWidth() / 2.f;
+  float textCenterY = m_text.GetRect().GetHeight() / 2.f;
+  m_text.SetCenter( textCenterX, textCenterY );
+
+  m_text.SetPosition( GetPosition() );
 }
 
 
@@ -67,9 +70,7 @@ void Button::SetText( const sf::String &text ) {
 Protected Member Functions
 ********************************************************/
 void Button::Render( sf::RenderTarget &Target ) const {
-  if ( GetImage() ) {
-    Sprite::Render( Target );
-  }
+  Sprite::Render( Target );
   Target.Draw( m_text );
 }
   

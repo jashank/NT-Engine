@@ -1,4 +1,5 @@
 #include <SFML/Graphics.hpp>
+#include <SFML/Window/Input.hpp>
 
 #include "App.h"
 #include "TitleState.h"
@@ -101,13 +102,8 @@ float App::GetDeltaTime() const {
 }
 
 
-int App::GetMouseX() const {
-  return m_window.GetInput().GetMouseX();
-}
-
-
-int App::GetMouseY() const {
-  return m_window.GetInput().GetMouseY();
+const sf::Input& App::GetInput() const {
+  return m_window.GetInput();
 }
 
 

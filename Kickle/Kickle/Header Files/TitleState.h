@@ -6,6 +6,10 @@
 #include <SFML/Graphics/String.hpp>
 class sf::Font;
 
+#include "Button.h"
+
+#include <iostream>
+
 /************************************************
 TitleState
 -Inherits from BaseState
@@ -68,10 +72,15 @@ class TitleState : public BaseState {
   TitleState();
   TitleState( const TitleState &title );
   TitleState& operator=( const TitleState &title );
+
+  /************************************************
+  TEST FUNCTION FOR BUTTON!
+  ************************************************/
+  static void ButtonAction();
   
   sf::Font *m_font; // Font for the title menu
   sf::String m_title; // Title string
-  sf::String m_play; // Play option string
+  Button m_play; // Button to play game
 
   static TitleState *m_instance; // TitleState has one instance
 };

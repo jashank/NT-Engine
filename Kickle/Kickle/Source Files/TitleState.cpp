@@ -16,12 +16,12 @@ Public Member Functions
 ************************************************/
 TitleState::TitleState()
   : m_title( "Kickle Cubicle" ),
-    m_play( "Play" ) {
+    m_play( 
+      ButtonAction, 
+      sf::Vector2f( 500, 400 ), sf::IntRect( 500, 400, 700, 500 ) 
+    ) {
   m_title.SetSize( 72 );
-  m_play.SetSize( 60 );
-
-  m_title.Move( 190.f, 10.f );
-  m_play.Move( 410.f, 240.f );
+  m_title.SetPosition( 190.f, 10.f );
 }
 
 
@@ -45,13 +45,16 @@ void TitleState::DestroyInstance() {
 
 void TitleState::Init() {
 	SetInit( true );
+
   App::GetApp()->SetClearColor( sf::Color(0,0,0) );
 
   m_font = new sf::Font();
   m_font->LoadFromFile( "Resources\\Fonts\\MICKEY.TTF" );
   
   m_title.SetFont( *m_font );
-  m_play.SetFont( *m_font );
+  
+  sf::String buttonText( "Play", *m_font, 60 );
+  m_play.SetText( buttonText );
 }
 
 
@@ -75,7 +78,14 @@ void TitleState::Resume() {
 
 
 void TitleState::HandleEvents() {
-
+  if ( App::GetApp()->GetInput().IsMouseButtonDown( sf::Mouse::Left )) {
+    if ( m_play.ContainsCursor( 
+          App::GetApp()->GetInput().GetMouseX(), 
+          App::GetApp()->GetInput().GetMouseY()
+         )) {
+      m_play.Activate();
+    }
+  }
 }
 
 
@@ -87,4 +97,9 @@ void TitleState::Update() {
 void TitleState::Render() {
   App::GetApp()->Draw( m_title );
   App::GetApp()->Draw( m_play );
+}
+
+
+void TitleState::ButtonAction() {
+  std::cout << "Button pressed.\n";
 }

@@ -8,6 +8,7 @@
 #include "ResourceManager.h"
 #include "StateManager.h"
 
+class Input;
 class StateManager;
 
 //Template specialization to handle sf::Music's OpenFromFile() 
@@ -63,13 +64,11 @@ class App {
   float GetDeltaTime() const;
 
   /************************************************
-  GetMouseX, GetMouseY
-  - Returns mouse's current x position.
-  - Returns mouse's current y position.
+  GetInput
+  - Returns input in app.
   ************************************************/
-  int GetMouseX() const;
-  int GetMouseY() const;
-  
+  const sf::Input& GetInput() const;
+
   /************************************************
   LoadImage
   -Returns an Image given a filename
