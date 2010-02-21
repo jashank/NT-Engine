@@ -159,3 +159,7 @@ void App::Run() {
 void App::SetClearColor( const sf::Color& color ) {
   m_clearColor = color;
 }
+
+void App::SetNextState( BaseState *state ) {
+	m_stateManager.SetNextState( state );
+}

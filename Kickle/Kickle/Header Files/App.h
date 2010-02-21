@@ -7,6 +7,7 @@
 
 #include "ResourceManager.h"
 #include "StateManager.h"
+#include "BaseState.h"
 
 class Input;
 class StateManager;
@@ -104,6 +105,12 @@ class App {
   -Sets the screen's clear color
   ************************************************/
   void SetClearColor( const sf::Color& color );
+
+  /***********************************************
+  SetNextState
+  -Wrapper for StateManager SetNextState
+  ***********************************************/
+  void SetNextState( BaseState *state );
 
  private:
   App( 

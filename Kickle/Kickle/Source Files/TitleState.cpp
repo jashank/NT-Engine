@@ -3,6 +3,7 @@
 #include <SFML/Graphics/Font.hpp>
 
 #include "App.h"
+#include "PlayState.h"
 #include "Utilities.h"
 
 /************************************************
@@ -45,7 +46,7 @@ void TitleState::DestroyInstance() {
 
 void TitleState::Init() {
 	SetInit( true );
-
+  
   App::GetApp()->SetClearColor( sf::Color(0,0,0) );
 
   m_font = new sf::Font();
@@ -102,4 +103,5 @@ void TitleState::Render() {
 
 void TitleState::ButtonAction() {
   std::cout << "Button pressed.\n";
+  App::GetApp()->SetNextState( PlayState::GetInstance() );
 }
