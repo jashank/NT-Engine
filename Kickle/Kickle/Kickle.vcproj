@@ -180,10 +180,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Header Files\BaseState.h"
-				>
-			</File>
-			<File
 				RelativePath=".\Header Files\Button.h"
 				>
 			</File>
@@ -219,6 +215,10 @@
 				Name="States"
 				>
 				<File
+					RelativePath=".\Header Files\BaseState.h"
+					>
+				</File>
+				<File
 					RelativePath=".\Header Files\PlayState.h"
 					>
 				</File>
@@ -244,10 +244,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Source Files\BaseState.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\Source Files\Button.cpp"
 				>
 			</File>
@@ -264,10 +260,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Source Files\PlayState.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\Source Files\StateManager.cpp"
 				>
 			</File>
@@ -275,13 +267,21 @@
 				RelativePath=".\Source Files\TileMap.cpp"
 				>
 			</File>
-			<File
-				RelativePath=".\Source Files\TitleState.cpp"
-				>
-			</File>
 			<Filter
 				Name="States"
 				>
+				<File
+					RelativePath=".\Source Files\BaseState.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Source Files\PlayState.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Source Files\TitleState.cpp"
+					>
+				</File>
 			</Filter>
 		</Filter>
 	</Files>

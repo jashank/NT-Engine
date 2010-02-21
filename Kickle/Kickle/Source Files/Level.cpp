@@ -15,6 +15,8 @@ void Level::Render() {
 }
 
 bool Level::SetLevel( std::string levelPath ) {
+	// This is a place holder for lua. Note when finished this function
+	// will parse the lua file passed through the levelPath argument.
 	int layout[15][15] ={
 	{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 	{0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0},
@@ -31,6 +33,7 @@ bool Level::SetLevel( std::string levelPath ) {
 	{0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0},
 	{0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0},
 	{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}};
-
-	return m_tileMap.SetTileMap( "levelSheet.png" ,layout );
+	
+	bool tileMapLoaded = m_tileMap.SetTileMap( "levelSheet.png" ,layout );
+	return tileMapLoaded;
 }
