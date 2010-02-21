@@ -188,6 +188,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Header Files\Configuration.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Header Files\Level.h"
+				>
+			</File>
+			<File
 				RelativePath=".\Header Files\ResourceManager.h"
 				>
 			</File>
@@ -200,7 +208,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Header Files\TitleState.h"
+				RelativePath=".\Header Files\TileMap.h"
 				>
 			</File>
 			<File
@@ -210,6 +218,14 @@
 			<Filter
 				Name="States"
 				>
+				<File
+					RelativePath=".\Header Files\PlayState.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Header Files\TitleState.h"
+					>
+				</File>
 			</Filter>
 		</Filter>
 		<Filter
@@ -236,11 +252,27 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Source Files\Configuration.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Source Files\Level.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\Source Files\main.cpp"
 				>
 			</File>
 			<File
+				RelativePath=".\Source Files\PlayState.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\Source Files\StateManager.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Source Files\TileMap.cpp"
 				>
 			</File>
 			<File
