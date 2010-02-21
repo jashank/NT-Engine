@@ -61,7 +61,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="sfml-system-d.lib sfml-window-d.lib sfml-graphics-d.lib sfml-audio-d.lib"
+				AdditionalDependencies="sfml-system-d.lib sfml-window-d.lib sfml-graphics-d.lib sfml-audio-d.lib libboost_system-vc90-s-1_42.lib"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="C:\boost_1_42\lib"
 				GenerateDebugInformation="true"
@@ -180,15 +180,11 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Header Files\BaseState.h"
+				>
+			</File>
+			<File
 				RelativePath=".\Header Files\Button.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Header Files\Configuration.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Header Files\Level.h"
 				>
 			</File>
 			<File
@@ -200,7 +196,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Header Files\TileMap.h"
+				RelativePath=".\Header Files\StateManager.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Header Files\TitleState.h"
 				>
 			</File>
 			<File
@@ -210,22 +210,6 @@
 			<Filter
 				Name="States"
 				>
-				<File
-					RelativePath=".\Header Files\BaseState.h"
-					>
-				</File>
-				<File
-					RelativePath=".\Header Files\PlayState.h"
-					>
-				</File>
-				<File
-					RelativePath=".\Header Files\StateManager.h"
-					>
-				</File>
-				<File
-					RelativePath=".\Header Files\TitleState.h"
-					>
-				</File>
 			</Filter>
 		</Filter>
 		<Filter
@@ -244,15 +228,11 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Source Files\BaseState.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\Source Files\Button.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\Source Files\Configuration.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\Source Files\Level.cpp"
 				>
 			</File>
 			<File
@@ -260,28 +240,16 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Source Files\TileMap.cpp"
+				RelativePath=".\Source Files\StateManager.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Source Files\TitleState.cpp"
 				>
 			</File>
 			<Filter
 				Name="States"
 				>
-				<File
-					RelativePath=".\Source Files\BaseState.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\Source Files\PlayState.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\Source Files\StateManager.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\Source Files\TitleState.cpp"
-					>
-				</File>
 			</Filter>
 		</Filter>
 	</Files>

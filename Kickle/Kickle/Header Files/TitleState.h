@@ -8,8 +8,6 @@ class sf::Font;
 
 #include "Button.h"
 
-#include <iostream>
-
 /************************************************
 TitleState
 -Inherits from BaseState
@@ -74,13 +72,14 @@ class TitleState : public BaseState {
   TitleState& operator=( const TitleState &title );
 
   /************************************************
-  TEST FUNCTION FOR BUTTON!
+  Play
+  - Function called when player clicks play.
   ************************************************/
-  static void ButtonAction();
+  static void Play();
   
+  Button m_play; // Button to play game
   sf::Font *m_font; // Font for the title menu
   sf::String m_title; // Title string
-  Button m_play; // Button to play game
 
   static TitleState *m_instance; // TitleState has one instance
 };

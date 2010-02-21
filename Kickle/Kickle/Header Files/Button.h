@@ -11,7 +11,6 @@ class sf::Image;
 class sf::RenderTarget;
 
 
-
 /********************************************************
 Button
 - Performs action when clicked by user.
@@ -54,7 +53,7 @@ class Button : public sf::Sprite {
   Activate
   - Activates the button's action.
   ********************************************************/
-  void Activate();
+  void Activate() const;
   
   /********************************************************
   SetText

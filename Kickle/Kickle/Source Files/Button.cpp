@@ -36,9 +36,9 @@ Button::Button(
 Public Member Functions
 ********************************************************/
 bool Button::ContainsCursor( int cursorX, int cursorY ) const {
-  float buttonLeft = GetPosition().x - GetSubRect().GetWidth() / 2.f;
+  float buttonLeft = GetPosition().x;
   float buttonRight = buttonLeft + GetSubRect().GetWidth();
-  float buttonTop = GetPosition().y - GetSubRect().GetHeight() / 2.f;
+  float buttonTop = GetPosition().y;
   float buttonBottom = buttonTop + GetSubRect().GetHeight();
   
   return (( cursorX > buttonLeft ) && ( cursorX < buttonRight ) &&
@@ -46,7 +46,7 @@ bool Button::ContainsCursor( int cursorX, int cursorY ) const {
 }
 
 
-void Button::Activate() {
+void Button::Activate() const {
   m_action();
 }
 
@@ -54,15 +54,12 @@ void Button::Activate() {
 void Button::SetText( const sf::String &text ) {
   m_text = text;
 
-  float buttonCenterX = GetSubRect().GetWidth()  / 2.f;
-  float buttonCenterY = GetSubRect().GetHeight() / 2.f;
-
-  SetCenter( buttonCenterX, buttonCenterY );
-
-  float textCenterX = (GetSubRect().GetWidth() - m_text.GetRect().GetWidth() )/ 2.f;
-  float textCenterY = (GetSubRect().GetHeight() - m_text.GetRect().GetHeight() )/ 2.f;
-
-  m_text.SetPosition( textCenterX, textCenterY );
+  float centerTextX = 
+    ( GetSubRect().GetWidth() - m_text.GetRect().GetWidth() ) / 2.f;
+  float centerTextY = 
+    ( GetSubRect().GetHeight() - m_text.GetRect().GetHeight() ) / 2.f;
+  
+  m_text.SetPosition( centerTextX, centerTextY );
 }
 
 
@@ -70,6 +67,9 @@ void Button::SetText( const sf::String &text ) {
 Protected Member Functions
 ********************************************************/
 void Button::Render( sf::RenderTarget &Target ) const {
-  Sprite::Render( Target );
+  if ( GetImage() ) {
+    Sprite::Render( Target );
+  }
   Target.Draw( m_text );
 }
+  

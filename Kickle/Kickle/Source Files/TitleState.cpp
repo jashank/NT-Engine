@@ -18,8 +18,9 @@ Public Member Functions
 TitleState::TitleState()
   : m_title( "Kickle Cubicle" ),
     m_play( 
-      ButtonAction, 
-      sf::Vector2f( 500, 400 ), sf::IntRect( 500, 400, 700, 500 ) 
+      Play, 
+      sf::Vector2f( 500, 400 ), 
+      sf::IntRect( 500, 400, 700, 500 ) 
     ) {
   m_title.SetSize( 72 );
   m_title.SetPosition( 190.f, 10.f );
@@ -101,7 +102,12 @@ void TitleState::Render() {
 }
 
 
-void TitleState::ButtonAction() {
-  std::cout << "Button pressed.\n";
+/************************************************
+Private Member Functions
+************************************************/
+
+
+void TitleState::Play() {
+  // DOES NOTHING FOR NOW;
   App::GetApp()->SetNextState( PlayState::GetInstance() );
 }
