@@ -34,6 +34,6 @@ bool Level::SetLevel( std::string levelPath ) {
 	{0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0},
 	{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}};
 	
-	bool tileMapLoaded = m_tileMap.SetTileMap( "levelSheet.png" ,layout );
+	bool tileMapLoaded = m_tileMap.SetTileMap( "Content/Core/Sprites/levelSheet.png" ,layout );
 	return tileMapLoaded;
 }
