@@ -51,7 +51,7 @@ void TitleState::Init() {
   App::GetApp()->SetClearColor( sf::Color(0,0,0) );
 
   m_font = new sf::Font();
-  m_font->LoadFromFile( "Resources\\Fonts\\MICKEY.TTF" );
+  m_font->LoadFromFile( "Content/Core/Fonts/MICKEY.TTF" );
   
   m_title.SetFont( *m_font );
   
