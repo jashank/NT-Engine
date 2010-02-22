@@ -176,7 +176,15 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
+				RelativePath=".\Header Files\AnimData.h"
+				>
+			</File>
+			<File
 				RelativePath=".\Header Files\App.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Header Files\BasicTypeDefs.h"
 				>
 			</File>
 			<File
@@ -185,6 +193,10 @@
 			</File>
 			<File
 				RelativePath=".\Header Files\Configuration.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Header Files\GameObject.h"
 				>
 			</File>
 			<File
@@ -240,6 +252,10 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath=".\Source Files\AnimData.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\Source Files\App.cpp"
 				>
 			</File>
@@ -249,6 +265,10 @@
 			</File>
 			<File
 				RelativePath=".\Source Files\Configuration.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Source Files\GameObject.cpp"
 				>
 			</File>
 			<File
