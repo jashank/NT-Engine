@@ -4,10 +4,18 @@
 #include "tinyxml.h"
 
 #include "App.h"
+#include "Configuration.h"
 
 
 int main() {
-	std::auto_ptr< App > Game( App::CreateApp( "Kickle!", 1024, 768, 60 ) );
+	std::auto_ptr< App > Game( 
+    App::CreateApp( 
+      "Kickle!", 
+      Configuration::SCREEN_WIDTH, 
+      Configuration::SCREEN_HEIGHT, 
+      Configuration::FPS 
+    ) 
+  );
 
 	Game->Run();
 	

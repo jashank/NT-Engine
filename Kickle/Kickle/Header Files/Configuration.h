@@ -1,20 +1,12 @@
 #ifndef CONFIGURATION_H
 #define CONFIGURATION_H
 
-class Configuration {
-public:
-	Configuration();
-	virtual ~Configuration();
-	
-	void SetHeight( unsigned int height );
-	unsigned int GetHeight();
+#include "BasicTypeDefs.h"
 
-	void SetWidth( unsigned int width );
-	unsigned int GetWidth();
-
-private:
-	unsigned int m_height;
-	unsigned int m_width;
-};
+namespace Configuration {
+  extern const Uint SCREEN_HEIGHT;
+  extern const Uint SCREEN_WIDTH;
+  extern const Uint FPS;
+}
 
 #endif
