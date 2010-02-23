@@ -192,6 +192,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Header Files\CollisionMap.h"
+				>
+			</File>
+			<File
 				RelativePath=".\Header Files\Configuration.h"
 				>
 			</File>
@@ -261,6 +265,10 @@
 			</File>
 			<File
 				RelativePath=".\Source Files\Button.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Source Files\CollisionMap.cpp"
 				>
 			</File>
 			<File

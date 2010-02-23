@@ -1,5 +1,8 @@
 #include "TileMap.h"
 
+/******************************
+Constructors and Destructors.
+******************************/
 TileMap::TileMap() {
 	Init();
 }
@@ -7,10 +10,19 @@ TileMap::TileMap() {
 TileMap::~TileMap() {
 }
 
+/**********************************************
+Init()
+- Called by the constructor and initializes the
+	tile map.
+***********************************************/
 void TileMap::Init() {
 	// Do nothing.
 }
 
+/***********************************************
+Render()
+- Called by the Level class and renders the map
+************************************************/
 void TileMap::Render() {
 	/*
 	The current tile refers to the integer identifier that specifies
@@ -47,6 +59,12 @@ void TileMap::Render() {
 	}
 }
 
+/************************************************
+SetTileMap()
+- Called by the Level class trys to grab and load
+	the tile map sheet and sets the buffer as given.
+	The Tile Map does not deal directly with LUNA.
+*************************************************/
 bool TileMap::SetTileMap( std::string mapPath, int layout[MAP_SIZE][MAP_SIZE] ) {
 	// Check that the tile sheet exists. If it doesn't return false.
 	if ( m_tileSheet.LoadFromFile( mapPath ) ) {

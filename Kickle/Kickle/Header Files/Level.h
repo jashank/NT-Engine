@@ -1,10 +1,10 @@
 #ifndef LEVEL_H
 #define LEVEL_H
 
-//TODO
-// Associate Y value with render preference.
+#include <SFML/Graphics.hpp>
 
 #include "TileMap.h"
+#include "CollisionMap.h"
 
 class Level {
 public:
@@ -31,9 +31,16 @@ public:
 	collision layer.
 	**************************************************************************/
 	bool SetLevel( std::string levelPath );
+
+  /****************************************
+  IsTileSolid()
+  -Wrapper function for the collision map.
+  *****************************************/
+  bool IsTileSolid( const sf::Vector2f& position );
+
 private:
 	TileMap m_tileMap;
-	//CollisionMap m_collision_map;
+  CollisionMap m_collisionMap;
 };
 
 #endif

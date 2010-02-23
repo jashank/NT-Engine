@@ -67,23 +67,25 @@ void PlayState::HandleEvents() {
   static float speed = 1.0f;
   static int direction = 1; // 0 = Up, 1 = Down, 2 = Left, 3 = Right
   const sf::Input& inp = App::GetApp()->GetInput();
-  if( inp.IsKeyDown( sf::Key::Up ) ) {
+  sf::Vector2f kicklePos = m_kickle.GetPosition();
+
+  if( inp.IsKeyDown( sf::Key::Up ) && !m_level.IsTileSolid(sf::Vector2f(kicklePos.x, kicklePos.y-1)) ) {
     direction = 0;
     m_kickle.SetAnimation( direction+4 );
     m_kickle.Move( 0.0f, -speed );
   }
-  else if( inp.IsKeyDown( sf::Key::Down ) ) {
+  else if( inp.IsKeyDown( sf::Key::Down ) && !m_level.IsTileSolid(sf::Vector2f(kicklePos.x, kicklePos.y+1)) ) {
     direction = 1;
     m_kickle.SetAnimation( direction+4 );
     m_kickle.Move( 0.0f, speed );
   }
-  else if( inp.IsKeyDown( sf::Key::Left ) ) {
+  else if( inp.IsKeyDown( sf::Key::Left )  && !m_level.IsTileSolid(sf::Vector2f(kicklePos.x-1, kicklePos.y)) ) {
     direction = 2;
     m_kickle.SetAnimation( direction+4 );
     m_kickle.Move( -speed, 0.0f );
     
   }
-  else if( inp.IsKeyDown( sf::Key::Right ) ) {
+  else if( inp.IsKeyDown( sf::Key::Right ) && !m_level.IsTileSolid(sf::Vector2f(kicklePos.x+1, kicklePos.y)) ) {
     direction = 3;
     m_kickle.SetAnimation( direction+4 );
     m_kickle.Move( speed, 0.0f );
