@@ -1,5 +1,8 @@
 #include <memory>
 #include <iostream>
+
+#include "tinyxml.h"
+
 #include "App.h"
 
 
@@ -9,5 +12,6 @@ int main() {
 	Game->Run();
 	
 	std::cin.get();
+
 	return 0;
 }

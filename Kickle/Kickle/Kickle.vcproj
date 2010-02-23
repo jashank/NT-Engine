@@ -243,6 +243,18 @@
 					>
 				</File>
 			</Filter>
+			<Filter
+				Name="TinyXML"
+				>
+				<File
+					RelativePath=".\Header Files\tinystr.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Header Files\tinyxml.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Resource Files"
@@ -308,6 +320,26 @@
 				</File>
 				<File
 					RelativePath=".\Source Files\TitleState.cpp"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="TinyXML"
+				>
+				<File
+					RelativePath=".\Source Files\tinystr.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Source Files\tinyxml.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Source Files\tinyxmlerror.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Source Files\tinyxmlparser.cpp"
 					>
 				</File>
 			</Filter>
