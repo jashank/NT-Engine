@@ -5,6 +5,7 @@
 
 #include "TileMap.h"
 #include "CollisionMap.h"
+#include "Configuration.h"
 
 class Level {
 public:

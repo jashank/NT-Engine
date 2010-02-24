@@ -48,7 +48,7 @@ void TileMap::Render() {
 				The sprite is then placed on the desired location on the map. Note the
 				inverse of the J and I so that the map reads correctly.
 				*/
-				m_tileSprite.SetPosition( (float)j*TILE_SIZE, (float)i*TILE_SIZE );
+        m_tileSprite.SetPosition( (float)j*TILE_SIZE+Config::X_PAD, (float)i*TILE_SIZE+Config::Y_PAD );
 				/*
 				Once we find the sprites sub rect on the level sprite sheet and
 				have its position to be placed we draw it to the screen.

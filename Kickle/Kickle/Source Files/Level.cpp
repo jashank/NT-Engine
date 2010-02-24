@@ -16,7 +16,7 @@ void Level::Render() {
 
 bool Level::IsTileSolid( const sf::Vector2f& position ) {
   // TODO cleanup.
-  return m_collisionMap.IsTileSolid( ((int)position.x+24)/48 , ((int)position.y+48)/48 );
+  return m_collisionMap.IsTileSolid( ((int)position.x+24-Config::X_PAD)/48 , ((int)position.y+48-Config::Y_PAD)/48 );
 }
 
 bool Level::SetLevel( std::string levelPath ) {
