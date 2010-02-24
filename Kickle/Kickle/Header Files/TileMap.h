@@ -6,6 +6,8 @@ Author: Ben Wright (bwright.au@gmail.com)
 #define TILE_MAP_H
 
 #include "App.h"
+#include "Configuration.h"
+
 #include <SFML/Graphics.hpp>
 #include <string>
 
@@ -39,8 +41,6 @@ private:
 		static const int MAP_SIZE = 15;
 		static const int NULL_TILE = -1;
 		static const int TILE_SIZE = 48;
-		static const int X_PAD = 50;
-		static const int Y_PAD = 10;
 
 		sf::Image m_tileSheet;
 		sf::Sprite m_tileSprite;
