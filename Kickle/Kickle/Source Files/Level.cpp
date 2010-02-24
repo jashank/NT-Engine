@@ -1,3 +1,7 @@
+#include <iostream>
+#include <sstream>
+#include <string>
+
 #include "Level.h"
 #include "Utilities.h"
 
@@ -20,44 +24,50 @@ bool Level::IsTileSolid( const sf::Vector2f& position ) {
 }
 
 bool Level::SetLevel( std::string levelPath ) {
-	// This is a place holder for lua. Note when finished this function
-	// will parse the lua file passed through the levelPath argument.
-	int layout[15][15] ={
-	{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-	{0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0},
-	{0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0},
-	{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-	{0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0},
-	{0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0},
-	{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-	{0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0},
-	{0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0},
-	{0, 0, 0, 1, 1, 2, 1, 1, 1, 2, 1, 1, 0, 0, 0},
-	{0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0},
-	{0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0},
-	{0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0},
-	{0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0},
-	{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}};
-	
+  TiXmlDocument doc ( levelPath.c_str() );
+  
+  if ( !doc.LoadFile() ) {
+    return false;
+  }
+
+  TiXmlHandle handleDoc( &doc );
+  TiXmlElement* root = handleDoc.FirstChildElement("map").Element();
+
+  // Load in tiles.
+  std::string tile_string( root->FirstChildElement("tile_layout")->GetText() );
+  std::stringstream tile_layout( tile_string, std::ios_base::in );
+
+  int layout[15][15];
+ 
+  int current_tile = 0;
+  for( unsigned int i=0; i < Config::MAP_SIZE; i++ ) {
+    for ( unsigned int j=0; j < Config::MAP_SIZE; j++ ) {
+      if ( tile_layout >> current_tile ) {
+          layout[i][j] = current_tile;
+      } else {
+          layout[i][j] = -1;
+      }
+    }
+  }
+  
+  // Load In Collision Layout
+  std::string collision_string( root->FirstChildElement("collision_layout")->GetText() );
+  std::stringstream collision_layout( collision_string, std::ios_base::in );
+
+  int collisionLayout[15][15];
+ 
+  for( unsigned int i=0; i < Config::MAP_SIZE; i++ ) {
+    for ( unsigned int j=0; j < Config::MAP_SIZE; j++ ) {
+      if ( collision_layout >> current_tile ) {
+          collisionLayout[i][j] = current_tile;
+      } else {
+          collisionLayout[i][j] = -1;
+      }
+    }
+  }
+
+	// Send them to the appropriate functions.
 	bool tileMapLoaded = m_tileMap.SetTileMap( "Content/Core/Sprites/levelSheet.png" ,layout );
-
-  int collisionLayout[15][15] =	{
-  {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-	{1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1},
-	{1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1},
-	{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-	{1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1},
-	{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-	{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-	{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-	{1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1},
-	{1, 1, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 1, 1},
-	{1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1},
-	{1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1},
-	{1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1},
-	{1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1},
-	{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}};
-
   m_collisionMap.SetCollisionMap( collisionLayout );
 
 	return tileMapLoaded;

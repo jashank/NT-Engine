@@ -6,6 +6,7 @@
 #include "TileMap.h"
 #include "CollisionMap.h"
 #include "Configuration.h"
+#include "tinyxml.h"
 
 class Level {
 public:

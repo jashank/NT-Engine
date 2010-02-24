@@ -43,7 +43,7 @@ void PlayState::Init() {
 	SetInit( true );
 	App::GetApp()->SetClearColor( sf::Color(0,49,139) );
 	// Create a level with a place holder path.
-	m_level.SetLevel( "levelPath.lua" );
+	m_level.SetLevel( "Content\\Core\\Levels\\TestLevel.txt" );
 }
 
 
