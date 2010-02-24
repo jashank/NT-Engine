@@ -11,9 +11,9 @@ int main() {
 	std::auto_ptr< App > Game( 
     App::CreateApp( 
       "Kickle!", 
-      Configuration::SCREEN_WIDTH, 
-      Configuration::SCREEN_HEIGHT, 
-      Configuration::FPS 
+      Config::SCREEN_WIDTH, 
+      Config::SCREEN_HEIGHT, 
+      Config::FPS 
     ) 
   );
 

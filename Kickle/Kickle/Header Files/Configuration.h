@@ -3,7 +3,7 @@
 
 #include "BasicTypeDefs.h"
 
-namespace Configuration {
+namespace Config {
   extern const Uint SCREEN_HEIGHT;
   extern const Uint SCREEN_WIDTH;
   extern const Uint FPS;
