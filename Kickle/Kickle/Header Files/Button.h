@@ -26,10 +26,11 @@ class Button : public sf::Sprite {
   /********************************************************
   Constructors
   - All constructors take a buttonAction, an sf::vector2<float>,
-    and an sf::IntRect
-  - Separate constructors for just an sf::string, and an 
-    string with an image.
+    and an sf::IntRect. Image may be provided.
+  - Default Constructor creates "non-existent" button.
   ********************************************************/
+  Button();
+
   Button( 
     const Action &action, 
     const sf::Vector2f &position,

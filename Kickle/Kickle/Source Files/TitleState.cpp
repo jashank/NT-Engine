@@ -16,12 +16,9 @@ TitleState *TitleState::m_instance = 0;
 Public Member Functions
 ************************************************/
 TitleState::TitleState()
-  : m_title( "Kickle Cubicle" ),
-    m_play( 
-      Play, 
-      sf::Vector2f( 500, 400 ), 
-      sf::IntRect( 500, 400, 700, 500 ) 
-    ) {
+  : m_title( "Kickle Cubicle" ) {
+  CreateButtons();
+
   m_title.SetSize( 72 );
   m_title.SetPosition( 190.f, 10.f );
 }
@@ -106,8 +103,20 @@ void TitleState::Render() {
 Private Member Functions
 ************************************************/
 
-
 void TitleState::Play() {
-  // DOES NOTHING FOR NOW;
   App::GetApp()->SetNextState( PlayState::GetInstance() );
+}
+
+
+void TitleState::CreateButtons() {
+  const float PLAY_WIDTH = 200.f;
+  const float PLAY_HEIGHT = 75.f;
+  sf::Vector2f playPosition( 400.f, 250.f );
+  sf::IntRect playRect( 
+    static_cast< int >( playPosition.x ), 
+    static_cast< int >( playPosition.y ), 
+    static_cast< int >( playPosition.x + PLAY_WIDTH ), 
+    static_cast< int >( playPosition.y + PLAY_HEIGHT )
+  );
+  m_play = Button( Play, playPosition, playRect );
 }

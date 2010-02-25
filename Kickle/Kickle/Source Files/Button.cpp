@@ -8,6 +8,9 @@
 /********************************************************
 Constructors
 ********************************************************/
+Button::Button()
+  : m_action( 0 ), m_text( "" ) {}
+
 Button::Button( 
   const Action &action, 
   const sf::Vector2f &position,

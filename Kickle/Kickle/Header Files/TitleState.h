@@ -7,6 +7,7 @@
 class sf::Font;
 
 #include "Button.h"
+#include "BasicTypeDefs.h"
 
 /************************************************
 TitleState
@@ -76,6 +77,15 @@ class TitleState : public BaseState {
   - Function called when player clicks play.
   ************************************************/
   static void Play();
+
+  /************************************************
+  CreateButtons
+  - Creates the buttons for the Title Menu
+  ************************************************/
+  void CreateButtons();
+
+  
+  
   
   Button m_play; // Button to play game
   sf::Font *m_font; // Font for the title menu
