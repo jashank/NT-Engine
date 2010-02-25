@@ -63,3 +63,27 @@ bool CollisionMap::IsTileSolid( int x, int y ) {
   }
   return false;
 }
+
+/************************************************************
+SetCollision()
+- Changes the value of the collision sheet to that value if it is 
+ valid else -1.
+************************************************************/
+void CollisionMap::SetCollision( int x, int y, int collisionId ) {
+  if ( x < MAP_SIZE && x >= 0 && y < MAP_SIZE && y >= 0) {
+    m_collision_layout[y][x] = collisionId;
+  }
+
+}
+
+/**********************************************
+GetCollision()
+- Returns the id of the tile at that location.
+**********************************************/
+int CollisionMap::GetCollision( int x, int y ) {
+  if ( x < MAP_SIZE && x >= 0 && y < MAP_SIZE && y >= 0) {
+    return m_collision_layout[y][x];
+  } else {
+    return SOLID;
+  }
+}

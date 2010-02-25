@@ -82,3 +82,27 @@ bool TileMap::SetTileMap( std::string mapPath, int layout[MAP_SIZE][MAP_SIZE] ) 
 
 	return true;
 }
+
+/************************************************************
+SetTile()
+- Changes the value of the tile sheet to that value if it is 
+ valid else -1.
+************************************************************/
+void TileMap::SetTile( int x, int y, int tileId ) {
+  if ( x < MAP_SIZE && x >= 0 && y < MAP_SIZE && y >= 0) {
+    m_layout[y][x] = tileId;
+  }
+
+}
+
+/**********************************************
+GetTile()
+- Returns the id of the tile at that location.
+**********************************************/
+int TileMap::GetTile( int x, int y ) {
+  if ( x < MAP_SIZE && x >= 0 && y < MAP_SIZE && y >= 0) {
+    return m_layout[y][x];
+  } else {
+    return NULL_TILE;
+  }
+}

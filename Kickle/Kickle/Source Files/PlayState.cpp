@@ -2,6 +2,7 @@
 
 #include "App.h"
 #include "Utilities.h"
+#include "Configuration.h"
 
 /************************************************
 Data Members
@@ -92,6 +93,29 @@ void PlayState::HandleEvents() {
   }
   else if( inp.IsKeyDown( sf::Key::Z ) ) {
     m_kickle.SetAnimation( direction+8 );
+
+    int x_pos = ((int)kicklePos.x+24-Config::X_PAD)/48;
+    int y_pos = ((int)kicklePos.y+48-Config::Y_PAD)/48;
+
+    switch ( direction ) {
+      case 0:
+        y_pos--;
+        break;
+      case 1:
+        y_pos++;
+        break;
+      case 2:
+        x_pos--;
+        break;
+      case 3:
+        x_pos++;
+        break;
+      default:
+        break;
+    }
+    if ( m_level.GetTile(x_pos, y_pos) == 0 ) {
+      m_level.SetTile( x_pos , y_pos , 1, 0 );
+    }
   }
   else {
     m_kickle.SetAnimation( direction );

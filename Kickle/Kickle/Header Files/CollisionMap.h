@@ -26,6 +26,18 @@ public:
   *****************************************************************/
   bool IsTileSolid( int x, int y );
 
+  /************************************************************
+  SetTile()
+  - Changes the value of the tile sheet to that value if it is 
+  valid else -1.
+  ************************************************************/
+  void SetCollision( int x, int y, int collisionId );
+  /**********************************************
+  GetTile()
+  - Returns the id of the tile at that location.
+  **********************************************/
+  int GetCollision( int x, int y );
+
 private:
   static const unsigned int MAP_SIZE = 15;
   static const int SOLID = 1;

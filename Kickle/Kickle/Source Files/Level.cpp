@@ -74,3 +74,20 @@ bool Level::SetLevel( std::string levelPath ) {
 
 	return tileMapLoaded;
 }
+
+/********************************************
+GetTile()
+- Returns the id of the tile at x, y else -1
+********************************************/
+int Level::GetTile( int x, int y ) {
+  return m_tileMap.GetTile( x, y );
+}
+
+/**************************************************
+SetTile()
+- Sets the tile at x, y to that tile with that id
+***************************************************/
+void Level::SetTile (int x, int y, int tileId, int collisionId ) {
+  m_tileMap.SetTile( x, y, tileId );
+  m_collisionMap.SetCollision( x, y, collisionId );
+}

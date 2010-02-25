@@ -40,6 +40,18 @@ public:
   *****************************************/
   bool IsTileSolid( const sf::Vector2f& position );
 
+  /********************************************
+  GetTile()
+  - Returns the id of the tile at x, y else -1
+  ********************************************/
+  int GetTile( int x, int y );
+
+  /**************************************************
+  SetTile()
+  - Sets the tile at x, y to that tile with that id
+  ***************************************************/
+  void SetTile (int x, int y, int tileId, int collisionId );
+
 private:
 	TileMap m_tileMap;
   CollisionMap m_collisionMap;

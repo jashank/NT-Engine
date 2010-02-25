@@ -37,6 +37,18 @@ public:
 	*************************************************/
 	bool SetTileMap( std::string mapPath , int layout[15][15] );
 
+  /************************************************************
+  SetTile()
+  - Changes the value of the tile sheet to that value if it is 
+  valid else -1.
+  ************************************************************/
+  void SetTile( int x, int y, int tileId );
+  /**********************************************
+  GetTile()
+  - Returns the id of the tile at that location.
+  **********************************************/
+  int GetTile( int x, int y );
+
 private:
 		static const int MAP_SIZE = 15;
 		static const int NULL_TILE = -1;
