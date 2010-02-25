@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <map>
 	<tile_sprite_sheet>
-		Content/Core/Sprites/levelSheet.png
+		Content/Core/Sheets/levelSheet.png
 	</tile_sprite_sheet>
 	<tile_layout>
 		0 0 0 0 0 0 0 0 0 0 0 0 0 0 0

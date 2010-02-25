@@ -9,7 +9,7 @@
 class AnimData {
 public:
   AnimData();
-  AnimData( const std::string &filename );
+  //AnimData( const std::string &filename );
   ~AnimData();
 
   bool IsLooped( Uint animation ) const;
@@ -26,7 +26,7 @@ public:
 
   sf::IntRect GetFrameRect( Uint animation,  Uint frame ) const;
 
-  void LoadFromFile( const std::string &filename );
+  bool LoadFromFile( const std::string &filename );
 
 private:
   struct Animation {
@@ -39,7 +39,7 @@ private:
     sf::IntRect	frameRect; //(x,y)-first frame (w,h)-frame sizes
   };
 
-  int m_numAnims; //The number of Animations
+  Uint m_numAnims; //The number of Animations
 
   Animation *m_anims; //Holds information on all animations in animsheet
 };

@@ -61,7 +61,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="sfml-system-d.lib sfml-window-d.lib sfml-graphics-d.lib sfml-audio-d.lib libboost_system-vc90-s-1_42.lib"
+				AdditionalDependencies="sfml-system-d.lib sfml-window-d.lib sfml-graphics-d.lib sfml-audio-d.lib libboost_system-vc90-s-1_42.lib lua51.lib"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="C:\boost_1_42\lib"
 				GenerateDebugInformation="true"
@@ -136,7 +136,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="sfml-system.lib sfml-window.lib sfml-graphics.lib sfml-audio.lib"
+				AdditionalDependencies="sfml-system.lib sfml-window.lib sfml-graphics.lib sfml-audio.lib libboost_system-vc90-s-1_42.lib lua51.lib"
 				LinkIncremental="1"
 				GenerateDebugInformation="true"
 				SubSystem="1"
@@ -192,10 +192,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Header Files\CollisionMap.h"
-				>
-			</File>
-			<File
 				RelativePath=".\Header Files\Configuration.h"
 				>
 			</File>
@@ -204,27 +200,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Header Files\GameObjectMap.h"
-				>
-			</File>
-			<File
 				RelativePath=".\Header Files\Level.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Header Files\ResourceManager.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Header Files\ResourceManager.hpp"
-				>
-			</File>
-			<File
-				RelativePath=".\Header Files\StateManager.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Header Files\TileMap.h"
 				>
 			</File>
 			<File
@@ -259,6 +235,38 @@
 					>
 				</File>
 			</Filter>
+			<Filter
+				Name="Managers"
+				>
+				<File
+					RelativePath=".\Header Files\ResourceManager.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Header Files\ResourceManager.hpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Header Files\StateManager.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="Maps"
+				>
+				<File
+					RelativePath=".\Header Files\CollisionMap.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Header Files\GameObjectMap.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Header Files\TileMap.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Resource Files"
@@ -284,10 +292,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Source Files\CollisionMap.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\Source Files\Configuration.cpp"
 				>
 			</File>
@@ -296,23 +300,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Source Files\GameObjectMap.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\Source Files\Level.cpp"
 				>
 			</File>
 			<File
 				RelativePath=".\Source Files\main.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\Source Files\StateManager.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\Source Files\TileMap.cpp"
 				>
 			</File>
 			<Filter
@@ -348,6 +340,30 @@
 				</File>
 				<File
 					RelativePath=".\Source Files\tinyxmlparser.cpp"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="Managers"
+				>
+				<File
+					RelativePath=".\Source Files\StateManager.cpp"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="Maps"
+				>
+				<File
+					RelativePath=".\Source Files\CollisionMap.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Source Files\GameObjectMap.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Source Files\TileMap.cpp"
 					>
 				</File>
 			</Filter>

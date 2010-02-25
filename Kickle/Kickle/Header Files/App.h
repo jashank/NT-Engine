@@ -8,9 +8,11 @@
 #include "ResourceManager.h"
 #include "StateManager.h"
 #include "BaseState.h"
+#include "AnimData.h"
 
 class Input;
 class StateManager;
+class AnimData;
 
 //Template specialization to handle sf::Music's OpenFromFile() 
 //instead of the typical LoadFromFile()
@@ -36,7 +38,10 @@ class App {
     unsigned int height, 
     unsigned int framerate 
   );
+
+
   ~App();
+
 
   /************************************************
   DestroyApp
@@ -44,11 +49,13 @@ class App {
   ************************************************/
   static void DestroyApp();
 
+
   /************************************************
   Draw
   -Draws any Drawable object to the screen
   ************************************************/
   void Draw( const sf::Drawable &object );
+
 
   /************************************************
   GetApp
@@ -58,11 +65,13 @@ class App {
   ************************************************/
   static App* GetApp();
 
+
   /************************************************
   GetDeltaTime
   -Returns the change in time since last frame
   ************************************************/
   float GetDeltaTime() const;
+
 
   /************************************************
   GetInput
@@ -70,13 +79,15 @@ class App {
   ************************************************/
   const sf::Input& GetInput() const;
 
+
   /************************************************
   LoadImage
   -Returns an Image given a filename
-  -Insures that no duplicate Sound is loaded into
+  -Insures that no duplicate Image is loaded into
   memory
   ************************************************/
-  sf::Image& LoadImage( const std::string &filename );\
+  sf::Image& LoadImage( const std::string &filename );
+
 
   /************************************************
   LoadSound
@@ -86,13 +97,24 @@ class App {
   ************************************************/
   sf::SoundBuffer& LoadSound( const std::string &filename );
 
+
   /************************************************
   LoadMusic
-  -Returns an Music given a filename
-  -Insures that no duplicate Sound is loaded into
+  -Returns a Music given a filename
+  -Insures that no duplicate Music is loaded into
   memory
   ************************************************/
   sf::Music& LoadMusic( const std::string &filename );
+
+
+  /************************************************
+  LoadAnim
+  -Returns an AnimData given a filename
+  -Insures that no duplicate AnimData is loaded into
+  memory
+  ************************************************/
+  AnimData& LoadAnim( const std::string &filename );
+
 
   /************************************************
   Run
@@ -100,11 +122,13 @@ class App {
   ************************************************/
   void Run();
 
+
   /************************************************
   SetClearColor
   -Sets the screen's clear color
   ************************************************/
   void SetClearColor( const sf::Color& color );
+
 
   /***********************************************
   SetNextState
@@ -119,7 +143,10 @@ class App {
     unsigned int height, 
     unsigned int framerate 
   );
+
+
   App( const App &app );
+
 
   static App *m_instance;
 
@@ -132,6 +159,7 @@ class App {
   ResourceManager< sf::Image > m_images;
   ResourceManager< sf::SoundBuffer > m_sounds;
   ResourceManager< sf::Music > m_music;
+  ResourceManager< AnimData > m_anims;
 
   sf::RenderWindow	m_window;
   sf::Color m_clearColor;

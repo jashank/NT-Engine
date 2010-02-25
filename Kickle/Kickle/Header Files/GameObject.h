@@ -17,7 +17,7 @@ GameObject
 ************************************************/
 class GameObject : public sf::Sprite {
  public:
-	GameObject( const std::string &filename );
+	GameObject( const std::string &xmlGameObjectPath );
   ~GameObject();
 
 	/************************************************

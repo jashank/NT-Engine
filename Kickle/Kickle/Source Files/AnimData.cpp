@@ -1,7 +1,13 @@
+#include "AnimData.h"
+
+
+
 #include <iostream>
 #include <fstream>
+#include <sstream>
 
-#include "AnimData.h"
+#include "tinyxml.h"
+
 #include "Utilities.h"
 
 /************************************************
@@ -11,42 +17,16 @@ AnimData::AnimData()
  : m_numAnims( 0 ), 
    m_anims( 0 ) {
 
-  //struct Animation {
-  //  Animation();
-  //  ~Animation();
-  //  bool uniqueFrameTimes; //True if each frame has it's own time
-  //  bool isLooped; //True if animation is looped
-  //  float *frameTime; //Individual times for each frame
-  //  Uint numFrames; //Total frames in animation
-  //  sf::IntRect	frameRect; //(x,y)-first frame (w,h)-frame sizes
-  //};
-
-  //int m_numAnims; //The number of Animations
-
-  //Animation *m_anims; //Holds information on all animations in animsheet
-
-  //HARDCODED -  just until lua is embedded
-  m_numAnims = 20;
-  m_anims = new Animation[m_numAnims];
-  for( int i = 0; i < m_numAnims; ++i ) {
-    m_anims[i].numFrames = 8;
-    m_anims[i].frameRect.Left = 0;
-    m_anims[i].frameRect.Right = 48;
-    m_anims[i].frameRect.Top = i*60;
-    m_anims[i].frameRect.Bottom = (i+1)*60;
-
-    m_anims[i].isLooped = true;
-    m_anims[i].uniqueFrameTimes = false;
-    m_anims[i].frameTime = new float(0.1f);
-  }
 }
 
 
-AnimData::AnimData( const std::string &filename )
- : m_numAnims( 0 ), 
-   m_anims( 0 ) {
-  LoadFromFile( filename );
-}
+//AnimData::AnimData( const std::string &filename )
+// : m_numAnims( 0 ), 
+//   m_anims( 0 ) {
+//  if( !LoadFromFile( filename ) ) {
+//    throw "Unable to load animation data";
+//  }
+//}
 
 
 AnimData::~AnimData() {
@@ -54,7 +34,108 @@ AnimData::~AnimData() {
 }
 
 
-void AnimData::LoadFromFile( const std::string &filename ) {
+bool AnimData::LoadFromFile( const std::string &filename ) {
+
+  //<strip name="up_standing">
+  //  <looped>true</looped>
+  //  <num_frames>8</num_frames>
+  //  <individual_times>false</individual_times>
+  //  <frame_times> 0.1 </frame_times>
+
+  //  <x_pos>0</x_pos>
+  //  <y_pos>0</y_pos>
+  //  <width>48</width>
+  //  <height>60</height>
+  //</strip>
+
+  TiXmlDocument doc ( filename.c_str() );
+  
+  if ( !doc.LoadFile() ) {
+    return false;
+  }
+  
+  std::stringstream ss; //used for converting strings to other data types
+  TiXmlHandle handleDoc( &doc ); //handle to the xml doc
+  
+  TiXmlElement* root = handleDoc.FirstChildElement( "anim_strips" ).Element();
+  
+  //Load the number of animations into a stringstream
+  ss << root->FirstChildElement( "num_anims" )->GetText();
+  //Set the number of animations
+  ss >> m_numAnims;
+
+  //Allocate the correct number of animation strips
+  m_anims = new Animation[m_numAnims];
+ 
+  TiXmlElement* strip = root->FirstChildElement( "strip" );
+  Uint i = 0;
+  for( 
+      ;
+      (i < m_numAnims) && strip; 
+      ++i, strip = strip->NextSiblingElement( "strip" ) 
+  ) {
+
+    //Load "looped"
+    std::string looped = strip->FirstChildElement( "looped" )->GetText();
+    //Set whether or not animation is looped
+    m_anims[i].isLooped = (looped == "true") ? true : false;
+
+
+    //Load "num_frames"
+    ss.clear();
+    ss << strip->FirstChildElement( "num_frames" )->GetText();
+    //Set the number of frames
+    ss >> m_anims[i].numFrames;
+   
+ 
+    //Load "individual_times"
+    std::string ind = strip->FirstChildElement( "individual_times" )->GetText();
+    m_anims[i].uniqueFrameTimes = (ind == "true") ? true : false;
+
+    //Load "frame_times"
+    ss.clear();
+    ss << strip->FirstChildElement( "frame_times" )->GetText();
+
+    //Allocate floats to hold the correct number of frame times
+    if( m_anims[i].uniqueFrameTimes ) {
+      m_anims[i].frameTime = new float[m_anims[i].numFrames];
+      //Set the frame times
+      for( Uint n = 0; n < m_anims[i].numFrames; ++n ) {
+        ss >> m_anims[i].frameTime[n];
+      }
+    }
+    else {
+      m_anims[i].frameTime = new float(0.0f);
+      //Set the frame time
+      ss >> m_anims[i].frameTime[0];
+    }
+
+    
+    //Load "x_pos"
+    ss.clear();
+    ss << strip->FirstChildElement( "x_pos" )->GetText();
+    ss >> m_anims[i].frameRect.Left;
+
+    //Load "y_pos"
+    ss.clear();
+    ss << strip->FirstChildElement( "y_pos" )->GetText();
+    ss >> m_anims[i].frameRect.Top;
+
+    //Load "width"
+    ss.clear();
+    ss << strip->FirstChildElement( "width" )->GetText();
+    ss >> m_anims[i].frameRect.Right;
+    m_anims[i].frameRect.Right += m_anims[i].frameRect.Left;
+
+    //Load "height"
+    ss.clear();
+    ss << strip->FirstChildElement( "height" )->GetText();
+    ss >> m_anims[i].frameRect.Bottom;
+    m_anims[i].frameRect.Bottom += m_anims[i].frameRect.Top;
+  }
+
+
+  return true;
 }
 
 

@@ -122,6 +122,11 @@ sf::Music& App::LoadMusic( const std::string &filename ) {
 }
 
 
+AnimData& App::LoadAnim( const std::string &filename ) {
+	return m_anims.Load( filename );
+}
+
+
 void App::Run() {
 	//Set the Initial State for the statemanager
 	m_stateManager.SetNextState( TitleState::GetInstance() );
@@ -159,6 +164,7 @@ void App::Run() {
 void App::SetClearColor( const sf::Color& color ) {
   m_clearColor = color;
 }
+
 
 void App::SetNextState( BaseState *state ) {
 	m_stateManager.SetNextState( state );

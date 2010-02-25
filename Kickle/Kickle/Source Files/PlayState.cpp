@@ -14,7 +14,7 @@ PlayState *PlayState::m_instance = 0;
 Public Member Functions
 ************************************************/
 PlayState::PlayState()
- : m_kickle( "guttersluts.com" ) {
+ : m_kickle( "./Content/Core/Objects/Kickle.xml" ) {
   //Test code
   m_kickle.SetAnimation( 1 );
   m_kickle.SetPosition( 336.0f, 372.0f );
@@ -44,7 +44,7 @@ void PlayState::Init() {
 	SetInit( true );
 	App::GetApp()->SetClearColor( sf::Color(0,49,139) );
 	// Create a level with a place holder path.
-	m_level.SetLevel( "Content\\Core\\Levels\\TestLevel.txt" );
+	m_level.SetLevel( "Content/Core/Levels/TestLevel.xml" );
 }
 
 

@@ -2,29 +2,58 @@
 
 #include <iostream>
 
+#include "tinyxml.h"
+
 #include "AnimData.h"
 #include "App.h"
 
 /************************************************
 Public Methods
 ************************************************/
-GameObject::GameObject( const std::string &filename )
+GameObject::GameObject( const std::string &xmlGameObjectPath )
  : m_play( false ),
    m_animation( 0 ),
    m_frameTime( 0.0f ),
    m_animData( 0 ) {
 
-  //TESTCODE
-  sf::Image& temp = App::GetApp()->LoadImageW( "./Content/Core/Sprites/kickle_48x60.png" );
-  temp.CreateMaskFromColor( sf::Color( 255, 0, 255 ) );
-  SetImage( temp );
-  m_animData = new AnimData();
+  TiXmlDocument doc ( xmlGameObjectPath.c_str() );
+  
+  if ( !doc.LoadFile() ) {
+    throw "Cannot load GameObject XML file";
+  }
+
+  TiXmlHandle handleDoc( &doc );
+  TiXmlElement* root = handleDoc.FirstChildElement( "game_object" ).Element();
+
+  //Load in path to GameObject's spritesheet
+  std::string spritePath( root->FirstChildElement( "sprite_path" )->GetText() );
+
+  //Load in path to animation's xml
+  std::string animPath( root->FirstChildElement( "animation_path" )->GetText() );
+
+  //Load in path to GameObject's lua script
+  std::string luaScript( root->FirstChildElement( "script_path" )->GetText() );
+
+
+  App* app= App::GetApp();
+
+  //Load the spritesheet image
+  sf::Image& img = app->LoadImageW( spritePath.c_str() );
+  //Set all pink pixels to be treated as clear
+  img.CreateMaskFromColor( sf::Color( 255, 0, 255 ) );
+  //Set the spritesheet image
+  SetImage( img );
+
+  //Load/Set the animation data
+  AnimData& anim = app->LoadAnim( animPath.c_str() );
+  SetAnimData( anim );
+
+  //TODO - stick loading lua script here
 }
 
 
 GameObject::~GameObject() {
-  //TESTCODE
-  SAFEDELETE( m_animData );
+
 }
 
 
@@ -76,10 +105,7 @@ void GameObject::SetFrame( Uint frame ) {
 
 
 void GameObject::SetAnimation( Uint animation ) {
-  //If GameObject is animated
-	//if( m_animData ) {
 		m_animation = animation;
-	//}
 }
 
 
