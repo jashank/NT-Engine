@@ -24,6 +24,7 @@ Render()
 - Called by the Level class and renders the map
 ************************************************/
 void TileMap::Render() {
+  static App* app = App::GetApp();
 	/*
 	The current tile refers to the integer identifier that specifies
 	which 48x48 tile on the 720x720 sprite sheet is selected.
@@ -53,7 +54,7 @@ void TileMap::Render() {
 				Once we find the sprites sub rect on the level sprite sheet and
 				have its position to be placed we draw it to the screen.
 				*/
-				App::GetApp()->Draw( m_tileSprite );
+				app->Draw( m_tileSprite );
 			}
 		}
 	}
@@ -65,13 +66,8 @@ SetTileMap()
 	the tile map sheet and sets the buffer as given.
 	The Tile Map does not deal directly with LUNA.
 *************************************************/
-bool TileMap::SetTileMap( std::string mapPath, int layout[MAP_SIZE][MAP_SIZE] ) {
-	// Check that the tile sheet exists. If it doesn't return false.
-	if ( m_tileSheet.LoadFromFile( mapPath ) ) {
-		m_tileSprite.SetImage( m_tileSheet );
-	} else {
-		return false;
-	}
+void TileMap::SetTileMap( std::string mapPath, int layout[MAP_SIZE][MAP_SIZE] ) {
+	m_tileSprite.SetImage( App::GetApp()->LoadImageW( mapPath ) );
 	
 	// Set the layout to that of the parsed in argument.
 	for ( int i = 0; i < MAP_SIZE; i++ ) {
@@ -79,8 +75,6 @@ bool TileMap::SetTileMap( std::string mapPath, int layout[MAP_SIZE][MAP_SIZE] ) 
 			 m_layout[i][j] = layout[i][j];
 		}
 	}
-
-	return true;
 }
 
 /************************************************************

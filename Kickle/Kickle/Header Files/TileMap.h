@@ -35,7 +35,7 @@ public:
 	  the tile map sheet and sets the buffer as given.
 	  The Tile Map does not deal directly with LUNA.
 	*************************************************/
-	bool SetTileMap( std::string mapPath , int layout[15][15] );
+	void SetTileMap( std::string mapPath , int layout[15][15] );
 
   /************************************************************
   SetTile()

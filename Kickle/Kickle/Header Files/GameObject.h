@@ -4,6 +4,8 @@
 #include <SFML/Graphics.hpp>
 #include <string>
 
+#include "LunaWrapper.h"
+
 #include "BasicTypeDefs.h"
 
 
@@ -17,8 +19,18 @@ GameObject
 ************************************************/
 class GameObject : public sf::Sprite {
  public:
+  enum Dir {
+    Up,
+    Down,
+    Left,
+    Right
+  };
+
+  GameObject( lua_State *L );
 	GameObject( const std::string &xmlGameObjectPath );
+  GameObject( const std::string &xmlGameObjectPath, Uint tileX, Uint tileY );
   ~GameObject();
+
 
 	/************************************************
 	GetAnimData
@@ -26,11 +38,13 @@ class GameObject : public sf::Sprite {
 	************************************************/
 	const AnimData *GetAnimData() const;
 	
+
 	/************************************************
 	GetFrame
 	-Returns the current animation frame
 	************************************************/
 	Uint GetFrame() const;
+
 
 	/************************************************
 	GetAnimation
@@ -39,10 +53,32 @@ class GameObject : public sf::Sprite {
 	Uint GetAnimation() const;
 
 	/************************************************
+	IsMoving
+	-Returns true if the object is currently moving
+	************************************************/
+  bool IsMoving() const;
+
+
+	/************************************************
+	LoadFromFile
+	-Loads a GameObject given a path to an xml file
+  -Returns true if loading was successful
+	************************************************/
+  bool LoadFromFile( const std::string& filepath );
+
+
+	/************************************************
+	MoveDir
+	-Moves 1 tile length in the supplied direction
+	************************************************/	
+  void MoveDir( Dir direction );
+
+	/************************************************
 	Pause
 	-Freezes animation on current frame
 	************************************************/	
 	void Pause();
+
 
 	/************************************************
 	Play
@@ -50,11 +86,13 @@ class GameObject : public sf::Sprite {
 	************************************************/
 	void Play();
 
+
 	/************************************************
 	Restart
 	-Stops animation then resumes from first frame
 	************************************************/
 	void Restart();
+
 
 	/************************************************
 	SetFrame
@@ -62,11 +100,13 @@ class GameObject : public sf::Sprite {
 	************************************************/
 	void SetFrame( Uint frame );
 
+
 	/************************************************
 	SetAnimation
 	-Sets the current animation
 	************************************************/
 	void SetAnimation( Uint animation );
+
 
 	/************************************************
 	SetAnimData
@@ -74,11 +114,13 @@ class GameObject : public sf::Sprite {
 	************************************************/
 	void SetAnimData( const AnimData &animData );
 
+
 	/************************************************
 	Start
 	-Resumes animation from current frame
 	************************************************/
 	void Start();
+
 
 	/************************************************
 	Stop
@@ -87,12 +129,31 @@ class GameObject : public sf::Sprite {
 	************************************************/
 	void Stop();
 
+
+	/************************************************
+	StopMoving
+	-Stops moving
+	************************************************/
+  void StopMoving();
+
+
 	/************************************************
 	Update
 	-Updates the GameObject
 	************************************************/
 	void Update();
 
+
+	/************************************************
+	LuaMoveDir
+	-Wraps MoveDir to allow it to be exposed to Lua
+	************************************************/
+  int LuaMoveDir( lua_State *L );
+
+
+  //Necessities for Luna
+  static const char className[];
+  static const Luna<GameObject>::RegType Register[];
  private:
 	/************************************************
 	AnimUpdate
@@ -100,16 +161,21 @@ class GameObject : public sf::Sprite {
 	************************************************/
   void AnimUpdate();
 
+
 	/************************************************
 	NextFrame
 	-Selects next frame
 	************************************************/
 	void NextFrame();
 
+
 	const AnimData *m_animData; //Pointer to constant animation data
 
+  bool m_moving; //If true; keep moving in m_direction
 	bool m_play; //If true; animate GameObject
+  Dir m_direction; //current direction game object is moving
 	float m_frameTime; //time left on current frame
+  std::string m_luaScript; //filepath to the lua script
 	Uint m_animation; //current animation selections
 	Uint m_frame; //current frame selection
 };

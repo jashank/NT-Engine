@@ -19,7 +19,7 @@ int main() {
 
 	Game->Run();
 	
-	std::cin.get();
+	//std::cin.get();
 
 	return 0;
 }

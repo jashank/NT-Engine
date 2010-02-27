@@ -4,8 +4,8 @@
 #include "BasicTypeDefs.h"
 
 namespace Config {
-  extern const Uint SCREEN_HEIGHT;
   extern const Uint SCREEN_WIDTH;
+  extern const Uint SCREEN_HEIGHT;
   extern const Uint FPS;
   extern const Uint MAP_SIZE;
   extern const Uint TILE_SIZE;

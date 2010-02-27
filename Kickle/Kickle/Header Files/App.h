@@ -5,6 +5,10 @@
 #include <SFML/Audio/Music.hpp>
 #include <SFML/Audio/SoundBuffer.hpp>
 
+extern "C" {
+#include "lua.h"
+}
+
 #include "ResourceManager.h"
 #include "StateManager.h"
 #include "BaseState.h"
@@ -74,10 +78,24 @@ class App {
 
 
   /************************************************
+  GetEvent
+  - Returns event in app
+  ************************************************/
+  const sf::Event &GetEvent() const;  
+
+
+  /************************************************
   GetInput
   - Returns input in app.
   ************************************************/
-  const sf::Input& GetInput() const;
+  const sf::Input &GetInput() const;
+
+
+  /************************************************
+  GetLuaState
+  - Returns App's m_luaState
+  ************************************************/
+  lua_State *GetLuaState();
 
 
   /************************************************
@@ -136,6 +154,7 @@ class App {
   ***********************************************/
   void SetNextState( BaseState *state );
 
+
  private:
   App( 
     const std::string &title, 
@@ -148,12 +167,13 @@ class App {
   App( const App &app );
 
 
-  static App *m_instance;
+  static App *m_instance; //Single instance of App
 
-  char m_fpsStrBuff[50];
-  sf::Event	m_event;
-  float	m_deltaTime;
-  float	m_fps;
+  char m_fpsStrBuff[50]; //String for displaying current FPS
+  float	m_deltaTime; //Time in seconds spent on last frame render
+  float	m_fps; //Frames per Second
+
+  lua_State* m_luaState; //Mediator between C/C++ and Lua VM
 
   //Resource Managers
   ResourceManager< sf::Image > m_images;
@@ -161,11 +181,11 @@ class App {
   ResourceManager< sf::Music > m_music;
   ResourceManager< AnimData > m_anims;
 
-  sf::RenderWindow	m_window;
-  sf::Color m_clearColor;
+  sf::Color m_clearColor; //Color to clear the screen to
+  sf::Event	m_event; //holds the most current event
+  sf::RenderWindow	m_window; //SFML's window
 
-
-  StateManager m_stateManager;
+  StateManager m_stateManager; //Keeps track of current state
 };
 
 #endif

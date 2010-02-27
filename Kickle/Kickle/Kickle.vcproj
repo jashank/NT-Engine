@@ -267,6 +267,18 @@
 					>
 				</File>
 			</Filter>
+			<Filter
+				Name="Lua"
+				>
+				<File
+					RelativePath=".\Header Files\LuaAppFuncts.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Header Files\LunaWrapper.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Resource Files"
@@ -364,6 +376,14 @@
 				</File>
 				<File
 					RelativePath=".\Source Files\TileMap.cpp"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="Lua"
+				>
+				<File
+					RelativePath=".\Source Files\LuaAppFuncts.cpp"
 					>
 				</File>
 			</Filter>

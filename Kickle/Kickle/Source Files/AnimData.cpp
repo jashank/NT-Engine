@@ -163,12 +163,12 @@ int AnimData::GetAnimY( Uint animation ) const {
 }
 
 int AnimData::GetFrameWidth( Uint animation ) const {
-	return m_anims[animation%m_numAnims].frameRect.Right;
+	return m_anims[animation%m_numAnims].frameRect.GetWidth();
 }
 
 
 int AnimData::GetFrameHeight( Uint animation ) const {
-	return m_anims[animation%m_numAnims].frameRect.Bottom;
+	return m_anims[animation%m_numAnims].frameRect.GetHeight();
 }
 
 

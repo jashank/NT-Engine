@@ -52,7 +52,7 @@ bool Level::SetLevel( std::string levelPath ) {
     }
   }
   // Get the sprite sheet
-  std::string tile_sheet( root->FirstChildElement("tile_sprite_sheet")->GetText() );
+  std::string tile_sheet( root->FirstChildElement("tile_sheet")->GetText() );
   
   // Load In Collision Layout
   std::string collision_string( root->FirstChildElement("collision_layout")->GetText() );
@@ -71,10 +71,10 @@ bool Level::SetLevel( std::string levelPath ) {
   }
 
 	// Send them to the appropriate functions.
-	bool tileMapLoaded = m_tileMap.SetTileMap( tile_sheet ,layout );
+	m_tileMap.SetTileMap( tile_sheet ,layout );
   m_collisionMap.SetCollisionMap( collisionLayout );
 
-	return tileMapLoaded;
+	return true;
 }
 
 /********************************************

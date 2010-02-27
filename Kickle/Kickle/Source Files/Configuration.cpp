@@ -1,7 +1,7 @@
 #include "Configuration.h"
 
-const Uint Config::SCREEN_HEIGHT = 768;
 const Uint Config::SCREEN_WIDTH = 1024;
+const Uint Config::SCREEN_HEIGHT = 768;
 const Uint Config::FPS = 60;
 const Uint Config::MAP_SIZE = 15;
 const Uint Config::TILE_SIZE = 48;
