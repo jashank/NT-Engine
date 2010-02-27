@@ -78,6 +78,7 @@ class TitleState : public BaseState {
   ************************************************/
   static void Play();
 
+  static void Edit();
   /************************************************
   CreateButtons
   - Creates the buttons for the Title Menu
@@ -88,6 +89,7 @@ class TitleState : public BaseState {
   
   
   Button m_play; // Button to play game
+  Button m_editor;
   sf::Font *m_font; // Font for the title menu
   sf::String m_title; // Title string
 

@@ -5,6 +5,7 @@
 
 #include "TileMap.h"
 #include "CollisionMap.h"
+#include "GameObjectMap.h"
 #include "Configuration.h"
 #include "tinyxml.h"
 
@@ -55,6 +56,7 @@ public:
 private:
 	TileMap m_tileMap;
   CollisionMap m_collisionMap;
+  GameObjectMap m_gameObjectMap;
 };
 
 #endif

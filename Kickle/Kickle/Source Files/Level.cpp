@@ -15,7 +15,9 @@ void Level::Init() {
 }
 
 void Level::Render() {
+  // The Rendering order is important.
 	m_tileMap.Render();
+  m_gameObjectMap.Render();
 }
 
 bool Level::IsTileSolid( const sf::Vector2f& position ) {

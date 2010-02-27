@@ -3,7 +3,11 @@
 
 #include <map>
 #include <vector>
+
 #include "GameObject.h"
+#include "App.h"
+#include "tinyxml.h"
+#include "Utilities.h"
 
 class GameObjectMap {
   public:
@@ -12,12 +16,17 @@ class GameObjectMap {
     
     void Init();
     
+    void Update(); 
     void Render();
-    bool SetGameObjectMap(/*Take some tinyXML*/);
+
+    bool SetGameObjectMap( TiXmlElement* root );
+
+    void AddGameObject( GameObject *gameObject );
+    void RemoveGameObject( int id );
 
   private:
     // This is a map of ids to game objects
-    std::map<int, GameObject> m_gameObjects;
+    std::map<int, GameObject*> m_gameObjects;
     // This is a list of dead players ids that need to be reused
     std::vector<int> m_avaliableIds;
     // This is the next possible expansion to the players ids.
