@@ -47,7 +47,7 @@ App::App(
 
   luaL_openlibs( m_luaState );
   RegisterLuaAppFuncts( m_luaState );
-  Luna<GameObject>::Register( m_luaState );
+  Lunar<GameObject>::Register( m_luaState );
 }
 
 

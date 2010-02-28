@@ -4,7 +4,7 @@
 #include <SFML/Graphics.hpp>
 #include <string>
 
-#include "LunaWrapper.h"
+#include "Lunar.h"
 
 #include "BasicTypeDefs.h"
 
@@ -151,9 +151,9 @@ class GameObject : public sf::Sprite {
   int LuaMoveDir( lua_State *L );
 
 
-  //Necessities for Luna
+  //Necessities for Lunar
   static const char className[];
-  static const Luna<GameObject>::RegType Register[];
+  static Lunar<GameObject>::RegType methods[];
  private:
 	/************************************************
 	AnimUpdate

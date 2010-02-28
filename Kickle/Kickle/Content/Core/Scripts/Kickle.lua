@@ -1,5 +1,5 @@
 -- Kickle's Script
 
-function AILogic()-- Kickle )
+function AILogic( Kickle )
 	-- Kickle:MoveDir(0);
 end

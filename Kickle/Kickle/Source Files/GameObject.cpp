@@ -12,7 +12,7 @@
 Public Members
 ************************************************/
 const char GameObject::className[] = "GameObject";
-const Luna<GameObject>::RegType GameObject::Register[] = {
+Lunar<GameObject>::RegType GameObject::methods[] = {
   { "MoveDir", &GameObject::LuaMoveDir },
   { 0, 0 }
 };
@@ -141,7 +141,8 @@ bool GameObject::LoadFromFile( const std::string& filepath ) {
   AnimData& anim = app->LoadAnim( animPath.c_str() );
   SetAnimData( anim );
 
-
+  lua_State* L = App::GetApp()->GetLuaState();
+  luaL_dofile( L, m_luaScript.c_str() );
   return true;
 }
 
@@ -258,14 +259,14 @@ void GameObject::Update() {
   //If aligned perfectly in grid
   if( x%Config::TILE_SIZE == 0 && y%Config::TILE_SIZE == 0 ) {
     m_moving = false;
-    lua_State* L = App::GetApp()->GetLuaState();
 
-    luaL_dofile( L, m_luaScript.c_str() );
+    lua_State* L = App::GetApp()->GetLuaState();
+    //luaL_dofile( L, m_luaScript.c_str() );
 
     //call AILogic lua function
-    //lua_getglobal( L, "AILogic" );
-    //Luna<GameObject>::inject( L, this ); //unsure about this call.. :\
-    //lua_call( L, 1, 0 );
+    lua_getglobal( L, "AILogic" );
+    Lunar<GameObject>::push( L, this );
+    lua_call( L, 1, 0 );
   }
 }
 

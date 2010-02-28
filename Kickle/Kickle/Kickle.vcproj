@@ -275,7 +275,7 @@
 					>
 				</File>
 				<File
-					RelativePath=".\Header Files\LunaWrapper.h"
+					RelativePath=".\Header Files\Lunar.h"
 					>
 				</File>
 			</Filter>
