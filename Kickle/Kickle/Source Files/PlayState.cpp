@@ -130,6 +130,8 @@ void PlayState::HandleEvents() {
 
 
 void PlayState::Update() {
+  m_level.Update();
+
   //TESTCODE
   m_slime.Update();
   m_kickle.Update();

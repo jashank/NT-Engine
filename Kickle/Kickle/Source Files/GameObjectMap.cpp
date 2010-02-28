@@ -1,4 +1,5 @@
 #include "GameObjectMap.h"
+#include "BasicTypeDefs.h"
 
 GameObjectMap::GameObjectMap() {
   Init();
@@ -33,6 +34,24 @@ void GameObjectMap::Render() {
 }
 
 bool GameObjectMap::SetGameObjectMap( TiXmlElement* root ) {
+  TiXmlElement* currentEntity;
+  TiXmlElement* currentEntityInstance;
+
+  std::string entityData;
+  int positionX;
+  int positionY;
+
+  for ( currentEntity = root->FirstChildElement( "entity" ); currentEntity; 
+        currentEntity = currentEntity->NextSiblingElement( "entity" ) ) {
+    entityData = currentEntity->Attribute( "data" );
+
+    for ( currentEntityInstance = currentEntity->FirstChildElement( "instance" );
+      currentEntityInstance ; currentEntityInstance = currentEntityInstance->NextSiblingElement() ) {
+        currentEntityInstance->Attribute( "x", &positionX );
+        currentEntityInstance->Attribute( "y", &positionY );
+        AddGameObject(  new GameObject( entityData, (unsigned int) positionX, (unsigned int) positionY ));
+    }
+  }
   return false;
 }
 
@@ -46,6 +65,8 @@ void GameObjectMap::AddGameObject( GameObject *gameObject ) {
     m_nextId++;
   }
    m_gameObjects[nextId] = gameObject;
+
+   gameObject->Play();
 }
 
 void GameObjectMap::RemoveGameObject( int id ) {

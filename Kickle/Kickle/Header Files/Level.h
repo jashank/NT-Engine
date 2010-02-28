@@ -21,9 +21,19 @@ public:
 	**************************************/
 	void Init();
 
+
+  /***************************************************************
+  Update()
+  - Runs m_gameObject.Update see that method for more information
+  ****************************************************************/
+  void Update();
+
 	/**************************************************************
 	Render()
 	- Runs m_tileMap.Render() see that method for more information
+  - Runs m_collisionMap.Render()
+  - Runs m_gameObject.Render()
+
 	***************************************************************/
 	void Render();
 
@@ -40,6 +50,12 @@ public:
   -Wrapper function for the collision map.
   *****************************************/
   bool IsTileSolid( const sf::Vector2f& position );
+
+   /****************************************
+  IsTileSolid()
+  -Wrapper function for the collision map.
+  *****************************************/
+  bool IsTileSolid( int x, int y );
 
   /********************************************
   GetTile()

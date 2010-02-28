@@ -37,15 +37,11 @@
 		1 1 1 1 1 1 1 0 1 1 1 1 1 1 1
 		1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
 	</collision_layout>
-</map>
+	<game_objects>
+		<entity data="Content\\Core\\Objects\\Slime.xml">
+			<instance x="5" y="7" />
+			<instance x="9" y="7" />
+		</entity>
+	</game_objects>
 
-<game_objects>
-	<slime>
-		<slime_data>
-		</slime_data>
-		<inst_1>
-			<x></x>
-			<y></y>
-		</inst_1>
-	</slime>
-</game_objects>
+</map>

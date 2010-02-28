@@ -14,6 +14,10 @@ Level::~Level() {
 void Level::Init() {
 }
 
+void Level::Update() {
+  m_gameObjectMap.Update();
+}
+
 void Level::Render() {
   // The Rendering order is important.
 	m_tileMap.Render();
@@ -21,18 +25,23 @@ void Level::Render() {
 }
 
 bool Level::IsTileSolid( const sf::Vector2f& position ) {
+  // Y is + 48 so it measures from the bottom of its feet.
   return m_collisionMap.IsTileSolid( ((int)position.x-Config::X_PAD)/48 , ((int)position.y-Config::Y_PAD+48)/48 );
 }
 
+bool Level::IsTileSolid( int x, int y ) {
+   return m_collisionMap.IsTileSolid( x, y );
+}
+
 bool Level::SetLevel( std::string levelPath ) {
+
   TiXmlDocument doc ( levelPath.c_str() );
   
   if ( !doc.LoadFile() ) {
     return false;
   }
 
-  TiXmlHandle handleDoc( &doc );
-  TiXmlElement* root = handleDoc.FirstChildElement("map").Element();
+  TiXmlElement* root = doc.FirstChildElement("map");
 
   // Load in tiles.
   std::string tile_string( root->FirstChildElement("tile_layout")->GetText() );
@@ -52,7 +61,6 @@ bool Level::SetLevel( std::string levelPath ) {
   }
   // Get the sprite sheet
   std::string tile_sheet( root->FirstChildElement("tile_sheet")->GetText() );
-  
   // Load In Collision Layout
   std::string collision_string( root->FirstChildElement("collision_layout")->GetText() );
   std::stringstream collision_layout( collision_string, std::ios_base::in );
@@ -68,6 +76,11 @@ bool Level::SetLevel( std::string levelPath ) {
       }
     }
   }
+
+  // GameObjectMap parses its section by itself instead of in this method.
+ if ( root->FirstChildElement("game_objects") ) {
+    m_gameObjectMap.SetGameObjectMap( root->FirstChildElement("game_objects") );
+ }
 
 	// Send them to the appropriate functions.
 	m_tileMap.SetTileMap( tile_sheet ,layout );
