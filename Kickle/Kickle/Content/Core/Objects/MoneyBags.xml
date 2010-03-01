@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<game_object>
+  <sprite_path>
+    Content/Core/Sheets/moneyBags_48x48.png
+  </sprite_path>
+  <animation_path>
+    Content/Core/Animations/BasicAnim_48x48.xml
+  </animation_path>
+  <script_path>
+    Content/Core/Scripts/MoneyBags.lua
+  </script_path>
+</game_object>

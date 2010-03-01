@@ -42,6 +42,11 @@
 			<instance x="5" y="7" />
 			<instance x="9" y="7" />
 		</entity>
+		<entity data="Content\\Core\\Objects\\MoneyBags.xml">
+			<instance x="6" y="2" />
+			<instance x="7" y="2" />
+			<instance x="8" y="2" />
+		</entity>
 	</game_objects>
 
 </map>

@@ -118,7 +118,7 @@ void PlayState::HandleEvents() {
         default:
           break;
       }
-      if ( m_level.GetTile(x_pos, y_pos) == 0 ) {
+      if ( m_level.GetTile(x_pos, y_pos) != 2 ) {
         m_level.SetTile( x_pos , y_pos , 1, 0 );
       }
     }
