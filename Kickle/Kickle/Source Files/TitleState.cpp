@@ -4,6 +4,7 @@
 
 #include "App.h"
 #include "PlayState.h"
+#include "EditorState.h"
 #include "Utilities.h"
 
 /************************************************
@@ -87,6 +88,12 @@ void TitleState::HandleEvents() {
          )) {
       m_play.Activate();
     }
+    if (  m_editor.ContainsCursor( 
+          App::GetApp()->GetInput().GetMouseX(), 
+          App::GetApp()->GetInput().GetMouseY()
+         )) {
+       m_editor.Activate();
+    }
   }
 }
 
@@ -112,7 +119,7 @@ void TitleState::Play() {
 }
 
 void TitleState::Edit() {
-  // Do Nothing
+   App::GetApp()->SetNextState( EditorState::GetInstance() );
 }
 
 void TitleState::CreateButtons() {
