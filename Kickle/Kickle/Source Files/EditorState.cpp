@@ -71,5 +71,13 @@ void EditorState::Update() {
 
 
 void EditorState::Render() {
+  /*
+  Draw a grid.
+  */
+  for ( float i = 0; i <= Config::MAP_SIZE; i++ ) {
+    App::GetApp()->Draw(sf::Shape::Line( i*Config::TILE_SIZE, 0, i*Config::TILE_SIZE, (float)Config::MAP_SIZE*Config::TILE_SIZE, 1 ,sf::Color::White ));
+    App::GetApp()->Draw(sf::Shape::Line( 0, i*Config::TILE_SIZE, (float)Config::MAP_SIZE*Config::TILE_SIZE, i*Config::TILE_SIZE, 1, sf::Color::White ));
+  }
+      
 }
 
