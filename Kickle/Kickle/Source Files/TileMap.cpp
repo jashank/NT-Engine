@@ -39,6 +39,7 @@ void TileMap::Render() {
 				refering to in the level sprite sheet. Note this relies on
 				the properties of integer division.
 				*/
+
 				m_tileSprite.SetSubRect(
 					sf::IntRect((current_tile%MAP_SIZE)*TILE_SIZE, 
 					(current_tile/MAP_SIZE)*TILE_SIZE, 
@@ -49,7 +50,7 @@ void TileMap::Render() {
 				The sprite is then placed on the desired location on the map. Note the
 				inverse of the J and I so that the map reads correctly.
 				*/
-        m_tileSprite.SetPosition( (float)j*TILE_SIZE+Config::X_PAD, (float)i*TILE_SIZE+Config::Y_PAD );
+        m_tileSprite.SetPosition( (float)j*TILE_SIZE+App::GetApp()->GetConfig()->GetXPad(), (float)i*TILE_SIZE+App::GetApp()->GetConfig()->GetYPad() );
 				/*
 				Once we find the sprites sub rect on the level sprite sheet and
 				have its position to be placed we draw it to the screen.

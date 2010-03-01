@@ -26,7 +26,7 @@ void Level::Render() {
 
 bool Level::IsTileSolid( const sf::Vector2f& position ) {
   // Y is + 48 so it measures from the bottom of its feet.
-  return m_collisionMap.IsTileSolid( ((int)position.x-Config::X_PAD)/48 , ((int)position.y-Config::Y_PAD+48)/48 );
+  return m_collisionMap.IsTileSolid( ((int)position.x-App::GetApp()->GetConfig()->GetXPad())/48 , ((int)position.y-App::GetApp()->GetConfig()->GetYPad()+48)/48 );
 }
 
 bool Level::IsTileSolid( int x, int y ) {

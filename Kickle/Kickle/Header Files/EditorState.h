@@ -2,6 +2,7 @@
 #define EDITORSTATE_H
 
 #include "BaseState.h"
+#include "Level.h"
 
 #include <SFML/Graphics/String.hpp>
 class sf::Font;
@@ -73,6 +74,8 @@ class EditorState : public BaseState {
   EditorState& operator=( const EditorState &title );
 
   static EditorState *m_instance; // EditorState has one instance
+
+  Level m_level;
 };
 
 #endif
