@@ -39,8 +39,8 @@
 	</collision_layout>
 	<game_objects>
 		<entity data="Content\\Core\\Objects\\Slime.xml">
-			<instance x="5" y="7" />
-			<instance x="9" y="7" />
+			<instance x="6" y="8" />
+			<instance x="10" y="8" />
 		</entity>
 		<entity data="Content\\Core\\Objects\\MoneyBags.xml">
 			<instance x="6" y="2" />

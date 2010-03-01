@@ -63,6 +63,6 @@ int LuaGetKeyEvent( lua_State *L ) {
 //Returns time spent processing last frame
 int LuaGetDeltaTime( lua_State* L ) {
   App* app = App::GetApp();
-  lua_pushnumber( app->GetLuaState(), app->GetDeltaTime() );
+  lua_pushnumber( L, app->GetDeltaTime() );
   return 1;
 }

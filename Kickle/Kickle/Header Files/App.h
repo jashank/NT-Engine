@@ -92,13 +92,6 @@ class App {
 
 
   /************************************************
-  GetLuaState
-  - Returns App's m_luaState
-  ************************************************/
-  lua_State *GetLuaState();
-
-
-  /************************************************
   LoadImage
   -Returns an Image given a filename
   -Insures that no duplicate Image is loaded into
@@ -173,7 +166,6 @@ class App {
   float	m_deltaTime; //Time in seconds spent on last frame render
   float	m_fps; //Frames per Second
 
-  lua_State* m_luaState; //Mediator between C/C++ and Lua VM
 
   //Resource Managers
   ResourceManager< sf::Image > m_images;
@@ -181,9 +173,11 @@ class App {
   ResourceManager< sf::Music > m_music;
   ResourceManager< AnimData > m_anims;
 
+
   sf::Color m_clearColor; //Color to clear the screen to
   sf::Event	m_event; //holds the most current event
   sf::RenderWindow	m_window; //SFML's window
+
 
   StateManager m_stateManager; //Keeps track of current state
 };

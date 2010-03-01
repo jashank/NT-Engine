@@ -7,6 +7,7 @@
 #include "AnimData.h"
 #include "App.h"
 #include "Configuration.h"
+#include "LuaAppFuncts.h"
 
 /************************************************
 Public Members
@@ -14,6 +15,7 @@ Public Members
 const char GameObject::className[] = "GameObject";
 Lunar<GameObject>::RegType GameObject::methods[] = {
   { "MoveDir", &GameObject::LuaMoveDir },
+  { "SetAnimation", &GameObject::LuaSetAnimation },
   { 0, 0 }
 };
 
@@ -25,13 +27,20 @@ GameObject::GameObject( lua_State *L )
    m_animation( 0 ),
    m_frameTime( 0.0f ),
    m_animData( 0 ),
-   m_moving( false ) {
+   m_moving( false ),
+   m_luaState(luaL_newstate()) {
   if( !lua_isstring( L, -1 ) ) {
     luaL_error( L, "Invalid argument for GameObject." );
   }
 
   std::string xmlPath( lua_tostring( L, -1 ) );
-  LoadFromFile( xmlPath );
+  if( !LoadFromFile( xmlPath ) ) {
+    lua_close( m_luaState );
+    m_luaState = 0;
+    throw "Cannon load GameObject XML file";
+  }
+
+  InitLua();
 }
 
 
@@ -40,10 +49,15 @@ GameObject::GameObject( const std::string &xmlGameObjectPath )
    m_animation( 0 ),
    m_frameTime( 0.0f ),
    m_animData( 0 ),
-   m_moving( false ) { 
+   m_moving( false ),
+   m_luaState(luaL_newstate()) { 
   if( !LoadFromFile( xmlGameObjectPath ) ) {
+    lua_close( m_luaState );
+    m_luaState = 0;
     throw "Cannot load GameObject XML file";
   }
+  
+  InitLua();
 }
 
 GameObject::GameObject( const std::string &xmlGameObjectPath, Uint tileX, Uint tileY )
@@ -51,8 +65,11 @@ GameObject::GameObject( const std::string &xmlGameObjectPath, Uint tileX, Uint t
    m_animation( 0 ),
    m_frameTime( 0.0f ),
    m_animData( 0 ),
-   m_moving( false ) { 
+   m_moving( false ),
+   m_luaState(luaL_newstate()) { 
   if( !LoadFromFile( xmlGameObjectPath ) ) {
+    lua_close( m_luaState );
+    m_luaState = 0;
     throw "Cannot load GameObject XML file";
   }
   
@@ -80,11 +97,17 @@ GameObject::GameObject( const std::string &xmlGameObjectPath, Uint tileX, Uint t
   y -= m_animData->GetFrameHeight( m_animation )%Config::TILE_SIZE;
 
   SetPosition( x, y );
+
+  InitLua();
 }
 
 
 GameObject::~GameObject() {
-
+  //Check to see if m_luaState not equal to 0
+  //because it WILL crash if closing a null pointer
+  if( m_luaState ) {
+    lua_close( m_luaState );
+  }
 }
 
 
@@ -141,8 +164,8 @@ bool GameObject::LoadFromFile( const std::string& filepath ) {
   AnimData& anim = app->LoadAnim( animPath.c_str() );
   SetAnimData( anim );
 
-  lua_State* L = App::GetApp()->GetLuaState();
-  luaL_dofile( L, m_luaScript.c_str() );
+  //lua_State* L = App::GetApp()->GetLuaState();
+  //luaL_dofile( L, m_luaScript.c_str() );
   return true;
 }
 
@@ -260,13 +283,11 @@ void GameObject::Update() {
   if( x%Config::TILE_SIZE == 0 && y%Config::TILE_SIZE == 0 ) {
     m_moving = false;
 
-    lua_State* L = App::GetApp()->GetLuaState();
-    //luaL_dofile( L, m_luaScript.c_str() );
-
+    
     //call AILogic lua function
-    lua_getglobal( L, "AILogic" );
-    Lunar<GameObject>::push( L, this );
-    lua_call( L, 1, 0 );
+    lua_getglobal( m_luaState, "AILogic" );
+    Lunar<GameObject>::push( m_luaState, this );
+    lua_call( m_luaState, 1, 0 );
   }
 }
 
@@ -279,6 +300,19 @@ int GameObject::LuaMoveDir( lua_State *L ) {
   int dir = lua_tointeger( L, -1 );
 
   MoveDir( static_cast<Dir>(dir) );
+
+  return 0;
+}
+
+
+int GameObject::LuaSetAnimation( lua_State *L ) {
+  if( !lua_isnumber( L, -1 ) ) {
+    return luaL_error( L, "Invalid argument for SetAnimation." );
+  }
+  
+  Uint animation = lua_tointeger( L, -1 );
+
+  SetAnimation( animation );
 
   return 0;
 }
@@ -305,6 +339,16 @@ void GameObject::AnimUpdate() {
 	  }
   }
 } 
+
+
+void GameObject::InitLua() {
+  luaL_openlibs( m_luaState );
+  RegisterLuaAppFuncts( m_luaState );
+  Lunar<GameObject>::Register( m_luaState );
+
+  luaL_dofile( m_luaState, m_luaScript.c_str() );
+}
+
 
 void GameObject::NextFrame() {
   //Increment frame

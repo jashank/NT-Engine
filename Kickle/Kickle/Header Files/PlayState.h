@@ -73,7 +73,6 @@ class PlayState : public BaseState {
 
   //TESTCODE
   GameObject m_kickle;
-  GameObject m_slime;
 };
 
 #endif

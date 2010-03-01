@@ -1,21 +1,29 @@
 -- Slime's Script
 
-local count = 0;
-
+local count = 1;
 function AILogic( Slime )
-	--print( "RUN THIS BITCHES!" );
-	--Slime:MoveDir( 0 );
-	--Make the slime move in circles(err a square)
-	if count < 4 then
-		Slime:MoveDir( 0 );
-	elseif count < 8 then
+
+	-- Lead the slime move in circles(err, a square >_<)
+	if count < 3 then
 		Slime:MoveDir( 2 );
-	elseif count < 12 then
+		Slime:SetAnimation( 2 );
+		-- print( "Direction: Left" );
+	elseif count < 5 then
 		Slime:MoveDir( 1 );
-	elseif count < 16 then
+		Slime:SetAnimation( 1 );
+		-- print( "Direction: Down" );
+	elseif count < 7 then
 		Slime:MoveDir( 3 );
+		Slime:SetAnimation( 3 );
+		-- print( "Direction: Right" );
+	elseif count < 9 then
+		Slime:MoveDir( 0 );
+		Slime:SetAnimation( 0 );
+		-- print( "Direction: Up" );
 	else
 		count = 0;
 	end
 	count = count + 1;
+
+	-- print( "Count: " .. count );
 end

@@ -41,13 +41,8 @@ App::App(
 ) 
  : m_window( sf::VideoMode( width, height ), title ), 
    m_deltaTime(0.0f), 
-   m_fps(0.0f), 
-   m_luaState(luaL_newstate()) {
+   m_fps(0.0f) {
 	m_window.SetFramerateLimit( framerate );
-
-  luaL_openlibs( m_luaState );
-  RegisterLuaAppFuncts( m_luaState );
-  Lunar<GameObject>::Register( m_luaState );
 }
 
 
@@ -56,8 +51,6 @@ App::~App() {
 
   PlayState::DestroyInstance();
 	TitleState::DestroyInstance();
-
-  lua_close( m_luaState );
 }
 
 
@@ -119,13 +112,11 @@ const sf::Event& App::GetEvent() const  {
   return m_event;
 }
 
+
 const sf::Input& App::GetInput() const {
   return m_window.GetInput();
 }
 
-lua_State *App::GetLuaState() {
-  return m_luaState;
-}
 
 sf::Image& App::LoadImage( const std::string &filename ) {
 	return m_images.Load( filename );

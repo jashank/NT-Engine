@@ -14,15 +14,10 @@ PlayState *PlayState::m_instance = 0;
 Public Member Functions
 ************************************************/
 PlayState::PlayState()
- : m_kickle( "./Content/Core/Objects/Kickle.xml", 7, 7 ),
-   m_slime( "./Content/Core/Objects/Slime.xml", 7, 8 ) {
-
+ : m_kickle( "./Content/Core/Objects/Kickle.xml", 7, 8 ) {
   //Test code
   m_kickle.SetAnimation( 1 );
   m_kickle.Play();
-
-  m_slime.SetAnimation( 1 );
-  m_slime.Play();
 }
 
 
@@ -133,7 +128,6 @@ void PlayState::Update() {
   m_level.Update();
 
   //TESTCODE
-  m_slime.Update();
   m_kickle.Update();
 }
 
@@ -141,6 +135,5 @@ void PlayState::Update() {
 void PlayState::Render() {
 	// Render the map.
 	m_level.Render();
-  App::GetApp()->Draw( m_slime );
   App::GetApp()->Draw( m_kickle );
 }

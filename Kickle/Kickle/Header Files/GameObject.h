@@ -150,6 +150,11 @@ class GameObject : public sf::Sprite {
 	************************************************/
   int LuaMoveDir( lua_State *L );
 
+	/************************************************
+	LuaMoveDir
+	-Wraps MoveDir to allow it to be exposed to Lua
+	************************************************/
+  int LuaSetAnimation( lua_State *L );
 
   //Necessities for Lunar
   static const char className[];
@@ -160,6 +165,13 @@ class GameObject : public sf::Sprite {
 	-Updates the animation
 	************************************************/
   void AnimUpdate();
+
+	/************************************************
+	InitLua
+	-Initializes the lua script
+  - //TODO - Call OnCreation here
+	************************************************/  
+  void InitLua();
 
 
 	/************************************************
@@ -175,6 +187,7 @@ class GameObject : public sf::Sprite {
 	bool m_play; //If true; animate GameObject
   Dir m_direction; //current direction game object is moving
 	float m_frameTime; //time left on current frame
+  lua_State* m_luaState; //Mediator between C/C++ and Lua VM
   std::string m_luaScript; //filepath to the lua script
 	Uint m_animation; //current animation selections
 	Uint m_frame; //current frame selection
