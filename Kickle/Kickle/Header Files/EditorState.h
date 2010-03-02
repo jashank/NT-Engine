@@ -72,17 +72,20 @@ class EditorState : public BaseState {
   void CreateButtons();
   // Button Actions
   static void SaveFile();
-  static void SaveAsFile();
   static void LoadFile();
   static void LoadTileSheet();
   static void TileLayer();
   static void CollisionLayer();
   static void GameObjectLayer();
-
+  static void Exit();
  private:
    void DrawGrid();
+
    void DrawSideBar();
+   void SideBarEvents();
+
    void DrawToolbar();
+   void ToolbarEvents();
   /************************************************
   Restricts construction, copy construction, 
   and assignment.
@@ -95,9 +98,8 @@ class EditorState : public BaseState {
 
   Level m_level;
 
-  Button m_back; // Go back to title screen.
+  Button m_exit; // Go back to title screen.
   Button m_saveMap; // Button to save game
-  Button m_saveAsMap;
   Button m_loadMap;
   Button m_loadTileSheet;
   Button m_tileLayer;
