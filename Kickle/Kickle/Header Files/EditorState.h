@@ -79,7 +79,10 @@ class EditorState : public BaseState {
   static void CollisionLayer();
   static void GameObjectLayer();
 
- private:	
+ private:
+   void DrawGrid();
+   void DrawSideBar();
+   void DrawToolbar();
   /************************************************
   Restricts construction, copy construction, 
   and assignment.
@@ -92,6 +95,7 @@ class EditorState : public BaseState {
 
   Level m_level;
 
+  Button m_back; // Go back to title screen.
   Button m_saveMap; // Button to save game
   Button m_saveAsMap;
   Button m_loadMap;

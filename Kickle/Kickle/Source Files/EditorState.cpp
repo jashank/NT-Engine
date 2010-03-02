@@ -94,12 +94,21 @@ void EditorState::Update() {
 
 
 void EditorState::Render() {
-
   m_level.Render();
-    /*
-  Draw a grid.
-  */
-  for ( float i = 0; i <= Config::MAP_SIZE; i++ ) {
+  DrawGrid();
+  DrawToolbar();
+  DrawSideBar();
+}
+
+void EditorState::CreateButtons() {
+}
+
+void EditorState::CreateSidePanel() {
+
+}
+
+void EditorState::DrawGrid() {
+    for ( float i = 0; i <= Config::MAP_SIZE; i++ ) {
     App::GetApp()->Draw(sf::Shape::Line( i*Config::TILE_SIZE, 
                                         (float)App::GetApp()->GetConfig()->GetYPad(), 
                                         i*Config::TILE_SIZE, 
@@ -110,11 +119,19 @@ void EditorState::Render() {
                                         i*Config::TILE_SIZE+(float)App::GetApp()->GetConfig()->GetYPad(), 
                                         1, sf::Color::Black ));
   }
-      
 }
 
-void EditorState::CreateButtons() {
+void EditorState::DrawSideBar() {
+  App::GetApp()->Draw(sf::Shape::Rectangle((float)App::GetApp()->GetConfig()->GetTileSize()*App::GetApp()->GetConfig()->GetMapSize(),
+                                          (float)App::GetApp()->GetConfig()->GetYPad()+5.0f, // The outline size.
+                                          (float)App::GetApp()->GetConfig()->GetScreenWidth(), 
+                                          (float)App::GetApp()->GetConfig()->GetScreenHeight(),
+                                          sf::Color(128,128,128), 5.0f, sf::Color::Black));
 }
 
-void EditorState::CreateSidePanel() {
+void EditorState::DrawToolbar() {
+    App::GetApp()->Draw(sf::Shape::Rectangle(0.0f, 0.0f,
+                                          (float)App::GetApp()->GetConfig()->GetScreenWidth(), 
+                                          (float)App::GetApp()->GetConfig()->GetYPad(),
+                                          sf::Color(128,128,128), 5.0f, sf::Color::Black));
 }
