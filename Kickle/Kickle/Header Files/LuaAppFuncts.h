@@ -19,7 +19,7 @@ extern const int luaKeys[]; //Contains the key values exposed to lua
 
 //Functions exposed to Lua
 int LuaIsKeyDown( lua_State *L ); //Returns true if a specific key is pressed
-int LuaGetKeyEvent( lua_State *L ); //Returns true if any key is pressed
+int LuaGetKeyEvent(); // Returns integer value for key event
 int LuaGetDeltaTime( lua_State *L );//returns time spent processing last frame
 
 

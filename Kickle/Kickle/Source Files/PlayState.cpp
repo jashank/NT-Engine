@@ -13,12 +13,7 @@ PlayState *PlayState::m_instance = 0;
 /************************************************
 Public Member Functions
 ************************************************/
-PlayState::PlayState()
- : m_kickle( "./Content/Core/Objects/Kickle.xml", 7, 8 ) {
-  //Test code
-  m_kickle.SetAnimation( 1 );
-  m_kickle.Play();
-}
+PlayState::PlayState() {}
 
 
 PlayState::~PlayState() {
@@ -63,7 +58,7 @@ void PlayState::Resume() {
 
 
 void PlayState::HandleEvents() {
-  //TESTCODE
+  /*
   static float speed = 1.0f;
   static Uint direction = 0; // 0 = Up, 1 = Down, 2 = Left, 3 = Right
   const sf::Input& inp = App::GetApp()->GetInput();
@@ -120,20 +115,16 @@ void PlayState::HandleEvents() {
     else {
       m_kickle.SetAnimation( direction );
     }
-  }
+  }*/
 }
 
 
 void PlayState::Update() {
   m_level.Update();
-
-  //TESTCODE
-  m_kickle.Update();
 }
 
 
 void PlayState::Render() {
 	// Render the map.
 	m_level.Render();
-  App::GetApp()->Draw( m_kickle );
 }

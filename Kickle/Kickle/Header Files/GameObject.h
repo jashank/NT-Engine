@@ -23,7 +23,8 @@ class GameObject : public sf::Sprite {
     Up,
     Down,
     Left,
-    Right
+    Right,
+    Z
   };
 
   GameObject( lua_State *L );
@@ -159,6 +160,7 @@ class GameObject : public sf::Sprite {
   //Necessities for Lunar
   static const char className[];
   static Lunar<GameObject>::RegType methods[];
+
  private:
 	/************************************************
 	AnimUpdate

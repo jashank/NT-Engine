@@ -1,5 +1,1 @@
--- Slime's Script
-
-function AILogic( MoneyBags )
-
-end
+--MOneyBags script

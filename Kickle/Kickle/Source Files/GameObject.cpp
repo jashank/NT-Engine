@@ -164,8 +164,6 @@ bool GameObject::LoadFromFile( const std::string& filepath ) {
   AnimData& anim = app->LoadAnim( animPath.c_str() );
   SetAnimData( anim );
 
-  //lua_State* L = App::GetApp()->GetLuaState();
-  //luaL_dofile( L, m_luaScript.c_str() );
   return true;
 }
 
@@ -280,14 +278,27 @@ void GameObject::Update() {
     );
     
   //If aligned perfectly in grid
-  if( x%Config::TILE_SIZE == 0 && y%Config::TILE_SIZE == 0 ) {
+  if( x % Config::TILE_SIZE == 0 && y % Config::TILE_SIZE == 0 ) {
     m_moving = false;
+    
+    lua_getglobal( m_luaState, "HandleUserInput" );
+    if ( lua_isfunction( m_luaState, -1 )) {
+      lua_pushinteger( m_luaState, LuaGetKeyEvent() );
+      Lunar<GameObject>::push( m_luaState, this );
+      lua_call( m_luaState, 2, 0 );
+    } else {
+      lua_pop( m_luaState, 1 );
+    }
 
     
     //call AILogic lua function
     lua_getglobal( m_luaState, "AILogic" );
-    Lunar<GameObject>::push( m_luaState, this );
-    lua_call( m_luaState, 1, 0 );
+    if ( lua_isfunction( m_luaState, -1 )) {
+      Lunar<GameObject>::push( m_luaState, this );
+      lua_call( m_luaState, 1, 0 );
+    } else {
+      lua_pop( m_luaState, 1 );
+    }
   }
 }
 

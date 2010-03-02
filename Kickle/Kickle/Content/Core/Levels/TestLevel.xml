@@ -47,6 +47,9 @@
 			<instance x="7" y="2" />
 			<instance x="8" y="2" />
 		</entity>
+		<entity data="Content\\Core\\Objects\\Kickle.xml">
+			<instance x="7" y="8" />
+		</entity>
 	</game_objects>
 
 </map>

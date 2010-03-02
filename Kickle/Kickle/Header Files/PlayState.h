@@ -70,9 +70,6 @@ class PlayState : public BaseState {
   
   static PlayState *m_instance; // PlayState has one instance
   Level m_level;
-
-  //TESTCODE
-  GameObject m_kickle;
 };
 
 #endif

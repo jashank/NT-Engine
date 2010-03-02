@@ -3,6 +3,7 @@
 #include <SFML/Window/Input.hpp>
 
 #include "App.h"
+#include "GameObject.h"
 
 
 void RegisterLuaAppFuncts( lua_State *L ) {
@@ -15,7 +16,6 @@ void RegisterLuaAppFuncts( lua_State *L ) {
 //Data exposed to Lua
 const luaL_Reg luaAppFuncts[] = {
   { "IsKeyDown", LuaIsKeyDown },
-  { "GetKeyEvent", LuaGetKeyEvent },
   { "GetDeltaTime", LuaGetDeltaTime },
   { 0, 0 }
 };
@@ -51,13 +51,27 @@ int LuaIsKeyDown( lua_State *L ) {
   return 1;
 }
 
-
-//Returns true if any key is pressed
-int LuaGetKeyEvent( lua_State *L ) {
-  const sf::Event& ev = App::GetApp()->GetEvent();
-
-  lua_pushboolean(L, ( ev.Type == sf::Event::KeyPressed ) ? 1 : 0 );
-  return 1;
+int LuaGetKeyEvent() {
+  const sf::Input& inp = App::GetApp()->GetInput();
+  
+  if ( inp.IsKeyDown( sf::Key::Up ) ) {
+    return GameObject::Up;
+  }
+    else if ( inp.IsKeyDown( sf::Key::Down ) ) { 
+    return GameObject::Down;
+  } 
+    else if ( inp.IsKeyDown( sf::Key::Left ) ) {
+    return GameObject::Left;
+  }
+    else if ( inp.IsKeyDown( sf::Key::Right ) ) {
+    return GameObject::Right;
+  }
+    else if ( inp.IsKeyDown( sf::Key::Z ) ) {
+    return GameObject::Z;
+  }
+    else {
+    return -1;
+  }
 }
 
 //Returns time spent processing last frame
