@@ -20,6 +20,9 @@ EditorState::EditorState() {
   App::GetApp()->GetConfig()->SetYPad( (App::GetApp()->GetConfig()->GetScreenHeight() - 
                                         App::GetApp()->GetConfig()->GetMapSize()*
                                         App::GetApp()->GetConfig()->GetTileSize()));
+
+  CreateButtons();
+  CreateSidePanel();
 }
 
 
@@ -44,12 +47,19 @@ void EditorState::DestroyInstance() {
 void EditorState::Init() {
 	SetInit( true );
   App::GetApp()->SetClearColor( sf::Color(0,49,139) );
+  
+  m_font = new sf::Font();
+  m_font->LoadFromFile( "Content/Core/Fonts/MICKEY.TTF" );
+
+  m_saveMap.SetText( sf::String( "Save Map", *m_font, 60 ) );
+  m_loadMap.SetText( sf::String( "Load Map", *m_font, 60 ) );
 }
 
 
 void EditorState::CleanUp() {
 	SetInit( false );
   App::GetApp()->SetClearColor( sf::Color() );
+  SAFEDELETE( m_font );
   /*
   Return the values to their orignal state.
   */
@@ -73,7 +83,8 @@ void EditorState::Resume() {
 
 
 void EditorState::HandleEvents() {
-
+   if ( App::GetApp()->GetInput().IsMouseButtonDown( sf::Mouse::Left ) ) {
+   }
 }
 
 
@@ -83,10 +94,11 @@ void EditorState::Update() {
 
 
 void EditorState::Render() {
-  /*
+
+  m_level.Render();
+    /*
   Draw a grid.
   */
-  m_level.Render();
   for ( float i = 0; i <= Config::MAP_SIZE; i++ ) {
     App::GetApp()->Draw(sf::Shape::Line( i*Config::TILE_SIZE, 
                                         (float)App::GetApp()->GetConfig()->GetYPad(), 
@@ -101,3 +113,8 @@ void EditorState::Render() {
       
 }
 
+void EditorState::CreateButtons() {
+}
+
+void EditorState::CreateSidePanel() {
+}

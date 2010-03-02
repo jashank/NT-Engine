@@ -64,6 +64,21 @@ class EditorState : public BaseState {
   ************************************************/
   virtual void Render();
 
+  //GUI
+
+  // Side Panel
+  void CreateSidePanel();
+  // Buttons.
+  void CreateButtons();
+  // Button Actions
+  static void SaveFile();
+  static void SaveAsFile();
+  static void LoadFile();
+  static void LoadTileSheet();
+  static void TileLayer();
+  static void CollisionLayer();
+  static void GameObjectLayer();
+
  private:	
   /************************************************
   Restricts construction, copy construction, 
@@ -76,6 +91,17 @@ class EditorState : public BaseState {
   static EditorState *m_instance; // EditorState has one instance
 
   Level m_level;
+
+  Button m_saveMap; // Button to save game
+  Button m_saveAsMap;
+  Button m_loadMap;
+  Button m_loadTileSheet;
+  Button m_tileLayer;
+  Button m_collisionLayer;
+  Button m_gameObjectLayer;
+
+  sf::Font *m_font; // Font for the title menu
+
 };
 
 #endif
