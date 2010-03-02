@@ -9,18 +9,11 @@ extern "C" {
 
 #include "BasicTypeDefs.h"
 
-extern const luaL_Reg luaAppFuncts[]; //List of functions to expose to Lua
-void RegisterLuaAppFuncts( lua_State *L );
-
-
-//Data exposed to Lua
-extern const Uint numKeys;  //Contains the size of luaKeys
-extern const int luaKeys[]; //Contains the key values exposed to lua
-
-//Functions exposed to Lua
-int LuaIsKeyDown( lua_State *L ); //Returns true if a specific key is pressed
-int LuaGetKeyEvent(); // Returns integer value for key event
-int LuaGetDeltaTime( lua_State *L );//returns time spent processing last frame
+namespace LuaApp {
+  //Functions exposed to Lua
+  int LuaGetKeyEvent(); // Returns integer value for key event
+  int LuaGetDeltaTime( lua_State *L );//returns time spent processing last frame
+}
 
 
 #endif

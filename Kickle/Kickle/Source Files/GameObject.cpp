@@ -283,7 +283,7 @@ void GameObject::Update() {
     
     lua_getglobal( m_luaState, "HandleUserInput" );
     if ( lua_isfunction( m_luaState, -1 )) {
-      lua_pushinteger( m_luaState, LuaGetKeyEvent() );
+      lua_pushinteger( m_luaState, LuaApp::LuaGetKeyEvent() );
       Lunar<GameObject>::push( m_luaState, this );
       lua_call( m_luaState, 2, 0 );
     } else {
@@ -354,7 +354,6 @@ void GameObject::AnimUpdate() {
 
 void GameObject::InitLua() {
   luaL_openlibs( m_luaState );
-  RegisterLuaAppFuncts( m_luaState );
   Lunar<GameObject>::Register( m_luaState );
 
   luaL_dofile( m_luaState, m_luaScript.c_str() );

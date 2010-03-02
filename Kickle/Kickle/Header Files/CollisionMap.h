@@ -32,6 +32,7 @@ public:
   valid else -1.
   ************************************************************/
   void SetCollision( int x, int y, int collisionId );
+
   /**********************************************
   GetTile()
   - Returns the id of the tile at that location.

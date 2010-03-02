@@ -58,64 +58,7 @@ void PlayState::Resume() {
 
 
 void PlayState::HandleEvents() {
-  /*
-  static float speed = 1.0f;
-  static Uint direction = 0; // 0 = Up, 1 = Down, 2 = Left, 3 = Right
-  const sf::Input& inp = App::GetApp()->GetInput();
-  sf::Vector2f kicklePos = m_kickle.GetPosition();
-
-  if( !m_kickle.IsMoving() ) {
-    if( inp.IsKeyDown( sf::Key::Up ) && !m_level.IsTileSolid(sf::Vector2f(kicklePos.x, kicklePos.y-48)) ) {
-      direction = 0;
-      m_kickle.SetAnimation( direction+4 );
-      m_kickle.MoveDir( GameObject::Up );
-    }
-    else if( inp.IsKeyDown( sf::Key::Down ) && !m_level.IsTileSolid(sf::Vector2f(kicklePos.x, kicklePos.y+24))) {
-      direction = 1;
-      m_kickle.SetAnimation( direction+4 );
-      m_kickle.MoveDir( GameObject::Down );
-    }
-    else if( inp.IsKeyDown( sf::Key::Left )  && !m_level.IsTileSolid(sf::Vector2f(kicklePos.x-24, kicklePos.y))) {
-      direction = 2;
-      m_kickle.SetAnimation( direction+4 );
-      m_kickle.MoveDir( GameObject::Left );
-      
-    }
-    else if( inp.IsKeyDown( sf::Key::Right ) && !m_level.IsTileSolid(sf::Vector2f(kicklePos.x+48, kicklePos.y)) ) {
-      direction = 3;
-      m_kickle.SetAnimation( direction+4 );
-      m_kickle.MoveDir( GameObject::Right );
-    }
-    else if( inp.IsKeyDown( sf::Key::Z ) ) {
-      m_kickle.SetAnimation( direction+8 );
-
-      int x_pos = ((int)kicklePos.x-Config::X_PAD)/48;
-      int y_pos = ((int)kicklePos.y+48-Config::Y_PAD)/48;
-
-      switch ( direction ) {
-       case 0:
-          y_pos--;
-          break;
-        case 1:
-          y_pos++;
-          break;
-        case 2:
-          x_pos--;
-          break;
-        case 3:
-          x_pos++;
-          break;
-        default:
-          break;
-      }
-      if ( m_level.GetTile(x_pos, y_pos) != 2 ) {
-        m_level.SetTile( x_pos , y_pos , 1, 0 );
-      }
-    }
-    else {
-      m_kickle.SetAnimation( direction );
-    }
-  }*/
+  // Does nothing
 }
 
 
