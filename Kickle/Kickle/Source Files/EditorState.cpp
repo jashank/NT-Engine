@@ -126,12 +126,12 @@ void EditorState::DrawSideBar() {
                                           (float)App::GetApp()->GetConfig()->GetYPad()+5.0f, // The outline size.
                                           (float)App::GetApp()->GetConfig()->GetScreenWidth(), 
                                           (float)App::GetApp()->GetConfig()->GetScreenHeight(),
-                                          sf::Color(128,128,128), 5.0f, sf::Color::Black));
+                                          sf::Color(153,180,209), 5.0f, sf::Color::Black));
 }
 
 void EditorState::DrawToolbar() {
     App::GetApp()->Draw(sf::Shape::Rectangle(0.0f, 0.0f,
                                           (float)App::GetApp()->GetConfig()->GetScreenWidth(), 
                                           (float)App::GetApp()->GetConfig()->GetYPad(),
-                                          sf::Color(128,128,128), 5.0f, sf::Color::Black));
+                                          sf::Color(153,180,209), 5.0f, sf::Color::Black));
 }
