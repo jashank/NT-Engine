@@ -6,13 +6,6 @@ public:
   CollisionMap();
   virtual ~CollisionMap();
 
-  /*************************************************************
-  Init()
-  - Sets the initial value of the collision layout to NOT_SOLID.
-    Called by the constructor.
-  **************************************************************/
-  void Init();
-
   /******************************************************************
   SetCollisionMap()
   - Given a layout of 15 by 15 sets all the values in the collision
@@ -40,6 +33,13 @@ public:
   int GetCollision( int x, int y );
 
 private:
+  /*************************************************************
+  Init()
+  - Sets the initial value of the collision layout to NOT_SOLID.
+    Called by the constructor.
+  **************************************************************/
+  void Init();
+
   static const unsigned int MAP_SIZE = 15;
   static const int SOLID = 1;
   static const int NOT_SOLID = 0;

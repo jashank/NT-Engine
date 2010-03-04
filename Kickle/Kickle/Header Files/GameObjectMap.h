@@ -14,8 +14,6 @@ class GameObjectMap {
     GameObjectMap();
     virtual ~GameObjectMap();
     
-    void Init();
-    
     void Update(); 
     void Render();
 
@@ -25,6 +23,7 @@ class GameObjectMap {
     void RemoveGameObject( int id );
 
   private:
+    void Init();
     // This is a map of ids to game objects
     std::map<int, GameObject*> m_gameObjects;
     // This is a list of dead players ids that need to be reused

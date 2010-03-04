@@ -6,10 +6,10 @@ GameObjectMap::GameObjectMap() {
 }
 
 GameObjectMap::~GameObjectMap() {
-    for ( int i = 0; i < m_nextId; i++ ) {
-      if ( m_gameObjects[i] != 0 ) {
-        SAFEDELETE( m_gameObjects[i] );
-      }
+  for ( int i = 0; i < m_nextId; i++ ) {
+    if ( m_gameObjects[i] != 0 ) {
+      SAFEDELETE( m_gameObjects[i] );
+    }
   }
 }
 

@@ -11,17 +11,9 @@
 
 class Level {
 public:
-	Level();
+  Level();
 	virtual ~Level();
 	
-	/**************************************
-	Init()
-	-Called by the constructor simply sets
-	up all needed variables.
-	**************************************/
-	void Init();
-
-
   /***************************************************************
   Update()
   - Runs m_gameObject.Update see that method for more information
@@ -67,9 +59,17 @@ public:
   SetTile()
   - Sets the tile at x, y to that tile with that id
   ***************************************************/
-  void SetTile (int x, int y, int tileId, int collisionId );
+  void SetTile ( int x, int y, int tileId, int collisionId );
 
 private:
+
+  /**************************************
+	Init()
+	-Called by the constructor simply sets
+	up all needed variables.
+	**************************************/
+	void Init();
+
 	TileMap m_tileMap;
   CollisionMap m_collisionMap;
   GameObjectMap m_gameObjectMap;

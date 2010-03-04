@@ -15,13 +15,6 @@ class TileMap {
 public:
 	TileMap();
 	virtual ~TileMap();
-	
-	/**********************************************
-	Init()
-	- Called by the constructor and initializes the
-	  tile map.
-	***********************************************/
-	void Init();
 
 	/*********************************************
 	Render()
@@ -50,14 +43,20 @@ public:
   int GetTile( int x, int y );
 
 private:
-		static const int MAP_SIZE = 15;
-		static const int NULL_TILE = -1;
-		static const int TILE_SIZE = 48;
+  /**********************************************
+  Init()
+	- Called by the constructor and initializes the
+	  tile map.
+	***********************************************/
+	void Init();
+  static const int MAP_SIZE = 15;
+	static const int NULL_TILE = -1;
+	static const int TILE_SIZE = 48;
 
-		sf::Image m_tileSheet;
-		sf::Sprite m_tileSprite;
+	sf::Image m_tileSheet;
+	sf::Sprite m_tileSprite;
 
-		int m_layout[MAP_SIZE][MAP_SIZE];
+	int m_layout[MAP_SIZE][MAP_SIZE];
 };
 
 #endif

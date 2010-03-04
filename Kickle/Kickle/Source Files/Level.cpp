@@ -6,6 +6,7 @@
 #include "Utilities.h"
 
 Level::Level() {
+  Init();
 }
 
 Level::~Level() {
@@ -25,9 +26,10 @@ void Level::Render() {
 }
 
 bool Level::IsTileSolid( const sf::Vector2f& position ) const {
-  // Y is + 48 so it measures from the bottom of its feet.
-  return m_collisionMap.IsTileSolid( ((int)position.x-App::GetApp()->GetConfig()->GetXPad())/48 , 
-                                      ((int)position.y-App::GetApp()->GetConfig()->GetYPad()+48)/48 );
+  unsigned int tileSize = App::GetApp()->GetConfig()->GetTileSize();
+   // Y is + 48 so it measures from the bottom of its feet.
+  return m_collisionMap.IsTileSolid( ((int)position.x-App::GetApp()->GetConfig()->GetXPad())/tileSize , 
+                                      ((int)position.y-App::GetApp()->GetConfig()->GetYPad()+tileSize)/tileSize );
 }
 
 bool Level::IsTileSolid( int x, int y ) const {
@@ -42,36 +44,38 @@ bool Level::SetLevel( std::string levelPath ) {
     return false;
   }
 
-  TiXmlElement* root = doc.FirstChildElement("map");
+  TiXmlElement* root = doc.FirstChildElement( "map" );
 
   // Load in tiles.
-  std::string tile_string( root->FirstChildElement("tile_layout")->GetText() );
-  std::stringstream tile_layout( tile_string, std::ios_base::in );
+  unsigned int mapSize = App::GetApp()->GetConfig()->GetMapSize();
 
-  int layout[15][15];
+  std::string tileString( root->FirstChildElement( "tile_layout" )->GetText() );
+  std::stringstream tileMapStream( tileString, std::ios_base::in );
+
+  int tileLayout[15][15]; // TODO fix to dynamic
  
-  int current_tile = 0;
-  for( unsigned int i=0; i < Config::MAP_SIZE; i++ ) {
-    for ( unsigned int j=0; j < Config::MAP_SIZE; j++ ) {
-      if ( tile_layout >> current_tile ) {
-          layout[i][j] = current_tile;
+  int currentTile = 0;
+  for( unsigned int i=0; i < mapSize; i++ ) {
+    for ( unsigned int j=0; j < mapSize; j++ ) {
+      if ( tileMapStream >> currentTile ) {
+        tileLayout[i][j] = currentTile;
       } else {
-          layout[i][j] = -1;
+          tileLayout[i][j] = -1;
       }
     }
   }
   // Get the sprite sheet
-  std::string tile_sheet( root->FirstChildElement("tile_sheet")->GetText() );
+  std::string tileSheet( root->FirstChildElement( "tile_sheet" )->GetText() );
   // Load In Collision Layout
-  std::string collision_string( root->FirstChildElement("collision_layout")->GetText() );
-  std::stringstream collision_layout( collision_string, std::ios_base::in );
+  std::string collisionString( root->FirstChildElement( "collision_layout" )->GetText() );
+  std::stringstream collisionMapStream( collisionString, std::ios_base::in );
 
-  int collisionLayout[15][15];
+  int collisionLayout[15][15]; // TODO fix to dynamic
  
-  for( unsigned int i=0; i < Config::MAP_SIZE; i++ ) {
-    for ( unsigned int j=0; j < Config::MAP_SIZE; j++ ) {
-      if ( collision_layout >> current_tile ) {
-          collisionLayout[i][j] = current_tile;
+  for( unsigned int i=0; i < mapSize; i++ ) {
+    for ( unsigned int j=0; j < mapSize; j++ ) {
+      if ( collisionMapStream >> currentTile ) {
+          collisionLayout[i][j] = currentTile;
       } else {
           collisionLayout[i][j] = -1;
       }
@@ -79,12 +83,12 @@ bool Level::SetLevel( std::string levelPath ) {
   }
 
   // GameObjectMap parses its section by itself instead of in this method.
- if ( root->FirstChildElement("game_objects") ) {
-    m_gameObjectMap.SetGameObjectMap( root->FirstChildElement("game_objects") );
+ if ( root->FirstChildElement( "game_objects" ) ) {
+    m_gameObjectMap.SetGameObjectMap( root->FirstChildElement( "game_objects" ) );
  }
 
 	// Send them to the appropriate functions.
-	m_tileMap.SetTileMap( tile_sheet ,layout );
+	m_tileMap.SetTileMap( tileSheet, tileLayout );
   m_collisionMap.SetCollisionMap( collisionLayout );
 
 	return true;
