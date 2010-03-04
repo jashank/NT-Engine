@@ -52,6 +52,7 @@ bool CollisionMap::IsTileSolid( int x, int y ) const {
   } else {
     return true; // Off the map is always solid.
   }
+
   return false;
 }
 

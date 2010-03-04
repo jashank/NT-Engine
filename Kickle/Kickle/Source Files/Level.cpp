@@ -27,9 +27,8 @@ void Level::Render() {
 
 bool Level::IsTileSolid( const sf::Vector2f& position ) const {
   unsigned int tileSize = App::GetApp()->GetConfig()->GetTileSize();
-   // Y is + 48 so it measures from the bottom of its feet.
   return m_collisionMap.IsTileSolid( ((int)position.x-App::GetApp()->GetConfig()->GetXPad())/tileSize , 
-                                      ((int)position.y-App::GetApp()->GetConfig()->GetYPad()+tileSize)/tileSize );
+                                      ((int)position.y-App::GetApp()->GetConfig()->GetYPad())/tileSize );
 }
 
 bool Level::IsTileSolid( int x, int y ) const {

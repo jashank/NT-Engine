@@ -179,26 +179,26 @@ void GameObject::MoveDir( Dir direction ) {
   if( !m_moving ) {
     m_direction = direction;
 
-    sf::Vector2f tileToMoveTo;
+    sf::Vector2f tileToMoveTo( GetPosition() );
+    
+    //Take into account the sprites that are taller than a normal tile
+    tileToMoveTo.y += m_animData->GetFrameHeight( m_animation )%Config::TILE_SIZE;
+
     switch ( m_direction ) {
       case Up: {
-        tileToMoveTo.x = GetPosition().x;
-        tileToMoveTo.y = GetPosition().y - Config::TILE_SIZE;
+        tileToMoveTo.y -= Config::TILE_SIZE;
         break;
       }
       case Down: {
-        tileToMoveTo.x = GetPosition().x;
-        tileToMoveTo.y = GetPosition().y + Config::TILE_SIZE;
+        tileToMoveTo.y += Config::TILE_SIZE;
         break;
       }
       case Left: {
-        tileToMoveTo.x = GetPosition().x - Config::TILE_SIZE;
-        tileToMoveTo.y = GetPosition().y;
+        tileToMoveTo.x -= Config::TILE_SIZE;
         break;
       }
       case Right: {
-        tileToMoveTo.x = GetPosition().x + Config::TILE_SIZE;
-        tileToMoveTo.y = GetPosition().y;
+        tileToMoveTo.x += Config::TILE_SIZE;
         break;
       }
       default: {}

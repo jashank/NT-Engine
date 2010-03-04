@@ -4,6 +4,7 @@ local count = 1;
 function AILogic( Slime )
 
 	-- Lead the slime move in circles(err, a square >_<)
+
 	if count < 3 then
 		Slime:MoveDir( 2 );
 		Slime:SetAnimation( 2 );
