@@ -29,6 +29,8 @@ public:
   void SetYPad( unsigned int yPad );
   unsigned int GetYPad() const;
 
+  // This is just a useful function;
+  unsigned int GetMapPixelSize();
 
 private:
   unsigned int m_screenWidth;

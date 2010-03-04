@@ -70,7 +70,9 @@ unsigned int Configuration::GetYPad() const {
   return m_yPad;
 }
 
-
+unsigned int Configuration::GetMapPixelSize() {
+  return (m_tileSize*m_mapSize);
+}
 const Uint Config::SCREEN_WIDTH = 1024;
 const Uint Config::SCREEN_HEIGHT = 768;
 const Uint Config::FPS = 60;
