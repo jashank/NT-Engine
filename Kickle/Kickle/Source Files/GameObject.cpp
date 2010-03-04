@@ -178,9 +178,9 @@ void GameObject::AssignLevel( const Level *level ) {
 void GameObject::MoveDir( Dir direction ) {
   if( !m_moving ) {
     m_direction = direction;
-    
+
     sf::Vector2f tileToMoveTo;
-    switch ( direction ) {
+    switch ( m_direction ) {
       case Up: {
         tileToMoveTo.x = GetPosition().x;
         tileToMoveTo.y = GetPosition().y - Config::TILE_SIZE;
@@ -209,6 +209,7 @@ void GameObject::MoveDir( Dir direction ) {
     }
   }
 }
+
 
 void GameObject::Play() {
   if( m_animData ) {
