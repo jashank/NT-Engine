@@ -24,7 +24,7 @@ public:
   IsSolid()
   - Returns true if the tile at X Y is solid, else false;
   *****************************************************************/
-  bool IsTileSolid( int x, int y );
+  bool IsTileSolid( int x, int y ) const;
 
   /************************************************************
   SetTile()

@@ -59,6 +59,12 @@ class PlayState : public BaseState {
   ************************************************/
   virtual void Render();
 
+  /************************************************
+  GetLevel
+  -Returns current level in PlayState
+  ************************************************/
+  Level& GetLevel();
+
  private:	
   /************************************************
   Restricts construction, copy construction, 

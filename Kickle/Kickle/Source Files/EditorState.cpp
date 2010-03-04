@@ -4,6 +4,7 @@
 
 #include "App.h"
 #include "PlayState.h"
+#include "TitleState.h"
 #include "Utilities.h"
 
 /************************************************
@@ -206,20 +207,20 @@ void EditorState::DrawSideBar() {
 }
 
 void EditorState::SideBarEvents() {
-    if ( App::GetApp()->GetInput().IsMouseButtonDown( sf::Mouse::Left ) ) {
-       if ( m_tileLayer.ContainsCursor( App::GetApp()->GetInput().GetMouseX(), 
-                                  App::GetApp()->GetInput().GetMouseY() )) {
-        m_tileLayer.Activate();
-      }
-      else if ( m_collisionLayer.ContainsCursor( App::GetApp()->GetInput().GetMouseX(), 
-                                  App::GetApp()->GetInput().GetMouseY() )) {
-        m_collisionLayer.Activate();
-      }
-      else if ( m_gameObjectLayer.ContainsCursor( App::GetApp()->GetInput().GetMouseX(), 
-                                  App::GetApp()->GetInput().GetMouseY() )) {
-        m_gameObjectLayer.Activate();
-      }
+  if ( App::GetApp()->GetInput().IsMouseButtonDown( sf::Mouse::Left ) ) {
+     if ( m_tileLayer.ContainsCursor( App::GetApp()->GetInput().GetMouseX(), 
+                                App::GetApp()->GetInput().GetMouseY() )) {
+      m_tileLayer.Activate();
     }
+    else if ( m_collisionLayer.ContainsCursor( App::GetApp()->GetInput().GetMouseX(), 
+                                App::GetApp()->GetInput().GetMouseY() )) {
+      m_collisionLayer.Activate();
+    }
+    else if ( m_gameObjectLayer.ContainsCursor( App::GetApp()->GetInput().GetMouseX(), 
+                                App::GetApp()->GetInput().GetMouseY() )) {
+      m_gameObjectLayer.Activate();
+    }
+  }
 }
 
 void EditorState::DrawToolbar() {
@@ -235,24 +236,24 @@ void EditorState::DrawToolbar() {
 }
 
 void EditorState::ToolbarEvents() {
-    if ( App::GetApp()->GetInput().IsMouseButtonDown( sf::Mouse::Left ) ) {
-       if ( m_saveMap.ContainsCursor( App::GetApp()->GetInput().GetMouseX(), 
-                                  App::GetApp()->GetInput().GetMouseY() )) {
-        m_saveMap.Activate();
-      }
-      else if ( m_loadMap.ContainsCursor( App::GetApp()->GetInput().GetMouseX(), 
-                                  App::GetApp()->GetInput().GetMouseY() )) {
-        m_loadMap.Activate();
-      }
-      else if ( m_loadTileSheet.ContainsCursor( App::GetApp()->GetInput().GetMouseX(), 
-                                  App::GetApp()->GetInput().GetMouseY() )) {
-        m_loadTileSheet.Activate();
-      }
-      else if ( m_exit.ContainsCursor( App::GetApp()->GetInput().GetMouseX(), 
-                                  App::GetApp()->GetInput().GetMouseY() )) {
-        m_exit.Activate();
-      }
+  if ( App::GetApp()->GetInput().IsMouseButtonDown( sf::Mouse::Left ) ) {
+     if ( m_saveMap.ContainsCursor( App::GetApp()->GetInput().GetMouseX(), 
+                                App::GetApp()->GetInput().GetMouseY() )) {
+      m_saveMap.Activate();
     }
+    else if ( m_loadMap.ContainsCursor( App::GetApp()->GetInput().GetMouseX(), 
+                                App::GetApp()->GetInput().GetMouseY() )) {
+      m_loadMap.Activate();
+    }
+    else if ( m_loadTileSheet.ContainsCursor( App::GetApp()->GetInput().GetMouseX(), 
+                                App::GetApp()->GetInput().GetMouseY() )) {
+      m_loadTileSheet.Activate();
+    }
+    else if ( m_exit.ContainsCursor( App::GetApp()->GetInput().GetMouseX(), 
+                                App::GetApp()->GetInput().GetMouseY() )) {
+      m_exit.Activate();
+    }
+  }
 }
 
 // Button Actions
@@ -275,4 +276,5 @@ void EditorState::GameObjectLayer() {
 }
 
 void EditorState::Exit() {
+  App::GetApp()->SetNextState( TitleState::GetInstance() );
 }

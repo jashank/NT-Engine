@@ -24,12 +24,13 @@ void Level::Render() {
   m_gameObjectMap.Render();
 }
 
-bool Level::IsTileSolid( const sf::Vector2f& position ) {
+bool Level::IsTileSolid( const sf::Vector2f& position ) const {
   // Y is + 48 so it measures from the bottom of its feet.
-  return m_collisionMap.IsTileSolid( ((int)position.x-App::GetApp()->GetConfig()->GetXPad())/48 , ((int)position.y-App::GetApp()->GetConfig()->GetYPad()+48)/48 );
+  return m_collisionMap.IsTileSolid( ((int)position.x-App::GetApp()->GetConfig()->GetXPad())/48 , 
+                                      ((int)position.y-App::GetApp()->GetConfig()->GetYPad()+48)/48 );
 }
 
-bool Level::IsTileSolid( int x, int y ) {
+bool Level::IsTileSolid( int x, int y ) const {
    return m_collisionMap.IsTileSolid( x, y );
 }
 

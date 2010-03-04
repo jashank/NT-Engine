@@ -10,6 +10,7 @@
 
 
 class AnimData;
+class Level;
 
 
 /************************************************
@@ -24,7 +25,6 @@ class GameObject : public sf::Sprite {
     Down,
     Left,
     Right,
-    Z
   };
 
   GameObject( lua_State *L );
@@ -53,12 +53,6 @@ class GameObject : public sf::Sprite {
 	************************************************/
 	Uint GetAnimation() const;
 
-	/************************************************
-	IsMoving
-	-Returns true if the object is currently moving
-	************************************************/
-  bool IsMoving() const;
-
 
 	/************************************************
 	LoadFromFile
@@ -66,6 +60,12 @@ class GameObject : public sf::Sprite {
   -Returns true if loading was successful
 	************************************************/
   bool LoadFromFile( const std::string& filepath );
+
+	/************************************************
+	AssignLevel
+	-Lets GameObject know what level it is on.
+	************************************************/
+  static void AssignLevel( const Level *level );
 
 
 	/************************************************
@@ -182,8 +182,8 @@ class GameObject : public sf::Sprite {
 	************************************************/
 	void NextFrame();
 
-
 	const AnimData *m_animData; //Pointer to constant animation data
+  static const Level *m_level; // Level that GameObject is on
 
   bool m_moving; //If true; keep moving in m_direction
 	bool m_play; //If true; animate GameObject

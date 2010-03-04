@@ -49,13 +49,13 @@ public:
   IsTileSolid()
   -Wrapper function for the collision map.
   *****************************************/
-  bool IsTileSolid( const sf::Vector2f& position );
+  bool IsTileSolid( const sf::Vector2f& position ) const;
 
    /****************************************
   IsTileSolid()
   -Wrapper function for the collision map.
   *****************************************/
-  bool IsTileSolid( int x, int y );
+  bool IsTileSolid( int x, int y ) const;
 
   /********************************************
   GetTile()

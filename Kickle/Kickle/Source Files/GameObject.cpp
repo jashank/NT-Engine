@@ -7,7 +7,14 @@
 #include "AnimData.h"
 #include "App.h"
 #include "Configuration.h"
+#include "Level.h"
 #include "LuaAppFuncts.h"
+#include "PlayState.h"
+
+/************************************************
+Constant Members
+************************************************/
+const Level* GameObject::m_level = 0;
 
 /************************************************
 Public Members
@@ -126,11 +133,6 @@ Uint GameObject::GetAnimation() const {
 }
 
 
-bool GameObject::IsMoving() const {
-  return m_moving;
-}
-
-
 bool GameObject::LoadFromFile( const std::string& filepath ) {
   TiXmlDocument doc ( filepath.c_str() );
   
@@ -167,10 +169,44 @@ bool GameObject::LoadFromFile( const std::string& filepath ) {
   return true;
 }
 
+
+void GameObject::AssignLevel( const Level *level ) {
+  m_level = level;
+}
+
+
 void GameObject::MoveDir( Dir direction ) {
   if( !m_moving ) {
     m_direction = direction;
-    m_moving = true;
+    
+    sf::Vector2f tileToMoveTo;
+    switch ( direction ) {
+      case Up: {
+        tileToMoveTo.x = GetPosition().x;
+        tileToMoveTo.y = GetPosition().y - Config::TILE_SIZE;
+        break;
+      }
+      case Down: {
+        tileToMoveTo.x = GetPosition().x;
+        tileToMoveTo.y = GetPosition().y + Config::TILE_SIZE;
+        break;
+      }
+      case Left: {
+        tileToMoveTo.x = GetPosition().x - Config::TILE_SIZE;
+        tileToMoveTo.y = GetPosition().y;
+        break;
+      }
+      case Right: {
+        tileToMoveTo.x = GetPosition().x + Config::TILE_SIZE;
+        tileToMoveTo.y = GetPosition().y;
+        break;
+      }
+      default: {}
+    }
+
+    if ( !m_level->IsTileSolid( tileToMoveTo ) ) {
+      m_moving = true;
+    }
   }
 }
 
