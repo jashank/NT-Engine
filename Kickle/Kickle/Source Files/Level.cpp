@@ -109,3 +109,21 @@ void Level::SetTile (int x, int y, int tileId, int collisionId ) {
   m_tileMap.SetTile( x, y, tileId );
   m_collisionMap.SetCollision( x, y, collisionId );
 }
+
+/*********************************************
+IsObject()
+- Simply returns true if an object is located
+    at that location.
+*********************************************/
+bool Level::IsObject( int x, int y ) {
+  return false;
+}
+
+/*****************************************
+GetGameObject()
+- Returns a pointer to the game object at
+  the location. Else returns Null
+*****************************************/
+GameObject *Level::GetGameObject( int x, int y ) {
+  return NULL;
+}

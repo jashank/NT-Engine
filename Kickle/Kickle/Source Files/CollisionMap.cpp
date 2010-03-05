@@ -1,5 +1,5 @@
 #include "CollisionMap.h"
-#include <iostream>
+#include "App.h"
 /****************************
 Constructors and Destructors
 *****************************/
@@ -41,11 +41,11 @@ bool CollisionMap::SetCollisionMap( int layout[MAP_SIZE][MAP_SIZE] ) {
 }
 
 
-bool CollisionMap::IsTileSolid( int x, int y ) const {
+bool CollisionMap::IsTileSolid( unsigned int x, unsigned int y ) const {
   /*
   Making sure that your not going to run off the array.
   */
-  if ( x < MAP_SIZE && x >= 0 && y < MAP_SIZE && y >= 0) {
+  if ( App::GetApp()->GetConfig()->IsTileValid( x, y ) ) {
     if ( m_collision_layout[y][x] == SOLID ) {
       return true;
     }
@@ -57,16 +57,16 @@ bool CollisionMap::IsTileSolid( int x, int y ) const {
 }
 
 
-void CollisionMap::SetCollision( int x, int y, int collisionId ) {
-  if ( x < MAP_SIZE && x >= 0 && y < MAP_SIZE && y >= 0) {
+void CollisionMap::SetCollision( unsigned int x, unsigned int y, int collisionId ) {
+  if ( App::GetApp()->GetConfig()->IsTileValid( x, y ) ) {
     m_collision_layout[y][x] = collisionId;
   }
 
 }
 
 
-int CollisionMap::GetCollision( int x, int y ) {
-  if ( x < MAP_SIZE && x >= 0 && y < MAP_SIZE && y >= 0) {
+int CollisionMap::GetCollision( unsigned int x, unsigned int y ) {
+  if ( App::GetApp()->GetConfig()->IsTileValid( x, y ) ) {
     return m_collision_layout[y][x];
   } else {
     return SOLID;

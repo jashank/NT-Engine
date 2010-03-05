@@ -29,8 +29,10 @@ public:
   void SetYPad( unsigned int yPad );
   unsigned int GetYPad() const;
 
-  // This is just a useful function;
+  // Returns MAP_SIZE*TILE_SIZE
   unsigned int GetMapPixelSize();
+
+  bool IsTileValid( unsigned int x, unsigned int y );
 
 private:
   unsigned int m_screenWidth;

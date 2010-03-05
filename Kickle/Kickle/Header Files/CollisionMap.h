@@ -17,20 +17,20 @@ public:
   IsSolid()
   - Returns true if the tile at X Y is solid, else false;
   *****************************************************************/
-  bool IsTileSolid( int x, int y ) const;
+  bool IsTileSolid( unsigned int x, unsigned int y ) const;
 
   /************************************************************
   SetTile()
   - Changes the value of the tile sheet to that value if it is 
   valid else -1.
   ************************************************************/
-  void SetCollision( int x, int y, int collisionId );
+  void SetCollision( unsigned int x, unsigned int y, int collisionId );
 
   /**********************************************
   GetTile()
   - Returns the id of the tile at that location.
   **********************************************/
-  int GetCollision( int x, int y );
+  int GetCollision( unsigned int x, unsigned int y );
 
 private:
   /*************************************************************

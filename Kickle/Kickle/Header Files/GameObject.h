@@ -144,6 +144,24 @@ class GameObject : public sf::Sprite {
 	************************************************/
 	void Update();
 
+  /******************************************
+  SetTile()
+  - This sets the game object at that tile.
+    this may be useful for portals etc.
+  ******************************************/
+  void SetTile( unsigned int x, unsigned int y );
+
+  /***********************************************
+  GetTileX()
+  - Returns the X tile the player is located on.
+  ***********************************************/
+  unsigned int GetTileX();
+  
+  /***********************************************
+  GetTileY()
+  - Returns the Y tile the player is located on.
+  ************************************************/
+  unsigned int GetTileY();
 
 	/************************************************
 	LuaMoveDir

@@ -61,6 +61,20 @@ public:
   ***************************************************/
   void SetTile ( int x, int y, int tileId, int collisionId );
 
+  /*********************************************
+  IsObject()
+  - Simply returns true if an object is located
+    at that location.
+  *********************************************/
+  bool IsObject( int x, int y );
+
+  /*****************************************
+  GetGameObject()
+  - Returns a pointer to the game object at
+    the location. Else returns Null
+  *****************************************/
+  GameObject *GetGameObject( int x, int y );
+
 private:
 
   /**************************************

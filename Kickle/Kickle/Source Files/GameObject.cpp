@@ -338,6 +338,31 @@ void GameObject::Update() {
   }
 }
 
+void GameObject::SetTile( unsigned int x, unsigned int y ) {
+  // Check that the tile is valid
+  if ( App::GetApp()->GetConfig()->IsTileValid( x, y ) ) {
+    //Converts it to pixel locations and passes it through the
+    // sf::Sprite SetPosition fucncton
+    this->SetPosition( (float)x * App::GetApp()->GetConfig()->GetTileSize() +
+                       App::GetApp()->GetConfig()->GetXPad(),
+                       (float)y * App::GetApp()->GetConfig()->GetTileSize() +
+                       App::GetApp()->GetConfig()->GetYPad() );
+  }
+}
+
+unsigned int GameObject::GetTileX() {
+  unsigned int xTilePosition = (unsigned int)(this->GetPosition().x -
+                                App::GetApp()->GetConfig()->GetXPad()) /
+                                App::GetApp()->GetConfig()->GetTileSize();
+  return xTilePosition;
+}
+  
+unsigned int GameObject::GetTileY() {
+  unsigned int yTilePosition = (unsigned int)(this->GetPosition().y -
+                                App::GetApp()->GetConfig()->GetYPad()) /
+                                App::GetApp()->GetConfig()->GetTileSize();
+  return yTilePosition;
+}
 
 int GameObject::LuaMoveDir( lua_State *L ) {
   if( !lua_isnumber( L, -1 ) ) {

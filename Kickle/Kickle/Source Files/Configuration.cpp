@@ -73,6 +73,15 @@ unsigned int Configuration::GetYPad() const {
 unsigned int Configuration::GetMapPixelSize() {
   return (m_tileSize*m_mapSize);
 }
+
+bool Configuration::IsTileValid( unsigned int x, unsigned int y ) {
+  if ( x < m_mapSize && x >= 0 && y < m_mapSize && y >=0 ) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
 const Uint Config::SCREEN_WIDTH = 1024;
 const Uint Config::SCREEN_HEIGHT = 768;
 const Uint Config::FPS = 60;
