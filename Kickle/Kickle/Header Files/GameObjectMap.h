@@ -25,7 +25,6 @@ class GameObjectMap {
     GameObject *GetGameObject( unsigned int x, unsigned int y ) const;
   private:
     void Init();
-    void RefreshLayout();
 
     // This is a map of ids to game objects
     std::map<int, GameObject*> m_gameObjects;

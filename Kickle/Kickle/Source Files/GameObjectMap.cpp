@@ -16,16 +16,18 @@ GameObjectMap::~GameObjectMap() {
 
 void GameObjectMap::Init() {
   m_nextId = 0;
-  RefreshLayout();
+  for ( int i = 0; i < MAP_SIZE; i++ ) {
+    for ( int j = 0; j < MAP_SIZE; j++ ) {
+      m_gameObjectLayout[i][j] = NULL_GAME_OBJECT;
+    }
+  }
 }
 
 void GameObjectMap::Update() {
-  RefreshLayout();
   for ( int i = 0; i < m_nextId; i++ ) {
     if ( m_gameObjects[i] != 0 ) {
+      m_gameObjectLayout[m_gameObjects[i]->GetTileY()][m_gameObjects[i]->GetTileX()] = NULL_GAME_OBJECT;
       m_gameObjects[i]->Update();
-      // Set the game objects id on the map at its current position.
-      // This assumes that the player has done checks for collision.
       m_gameObjectLayout[m_gameObjects[i]->GetTileY()][m_gameObjects[i]->GetTileX()] = i;
     }
   }
@@ -92,18 +94,11 @@ void GameObjectMap::RemoveGameObject( GameObject *gameObject ) {
 
 GameObject *GameObjectMap::GetGameObject( unsigned int x, unsigned int y ) const {
   if ( App::GetApp()->GetConfig()->IsTileValid( x, y ) ) {
+    std::cout << x << " " << y << " " << m_gameObjectLayout[y][x] << std::endl;
     if ( m_gameObjects.find( m_gameObjectLayout[y][x] ) != m_gameObjects.end() ) {
       return m_gameObjects.find( m_gameObjectLayout[y][x] )->second;
     }
     return NULL;
   }
   return NULL;
-}
-
-void GameObjectMap::RefreshLayout() {
-  for ( int i = 0; i < MAP_SIZE; i++ ) {
-    for ( int j = 0; j < MAP_SIZE; j++ ) {
-      m_gameObjectLayout[i][j] = NULL_GAME_OBJECT;
-    }
-  }
 }
