@@ -66,8 +66,8 @@ public:
   - Returns a pointer to the game object at
     the location. Else returns Null
   *****************************************/
-  GameObject *GetGameObject( int x, int y );
-
+  GameObject *GetGameObject( unsigned int x, unsigned int y ) const;
+  GameObject *GetGameObject( sf::Vector2f position ) const;
 private:
 
   /**************************************

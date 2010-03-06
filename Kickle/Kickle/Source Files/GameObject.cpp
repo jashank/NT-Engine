@@ -208,7 +208,11 @@ void GameObject::MoveDir( Dir direction ) {
     }
 
     if ( !m_level->IsTileSolid( tileToMoveTo ) ) {
-      m_moving = true;
+      if ( m_level->GetGameObject( tileToMoveTo ) == NULL ) {
+        m_moving = true;
+      } else {
+        m_moving = false; // Do collision stuff here.
+      }
     }
   }
 }

@@ -115,6 +115,15 @@ GetGameObject()
 - Returns a pointer to the game object at
   the location. Else returns Null
 *****************************************/
-GameObject *Level::GetGameObject( int x, int y ) {
-  return NULL;
+GameObject *Level::GetGameObject( unsigned int x, unsigned int y ) const {
+  return m_gameObjectMap.GetGameObject( x, y );
+}
+
+GameObject *Level::GetGameObject( sf::Vector2f position ) const {
+  return GetGameObject((unsigned int)(position.x -
+                                        App::GetApp()->GetConfig()->GetXPad()) /
+                                        App::GetApp()->GetConfig()->GetTileSize(),
+                                        (unsigned int)(position.y -
+                                        App::GetApp()->GetConfig()->GetYPad()) /
+                                        App::GetApp()->GetConfig()->GetTileSize());
 }

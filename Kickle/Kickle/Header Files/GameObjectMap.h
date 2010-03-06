@@ -22,7 +22,7 @@ class GameObjectMap {
     void AddGameObject( GameObject *gameObject );
     void RemoveGameObject( GameObject *gameObject );
 
-    GameObject *GetGameObject( unsigned int x, unsigned int y );
+    GameObject *GetGameObject( unsigned int x, unsigned int y ) const;
   private:
     void Init();
     void RefreshLayout();

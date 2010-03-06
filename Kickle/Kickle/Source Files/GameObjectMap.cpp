@@ -90,9 +90,12 @@ void GameObjectMap::RemoveGameObject( GameObject *gameObject ) {
   }
 }
 
-GameObject *GameObjectMap::GetGameObject( unsigned int x, unsigned int y ) {
+GameObject *GameObjectMap::GetGameObject( unsigned int x, unsigned int y ) const {
   if ( App::GetApp()->GetConfig()->IsTileValid( x, y ) ) {
-    return m_gameObjects[m_gameObjectLayout[y][x]];
+    if ( m_gameObjects.find( m_gameObjectLayout[y][x] ) != m_gameObjects.end() ) {
+      return m_gameObjects.find( m_gameObjectLayout[y][x] )->second;
+    }
+    return NULL;
   }
   return NULL;
 }
