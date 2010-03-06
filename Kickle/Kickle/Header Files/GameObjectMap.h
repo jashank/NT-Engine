@@ -22,8 +22,11 @@ class GameObjectMap {
     void AddGameObject( GameObject *gameObject );
     void RemoveGameObject( GameObject *gameObject );
 
+    GameObject *GetGameObject( unsigned int x, unsigned int y );
   private:
     void Init();
+    void RefreshLayout();
+
     // This is a map of ids to game objects
     std::map<int, GameObject*> m_gameObjects;
     // This is a list of dead players ids that need to be reused
@@ -32,6 +35,9 @@ class GameObjectMap {
     int m_nextId;
 
     static const int NULL_GAME_OBJECT = -1;
+    static const int MAP_SIZE = 15;
+
+    int m_gameObjectLayout[MAP_SIZE][MAP_SIZE];
 };
 
 #endif
