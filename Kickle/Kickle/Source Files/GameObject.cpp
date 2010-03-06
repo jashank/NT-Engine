@@ -35,6 +35,7 @@ GameObject::GameObject( lua_State *L )
    m_frameTime( 0.0f ),
    m_animData( 0 ),
    m_moving( false ),
+   m_id( -1 ),
    m_luaState(luaL_newstate()) {
   if( !lua_isstring( L, -1 ) ) {
     luaL_error( L, "Invalid argument for GameObject." );
@@ -57,6 +58,7 @@ GameObject::GameObject( const std::string &xmlGameObjectPath )
    m_frameTime( 0.0f ),
    m_animData( 0 ),
    m_moving( false ),
+   m_id( -1 ),
    m_luaState(luaL_newstate()) { 
   if( !LoadFromFile( xmlGameObjectPath ) ) {
     lua_close( m_luaState );
@@ -73,6 +75,7 @@ GameObject::GameObject( const std::string &xmlGameObjectPath, Uint tileX, Uint t
    m_frameTime( 0.0f ),
    m_animData( 0 ),
    m_moving( false ),
+   m_id( -1 ),
    m_luaState(luaL_newstate()) { 
   if( !LoadFromFile( xmlGameObjectPath ) ) {
     lua_close( m_luaState );
@@ -358,10 +361,21 @@ unsigned int GameObject::GetTileX() {
 }
   
 unsigned int GameObject::GetTileY() {
-  unsigned int yTilePosition = (unsigned int)(this->GetPosition().y -
+  // Note the addition of the tilesize to get the Y tile from the
+  // bottom of the feet.
+  unsigned int yTilePosition = (unsigned int)(this->GetPosition().y + 
+                                App::GetApp()->GetConfig()->GetTileSize() -
                                 App::GetApp()->GetConfig()->GetYPad()) /
                                 App::GetApp()->GetConfig()->GetTileSize();
   return yTilePosition;
+}
+
+void GameObject::SetId( int id ) {
+  m_id = id;
+}
+  
+int GameObject::GetId() {
+  return m_id;
 }
 
 int GameObject::LuaMoveDir( lua_State *L ) {

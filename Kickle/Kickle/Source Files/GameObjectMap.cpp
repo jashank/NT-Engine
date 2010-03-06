@@ -1,5 +1,6 @@
 #include "GameObjectMap.h"
 #include "BasicTypeDefs.h"
+#include "Utilities.h"
 
 GameObjectMap::GameObjectMap() {
   Init();
@@ -64,12 +65,20 @@ void GameObjectMap::AddGameObject( GameObject *gameObject ) {
     nextId = m_nextId;
     m_nextId++;
   }
+
+  DEBUG_STATEMENT( std::cout << "Adding GameObject: Id[" << nextId << "] x[" <<
+                   gameObject->GetTileX() << "] y[" << gameObject->GetTileY() 
+                   << "]" << std::endl; );
+
    m_gameObjects[nextId] = gameObject;
+   gameObject->SetId( nextId );
+ 
 
    gameObject->Play();
 }
 
-void GameObjectMap::RemoveGameObject( int id ) {
+void GameObjectMap::RemoveGameObject( GameObject *gameObject ) {
+  int id = gameObject->GetId();
   if ( id < m_nextId && m_gameObjects[id] != 0 ) {
     m_avaliableIds.push_back( id );
     SAFEDELETE( m_gameObjects[id] );

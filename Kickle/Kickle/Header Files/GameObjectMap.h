@@ -20,7 +20,7 @@ class GameObjectMap {
     bool SetGameObjectMap( TiXmlElement* root );
 
     void AddGameObject( GameObject *gameObject );
-    void RemoveGameObject( int id );
+    void RemoveGameObject( GameObject *gameObject );
 
   private:
     void Init();
@@ -30,6 +30,8 @@ class GameObjectMap {
     std::vector<int> m_avaliableIds;
     // This is the next possible expansion to the players ids.
     int m_nextId;
+
+    static const int NULL_GAME_OBJECT = -1;
 };
 
 #endif

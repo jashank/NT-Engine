@@ -163,6 +163,18 @@ class GameObject : public sf::Sprite {
   ************************************************/
   unsigned int GetTileY();
 
+  /**********************************************
+  SetId()
+  - Sets the member unique identifier.
+  ***********************************************/
+  void SetId( int id );
+  
+  /*************************************************
+  GetId()
+  - Returns the member unique identifier (m_id)
+  **************************************************/
+  int GetId();
+
 	/************************************************
 	LuaMoveDir
 	-Wraps MoveDir to allow it to be exposed to Lua
@@ -211,6 +223,7 @@ class GameObject : public sf::Sprite {
   std::string m_luaScript; //filepath to the lua script
 	Uint m_animation; //current animation selections
 	Uint m_frame; //current frame selection
+  int m_id; // Unique identifier for the object.
 };
 
 #endif
