@@ -6,6 +6,7 @@ GameObjectMap::GameObjectMap() {
   Init();
 }
 
+
 GameObjectMap::~GameObjectMap() {
   for ( int i = 0; i < m_nextId; i++ ) {
     if ( m_gameObjects[i] != 0 ) {
@@ -13,6 +14,7 @@ GameObjectMap::~GameObjectMap() {
     }
   }
 }
+
 
 void GameObjectMap::Init() {
   m_nextId = 0;
@@ -22,6 +24,7 @@ void GameObjectMap::Init() {
     }
   }
 }
+
 
 void GameObjectMap::Update() {
   for ( int i = 0; i < m_nextId; i++ ) {
@@ -33,6 +36,7 @@ void GameObjectMap::Update() {
   }
 }
 
+
 void GameObjectMap::Render() {
   for ( int i = 0; i < m_nextId; i++ ) {
     if ( m_gameObjects[i] != 0 ) {
@@ -40,6 +44,7 @@ void GameObjectMap::Render() {
     }
   }
 }
+
 
 bool GameObjectMap::SetGameObjectMap( TiXmlElement* root ) {
   TiXmlElement* currentEntity;
@@ -57,11 +62,12 @@ bool GameObjectMap::SetGameObjectMap( TiXmlElement* root ) {
       currentEntityInstance ; currentEntityInstance = currentEntityInstance->NextSiblingElement() ) {
         currentEntityInstance->Attribute( "x", &positionX );
         currentEntityInstance->Attribute( "y", &positionY );
-        AddGameObject(  new GameObject( entityData, (unsigned int) positionX, (unsigned int) positionY ));
+        AddGameObject(  new GameObject( entityData, (Uint) positionX, (Uint) positionY ));
     }
   }
   return false;
 }
+
 
 void GameObjectMap::AddGameObject( GameObject *gameObject ) {
   int nextId;
@@ -84,6 +90,7 @@ void GameObjectMap::AddGameObject( GameObject *gameObject ) {
    gameObject->Play();
 }
 
+
 void GameObjectMap::RemoveGameObject( GameObject *gameObject ) {
   int id = gameObject->GetId();
   if ( id < m_nextId && m_gameObjects[id] != 0 ) {
@@ -92,7 +99,8 @@ void GameObjectMap::RemoveGameObject( GameObject *gameObject ) {
   }
 }
 
-GameObject *GameObjectMap::GetGameObject( unsigned int x, unsigned int y ) const {
+
+GameObject *GameObjectMap::GetGameObject( Uint x, Uint y ) const {
   if ( App::GetApp()->GetConfig()->IsTileValid( x, y ) ) {
     std::cout << x << " " << y << " " << m_gameObjectLayout[y][x] << std::endl;
     if ( m_gameObjects.find( m_gameObjectLayout[y][x] ) != m_gameObjects.end() ) {

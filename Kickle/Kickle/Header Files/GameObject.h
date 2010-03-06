@@ -38,7 +38,6 @@ class GameObject : public sf::Sprite {
 	-Returns the data used for the animation
 	************************************************/
 	const AnimData *GetAnimData() const;
-	
 
 	/************************************************
 	GetFrame
@@ -46,13 +45,11 @@ class GameObject : public sf::Sprite {
 	************************************************/
 	Uint GetFrame() const;
 
-
 	/************************************************
 	GetAnimation
 	-Returns the current animation
 	************************************************/
 	Uint GetAnimation() const;
-
 
 	/************************************************
 	LoadFromFile
@@ -67,7 +64,6 @@ class GameObject : public sf::Sprite {
 	************************************************/
   static void AssignLevel( const Level *level );
 
-
 	/************************************************
 	MoveDir
 	-Moves 1 tile length in the supplied direction
@@ -80,13 +76,11 @@ class GameObject : public sf::Sprite {
 	************************************************/	
 	void Pause();
 
-
 	/************************************************
 	Play
 	-Resumes animation from current frame
 	************************************************/
 	void Play();
-
 
 	/************************************************
 	Restart
@@ -94,13 +88,11 @@ class GameObject : public sf::Sprite {
 	************************************************/
 	void Restart();
 
-
 	/************************************************
 	SetFrame
 	-Sets the current animation frame
 	************************************************/
 	void SetFrame( Uint frame );
-
 
 	/************************************************
 	SetAnimation
@@ -108,20 +100,17 @@ class GameObject : public sf::Sprite {
 	************************************************/
 	void SetAnimation( Uint animation );
 
-
 	/************************************************
 	SetAnimData
 	-Sets the data to be used for the animation
 	************************************************/
 	void SetAnimData( const AnimData &animData );
 
-
 	/************************************************
 	Start
 	-Resumes animation from current frame
 	************************************************/
 	void Start();
-
 
 	/************************************************
 	Stop
@@ -130,13 +119,11 @@ class GameObject : public sf::Sprite {
 	************************************************/
 	void Stop();
 
-
 	/************************************************
 	StopMoving
 	-Stops moving
 	************************************************/
   void StopMoving();
-
 
 	/************************************************
 	Update
@@ -144,24 +131,17 @@ class GameObject : public sf::Sprite {
 	************************************************/
 	void Update();
 
-  /******************************************
-  SetTile()
-  - This sets the game object at that tile.
-    this may be useful for portals etc.
-  ******************************************/
-  void SetTile( unsigned int x, unsigned int y );
-
   /***********************************************
   GetTileX()
   - Returns the X tile the player is located on.
   ***********************************************/
-  unsigned int GetTileX();
+  Uint GetTileX();
   
   /***********************************************
   GetTileY()
   - Returns the Y tile the player is located on.
   ************************************************/
-  unsigned int GetTileY();
+  Uint GetTileY();
 
   /**********************************************
   SetId()
@@ -205,12 +185,12 @@ class GameObject : public sf::Sprite {
 	************************************************/  
   void InitLua();
 
-
 	/************************************************
 	NextFrame
 	-Selects next frame
 	************************************************/
 	void NextFrame();
+
 
 	const AnimData *m_animData; //Pointer to constant animation data
   static const Level *m_level; // Level that GameObject is on

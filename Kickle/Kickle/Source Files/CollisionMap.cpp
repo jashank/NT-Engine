@@ -41,7 +41,7 @@ bool CollisionMap::SetCollisionMap( int layout[MAP_SIZE][MAP_SIZE] ) {
 }
 
 
-bool CollisionMap::IsTileSolid( unsigned int x, unsigned int y ) const {
+bool CollisionMap::IsTileSolid( Uint x, Uint y ) const {
   /*
   Making sure that your not going to run off the array.
   */
@@ -57,7 +57,7 @@ bool CollisionMap::IsTileSolid( unsigned int x, unsigned int y ) const {
 }
 
 
-void CollisionMap::SetCollision( unsigned int x, unsigned int y, int collisionId ) {
+void CollisionMap::SetCollision( Uint x, Uint y, int collisionId ) {
   if ( App::GetApp()->GetConfig()->IsTileValid( x, y ) ) {
     m_collision_layout[y][x] = collisionId;
   }
@@ -65,7 +65,7 @@ void CollisionMap::SetCollision( unsigned int x, unsigned int y, int collisionId
 }
 
 
-int CollisionMap::GetCollision( unsigned int x, unsigned int y ) {
+int CollisionMap::GetCollision( Uint x, Uint y ) {
   if ( App::GetApp()->GetConfig()->IsTileValid( x, y ) ) {
     return m_collision_layout[y][x];
   } else {

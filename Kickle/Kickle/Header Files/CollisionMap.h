@@ -1,6 +1,8 @@
 #ifndef COLLISION_MAP_H
 #define COLLISION_MAP_H
 
+#include "BasicTypeDefs.h"
+
 class CollisionMap {
 public:
   CollisionMap();
@@ -17,20 +19,20 @@ public:
   IsSolid()
   - Returns true if the tile at X Y is solid, else false;
   *****************************************************************/
-  bool IsTileSolid( unsigned int x, unsigned int y ) const;
+  bool IsTileSolid( Uint x, Uint y ) const;
 
   /************************************************************
   SetTile()
   - Changes the value of the tile sheet to that value if it is 
   valid else -1.
   ************************************************************/
-  void SetCollision( unsigned int x, unsigned int y, int collisionId );
+  void SetCollision( Uint x, Uint y, int collisionId );
 
   /**********************************************
   GetTile()
   - Returns the id of the tile at that location.
   **********************************************/
-  int GetCollision( unsigned int x, unsigned int y );
+  int GetCollision( Uint x, Uint y );
 
 private:
   /*************************************************************
@@ -40,7 +42,7 @@ private:
   **************************************************************/
   void Init();
 
-  static const unsigned int MAP_SIZE = 15;
+  static const Uint MAP_SIZE = 15;
   static const int SOLID = 1;
   static const int NOT_SOLID = 0;
 

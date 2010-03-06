@@ -8,40 +8,40 @@ public:
   Configuration();
   virtual ~Configuration();
 
-  void SetScreenWidth( unsigned int screenWidth );
-  unsigned int GetScreenWidth() const;
+  void SetScreenWidth( Uint screenWidth );
+  Uint GetScreenWidth() const;
 
-  void SetScreenHeight( unsigned int screenHeight );
-  unsigned int GetScreenHeight() const;
+  void SetScreenHeight( Uint screenHeight );
+  Uint GetScreenHeight() const;
 
-  void SetFPS( unsigned int FPS );
-  unsigned int GetFPS() const;
+  void SetFPS( Uint FPS );
+  Uint GetFPS() const;
 
-  void SetMapSize( unsigned int mapSize );
-  unsigned int GetMapSize() const;
+  void SetMapSize( Uint mapSize );
+  Uint GetMapSize() const;
 
-  void SetTileSize( unsigned int tileSize );
-  unsigned int GetTileSize() const;
+  void SetTileSize( Uint tileSize );
+  Uint GetTileSize() const;
 
-  void SetXPad( unsigned int xPad );
-  unsigned int GetXPad() const;
+  void SetXPad( Uint xPad );
+  Uint GetXPad() const;
 
-  void SetYPad( unsigned int yPad );
-  unsigned int GetYPad() const;
+  void SetYPad( Uint yPad );
+  Uint GetYPad() const;
 
   // Returns MAP_SIZE*TILE_SIZE
-  unsigned int GetMapPixelSize();
+  Uint GetMapPixelSize();
 
-  bool IsTileValid( unsigned int x, unsigned int y );
+  bool IsTileValid( Uint x, Uint y );
 
 private:
-  unsigned int m_screenWidth;
-  unsigned int m_screenHeight;
-  unsigned int m_FPS;
-  unsigned int m_mapSize;
-  unsigned int m_tileSize;
-  unsigned int m_xPad;
-  unsigned int m_yPad;
+  Uint m_screenWidth;
+  Uint m_screenHeight;
+  Uint m_FPS;
+  Uint m_mapSize;
+  Uint m_tileSize;
+  Uint m_xPad;
+  Uint m_yPad;
 };
 
 

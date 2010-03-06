@@ -26,7 +26,7 @@ void Level::Render() {
 }
 
 bool Level::IsTileSolid( const sf::Vector2f& position ) const {
-  unsigned int tileSize = App::GetApp()->GetConfig()->GetTileSize();
+  Uint tileSize = App::GetApp()->GetConfig()->GetTileSize();
   return m_collisionMap.IsTileSolid( ((int)position.x-App::GetApp()->GetConfig()->GetXPad())/tileSize , 
                                       ((int)position.y-App::GetApp()->GetConfig()->GetYPad())/tileSize );
 }
@@ -46,7 +46,7 @@ bool Level::SetLevel( std::string levelPath ) {
   TiXmlElement* root = doc.FirstChildElement( "map" );
 
   // Load in tiles.
-  unsigned int mapSize = App::GetApp()->GetConfig()->GetMapSize();
+  Uint mapSize = App::GetApp()->GetConfig()->GetMapSize();
 
   std::string tileString( root->FirstChildElement( "tile_layout" )->GetText() );
   std::stringstream tileMapStream( tileString, std::ios_base::in );
@@ -54,8 +54,8 @@ bool Level::SetLevel( std::string levelPath ) {
   int tileLayout[15][15]; // TODO fix to dynamic
  
   int currentTile = 0;
-  for( unsigned int i=0; i < mapSize; i++ ) {
-    for ( unsigned int j=0; j < mapSize; j++ ) {
+  for( Uint i=0; i < mapSize; i++ ) {
+    for ( Uint j=0; j < mapSize; j++ ) {
       if ( tileMapStream >> currentTile ) {
         tileLayout[i][j] = currentTile;
       } else {
@@ -71,8 +71,8 @@ bool Level::SetLevel( std::string levelPath ) {
 
   int collisionLayout[15][15]; // TODO fix to dynamic
  
-  for( unsigned int i=0; i < mapSize; i++ ) {
-    for ( unsigned int j=0; j < mapSize; j++ ) {
+  for( Uint i=0; i < mapSize; i++ ) {
+    for ( Uint j=0; j < mapSize; j++ ) {
       if ( collisionMapStream >> currentTile ) {
           collisionLayout[i][j] = currentTile;
       } else {
@@ -115,15 +115,15 @@ GetGameObject()
 - Returns a pointer to the game object at
   the location. Else returns Null
 *****************************************/
-GameObject *Level::GetGameObject( unsigned int x, unsigned int y ) const {
+GameObject *Level::GetGameObject( Uint x, Uint y ) const {
   return m_gameObjectMap.GetGameObject( x, y );
 }
 
 GameObject *Level::GetGameObject( sf::Vector2f position ) const {
-  return GetGameObject((unsigned int)(position.x -
+  return GetGameObject((Uint)(position.x -
                                         App::GetApp()->GetConfig()->GetXPad()) /
                                         App::GetApp()->GetConfig()->GetTileSize(),
-                                        (unsigned int)(position.y -
+                                        (Uint)(position.y -
                                         App::GetApp()->GetConfig()->GetYPad()) /
                                         App::GetApp()->GetConfig()->GetTileSize());
 }

@@ -4,10 +4,11 @@
 #include <map>
 #include <vector>
 
-#include "GameObject.h"
 #include "App.h"
-#include "tinyxml.h"
+#include "BasicTypeDefs.h"
+#include "GameObject.h"
 #include "Utilities.h"
+#include "tinyxml.h"
 
 class GameObjectMap {
   public:
@@ -22,7 +23,7 @@ class GameObjectMap {
     void AddGameObject( GameObject *gameObject );
     void RemoveGameObject( GameObject *gameObject );
 
-    GameObject *GetGameObject( unsigned int x, unsigned int y ) const;
+    GameObject *GetGameObject( Uint x, Uint y ) const;
   private:
     void Init();
 

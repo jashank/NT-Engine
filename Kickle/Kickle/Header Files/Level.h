@@ -3,10 +3,11 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "TileMap.h"
+#include "BasicTypeDefs.h"
 #include "CollisionMap.h"
-#include "GameObjectMap.h"
 #include "Configuration.h"
+#include "GameObjectMap.h"
+#include "TileMap.h"
 #include "tinyxml.h"
 
 class Level {
@@ -66,7 +67,7 @@ public:
   - Returns a pointer to the game object at
     the location. Else returns Null
   *****************************************/
-  GameObject *GetGameObject( unsigned int x, unsigned int y ) const;
+  GameObject *GetGameObject( Uint x, Uint y ) const;
   GameObject *GetGameObject( sf::Vector2f position ) const;
 private:
 

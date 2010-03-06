@@ -14,67 +14,67 @@ Configuration::Configuration()
 Configuration::~Configuration() {
 }
 
-void Configuration::SetScreenWidth( unsigned int screenWidth ) {
+void Configuration::SetScreenWidth( Uint screenWidth ) {
   m_screenWidth = screenWidth;
 }
 
-unsigned int Configuration::GetScreenWidth() const {
+Uint Configuration::GetScreenWidth() const {
   return m_screenWidth;
 }
 
-void Configuration::SetScreenHeight( unsigned int screenHeight ) {
+void Configuration::SetScreenHeight( Uint screenHeight ) {
   m_screenHeight = screenHeight;
 }
 
-unsigned int Configuration::GetScreenHeight() const {
+Uint Configuration::GetScreenHeight() const {
   return m_screenHeight;
 }
 
-void Configuration::SetFPS( unsigned int FPS ) {
+void Configuration::SetFPS( Uint FPS ) {
   m_FPS = FPS;
 }
 
-unsigned int Configuration::GetFPS() const {
+Uint Configuration::GetFPS() const {
   return m_FPS;
 }
 
-void Configuration::SetMapSize( unsigned int mapSize ) {
+void Configuration::SetMapSize( Uint mapSize ) {
   m_mapSize = mapSize;
 }
 
-unsigned int Configuration::GetMapSize() const {
+Uint Configuration::GetMapSize() const {
   return m_mapSize;
 }
 
-void Configuration::SetTileSize( unsigned int tileSize ) {
+void Configuration::SetTileSize( Uint tileSize ) {
   m_tileSize = tileSize;
 }
 
-unsigned int Configuration::GetTileSize() const {
+Uint Configuration::GetTileSize() const {
   return m_tileSize;
 }
 
-void Configuration::SetXPad( unsigned int xPad ) {
+void Configuration::SetXPad( Uint xPad ) {
   m_xPad = xPad;
 }
 
-unsigned int Configuration::GetXPad() const {
+Uint Configuration::GetXPad() const {
   return m_xPad;
 }
 
-void Configuration::SetYPad( unsigned int yPad ) {
+void Configuration::SetYPad( Uint yPad ) {
   m_yPad = yPad;
 }
 
-unsigned int Configuration::GetYPad() const {
+Uint Configuration::GetYPad() const {
   return m_yPad;
 }
 
-unsigned int Configuration::GetMapPixelSize() {
+Uint Configuration::GetMapPixelSize() {
   return (m_tileSize*m_mapSize);
 }
 
-bool Configuration::IsTileValid( unsigned int x, unsigned int y ) {
+bool Configuration::IsTileValid( Uint x, Uint y ) {
   if ( x < m_mapSize && x >= 0 && y < m_mapSize && y >=0 ) {
     return true;
   } else {

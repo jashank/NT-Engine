@@ -270,6 +270,7 @@ void GameObject::Stop() {
   SetFrame( 0 );
 }
 
+
 void GameObject::StopMoving() {
   static sf::Vector2f pos;
   pos = GetPosition();
@@ -285,6 +286,7 @@ void GameObject::StopMoving() {
     m_moving = false;
   }
 }
+
 
 void GameObject::Update() {
   AnimUpdate();
@@ -345,42 +347,30 @@ void GameObject::Update() {
   }
 }
 
-void GameObject::SetTile( unsigned int x, unsigned int y ) {
-  // Check that the tile is valid
-  if ( App::GetApp()->GetConfig()->IsTileValid( x, y ) ) {
-    //Converts it to pixel locations and passes it through the
-    // sf::Sprite SetPosition fucncton
-    this->SetPosition( (float)x * App::GetApp()->GetConfig()->GetTileSize() +
-                       App::GetApp()->GetConfig()->GetXPad(),
-                       (float)y * App::GetApp()->GetConfig()->GetTileSize() +
-                       App::GetApp()->GetConfig()->GetYPad() );
-  }
-}
 
-unsigned int GameObject::GetTileX() {
-  unsigned int xTilePosition = (unsigned int)(this->GetPosition().x -
-                                App::GetApp()->GetConfig()->GetXPad()) /
-                                App::GetApp()->GetConfig()->GetTileSize();
-  return xTilePosition;
+Uint GameObject::GetTileX() {
+  return (Uint)(this->GetPosition().x -
+                        App::GetApp()->GetConfig()->GetXPad()) /
+                        App::GetApp()->GetConfig()->GetTileSize();
 }
   
-unsigned int GameObject::GetTileY() {
-  // Note the addition of the tilesize to get the Y tile from the
-  // bottom of the feet.
-  unsigned int yTilePosition = (unsigned int)(this->GetPosition().y + 
-                                App::GetApp()->GetConfig()->GetTileSize() -
-                                App::GetApp()->GetConfig()->GetYPad()) /
-                                App::GetApp()->GetConfig()->GetTileSize();
-  return yTilePosition;
+Uint GameObject::GetTileY() {
+return (Uint)( ( this->GetPosition().y +  
+              m_animData->GetFrameHeight( m_animation )  % Config::TILE_SIZE ) - 
+              App::GetApp()->GetConfig()->GetYPad() ) / 
+              App::GetApp()->GetConfig()->GetTileSize();
 }
+
 
 void GameObject::SetId( int id ) {
   m_id = id;
 }
   
+
 int GameObject::GetId() {
   return m_id;
 }
+
 
 int GameObject::LuaMoveDir( lua_State *L ) {
   if( !lua_isnumber( L, -1 ) ) {

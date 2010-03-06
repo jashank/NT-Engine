@@ -14,6 +14,7 @@ extern "C" {
 #include "BaseState.h"
 #include "AnimData.h"
 
+#include "BasicTypeDefs.h"
 #include "Configuration.h"
 
 class Input;
@@ -40,9 +41,9 @@ class App {
  public:
   static App* CreateApp( 
     const std::string &title, 
-    unsigned int width, 
-    unsigned int height, 
-    unsigned int framerate 
+    Uint width, 
+    Uint height, 
+    Uint framerate 
   );
 
 
@@ -154,9 +155,9 @@ class App {
  private:
   App( 
     const std::string &title, 
-    unsigned int width, 
-    unsigned int height, 
-    unsigned int framerate 
+    Uint width, 
+    Uint height, 
+    Uint framerate 
   );
 
 
