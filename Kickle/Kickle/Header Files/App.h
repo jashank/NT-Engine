@@ -15,7 +15,6 @@ extern "C" {
 #include "AnimData.h"
 
 #include "BasicTypeDefs.h"
-#include "Configuration.h"
 
 class Input;
 class StateManager;
@@ -94,7 +93,6 @@ class App {
   const sf::Input &GetInput() const;
 
 
-  Configuration *GetConfig();
   /************************************************
   LoadImage
   -Returns an Image given a filename
@@ -181,8 +179,6 @@ class App {
   sf::Color m_clearColor; //Color to clear the screen to
   sf::Event	m_event; //holds the most current event
   sf::RenderWindow	m_window; //SFML's window
-
-  Configuration m_config;
 
   StateManager m_stateManager; //Keeps track of current state
 };

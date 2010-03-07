@@ -42,9 +42,9 @@ void EditorState::Init() {
 	SetInit( true );
   App::GetApp()->SetClearColor( sf::Color(0,49,139) );
   
-  App::GetApp()->GetConfig()->SetXPad( 0 );
-  App::GetApp()->GetConfig()->SetYPad( (App::GetApp()->GetConfig()->GetScreenHeight() - 
-                                        App::GetApp()->GetConfig()->GetMapPixelSize()));
+  Configuration::SetXPad( 0 );
+  Configuration::SetYPad(( Configuration::GetScreenHeight() - 
+                           Configuration::GetMapPixelSize() ));
 
   CreateButtons();
   CreateSidePanel();
@@ -71,10 +71,10 @@ void EditorState::CleanUp() {
   /*
   Return the values to their orignal state.
   */
-  App::GetApp()->GetConfig()->SetXPad( (App::GetApp()->GetConfig()->GetScreenWidth() - 
-                                        App::GetApp()->GetConfig()->GetMapPixelSize())/2 );
-  App::GetApp()->GetConfig()->SetYPad( (App::GetApp()->GetConfig()->GetScreenHeight() - 
-                                        App::GetApp()->GetConfig()->GetMapPixelSize())/2);
+  Configuration::SetXPad(( Configuration::GetScreenWidth() - 
+                           Configuration::GetMapPixelSize() ) / 2 );
+  Configuration::SetYPad(( Configuration::GetScreenHeight() - 
+                           Configuration::GetMapPixelSize() ) / 2 );
 }
 
 
@@ -150,8 +150,8 @@ void EditorState::CreateButtons() {
 
    // SideBar Buttons
 
-    buttonPos.x = (float)App::GetApp()->GetConfig()->GetMapPixelSize()-10.0f;
-    buttonPos.y = (float)App::GetApp()->GetConfig()->GetYPad();
+    buttonPos.x = (float)Configuration::GetMapPixelSize() - 10.0f;
+    buttonPos.y = (float)Configuration::GetYPad();
 
     m_tileLayer =  Button( TileLayer, buttonPos, sf::IntRect( 
     static_cast< int >( buttonPos.x ), 
@@ -182,29 +182,33 @@ void EditorState::CreateSidePanel() {
 }
 
 void EditorState::DrawGrid() {
-  for ( float i = 0; i <= Config::MAP_SIZE; i++ ) {
-    App::GetApp()->Draw(sf::Shape::Line( i*Config::TILE_SIZE, 
-                                        (float)App::GetApp()->GetConfig()->GetYPad(), 
-                                        i*App::GetApp()->GetConfig()->GetTileSize(), 
-                                        (float)App::GetApp()->GetConfig()->GetMapPixelSize()+
-                                        (float)App::GetApp()->GetConfig()->GetYPad(), 
-                                        1 ,sf::Color::Black ));
+  for ( float i = 0; i <= Configuration::GetMapSize(); i++ ) {
+    App::GetApp()->Draw(
+      sf::Shape::Line( i * Configuration::GetTileSize(), 
+                       (float)Configuration::GetYPad(), 
+                       i * Configuration::GetTileSize(), 
+                       (float)Configuration::GetMapPixelSize()+
+                       (float)Configuration::GetYPad(), 
+                       1 ,sf::Color::Black ));
 
-    App::GetApp()->Draw(sf::Shape::Line( 0, i*App::GetApp()->GetConfig()->GetTileSize()+
-                                        (float)App::GetApp()->GetConfig()->GetYPad(),
-                                        (float)App::GetApp()->GetConfig()->GetMapPixelSize(),
-                                        i*App::GetApp()->GetConfig()->GetTileSize()+
-                                        (float)App::GetApp()->GetConfig()->GetYPad(), 
-                                        1, sf::Color::Black ));
+    App::GetApp()->Draw(
+      sf::Shape::Line( 0, i * Configuration::GetTileSize() +
+                          (float)Configuration::GetYPad(),
+                          (float)Configuration::GetMapPixelSize(),
+                          i * Configuration::GetTileSize() +
+                          (float)Configuration::GetYPad(), 
+                          1, sf::Color::Black ));
   }
 }
 
 void EditorState::DrawSideBar() {
-  App::GetApp()->Draw(sf::Shape::Rectangle((float)App::GetApp()->GetConfig()->GetMapPixelSize(),
-                                          (float)App::GetApp()->GetConfig()->GetYPad()+5.0f, // The outline size.
-                                          (float)App::GetApp()->GetConfig()->GetScreenWidth(), 
-                                          (float)App::GetApp()->GetConfig()->GetScreenHeight(),
-                                          sf::Color(153,180,209), 5.0f, sf::Color::Black));
+  App::GetApp()->Draw( 
+    sf::Shape::Rectangle( (float)Configuration::GetMapPixelSize(),
+                          (float)Configuration::GetYPad() + 5.0f, // The outline size.
+                          (float)Configuration::GetScreenWidth(), 
+                          (float)Configuration::GetScreenHeight(),
+                          sf::Color( 153, 180, 209 ), 5.0f, sf::Color::Black ));
+
   App::GetApp()->Draw( m_tileLayer );
   App::GetApp()->Draw( m_collisionLayer );
   App::GetApp()->Draw( m_gameObjectLayer );
@@ -228,10 +232,11 @@ void EditorState::SideBarEvents() {
 }
 
 void EditorState::DrawToolbar() {
-  App::GetApp()->Draw(sf::Shape::Rectangle(0.0f, 0.0f,
-                                          (float)App::GetApp()->GetConfig()->GetScreenWidth(), 
-                                          (float)App::GetApp()->GetConfig()->GetYPad(),
-                                          sf::Color(153,180,209), 5.0f, sf::Color::Black));
+  App::GetApp()->Draw(
+    sf::Shape::Rectangle( 0.0f, 0.0f,
+                          (float)Configuration::GetScreenWidth(), 
+                          (float)Configuration::GetYPad(),
+                          sf::Color( 153, 180, 209 ), 5.0f, sf::Color::Black ));
     // Draw Buttons
   App::GetApp()->Draw( m_saveMap );
   App::GetApp()->Draw( m_loadMap );
@@ -263,13 +268,13 @@ void EditorState::ToolbarEvents() {
 void EditorState::GridEvents() {
   if ( App::GetApp()->GetInput().IsMouseButtonDown( sf::Mouse::Left ) ) {
     unsigned int x = App::GetApp()->GetInput().GetMouseX() - 
-                    App::GetApp()->GetConfig()->GetXPad() / 
-                    App::GetApp()->GetConfig()->GetTileSize();
+                     Configuration::GetXPad() / 
+                     Configuration::GetTileSize();
     unsigned int y = App::GetApp()->GetInput().GetMouseY() - 
-                    App::GetApp()->GetConfig()->GetYPad() / 
-                    App::GetApp()->GetConfig()->GetTileSize();
+                     Configuration::GetYPad() / 
+                     Configuration::GetTileSize();
 
-    if ( App::GetApp()->GetConfig()->IsTileValid( x, y ) ) {
+    if ( Configuration::IsTileValid( x, y ) ) {
     }
   }
 }

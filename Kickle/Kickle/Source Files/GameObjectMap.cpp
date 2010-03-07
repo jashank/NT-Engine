@@ -1,5 +1,7 @@
 #include "GameObjectMap.h"
+
 #include "BasicTypeDefs.h"
+#include "Configuration.h"
 #include "Utilities.h"
 
 GameObjectMap::GameObjectMap() {
@@ -53,6 +55,7 @@ bool GameObjectMap::SetGameObjectMap( TiXmlElement* root ) {
   std::string entityData;
   int positionX;
   int positionY;
+  std::string entityType;
 
   for ( currentEntity = root->FirstChildElement( "entity" ); currentEntity; 
         currentEntity = currentEntity->NextSiblingElement( "entity" ) ) {
@@ -62,7 +65,15 @@ bool GameObjectMap::SetGameObjectMap( TiXmlElement* root ) {
       currentEntityInstance ; currentEntityInstance = currentEntityInstance->NextSiblingElement() ) {
         currentEntityInstance->Attribute( "x", &positionX );
         currentEntityInstance->Attribute( "y", &positionY );
-        AddGameObject(  new GameObject( entityData, (Uint) positionX, (Uint) positionY ));
+        entityType = currentEntityInstance->Attribute( "type" );
+        AddGameObject( 
+          new GameObject( 
+            entityData, 
+            (Uint) positionX, 
+            (Uint) positionY,
+            entityType 
+          )
+      );
     }
   }
   return false;
@@ -101,7 +112,7 @@ void GameObjectMap::RemoveGameObject( GameObject *gameObject ) {
 
 
 GameObject *GameObjectMap::GetGameObject( Uint x, Uint y ) const {
-  if ( App::GetApp()->GetConfig()->IsTileValid( x, y ) ) {
+  if ( Configuration::IsTileValid( x, y ) ) {
     DEBUG_STATEMENT( std::cout << x << " " << y << " " << 
                      m_gameObjectLayout[y][x] << std::endl; );
     if ( m_gameObjects.find( m_gameObjectLayout[y][x] ) != m_gameObjects.end() ) {

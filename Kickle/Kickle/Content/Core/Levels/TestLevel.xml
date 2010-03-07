@@ -39,16 +39,16 @@
 	</collision_layout>
 	<game_objects>
 		<entity data="Content\\Core\\Objects\\Slime.xml">
-			<instance x="6" y="8" />
-			<instance x="10" y="8" />
+			<instance x="6" y="8" type="Slime" />
+			<instance x="10" y="8" type="Slime" />
 		</entity>
 		<entity data="Content\\Core\\Objects\\MoneyBags.xml">
-			<instance x="6" y="2" />
-			<instance x="7" y="2" />
-			<instance x="8" y="2" />
+			<instance x="6" y="2" type="Money Bag"/>
+			<instance x="7" y="2" type="Money Bag"/>
+			<instance x="8" y="2" type="Money Bag"/>
 		</entity>
 		<entity data="Content\\Core\\Objects\\Kickle.xml">
-			<instance x="7" y="8" />
+			<instance x="7" y="8" type="Kickle" />
 		</entity>
 	</game_objects>
 

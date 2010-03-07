@@ -29,7 +29,12 @@ class GameObject : public sf::Sprite {
 
   GameObject( lua_State *L );
 	GameObject( const std::string &xmlGameObjectPath );
-  GameObject( const std::string &xmlGameObjectPath, Uint tileX, Uint tileY );
+  GameObject( 
+    const std::string &xmlGameObjectPath, 
+    Uint tileX, 
+    Uint tileY,
+    const std::string &type 
+  );
   ~GameObject();
 
 
@@ -201,6 +206,7 @@ class GameObject : public sf::Sprite {
 	float m_frameTime; //time left on current frame
   lua_State* m_luaState; //Mediator between C/C++ and Lua VM
   std::string m_luaScript; //filepath to the lua script
+  std::string m_type; // What type of game object (slime, kickle, etc.)
 	Uint m_animation; //current animation selections
 	Uint m_frame; //current frame selection
   int m_id; // Unique identifier for the object.

@@ -117,9 +117,6 @@ const sf::Input& App::GetInput() const {
   return m_window.GetInput();
 }
 
-Configuration *App::GetConfig() {
-  return &m_config;
-}
 
 sf::Image& App::LoadImage( const std::string &filename ) {
 	return m_images.Load( filename );

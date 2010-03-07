@@ -69,14 +69,20 @@ GameObject::GameObject( const std::string &xmlGameObjectPath )
   InitLua();
 }
 
-GameObject::GameObject( const std::string &xmlGameObjectPath, Uint tileX, Uint tileY )
+GameObject::GameObject( 
+  const std::string &xmlGameObjectPath, 
+  Uint tileX, 
+  Uint tileY, 
+  const std::string &type 
+)
  : m_play( false ),
    m_animation( 0 ),
    m_frameTime( 0.0f ),
    m_animData( 0 ),
    m_moving( false ),
    m_id( -1 ),
-   m_luaState(luaL_newstate()) { 
+   m_type( type ),
+   m_luaState( luaL_newstate() ) { 
   if( !LoadFromFile( xmlGameObjectPath ) ) {
     lua_close( m_luaState );
     m_luaState = 0;
@@ -88,15 +94,15 @@ GameObject::GameObject( const std::string &xmlGameObjectPath, Uint tileX, Uint t
   //max tiles across/down
   float x =
   static_cast<float>( 
-    Config::X_PAD +         //map's offset X location
-    Config::TILE_SIZE *     //tile size in pixels
-    (tileX%Config::MAP_SIZE)//number of tiles across tilemap
+    Configuration::GetXPad() +         //map's offset X location
+    Configuration::GetTileSize() *     //tile size in pixels
+    ( tileX % Configuration::GetMapSize() )//number of tiles across tilemap
   );
   float y =
   static_cast<float>( 
-    Config::Y_PAD +         //map's offset Y location
-    Config::TILE_SIZE *     //tile size in pixels
-    (tileY%Config::MAP_SIZE)//number of tiles down tilemap
+    Configuration::GetYPad() +         //map's offset Y location
+    Configuration::GetTileSize() *     //tile size in pixels
+    ( tileY % Configuration::GetMapSize() )//number of tiles down tilemap
   );
   
   //TODO - I need to handle this every time someone calls SetAnimation as well,
@@ -104,7 +110,7 @@ GameObject::GameObject( const std::string &xmlGameObjectPath, Uint tileX, Uint t
   //grid
 
   //Take into account the sprites that are taller than a normal tile
-  y -= m_animData->GetFrameHeight( m_animation )%Config::TILE_SIZE;
+  y -= m_animData->GetFrameHeight( m_animation ) % Configuration::GetTileSize();
 
   SetPosition( x, y );
 
@@ -185,23 +191,24 @@ void GameObject::MoveDir( Dir direction ) {
     sf::Vector2f tileToMoveTo( GetPosition() );
     
     //Take into account the sprites that are taller than a normal tile
-    tileToMoveTo.y += m_animData->GetFrameHeight( m_animation )%Config::TILE_SIZE;
+    tileToMoveTo.y += 
+      m_animData->GetFrameHeight( m_animation ) % Configuration::GetTileSize();
 
     switch ( m_direction ) {
       case Up: {
-        tileToMoveTo.y -= Config::TILE_SIZE;
+        tileToMoveTo.y -= Configuration::GetTileSize();
         break;
       }
       case Down: {
-        tileToMoveTo.y += Config::TILE_SIZE;
+        tileToMoveTo.y += Configuration::GetTileSize();
         break;
       }
       case Left: {
-        tileToMoveTo.x -= Config::TILE_SIZE;
+        tileToMoveTo.x -= Configuration::GetTileSize();
         break;
       }
       case Right: {
-        tileToMoveTo.x += Config::TILE_SIZE;
+        tileToMoveTo.x += Configuration::GetTileSize();
         break;
       }
       default: {}
@@ -275,13 +282,13 @@ void GameObject::StopMoving() {
   static sf::Vector2f pos;
   pos = GetPosition();
   if( //aligned perfectly in grid(taking into account tilemap's offset)
-    static_cast<int>(pos.x-Config::X_PAD)%Config::TILE_SIZE == 0 &&
+    static_cast<int>( pos.x - Configuration::GetXPad() ) % 
+                      Configuration::GetTileSize() == 0 &&
     static_cast<int>(
-      pos.y + 
-      m_animData->GetFrameHeight( m_animation ) - 
-      Config::TILE_SIZE -
-      Config::Y_PAD
-    )%Config::TILE_SIZE == 0 
+      pos.y + m_animData->GetFrameHeight( m_animation ) - 
+      Configuration::GetTileSize() -
+      Configuration::GetYPad() ) % 
+      Configuration::GetTileSize() == 0 
   ) {
     m_moving = false;
   }
@@ -315,16 +322,17 @@ void GameObject::Update() {
   static int x, y = 0;
 
   //Compensate for the tilemap's position and the taller gameobjects
-  x = static_cast<int>(pos.x - Config::X_PAD);
+  x = static_cast<int>( pos.x - Configuration::GetXPad() );
   y = 
     static_cast<int>(
-        (pos.y - Config::Y_PAD) +
-        (m_animData->GetFrameHeight( m_animation ) - 
-        Config::TILE_SIZE)
+        ( pos.y - Configuration::GetYPad() ) +
+        ( m_animData->GetFrameHeight( m_animation ) - 
+          Configuration::GetTileSize() )
     );
     
   //If aligned perfectly in grid
-  if( x % Config::TILE_SIZE == 0 && y % Config::TILE_SIZE == 0 ) {
+  if( x % Configuration::GetTileSize() == 0 && 
+      y % Configuration::GetTileSize() == 0 ) {
     m_moving = false;
     
     lua_getglobal( m_luaState, "HandleUserInput" );
@@ -349,16 +357,17 @@ void GameObject::Update() {
 
 
 Uint GameObject::GetTileX() {
-  return (Uint)(this->GetPosition().x -
-                        App::GetApp()->GetConfig()->GetXPad()) /
-                        App::GetApp()->GetConfig()->GetTileSize();
+  return (Uint)( this->GetPosition().x -
+                 Configuration::GetXPad() ) /
+                 Configuration::GetTileSize();
 }
   
 Uint GameObject::GetTileY() {
-return (Uint)( ( this->GetPosition().y +  
-              m_animData->GetFrameHeight( m_animation )  % Config::TILE_SIZE ) - 
-              App::GetApp()->GetConfig()->GetYPad() ) / 
-              App::GetApp()->GetConfig()->GetTileSize();
+return (Uint)(( this->GetPosition().y +  
+                m_animData->GetFrameHeight( m_animation ) % 
+                Configuration::GetTileSize() ) - 
+                Configuration::GetYPad() ) / 
+                Configuration::GetTileSize();
 }
 
 

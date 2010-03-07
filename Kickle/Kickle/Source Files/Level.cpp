@@ -26,9 +26,10 @@ void Level::Render() {
 }
 
 bool Level::IsTileSolid( const sf::Vector2f& position ) const {
-  Uint tileSize = App::GetApp()->GetConfig()->GetTileSize();
-  return m_collisionMap.IsTileSolid( ((int)position.x-App::GetApp()->GetConfig()->GetXPad())/tileSize , 
-                                      ((int)position.y-App::GetApp()->GetConfig()->GetYPad())/tileSize );
+  Uint tileSize = Configuration::GetTileSize();
+  return m_collisionMap.IsTileSolid( 
+    ( (int)position.x - Configuration::GetXPad() ) / tileSize , 
+    ( (int)position.y - Configuration::GetYPad() )/ tileSize );
 }
 
 bool Level::IsTileSolid( int x, int y ) const {
@@ -46,7 +47,7 @@ bool Level::SetLevel( std::string levelPath ) {
   TiXmlElement* root = doc.FirstChildElement( "map" );
 
   // Load in tiles.
-  Uint mapSize = App::GetApp()->GetConfig()->GetMapSize();
+  Uint mapSize = Configuration::GetMapSize();
 
   std::string tileString( root->FirstChildElement( "tile_layout" )->GetText() );
   std::stringstream tileMapStream( tileString, std::ios_base::in );
@@ -120,10 +121,10 @@ GameObject *Level::GetGameObject( Uint x, Uint y ) const {
 }
 
 GameObject *Level::GetGameObject( sf::Vector2f position ) const {
-  return GetGameObject((Uint)(position.x -
-                                        App::GetApp()->GetConfig()->GetXPad()) /
-                                        App::GetApp()->GetConfig()->GetTileSize(),
-                                        (Uint)(position.y -
-                                        App::GetApp()->GetConfig()->GetYPad()) /
-                                        App::GetApp()->GetConfig()->GetTileSize());
+  return GetGameObject( (Uint)( position.x -
+                                Configuration::GetXPad() ) /
+                                Configuration::GetTileSize(),
+                        (Uint)( position.y -
+                                Configuration::GetYPad() ) /
+                                Configuration::GetTileSize() );
 }

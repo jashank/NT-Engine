@@ -4,58 +4,51 @@
 #include "BasicTypeDefs.h"
 
 class Configuration {
-public:
+ public:
   Configuration();
   virtual ~Configuration();
 
-  void SetScreenWidth( Uint screenWidth );
-  Uint GetScreenWidth() const;
+  /********************************************************
+  Load
+  - Loads the configuration data.
+  ********************************************************/
+  static void Load();
 
-  void SetScreenHeight( Uint screenHeight );
-  Uint GetScreenHeight() const;
+  static void SetScreenWidth( Uint screenWidth );
+  static Uint GetScreenWidth();
 
-  void SetFPS( Uint FPS );
-  Uint GetFPS() const;
+  static void SetScreenHeight( Uint screenHeight );
+  static Uint GetScreenHeight();
 
-  void SetMapSize( Uint mapSize );
-  Uint GetMapSize() const;
+  static void SetFPS( Uint FPS );
+  static Uint GetFPS();
 
-  void SetTileSize( Uint tileSize );
-  Uint GetTileSize() const;
+  static void SetMapSize( Uint mapSize );
+  static Uint GetMapSize();
 
-  void SetXPad( Uint xPad );
-  Uint GetXPad() const;
+  static void SetTileSize( Uint tileSize );
+  static Uint GetTileSize();
 
-  void SetYPad( Uint yPad );
-  Uint GetYPad() const;
+  static void SetXPad( Uint xPad );
+  static Uint GetXPad();
+
+  static void SetYPad( Uint yPad );
+  static Uint GetYPad();
 
   // Returns MAP_SIZE*TILE_SIZE
-  Uint GetMapPixelSize();
+  static Uint GetMapPixelSize();
 
-  bool IsTileValid( Uint x, Uint y );
+  static bool IsTileValid( Uint x, Uint y );
 
 private:
-  Uint m_screenWidth;
-  Uint m_screenHeight;
-  Uint m_FPS;
-  Uint m_mapSize;
-  Uint m_tileSize;
-  Uint m_xPad;
-  Uint m_yPad;
+  static Uint m_screenWidth;
+  static Uint m_screenHeight;
+  static Uint m_FPS;
+  static Uint m_mapSize;
+  static Uint m_tileSize;
+  static Uint m_xPad;
+  static Uint m_yPad;
 };
-
-
-
-// Remove these instances from your code.
-namespace Config {
-  extern const Uint SCREEN_WIDTH;
-  extern const Uint SCREEN_HEIGHT;
-  extern const Uint FPS;
-  extern const Uint MAP_SIZE;
-  extern const Uint TILE_SIZE;
-  extern const Uint X_PAD;
-  extern const Uint Y_PAD;
-}
 
 #endif
 

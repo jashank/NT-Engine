@@ -8,12 +8,14 @@
 
 
 int main() {
+  Configuration::Load();
+
 	std::auto_ptr< App > Game( 
     App::CreateApp( 
       "Kickle!", 
-      Config::SCREEN_WIDTH, 
-      Config::SCREEN_HEIGHT, 
-      Config::FPS 
+      Configuration::GetScreenWidth(), 
+      Configuration::GetScreenHeight(), 
+      Configuration::GetFPS() 
     ) 
   );
 
