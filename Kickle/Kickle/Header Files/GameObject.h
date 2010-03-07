@@ -200,16 +200,16 @@ class GameObject : public sf::Sprite {
 	const AnimData *m_animData; //Pointer to constant animation data
   static const Level *m_level; // Level that GameObject is on
 
-  bool m_moving; //If true; keep moving in m_direction
-	bool m_play; //If true; animate GameObject
-  Dir m_direction; //current direction game object is moving
-	float m_frameTime; //time left on current frame
-  int m_id; // Unique identifier for the object.
-  lua_State* m_luaState; //Mediator between C/C++ and Lua VM
-  std::string m_luaScript; //filepath to the lua script
+  bool m_moving; // If true; keep moving in m_direction
+	bool m_play; // If true; animate GameObject
+  Dir m_direction; // Current direction game object is moving
+	float m_frameTime; // Time left on current frame
+  float m_distance; // Distance traveled from last grid location
+  lua_State* m_luaState; // Mediator between C/C++ and Lua VM
+  std::string m_luaScript; // Filepath to the lua script
   std::string m_type; // What type of game object (slime, kickle, etc.)
-	Uint m_animation; //current animation selections
-	Uint m_frame; //current frame selection
+	Uint m_animation; // Current animation selections
+	Uint m_frame; // Current frame selection
 };
 
 #endif

@@ -30,13 +30,14 @@ Lunar<GameObject>::RegType GameObject::methods[] = {
 Public Methods
 ************************************************/
 GameObject::GameObject( lua_State *L )
- : m_animData( 0 ),
-   m_moving( false ), 
-   m_play( false ),
+ : m_play( false ),
+   m_animation( 0 ),
    m_frameTime( 0.0f ),
+   m_distance( 0.0f ),
+   m_animData( 0 ),
+   m_moving( false ),
    m_id( -1 ),
-   m_luaState( luaL_newstate() ),
-   m_animation( 0 ) {
+   m_luaState(luaL_newstate()) {
   if( !lua_isstring( L, -1 ) ) {
     luaL_error( L, "Invalid argument for GameObject." );
   }
@@ -53,13 +54,14 @@ GameObject::GameObject( lua_State *L )
 
 
 GameObject::GameObject( const std::string &xmlGameObjectPath )
- : m_animData( 0 ),
-   m_moving( false ), 
-   m_play( false ),
+ : m_play( false ),
+   m_animation( 0 ),
    m_frameTime( 0.0f ),
+   m_distance( 0.0f ),
+   m_animData( 0 ),
+   m_moving( false ),
    m_id( -1 ),
-   m_luaState( luaL_newstate() ),
-   m_animation( 0 ) { 
+   m_luaState(luaL_newstate()) { 
   if( !LoadFromFile( xmlGameObjectPath ) ) {
     lua_close( m_luaState );
     m_luaState = 0;
@@ -75,14 +77,15 @@ GameObject::GameObject(
   Uint tileY, 
   const std::string &type 
 )
- : m_animData( 0 ),
-   m_moving( false ), 
-   m_play( false ),
+ : m_play( false ),
+   m_animation( 0 ),
    m_frameTime( 0.0f ),
+   m_distance( 0.0f ),
+   m_animData( 0 ),
+   m_moving( false ),
    m_id( -1 ),
-   m_luaState( luaL_newstate() ),
    m_type( type ),
-   m_animation( 0 ) { 
+   m_luaState( luaL_newstate() ) { 
   if( !LoadFromFile( xmlGameObjectPath ) ) {
     lua_close( m_luaState );
     m_luaState = 0;
@@ -187,6 +190,8 @@ void GameObject::AssignLevel( const Level *level ) {
 void GameObject::MoveDir( Dir direction ) {
   if( !m_moving ) {
     m_direction = direction;
+
+    m_distance = 0.0f;
 
     sf::Vector2f tileToMoveTo( GetPosition() );
     
@@ -298,7 +303,9 @@ void GameObject::StopMoving() {
 void GameObject::Update() {
   AnimUpdate();
   if( m_moving ) {
-    static const float SPEED = 1.0f;
+    static const float SPEED = 2.0f;
+    m_distance += SPEED;
+
     switch( m_direction ) {
     case Up:
       Move( 0.0f, -SPEED );
@@ -314,27 +321,8 @@ void GameObject::Update() {
       break;
     }
   }
-
-
-
-  static sf::Vector2f pos;
-  pos = GetPosition();
-  static int x, y = 0;
-
-  //Compensate for the tilemap's position and the taller gameobjects
-  x = static_cast<int>( pos.x - Configuration::GetXPad() );
-  y = 
-    static_cast<int>(
-        ( pos.y - Configuration::GetYPad() ) +
-        ( m_animData->GetFrameHeight( m_animation ) - 
-          Configuration::GetTileSize() )
-    );
-    
-  //If aligned perfectly in grid
-  if( x % Configuration::GetTileSize() == 0 && 
-      y % Configuration::GetTileSize() == 0 ) {
-    m_moving = false;
-    
+  else {
+    //Call HandleUserInput lua function
     lua_getglobal( m_luaState, "HandleUserInput" );
     if ( lua_isfunction( m_luaState, -1 )) {
       Lunar<GameObject>::push( m_luaState, this );
@@ -344,13 +332,38 @@ void GameObject::Update() {
     }
 
     
-    //call AILogic lua function
+    //Call AILogic lua function
     lua_getglobal( m_luaState, "AILogic" );
     if ( lua_isfunction( m_luaState, -1 )) {
       Lunar<GameObject>::push( m_luaState, this );
       lua_call( m_luaState, 1, 0 );
     } else {
       lua_pop( m_luaState, 1 );
+    }
+  }
+
+
+  
+  if( m_distance >= Configuration::GetTileSize() ) {
+    m_moving = false;
+    static float diff = 0.0f;
+    //Calculate the amount of distance to move back
+    diff = m_distance - Configuration::GetTileSize();
+
+    //Find the correct direction to move back
+    switch( m_direction ) {
+    case Up:
+      Move( 0.0f, diff );
+      break;
+    case Down:
+      Move( 0.0f, -diff );
+      break;
+    case Left:
+      Move( diff, 0.0f );
+      break;
+    case Right:
+      Move( -diff, 0.0f );
+      break;
     }
   }
 }

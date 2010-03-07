@@ -115,6 +115,7 @@ GameObject *GameObjectMap::GetGameObject( Uint x, Uint y ) const {
   if ( Configuration::IsTileValid( x, y ) ) {
     DEBUG_STATEMENT( std::cout << x << " " << y << " " << 
                      m_gameObjectLayout[y][x] << std::endl; );
+
     if ( m_gameObjects.find( m_gameObjectLayout[y][x] ) != m_gameObjects.end() ) {
       return m_gameObjects.find( m_gameObjectLayout[y][x] )->second;
     }
