@@ -69,8 +69,8 @@ public:
   *****************************************/
   GameObject *GetGameObject( Uint x, Uint y ) const;
   GameObject *GetGameObject( sf::Vector2f position ) const;
-private:
 
+private:
   /**************************************
 	Init()
 	-Called by the constructor simply sets
