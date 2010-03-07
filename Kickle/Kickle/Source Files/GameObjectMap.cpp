@@ -102,7 +102,8 @@ void GameObjectMap::RemoveGameObject( GameObject *gameObject ) {
 
 GameObject *GameObjectMap::GetGameObject( Uint x, Uint y ) const {
   if ( App::GetApp()->GetConfig()->IsTileValid( x, y ) ) {
-    std::cout << x << " " << y << " " << m_gameObjectLayout[y][x] << std::endl;
+    DEBUG_STATEMENT( std::cout << x << " " << y << " " << 
+                     m_gameObjectLayout[y][x] << std::endl; );
     if ( m_gameObjects.find( m_gameObjectLayout[y][x] ) != m_gameObjects.end() ) {
       return m_gameObjects.find( m_gameObjectLayout[y][x] )->second;
     }

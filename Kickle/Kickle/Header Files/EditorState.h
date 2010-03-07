@@ -86,6 +86,7 @@ class EditorState : public BaseState {
 
    void DrawToolbar();
    void ToolbarEvents();
+   void GridEvents();
   /************************************************
   Restricts construction, copy construction, 
   and assignment.

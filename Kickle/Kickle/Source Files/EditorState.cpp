@@ -91,6 +91,7 @@ void EditorState::Resume() {
 void EditorState::HandleEvents() {
   SideBarEvents();
   ToolbarEvents();
+  GridEvents();
 }
 
 
@@ -255,6 +256,20 @@ void EditorState::ToolbarEvents() {
     else if ( m_exit.ContainsCursor( App::GetApp()->GetInput().GetMouseX(), 
                                 App::GetApp()->GetInput().GetMouseY() )) {
       m_exit.Activate();
+    }
+  }
+}
+
+void EditorState::GridEvents() {
+  if ( App::GetApp()->GetInput().IsMouseButtonDown( sf::Mouse::Left ) ) {
+    unsigned int x = App::GetApp()->GetInput().GetMouseX() - 
+                    App::GetApp()->GetConfig()->GetXPad() / 
+                    App::GetApp()->GetConfig()->GetTileSize();
+    unsigned int y = App::GetApp()->GetInput().GetMouseY() - 
+                    App::GetApp()->GetConfig()->GetYPad() / 
+                    App::GetApp()->GetConfig()->GetTileSize();
+
+    if ( App::GetApp()->GetConfig()->IsTileValid( x, y ) ) {
     }
   }
 }
