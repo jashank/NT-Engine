@@ -205,6 +205,7 @@ class GameObject : public sf::Sprite {
   Dir m_direction; // Current direction game object is moving
 	float m_frameTime; // Time left on current frame
   float m_distance; // Distance traveled from last grid location
+  int m_id; // ID of object
   lua_State* m_luaState; // Mediator between C/C++ and Lua VM
   std::string m_luaScript; // Filepath to the lua script
   std::string m_type; // What type of game object (slime, kickle, etc.)
