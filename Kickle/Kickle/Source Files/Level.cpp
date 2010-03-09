@@ -27,9 +27,13 @@ void Level::Render() {
 
 bool Level::IsTileSolid( const sf::Vector2f& position ) const {
   Uint tileSize = Configuration::GetTileSize();
-  return m_collisionMap.IsTileSolid( 
-    ( (int)position.x - Configuration::GetXPad() ) / tileSize , 
-    ( (int)position.y - Configuration::GetYPad() )/ tileSize );
+  Uint tileX = ( position.x - Configuration::GetXPad() ) / tileSize;
+  Uint tileY = ( position.y - Configuration::GetYPad() ) / tileSize;
+
+  return ( 
+    m_collisionMap.IsTileSolid( tileX, tileY ) ||
+    m_gameObjectMap.GetGameObject( tileX, tileY ) 
+  );
 }
 
 bool Level::IsTileSolid( int x, int y ) const {
@@ -129,12 +133,12 @@ GameObject *Level::GetGameObject( sf::Vector2f position ) const {
                                 Configuration::GetTileSize() );
 }
 
-void Level::UpdatePosition( GameObject* gameObject, Uint x, Uint y ) {
-  m_gameObjectMap.UpdatePosition( gameObject, x, y );
+void Level::UpdatePosition( int id, Uint x, Uint y ) {
+  m_gameObjectMap.UpdatePosition( id, x, y );
 }
 
-void Level::UpdatePosition( GameObject* gameObject, sf::Vector2f position ) {
-    m_gameObjectMap.UpdatePosition( gameObject,
+void Level::UpdatePosition( int id, sf::Vector2f position ) {
+    m_gameObjectMap.UpdatePosition( id,
                                 (Uint)( position.x -
                                 Configuration::GetXPad() ) /
                                 Configuration::GetTileSize(),

@@ -27,7 +27,6 @@ void GameObjectMap::Init() {
   }
 }
 
-
 void GameObjectMap::Update() {
   for ( int i = 0; i < m_nextId; i++ ) {
     if ( m_gameObjects[i] != 0 ) {
@@ -111,8 +110,8 @@ void GameObjectMap::RemoveGameObject( GameObject *gameObject ) {
 
 GameObject *GameObjectMap::GetGameObject( Uint x, Uint y ) const {
   if ( Configuration::IsTileValid( x, y ) ) {
-    DEBUG_STATEMENT( std::cout << x << " " << y << " " << 
-                     m_gameObjectLayout[y][x] << std::endl; );
+    //DEBUG_STATEMENT( std::cout << x << " " << y << " " << 
+    //                 m_gameObjectLayout[y][x] << std::endl; );
 
     if ( m_gameObjects.find( m_gameObjectLayout[y][x] ) != m_gameObjects.end() ) {
       return m_gameObjects.find( m_gameObjectLayout[y][x] )->second;
@@ -122,9 +121,8 @@ GameObject *GameObjectMap::GetGameObject( Uint x, Uint y ) const {
   return NULL;
 }
 
-void GameObjectMap::UpdatePosition( GameObject* gameObject,  Uint x, Uint y ) {
+void GameObjectMap::UpdatePosition( int id,  Uint x, Uint y ) {
   if ( Configuration::IsTileValid( x, y ) ) {
-    m_gameObjectLayout[gameObject->GetTileY()][gameObject->GetTileX()] = NULL_GAME_OBJECT;
-    m_gameObjectLayout[y][x] = gameObject->GetId();
+    m_gameObjectLayout[y][x] = id;
   }
 }

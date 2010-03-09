@@ -221,7 +221,7 @@ void GameObject::MoveDir( Dir direction ) {
 
     if ( !m_level->IsTileSolid( tileToMoveTo ) ) {
       if ( m_level->GetGameObject( tileToMoveTo ) == NULL ) {
-        m_level->UpdatePosition( this, tileToMoveTo );
+        m_level->UpdatePosition( m_id, tileToMoveTo );
         m_moving = true;
       } else {
         m_moving = false; // Do collision stuff here.
@@ -344,9 +344,10 @@ void GameObject::Update() {
   }
 
 
-  
+
   if( m_distance >= Configuration::GetTileSize() ) {
     m_moving = false;
+
     static float diff = 0.0f;
     //Calculate the amount of distance to move back
     diff = m_distance - Configuration::GetTileSize();
@@ -366,6 +367,32 @@ void GameObject::Update() {
       Move( -diff, 0.0f );
       break;
     }
+  }
+  else if( m_distance >= (Configuration::GetTileSize()*(2.0f/3.0f)) ) {
+    static sf::Vector2f lastTile;
+    lastTile = GetPosition();
+    //Take into account the sprites that are taller than a normal tile
+    lastTile.y += 
+      m_animData->GetFrameHeight( m_animation ) % Configuration::GetTileSize();
+  
+    //Find the correct last tile
+    switch( m_direction ) {
+    case Up:
+      lastTile.y += m_distance; //last tile was below 
+      break;
+    case Down:
+      lastTile.y -= m_distance; //last tile was above
+      break;
+    case Left:
+      lastTile.x += m_distance; //last tile was to the right
+      break;
+    case Right:
+      lastTile.x -= m_distance; //last tile was to the left
+      break;
+    }
+
+    //Removes GameObject from it's last tile location
+    m_level->UpdatePosition( GameObjectMap::NULL_GAME_OBJECT, lastTile );
   }
 }
 

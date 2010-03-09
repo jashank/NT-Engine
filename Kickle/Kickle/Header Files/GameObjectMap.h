@@ -12,6 +12,8 @@
 
 class GameObjectMap {
   public:
+    static const int NULL_GAME_OBJECT = -1;
+
     GameObjectMap();
     virtual ~GameObjectMap();
     
@@ -20,11 +22,12 @@ class GameObjectMap {
 
     bool SetGameObjectMap( TiXmlElement* root );
 
+    
     void AddGameObject( GameObject *gameObject );
     void RemoveGameObject( GameObject *gameObject );
 
     GameObject *GetGameObject( Uint x, Uint y ) const;
-    void UpdatePosition( GameObject* gameObject,  Uint x, Uint y );
+    void UpdatePosition( int id,  Uint x, Uint y );
   private:
     void Init();
 
@@ -35,7 +38,6 @@ class GameObjectMap {
     // This is the next possible expansion to the players ids.
     int m_nextId;
 
-    static const int NULL_GAME_OBJECT = -1;
     static const int MAP_SIZE = 15;
 
     int m_gameObjectLayout[MAP_SIZE][MAP_SIZE];
