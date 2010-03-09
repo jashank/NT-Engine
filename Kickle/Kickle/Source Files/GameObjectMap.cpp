@@ -31,9 +31,7 @@ void GameObjectMap::Init() {
 void GameObjectMap::Update() {
   for ( int i = 0; i < m_nextId; i++ ) {
     if ( m_gameObjects[i] != 0 ) {
-      m_gameObjectLayout[m_gameObjects[i]->GetTileY()][m_gameObjects[i]->GetTileX()] = NULL_GAME_OBJECT;
       m_gameObjects[i]->Update();
-      m_gameObjectLayout[m_gameObjects[i]->GetTileY()][m_gameObjects[i]->GetTileX()] = i;
     }
   }
 }
@@ -122,4 +120,11 @@ GameObject *GameObjectMap::GetGameObject( Uint x, Uint y ) const {
     return NULL;
   }
   return NULL;
+}
+
+void GameObjectMap::UpdatePosition( GameObject* gameObject,  Uint x, Uint y ) {
+  if ( Configuration::IsTileValid( x, y ) ) {
+    m_gameObjectLayout[gameObject->GetTileY()][gameObject->GetTileX()] = NULL_GAME_OBJECT;
+    m_gameObjectLayout[y][x] = gameObject->GetId();
+  }
 }

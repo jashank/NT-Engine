@@ -67,7 +67,7 @@ class GameObject : public sf::Sprite {
 	AssignLevel
 	-Lets GameObject know what level it is on.
 	************************************************/
-  static void AssignLevel( const Level *level );
+  static void AssignLevel( Level *level );
 
 	/************************************************
 	MoveDir
@@ -198,7 +198,7 @@ class GameObject : public sf::Sprite {
 
 
 	const AnimData *m_animData; //Pointer to constant animation data
-  static const Level *m_level; // Level that GameObject is on
+  static  Level *m_level; // Level that GameObject is on
 
   bool m_moving; // If true; keep moving in m_direction
 	bool m_play; // If true; animate GameObject

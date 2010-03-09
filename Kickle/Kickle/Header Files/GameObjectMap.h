@@ -24,6 +24,7 @@ class GameObjectMap {
     void RemoveGameObject( GameObject *gameObject );
 
     GameObject *GetGameObject( Uint x, Uint y ) const;
+    void UpdatePosition( GameObject* gameObject,  Uint x, Uint y );
   private:
     void Init();
 

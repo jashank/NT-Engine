@@ -14,7 +14,7 @@
 /************************************************
 Constant Members
 ************************************************/
-const Level* GameObject::m_level = 0;
+Level* GameObject::m_level = 0;
 
 /************************************************
 Public Members
@@ -182,7 +182,7 @@ bool GameObject::LoadFromFile( const std::string& filepath ) {
 }
 
 
-void GameObject::AssignLevel( const Level *level ) {
+void GameObject::AssignLevel( Level *level ) {
   m_level = level;
 }
 
@@ -221,6 +221,7 @@ void GameObject::MoveDir( Dir direction ) {
 
     if ( !m_level->IsTileSolid( tileToMoveTo ) ) {
       if ( m_level->GetGameObject( tileToMoveTo ) == NULL ) {
+        m_level->UpdatePosition( this, tileToMoveTo );
         m_moving = true;
       } else {
         m_moving = false; // Do collision stuff here.

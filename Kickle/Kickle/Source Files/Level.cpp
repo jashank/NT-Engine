@@ -128,3 +128,17 @@ GameObject *Level::GetGameObject( sf::Vector2f position ) const {
                                 Configuration::GetYPad() ) /
                                 Configuration::GetTileSize() );
 }
+
+void Level::UpdatePosition( GameObject* gameObject, Uint x, Uint y ) {
+  m_gameObjectMap.UpdatePosition( gameObject, x, y );
+}
+
+void Level::UpdatePosition( GameObject* gameObject, sf::Vector2f position ) {
+    m_gameObjectMap.UpdatePosition( gameObject,
+                                (Uint)( position.x -
+                                Configuration::GetXPad() ) /
+                                Configuration::GetTileSize(),
+                                (Uint)( position.y -
+                                Configuration::GetYPad() ) /
+                                Configuration::GetTileSize() );
+}

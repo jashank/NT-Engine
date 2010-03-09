@@ -69,6 +69,8 @@ public:
   *****************************************/
   GameObject *GetGameObject( Uint x, Uint y ) const;
   GameObject *GetGameObject( sf::Vector2f position ) const;
+  void UpdatePosition( GameObject* gameObject, Uint x, Uint y );
+  void UpdatePosition( GameObject* gameObject, sf::Vector2f position );
 
 private:
   /**************************************
