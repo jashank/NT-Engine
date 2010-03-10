@@ -90,7 +90,7 @@ void GameObjectMap::RemoveGameObject( GameObject *gameObject ) {
 }
 
 
-bool GameObjectMap::ObjectHasCollided( GameObject *gameObject ) {
+GameObject *GameObjectMap::ObjectHasCollided( GameObject *gameObject) {
   float leftA = gameObject->GetCollisionBox().Left;
   float rightA = gameObject->GetCollisionBox().Right;
   float topA = gameObject->GetCollisionBox().Top;
@@ -102,10 +102,10 @@ bool GameObjectMap::ObjectHasCollided( GameObject *gameObject ) {
            rightA >= m_gameObjects[i]->GetCollisionBox().Left &&
            topA <= m_gameObjects[i]->GetCollisionBox().Bottom &&
            bottomA >= m_gameObjects[i]->GetCollisionBox().Top ) {
-        return true;
+        return m_gameObjects[i];
       }
     }
   }
 
-  return false;
+  return NULL;
 }

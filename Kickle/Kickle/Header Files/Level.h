@@ -67,7 +67,7 @@ public:
   - Returns whether gameObject has collided with
     another object
   ***************************************************/
-  bool ObjectHasCollided( GameObject *gameObject );
+  GameObject *ObjectHasCollided( GameObject *gameObject );
 
 
 private:

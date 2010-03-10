@@ -25,8 +25,7 @@ class GameObjectMap {
     void AddGameObject( GameObject *gameObject );
     void RemoveGameObject( GameObject *gameObject );
     
-    bool ObjectHasCollided( GameObject *gameObject );
-
+    GameObject *ObjectHasCollided( GameObject *gameObject);
   private:
     void Init();
 

@@ -190,9 +190,10 @@ void GameObject::MoveDir( Dir direction ) {
     }
 
     if ( !m_level->IsTileSolid( tileToMoveTo ) && 
-         !m_level->ObjectHasCollided( this ) ) {
+         m_level->ObjectHasCollided( this ) == NULL ) {
       m_moving = true;
     } else {
+      // We use what is returned from ObjectHasCollided to do stuff.
       m_moving = false; // Do collision stuff here.
     }
   }

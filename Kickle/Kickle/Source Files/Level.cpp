@@ -107,6 +107,6 @@ void Level::SetTile (int x, int y, int tileId, int collisionId ) {
 }
 
 
-bool Level::ObjectHasCollided( GameObject *gameObject ) {
+GameObject *Level::ObjectHasCollided( GameObject *gameObject ) {
   return m_gameObjectMap.ObjectHasCollided( gameObject );
 }
