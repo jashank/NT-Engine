@@ -63,11 +63,11 @@ public:
   void SetTile ( int x, int y, int tileId, int collisionId );
   
   /**************************************************
-  ObjectHasCollided()
+  DetectObjectCollision()
   - Returns whether gameObject has collided with
     another object
   ***************************************************/
-  GameObject *ObjectHasCollided( GameObject *gameObject );
+  GameObject *DetectObjectCollision( GameObject *gameObject );
 
 
 private:

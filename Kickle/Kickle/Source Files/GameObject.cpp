@@ -190,7 +190,7 @@ void GameObject::MoveDir( Dir direction ) {
     }
 
     if ( !m_level->IsTileSolid( tileToMoveTo ) && 
-         m_level->ObjectHasCollided( this ) == NULL ) {
+         m_level->DetectObjectCollision( this ) == NULL ) {
       m_moving = true;
     } else {
       // We use what is returned from ObjectHasCollided to do stuff.
@@ -485,11 +485,17 @@ bool GameObject::LoadCollisionData( const std::string &filepath ) {
   TiXmlElement* root = handleDoc.FirstChildElement( "game_object" ).Element();
 
   m_collisionRect.Left = GetPosition().x;
-  std::string width( root->FirstChildElement( "width" )->GetText() );
+  std::string rectXOffset( root->FirstChildElement( "solid_area_x" )->GetText() );
+  m_collisionRect.Left += atoi( rectXOffset.c_str() );
+
+  std::string width( root->FirstChildElement( "solid_area_width" )->GetText() );
   m_collisionRect.Right = m_collisionRect.Left + atoi( width.c_str() );
 
   m_collisionRect.Top = GetPosition().y;
-  std::string height( root->FirstChildElement( "height" )->GetText() );
+  std::string rectYOffset( root->FirstChildElement( "solid_area_y" )->GetText() );
+  m_collisionRect.Top += atoi( rectYOffset.c_str() );
+
+  std::string height( root->FirstChildElement( "solid_area_height" )->GetText() );
   m_collisionRect.Bottom = m_collisionRect.Top + atoi( height.c_str() );
   
   return true;

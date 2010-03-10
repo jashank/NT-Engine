@@ -90,7 +90,7 @@ void GameObjectMap::RemoveGameObject( GameObject *gameObject ) {
 }
 
 
-GameObject *GameObjectMap::ObjectHasCollided( GameObject *gameObject) {
+GameObject *GameObjectMap::DetectCollision( GameObject *gameObject) {
   float leftA = gameObject->GetCollisionBox().Left;
   float rightA = gameObject->GetCollisionBox().Right;
   float topA = gameObject->GetCollisionBox().Top;

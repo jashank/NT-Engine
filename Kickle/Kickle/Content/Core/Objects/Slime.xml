@@ -12,10 +12,16 @@
   <typename>
     Slime
   </typename>
-  <width>
+  <solid_area_x>
+    0
+  </solid_area_x>
+  <solid_area_y>
+    0
+  </solid_area_y>
+  <solid_area_width>
     48
-  </width>
-  <height>
+  </solid_area_width>
+  <solid_area_height>
     48
-  </height>
+  </solid_area_height>
 </game_object>

@@ -12,10 +12,16 @@
   <typename>
     Kickle
   </typename>
-  <width>
-    48
-  </width>
-  <height>
-    48
-  </height>
+  <solid_area_x>
+    10
+  </solid_area_x>
+  <solid_area_y>
+    15
+  </solid_area_y>
+  <solid_area_width>
+    17
+  </solid_area_width>
+  <solid_area_height>
+    24
+  </solid_area_height>
 </game_object>

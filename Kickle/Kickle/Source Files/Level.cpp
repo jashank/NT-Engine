@@ -107,6 +107,6 @@ void Level::SetTile (int x, int y, int tileId, int collisionId ) {
 }
 
 
-GameObject *Level::ObjectHasCollided( GameObject *gameObject ) {
-  return m_gameObjectMap.ObjectHasCollided( gameObject );
+GameObject *Level::DetectObjectCollision( GameObject *gameObject ) {
+  return m_gameObjectMap.DetectCollision( gameObject );
 }
