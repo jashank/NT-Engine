@@ -27,8 +27,8 @@ void Level::Render() {
 
 bool Level::IsTileSolid( const sf::Vector2f& position ) const {
   Uint tileSize = Configuration::GetTileSize();
-  Uint tileX = ( position.x - Configuration::GetXPad() ) / tileSize;
-  Uint tileY = ( position.y - Configuration::GetYPad() ) / tileSize;
+  Uint tileX = (Uint)( position.x - Configuration::GetXPad() ) / tileSize;
+  Uint tileY = (Uint)( position.y - Configuration::GetYPad() ) / tileSize;
 
   return ( m_collisionMap.IsTileSolid( tileX, tileY ) );
 }
