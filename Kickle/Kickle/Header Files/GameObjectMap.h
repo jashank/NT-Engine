@@ -22,12 +22,11 @@ class GameObjectMap {
 
     bool SetGameObjectMap( TiXmlElement* root );
 
-    
     void AddGameObject( GameObject *gameObject );
     void RemoveGameObject( GameObject *gameObject );
+    
+    bool ObjectHasCollided( GameObject *gameObject );
 
-    GameObject *GetGameObject( Uint x, Uint y ) const;
-    void UpdatePosition( int id,  Uint x, Uint y );
   private:
     void Init();
 
@@ -39,8 +38,6 @@ class GameObjectMap {
     int m_nextId;
 
     static const int MAP_SIZE = 15;
-
-    int m_gameObjectLayout[MAP_SIZE][MAP_SIZE];
 };
 
 #endif

@@ -61,17 +61,14 @@ public:
   - Sets the tile at x, y to that tile with that id
   ***************************************************/
   void SetTile ( int x, int y, int tileId, int collisionId );
+  
+  /**************************************************
+  ObjectHasCollided()
+  - Returns whether gameObject has collided with
+    another object
+  ***************************************************/
+  bool ObjectHasCollided( GameObject *gameObject );
 
-  /*****************************************
-  GetGameObject()
-  - Returns a pointer to the game object at
-    the location. Else returns Null
-  *****************************************/
-  GameObject *GetGameObject( Uint x, Uint y ) const;
-  GameObject *GetGameObject( sf::Vector2f position ) const;
-
-  void UpdatePosition( int id, Uint x, Uint y );
-  void UpdatePosition( int id, sf::Vector2f position );
 
 private:
   /**************************************

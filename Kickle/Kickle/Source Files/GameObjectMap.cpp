@@ -20,11 +20,6 @@ GameObjectMap::~GameObjectMap() {
 
 void GameObjectMap::Init() {
   m_nextId = 0;
-  for ( int i = 0; i < MAP_SIZE; i++ ) {
-    for ( int j = 0; j < MAP_SIZE; j++ ) {
-      m_gameObjectLayout[i][j] = NULL_GAME_OBJECT;
-    }
-  }
 }
 
 void GameObjectMap::Update() {
@@ -52,7 +47,6 @@ bool GameObjectMap::SetGameObjectMap( TiXmlElement* root ) {
   std::string entityData;
   int positionX;
   int positionY;
-  std::string entityType;
 
   for ( currentEntity = root->FirstChildElement( "entity" ); currentEntity; 
         currentEntity = currentEntity->NextSiblingElement( "entity" ) ) {
@@ -62,15 +56,7 @@ bool GameObjectMap::SetGameObjectMap( TiXmlElement* root ) {
       currentEntityInstance ; currentEntityInstance = currentEntityInstance->NextSiblingElement() ) {
         currentEntityInstance->Attribute( "x", &positionX );
         currentEntityInstance->Attribute( "y", &positionY );
-        entityType = currentEntityInstance->Attribute( "type" );
-        AddGameObject( 
-          new GameObject( 
-            entityData, 
-            (Uint) positionX, 
-            (Uint) positionY,
-            entityType 
-          )
-      );
+        AddGameObject( new GameObject( entityData, (Uint)positionX, (Uint)positionY ));
     }
   }
   return false;
@@ -79,6 +65,7 @@ bool GameObjectMap::SetGameObjectMap( TiXmlElement* root ) {
 
 void GameObjectMap::AddGameObject( GameObject *gameObject ) {
   int nextId;
+
   if ( !m_avaliableIds.empty() ) {
     nextId = m_avaliableIds.back();
     m_avaliableIds.pop_back();
@@ -87,15 +74,10 @@ void GameObjectMap::AddGameObject( GameObject *gameObject ) {
     m_nextId++;
   }
 
-  DEBUG_STATEMENT( std::cout << "Adding GameObject: id[" << nextId << "] x[" <<
-                   gameObject->GetTileX() << "] y[" << gameObject->GetTileY() 
-                   << "]" << std::endl; );
-
-   m_gameObjects[nextId] = gameObject;
-   gameObject->SetId( nextId );
+  m_gameObjects[nextId] = gameObject;
+  gameObject->SetId( nextId );
  
-
-   gameObject->Play();
+  gameObject->Play();
 }
 
 
@@ -108,21 +90,22 @@ void GameObjectMap::RemoveGameObject( GameObject *gameObject ) {
 }
 
 
-GameObject *GameObjectMap::GetGameObject( Uint x, Uint y ) const {
-  if ( Configuration::IsTileValid( x, y ) ) {
-    //DEBUG_STATEMENT( std::cout << x << " " << y << " " << 
-    //                 m_gameObjectLayout[y][x] << std::endl; );
+bool GameObjectMap::ObjectHasCollided( GameObject *gameObject ) {
+  float leftA = gameObject->GetCollisionBox().Left;
+  float rightA = gameObject->GetCollisionBox().Right;
+  float topA = gameObject->GetCollisionBox().Top;
+  float bottomA = gameObject->GetCollisionBox().Bottom;
 
-    if ( m_gameObjects.find( m_gameObjectLayout[y][x] ) != m_gameObjects.end() ) {
-      return m_gameObjects.find( m_gameObjectLayout[y][x] )->second;
+  for ( int i = 0; i < m_nextId; ++i ) {
+    if ( m_gameObjects[i] != gameObject ) {
+      if ( leftA <= m_gameObjects[i]->GetCollisionBox().Right &&
+           rightA >= m_gameObjects[i]->GetCollisionBox().Left &&
+           topA <= m_gameObjects[i]->GetCollisionBox().Bottom &&
+           bottomA >= m_gameObjects[i]->GetCollisionBox().Top ) {
+        return true;
+      }
     }
-    return NULL;
   }
-  return NULL;
-}
 
-void GameObjectMap::UpdatePosition( int id,  Uint x, Uint y ) {
-  if ( Configuration::IsTileValid( x, y ) ) {
-    m_gameObjectLayout[y][x] = id;
-  }
+  return false;
 }

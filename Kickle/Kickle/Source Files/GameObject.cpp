@@ -1,5 +1,6 @@
 #include "GameObject.h"
 
+#include <cstdlib>
 #include <iostream>
 
 #include "tinyxml.h"
@@ -43,7 +44,8 @@ GameObject::GameObject( lua_State *L )
   }
 
   std::string xmlPath( lua_tostring( L, -1 ) );
-  if( !LoadFromFile( xmlPath ) ) {
+  if( !LoadObjectData( xmlPath ) &&
+      !LoadCollisionData( xmlPath ) ) {
     lua_close( m_luaState );
     m_luaState = 0;
     throw "Cannon load GameObject XML file";
@@ -62,7 +64,8 @@ GameObject::GameObject( const std::string &xmlGameObjectPath )
    m_moving( false ),
    m_id( -1 ),
    m_luaState(luaL_newstate()) { 
-  if( !LoadFromFile( xmlGameObjectPath ) ) {
+  if( !LoadObjectData( xmlGameObjectPath ) &&
+      !LoadCollisionData( xmlGameObjectPath )) {
     lua_close( m_luaState );
     m_luaState = 0;
     throw "Cannot load GameObject XML file";
@@ -74,8 +77,7 @@ GameObject::GameObject( const std::string &xmlGameObjectPath )
 GameObject::GameObject( 
   const std::string &xmlGameObjectPath, 
   Uint tileX, 
-  Uint tileY, 
-  const std::string &type 
+  Uint tileY
 )
  : m_play( false ),
    m_animation( 0 ),
@@ -84,14 +86,13 @@ GameObject::GameObject(
    m_animData( 0 ),
    m_moving( false ),
    m_id( -1 ),
-   m_type( type ),
    m_luaState( luaL_newstate() ) { 
-  if( !LoadFromFile( xmlGameObjectPath ) ) {
-    lua_close( m_luaState );
-    m_luaState = 0;
-    throw "Cannot load GameObject XML file";
+  if( !LoadObjectData( xmlGameObjectPath ) ) {
+  lua_close( m_luaState );
+  m_luaState = 0;
+  throw "Cannot load GameObject XML file";
   }
-  
+
   //Calculate the float positions given tileX and tileY
   //Taking into account tilemap's offset location, tile size, and
   //max tiles across/down
@@ -116,6 +117,12 @@ GameObject::GameObject(
   y -= m_animData->GetFrameHeight( m_animation ) % Configuration::GetTileSize();
 
   SetPosition( x, y );
+
+  if( !LoadCollisionData( xmlGameObjectPath ) ) {
+    lua_close( m_luaState );
+    m_luaState = 0;
+    throw "Cannot load GameObject XML file";
+  }
 
   InitLua();
 }
@@ -142,43 +149,6 @@ Uint GameObject::GetFrame() const {
 
 Uint GameObject::GetAnimation() const {
 	return m_animation;
-}
-
-
-bool GameObject::LoadFromFile( const std::string& filepath ) {
-  TiXmlDocument doc ( filepath.c_str() );
-  
-  if ( !doc.LoadFile() ) {
-    return false;
-  }
-
-  TiXmlHandle handleDoc( &doc );
-  TiXmlElement* root = handleDoc.FirstChildElement( "game_object" ).Element();
-
-  //Load in path to GameObject's spritesheet
-  std::string spritePath( root->FirstChildElement( "sprite_path" )->GetText() );
-
-  //Load in path to animation's xml
-  std::string animPath( root->FirstChildElement( "animation_path" )->GetText() );
-
-  //Load in path to GameObject's lua script
-  m_luaScript =  root->FirstChildElement( "script_path" )->GetText();
-
-
-  App* app= App::GetApp();
-
-  //Load the spritesheet image
-  sf::Image& img = app->LoadImageW( spritePath.c_str() );
-  //Set all pink pixels to be treated as clear
-  img.CreateMaskFromColor( sf::Color( 255, 0, 255 ) );
-  //Set the spritesheet image
-  SetImage( img );
-
-  //Load/Set the animation data
-  AnimData& anim = app->LoadAnim( animPath.c_str() );
-  SetAnimData( anim );
-
-  return true;
 }
 
 
@@ -219,13 +189,11 @@ void GameObject::MoveDir( Dir direction ) {
       default: {}
     }
 
-    if ( !m_level->IsTileSolid( tileToMoveTo ) ) {
-      if ( m_level->GetGameObject( tileToMoveTo ) == NULL ) {
-        m_level->UpdatePosition( m_id, tileToMoveTo );
-        m_moving = true;
-      } else {
-        m_moving = false; // Do collision stuff here.
-      }
+    if ( !m_level->IsTileSolid( tileToMoveTo ) && 
+         !m_level->ObjectHasCollided( this ) ) {
+      m_moving = true;
+    } else {
+      m_moving = false; // Do collision stuff here.
     }
   }
 }
@@ -303,22 +271,27 @@ void GameObject::StopMoving() {
 
 void GameObject::Update() {
   AnimUpdate();
+
   if( m_moving ) {
-    static const float SPEED = 2.0f;
+    static const float SPEED = 1.0f;
     m_distance += SPEED;
 
     switch( m_direction ) {
     case Up:
       Move( 0.0f, -SPEED );
+      m_collisionRect.Offset( 0.f, -SPEED );
       break;
     case Down:
       Move( 0.0f, SPEED );
+      m_collisionRect.Offset( 0.f, SPEED );
       break;
     case Left:
       Move( -SPEED, 0.0f );
+      m_collisionRect.Offset( -SPEED, 0.f );
       break;
     case Right:
       Move( SPEED, 0.0f );
+      m_collisionRect.Offset( SPEED, 0.f );
       break;
     }
   }
@@ -331,7 +304,6 @@ void GameObject::Update() {
     } else {
       lua_pop( m_luaState, 1 );
     }
-
     
     //Call AILogic lua function
     lua_getglobal( m_luaState, "AILogic" );
@@ -342,8 +314,6 @@ void GameObject::Update() {
       lua_pop( m_luaState, 1 );
     }
   }
-
-
 
   if( m_distance >= Configuration::GetTileSize() ) {
     m_moving = false;
@@ -368,47 +338,6 @@ void GameObject::Update() {
       break;
     }
   }
-  else if( m_distance >= (Configuration::GetTileSize()*(2.0f/3.0f)) ) {
-    static sf::Vector2f lastTile;
-    lastTile = GetPosition();
-    //Take into account the sprites that are taller than a normal tile
-    lastTile.y += 
-      m_animData->GetFrameHeight( m_animation ) % Configuration::GetTileSize();
-  
-    //Find the correct last tile
-    switch( m_direction ) {
-    case Up:
-      lastTile.y += m_distance; //last tile was below 
-      break;
-    case Down:
-      lastTile.y -= m_distance; //last tile was above
-      break;
-    case Left:
-      lastTile.x += m_distance; //last tile was to the right
-      break;
-    case Right:
-      lastTile.x -= m_distance; //last tile was to the left
-      break;
-    }
-
-    //Removes GameObject from it's last tile location
-    m_level->UpdatePosition( GameObjectMap::NULL_GAME_OBJECT, lastTile );
-  }
-}
-
-
-Uint GameObject::GetTileX() {
-  return (Uint)( this->GetPosition().x -
-                 Configuration::GetXPad() ) /
-                 Configuration::GetTileSize();
-}
-  
-Uint GameObject::GetTileY() {
-return (Uint)(( this->GetPosition().y +  
-                m_animData->GetFrameHeight( m_animation ) % 
-                Configuration::GetTileSize() ) - 
-                Configuration::GetYPad() ) / 
-                Configuration::GetTileSize();
 }
 
 
@@ -419,6 +348,11 @@ void GameObject::SetId( int id ) {
 
 int GameObject::GetId() {
   return m_id;
+}
+
+
+sf::Rect< float >& GameObject::GetCollisionBox() {
+  return m_collisionRect;
 }
 
 
@@ -497,4 +431,65 @@ void GameObject::NextFrame() {
 			Pause();
 		}
 	}
+}
+
+
+bool GameObject::LoadObjectData( const std::string &filepath ) {
+  TiXmlDocument doc ( filepath.c_str() );
+  
+  if ( !doc.LoadFile() ) {
+    return false;
+  }
+
+  TiXmlHandle handleDoc( &doc );
+  TiXmlElement* root = handleDoc.FirstChildElement( "game_object" ).Element();
+
+  //Load in path to GameObject's spritesheet
+  std::string spritePath( root->FirstChildElement( "sprite_path" )->GetText() );
+
+  //Load in path to animation's xml
+  std::string animPath( root->FirstChildElement( "animation_path" )->GetText() );
+
+  //Load in path to GameObject's lua script
+  m_luaScript =  root->FirstChildElement( "script_path" )->GetText();
+
+  // Load in type of object
+  m_type = root->FirstChildElement( "typename" )->GetText();
+
+  App* app= App::GetApp();
+
+  //Load the spritesheet image
+  sf::Image& img = app->LoadImageW( spritePath.c_str() );
+  //Set all pink pixels to be treated as clear
+  img.CreateMaskFromColor( sf::Color( 255, 0, 255 ) );
+  //Set the spritesheet image
+  SetImage( img );
+
+  //Load/Set the animation data
+  AnimData& anim = app->LoadAnim( animPath.c_str() );
+  SetAnimData( anim );
+
+  return true;
+}
+
+
+bool GameObject::LoadCollisionData( const std::string &filepath ) {
+  TiXmlDocument doc ( filepath.c_str() );
+  
+  if ( !doc.LoadFile() ) {
+    return false;
+  }
+
+  TiXmlHandle handleDoc( &doc );
+  TiXmlElement* root = handleDoc.FirstChildElement( "game_object" ).Element();
+
+  m_collisionRect.Left = GetPosition().x;
+  std::string width( root->FirstChildElement( "width" )->GetText() );
+  m_collisionRect.Right = m_collisionRect.Left + atoi( width.c_str() );
+
+  m_collisionRect.Top = GetPosition().y;
+  std::string height( root->FirstChildElement( "height" )->GetText() );
+  m_collisionRect.Bottom = m_collisionRect.Top + atoi( height.c_str() );
+  
+  return true;
 }

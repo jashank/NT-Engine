@@ -9,4 +9,13 @@
   <script_path>
     Content/Core/Scripts/MoneyBags.lua
   </script_path>
+  <typename>
+    MoneyBag
+  </typename>
+  <width>
+    48
+  </width>
+  <height>
+    48
+  </height>
 </game_object>

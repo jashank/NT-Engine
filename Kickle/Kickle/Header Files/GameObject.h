@@ -32,8 +32,7 @@ class GameObject : public sf::Sprite {
   GameObject( 
     const std::string &xmlGameObjectPath, 
     Uint tileX, 
-    Uint tileY,
-    const std::string &type 
+    Uint tileY
   );
   ~GameObject();
 
@@ -55,13 +54,6 @@ class GameObject : public sf::Sprite {
 	-Returns the current animation
 	************************************************/
 	Uint GetAnimation() const;
-
-	/************************************************
-	LoadFromFile
-	-Loads a GameObject given a path to an xml file
-  -Returns true if loading was successful
-	************************************************/
-  bool LoadFromFile( const std::string& filepath );
 
 	/************************************************
 	AssignLevel
@@ -136,18 +128,6 @@ class GameObject : public sf::Sprite {
 	************************************************/
 	void Update();
 
-  /***********************************************
-  GetTileX()
-  - Returns the X tile the player is located on.
-  ***********************************************/
-  Uint GetTileX();
-  
-  /***********************************************
-  GetTileY()
-  - Returns the Y tile the player is located on.
-  ************************************************/
-  Uint GetTileY();
-
   /**********************************************
   SetId()
   - Sets the member unique identifier.
@@ -160,6 +140,12 @@ class GameObject : public sf::Sprite {
   **************************************************/
   int GetId();
 
+  /*************************************************
+  GetCollisionBox()
+  - Returns collision box for game object
+  **************************************************/
+  sf::Rect< float >& GetCollisionBox();
+  
 	/************************************************
 	LuaMoveDir
 	-Wraps MoveDir to allow it to be exposed to Lua
@@ -177,6 +163,21 @@ class GameObject : public sf::Sprite {
   static Lunar<GameObject>::RegType methods[];
 
  private:
+  /************************************************
+	LoadObjectData
+	-Loads a GameObject given a path to an xml file
+  -Returns true if loading was successful
+	************************************************/
+  bool LoadObjectData( const std::string &filepath );
+
+  /************************************************
+	LoadCollisionData
+	-Loads GameObject's collision data given path to
+   xml file
+  -Returns true if loading was successful
+	************************************************/
+  bool LoadCollisionData( const std::string &filepath );
+
 	/************************************************
 	AnimUpdate
 	-Updates the animation
@@ -207,6 +208,7 @@ class GameObject : public sf::Sprite {
   float m_distance; // Distance traveled from last grid location
   int m_id; // ID of object
   lua_State* m_luaState; // Mediator between C/C++ and Lua VM
+  sf::Rect< float > m_collisionRect; // Object's collision box
   std::string m_luaScript; // Filepath to the lua script
   std::string m_type; // What type of game object (slime, kickle, etc.)
 	Uint m_animation; // Current animation selections

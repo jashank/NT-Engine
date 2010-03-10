@@ -30,10 +30,7 @@ bool Level::IsTileSolid( const sf::Vector2f& position ) const {
   Uint tileX = ( position.x - Configuration::GetXPad() ) / tileSize;
   Uint tileY = ( position.y - Configuration::GetYPad() ) / tileSize;
 
-  return ( 
-    m_collisionMap.IsTileSolid( tileX, tileY ) ||
-    m_gameObjectMap.GetGameObject( tileX, tileY ) 
-  );
+  return ( m_collisionMap.IsTileSolid( tileX, tileY ) );
 }
 
 bool Level::IsTileSolid( int x, int y ) const {
@@ -98,51 +95,18 @@ bool Level::SetLevel( std::string levelPath ) {
 	return true;
 }
 
-/********************************************
-GetTile()
-- Returns the id of the tile at x, y else -1
-********************************************/
+
 int Level::GetTile( int x, int y ) {
   return m_tileMap.GetTile( x, y );
 }
 
-/**************************************************
-SetTile()
-- Sets the tile at x, y to that tile with that id
-***************************************************/
+
 void Level::SetTile (int x, int y, int tileId, int collisionId ) {
   m_tileMap.SetTile( x, y, tileId );
   m_collisionMap.SetCollision( x, y, collisionId );
 }
 
-/*****************************************
-GetGameObject()
-- Returns a pointer to the game object at
-  the location. Else returns Null
-*****************************************/
-GameObject *Level::GetGameObject( Uint x, Uint y ) const {
-  return m_gameObjectMap.GetGameObject( x, y );
-}
 
-GameObject *Level::GetGameObject( sf::Vector2f position ) const {
-  return GetGameObject( (Uint)( position.x -
-                                Configuration::GetXPad() ) /
-                                Configuration::GetTileSize(),
-                        (Uint)( position.y -
-                                Configuration::GetYPad() ) /
-                                Configuration::GetTileSize() );
-}
-
-void Level::UpdatePosition( int id, Uint x, Uint y ) {
-  m_gameObjectMap.UpdatePosition( id, x, y );
-}
-
-void Level::UpdatePosition( int id, sf::Vector2f position ) {
-    m_gameObjectMap.UpdatePosition( id,
-                                (Uint)( position.x -
-                                Configuration::GetXPad() ) /
-                                Configuration::GetTileSize(),
-                                (Uint)( position.y -
-                                Configuration::GetYPad() ) /
-                                Configuration::GetTileSize() );
+bool Level::ObjectHasCollided( GameObject *gameObject ) {
+  return m_gameObjectMap.ObjectHasCollided( gameObject );
 }
