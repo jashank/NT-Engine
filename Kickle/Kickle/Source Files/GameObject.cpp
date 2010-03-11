@@ -24,6 +24,7 @@ const char GameObject::className[] = "GameObject";
 Lunar<GameObject>::RegType GameObject::methods[] = {
   { "MoveDir", &GameObject::LuaMoveDir },
   { "SetAnimation", &GameObject::LuaSetAnimation },
+  { "GetType", &GameObject::LuaGetType },
   { 0, 0 }
 };
 
@@ -354,6 +355,13 @@ int GameObject::LuaSetAnimation( lua_State *L ) {
   SetAnimation( animation );
 
   return 0;
+}
+
+
+int GameObject::LuaGetType( lua_State *L ) {  
+  lua_pushstring( L, m_type.c_str() );
+
+  return 1;
 }
 
 

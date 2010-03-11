@@ -12,11 +12,13 @@ local mode = 0;
 
 -- [[ Function that is called to handle scripted collision response events ]]
 function HandleCollision( Kickle, Other )
-	-- Show death animation
-	Kickle:SetAnimation( dir + 16 );
+	if ( Other:GetType() == "Slime" ) then
+		-- Show death animation
+		Kickle:SetAnimation( dir + 16 );
+		-- Disable kickle's movement
+	     moveable = false;
+	end
 
-	-- Disable kickle's movement
-	moveable = false;
 end
 
 

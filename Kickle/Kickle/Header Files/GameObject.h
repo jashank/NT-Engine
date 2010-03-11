@@ -158,6 +158,12 @@ class GameObject : public sf::Sprite {
 	************************************************/
   int LuaSetAnimation( lua_State *L );
 
+  /************************************************
+	LuaGetType
+	-Allows Lua to access type of GameObject
+	************************************************/
+  int LuaGetType( lua_State *L );
+
   //Necessities for Lunar
   static const char className[];
   static Lunar<GameObject>::RegType methods[];
