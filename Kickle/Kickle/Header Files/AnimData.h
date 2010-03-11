@@ -14,7 +14,7 @@ public:
 
   bool IsLooped( Uint animation ) const;
 
-  float GetFrameTime( Uint animation ) const;
+  //float GetFrameTime( Uint animation ) const;
   float GetFrameTime( Uint animation, Uint frame ) const;
 
   int GetAnimX( Uint animation ) const;

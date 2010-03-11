@@ -189,13 +189,9 @@ void GameObject::MoveDir( Dir direction ) {
       default: {}
     }
 
-    if ( !m_level->IsTileSolid( tileToMoveTo ) && 
-         m_level->DetectObjectCollision( this ) == NULL ) {
+    if ( !m_level->IsTileSolid( tileToMoveTo ) ) {
       m_moving = true;
-    } else {
-      // We use what is returned from ObjectHasCollided to do stuff.
-      m_moving = false; // Do collision stuff here.
-    }
+    } 
   }
 }
 
@@ -234,6 +230,7 @@ void GameObject::SetFrame( Uint frame ) {
 
 void GameObject::SetAnimation( Uint animation ) {
 		m_animation = animation;
+    //m_frameTime = m_animData->GetFrameTime( m_animation );
 }
 
 
@@ -272,34 +269,13 @@ void GameObject::StopMoving() {
 
 void GameObject::Update() {
   AnimUpdate();
-
   if( m_moving ) {
-    static const float SPEED = 1.0f;
-    m_distance += SPEED;
-
-    switch( m_direction ) {
-    case Up:
-      Move( 0.0f, -SPEED );
-      m_collisionRect.Offset( 0.f, -SPEED );
-      break;
-    case Down:
-      Move( 0.0f, SPEED );
-      m_collisionRect.Offset( 0.f, SPEED );
-      break;
-    case Left:
-      Move( -SPEED, 0.0f );
-      m_collisionRect.Offset( -SPEED, 0.f );
-      break;
-    case Right:
-      Move( SPEED, 0.0f );
-      m_collisionRect.Offset( SPEED, 0.f );
-      break;
-    }
+    MovementUpdate();
   }
   else {
     //Call HandleUserInput lua function
     lua_getglobal( m_luaState, "HandleUserInput" );
-    if ( lua_isfunction( m_luaState, -1 )) {
+    if( lua_isfunction( m_luaState, -1 ) ) {
       Lunar<GameObject>::push( m_luaState, this );
       lua_call( m_luaState, 1, 0 );
     } else {
@@ -316,27 +292,25 @@ void GameObject::Update() {
     }
   }
 
-  if( m_distance >= Configuration::GetTileSize() ) {
-    m_moving = false;
+  GameObject* collisionObj = m_level->DetectObjectCollision( this );
 
-    static float diff = 0.0f;
-    //Calculate the amount of distance to move back
-    diff = m_distance - Configuration::GetTileSize();
+  if( collisionObj != NULL ) {
+    //DEBUG_STATEMENT(  
+    //  std::cout 
+    //  << "Object Collision Detected..\n"
+    //  << m_type << "\n"
+    //  //<< collisionObj->GetType() 
+    //  << std::endl;
+    //)
 
-    //Find the correct direction to move back
-    switch( m_direction ) {
-    case Up:
-      Move( 0.0f, diff );
-      break;
-    case Down:
-      Move( 0.0f, -diff );
-      break;
-    case Left:
-      Move( diff, 0.0f );
-      break;
-    case Right:
-      Move( -diff, 0.0f );
-      break;
+    //Call OnCollision lua function
+    lua_getglobal( m_luaState, "HandleCollision" );
+    if ( lua_isfunction( m_luaState, -1 )) {
+      Lunar<GameObject>::push( m_luaState, this );
+      Lunar<GameObject>::push( m_luaState, collisionObj );
+      lua_call( m_luaState, 2, 0 );
+    } else {
+      lua_pop( m_luaState, 1 );
     }
   }
 }
@@ -352,7 +326,7 @@ int GameObject::GetId() {
 }
 
 
-sf::Rect< float >& GameObject::GetCollisionBox() {
+sf::FloatRect &GameObject::GetCollisionBox() {
   return m_collisionRect;
 }
 
@@ -414,6 +388,54 @@ void GameObject::InitLua() {
 }
 
 
+void GameObject::MovementUpdate() {
+  static const float SPEED = 1.0f;
+  m_distance += SPEED;
+
+  switch( m_direction ) {
+  case Up:
+    Move( 0.0f, -SPEED );
+    m_collisionRect.Offset( 0.f, -SPEED );
+    break;
+  case Down:
+    Move( 0.0f, SPEED );
+    m_collisionRect.Offset( 0.f, SPEED );
+    break;
+  case Left:
+    Move( -SPEED, 0.0f );
+    m_collisionRect.Offset( -SPEED, 0.f );
+    break;
+  case Right:
+    Move( SPEED, 0.0f );
+    m_collisionRect.Offset( SPEED, 0.f );
+    break;
+  }
+
+  //Corrects movements that exceed the next grid location
+  if( m_distance >= Configuration::GetTileSize() ) {
+    m_moving = false;
+
+    static float diff = 0.0f;
+    //Calculate the amount of distance to move back
+    diff = m_distance - Configuration::GetTileSize();
+
+    //Find the correct direction to move back
+    switch( m_direction ) {
+    case Up:
+      Move( 0.0f, diff );
+      break;
+    case Down:
+      Move( 0.0f, -diff );
+      break;
+    case Left:
+      Move( diff, 0.0f );
+      break;
+    case Right:
+      Move( -diff, 0.0f );
+      break;
+    }
+  }
+}
 void GameObject::NextFrame() {
   //Increment frame
 	++m_frame;

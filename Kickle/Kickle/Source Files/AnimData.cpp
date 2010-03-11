@@ -144,6 +144,11 @@ bool AnimData::IsLooped( Uint animation ) const {
 }
 
 
+//float AnimData::GetFrameTime( Uint animation ) const {
+//  return GetFrameTime( animation, 0 );
+//}
+
+
 float AnimData::GetFrameTime( Uint animation, Uint frame ) const {
 	if( m_anims[animation].uniqueFrameTimes ) {
 		return m_anims[animation%m_numAnims].

@@ -90,18 +90,13 @@ void GameObjectMap::RemoveGameObject( GameObject *gameObject ) {
 }
 
 
-GameObject *GameObjectMap::DetectCollision( GameObject *gameObject) {
-  float leftA = gameObject->GetCollisionBox().Left;
-  float rightA = gameObject->GetCollisionBox().Right;
-  float topA = gameObject->GetCollisionBox().Top;
-  float bottomA = gameObject->GetCollisionBox().Bottom;
+GameObject *GameObjectMap::DetectCollision( GameObject *gameObject ) {
+  sf::FloatRect &mainObj = gameObject->GetCollisionBox();
 
   for ( int i = 0; i < m_nextId; ++i ) {
     if ( m_gameObjects[i] != gameObject ) {
-      if ( leftA <= m_gameObjects[i]->GetCollisionBox().Right &&
-           rightA >= m_gameObjects[i]->GetCollisionBox().Left &&
-           topA <= m_gameObjects[i]->GetCollisionBox().Bottom &&
-           bottomA >= m_gameObjects[i]->GetCollisionBox().Top ) {
+      sf::FloatRect &otherObj = m_gameObjects[i]->GetCollisionBox();
+      if( mainObj.Intersects( otherObj ) ) {
         return m_gameObjects[i];
       }
     }

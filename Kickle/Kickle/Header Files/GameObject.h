@@ -144,7 +144,7 @@ class GameObject : public sf::Sprite {
   GetCollisionBox()
   - Returns collision box for game object
   **************************************************/
-  sf::Rect< float >& GetCollisionBox();
+  sf::FloatRect &GetCollisionBox();
   
 	/************************************************
 	LuaMoveDir
@@ -192,6 +192,12 @@ class GameObject : public sf::Sprite {
   void InitLua();
 
 	/************************************************
+	MovementUpdate
+	-Updates the movement of GameObject
+	************************************************/
+  void MovementUpdate();
+
+	/************************************************
 	NextFrame
 	-Selects next frame
 	************************************************/
@@ -208,7 +214,7 @@ class GameObject : public sf::Sprite {
   float m_distance; // Distance traveled from last grid location
   int m_id; // ID of object
   lua_State* m_luaState; // Mediator between C/C++ and Lua VM
-  sf::Rect< float > m_collisionRect; // Object's collision box
+  sf::FloatRect m_collisionRect; // Object's collision box
   std::string m_luaScript; // Filepath to the lua script
   std::string m_type; // What type of game object (slime, kickle, etc.)
 	Uint m_animation; // Current animation selections
