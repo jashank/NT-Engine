@@ -20,7 +20,6 @@ const luaL_Reg luaAppFuncts[] = {
   { 0, 0 }
 };
 
-
 //Contains the key values exposed to lua
 //const Uint numKeys = 5;
 //const int luaKeys[] = {

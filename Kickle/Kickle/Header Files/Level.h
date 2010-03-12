@@ -61,6 +61,12 @@ public:
   - Sets the tile at x, y to that tile with that id
   ***************************************************/
   void SetTile ( int x, int y, int tileId, int collisionId );
+
+  /**************************************************
+  AddGameObject( GameObject *gameObject )
+  - Adds gameObject to the gameObjectMap
+  ***************************************************/
+  void AddGameObject( GameObject *gameObject );
   
   /**************************************************
   DetectObjectCollision()

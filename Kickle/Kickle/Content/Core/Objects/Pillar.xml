@@ -1,27 +1,27 @@
 <?xml version="1.0"?>
 <game_object>
   <sprite_path>
-    Content/Core/Sheets/kickle_48x60.png
+    Content/Core/Sheets/pillar_48x48.png
   </sprite_path>
   <animation_path>
-    Content/Core/Animations/BasicAnim_48x60.xml
+    Content/Core/Animations/BasicAnim_48x48.xml
   </animation_path>
   <script_path>
-    Content/Core/Scripts/Kickle.lua
+    Content/Core/Scripts/Pillar.lua
   </script_path>
   <typename>
-    Kickle
+    Pillar
   </typename>
   <solid_area_x>
-    10
+    0
   </solid_area_x>
   <solid_area_y>
-    15
+    0
   </solid_area_y>
   <solid_area_width>
-    17
+    48
   </solid_area_width>
   <solid_area_height>
-    24
+    48
   </solid_area_height>
 </game_object>

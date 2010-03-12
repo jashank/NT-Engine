@@ -2,6 +2,8 @@
 #define PLAYSTATE_H
 
 #include "BaseState.h"
+
+#include "BasicTypeDefs.h"
 #include "GameObject.h"
 #include "Level.h"
 
@@ -65,6 +67,19 @@ class PlayState : public BaseState {
   ************************************************/
   Level& GetLevel();
 
+  /************************************************
+  LuaCreateGameObject
+  - Allows a GameObject to be created from Lua
+  ************************************************/
+  static int LuaCreateGameObject( lua_State *L );
+
+  /************************************************
+  RegisterLuaPlayFuncts()
+  - Registers functions associated with the
+    PlayState to Lua.
+  ************************************************/
+  static void RegisterLuaPlayFuncts( lua_State *L );
+  
  private:	
   /************************************************
   Restricts construction, copy construction, 
@@ -73,6 +88,8 @@ class PlayState : public BaseState {
   PlayState();
   PlayState( const PlayState &title );
   PlayState& operator=( const PlayState &title );
+
+  static const luaL_Reg luaPlayFuncts[2]; // Functions to register to Lua
   
   static PlayState *m_instance; // PlayState has one instance
   Level m_level;

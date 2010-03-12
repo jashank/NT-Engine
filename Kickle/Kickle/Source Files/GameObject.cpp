@@ -392,6 +392,7 @@ void GameObject::InitLua() {
   luaL_openlibs( m_luaState );
   Lunar<GameObject>::Register( m_luaState );
   LuaApp::RegisterLuaAppFuncts( m_luaState );
+  PlayState::RegisterLuaPlayFuncts( m_luaState );
   luaL_dofile( m_luaState, m_luaScript.c_str() );
 }
 

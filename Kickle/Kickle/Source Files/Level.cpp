@@ -107,6 +107,11 @@ void Level::SetTile (int x, int y, int tileId, int collisionId ) {
 }
 
 
+void Level::AddGameObject( GameObject *gameObject ) {
+  m_gameObjectMap.AddGameObject( gameObject );
+}
+
+
 GameObject *Level::DetectObjectCollision( GameObject *gameObject ) {
   return m_gameObjectMap.DetectCollision( gameObject );
 }

@@ -39,6 +39,8 @@ function HandleUserInput( Kickle )
 		elseif( Game.IsKeyDown( 292 ) ) then	-- 292 == value for the Right Arrow
 			dir = 3;  -- set direction to RIGHT
 			mode = 4; -- set mode to Walking
+		elseif( Game.IsKeyDown( 120 ) ) then
+			Game.CreateGameObject( 9, 7, "Content/Core/Objects/Pillar.xml" );
 		else
 			-- No key was pressed so:
 			mode = 0; -- set mode to STANDING

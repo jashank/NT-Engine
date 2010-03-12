@@ -78,3 +78,33 @@ void PlayState::Render() {
 Level& PlayState::GetLevel() {
   return m_level;
 }
+
+
+int PlayState::LuaCreateGameObject( lua_State *L ) {
+  m_instance->m_level.AddGameObject(
+    new GameObject(
+      lua_tostring( L, -1 ),
+      lua_tointeger( L, -1 ),
+      lua_tointeger( L, -1 )
+    )
+  );
+
+  return 0;
+}
+
+
+void PlayState::RegisterLuaPlayFuncts( lua_State *L ) {
+  luaL_register( L, "Game", luaPlayFuncts );
+}
+
+
+/************************************************
+Private Member Functions
+************************************************/
+
+const luaL_Reg PlayState::luaPlayFuncts[] = {
+  { "CreateGameObject", LuaCreateGameObject },
+  { 0, 0 }
+};
+
+
