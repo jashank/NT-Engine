@@ -39,7 +39,8 @@ GameObject::GameObject( lua_State *L )
    m_animData( 0 ),
    m_moving( false ),
    m_id( -1 ),
-   m_luaState(luaL_newstate()) {
+   m_luaState( luaL_newstate() ),
+   m_frame( 0 ) {
   if( !lua_isstring( L, -1 ) ) {
     luaL_error( L, "Invalid argument for GameObject." );
   }
@@ -64,7 +65,8 @@ GameObject::GameObject( const std::string &xmlGameObjectPath )
    m_animData( 0 ),
    m_moving( false ),
    m_id( -1 ),
-   m_luaState(luaL_newstate()) { 
+   m_luaState( luaL_newstate() ),
+   m_frame( 0 ) { 
   if( !LoadObjectData( xmlGameObjectPath ) &&
       !LoadCollisionData( xmlGameObjectPath )) {
     lua_close( m_luaState );
@@ -74,6 +76,7 @@ GameObject::GameObject( const std::string &xmlGameObjectPath )
   
   InitLua();
 }
+
 
 GameObject::GameObject( 
   const std::string &xmlGameObjectPath, 
@@ -87,7 +90,8 @@ GameObject::GameObject(
    m_animData( 0 ),
    m_moving( false ),
    m_id( -1 ),
-   m_luaState( luaL_newstate() ) { 
+   m_luaState( luaL_newstate() ),
+   m_frame( 0 ) { 
   if( !LoadObjectData( xmlGameObjectPath ) ) {
   lua_close( m_luaState );
   m_luaState = 0;
@@ -270,6 +274,7 @@ void GameObject::StopMoving() {
 
 void GameObject::Update() {
   AnimUpdate();
+
   if( m_moving ) {
     MovementUpdate();
   }
@@ -445,6 +450,8 @@ void GameObject::MovementUpdate() {
     }
   }
 }
+
+
 void GameObject::NextFrame() {
   //Increment frame
 	++m_frame;

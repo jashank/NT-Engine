@@ -96,8 +96,6 @@ int PlayState::LuaCreateGameObject( lua_State *L ) {
     return luaL_error( L, "Invalid tile y position for CreateGameObject." );
   }
   Uint tileY = static_cast<Uint>( lua_tointeger( L, -1 ) );
-  
-
 
   m_instance->m_level.AddGameObject(
     new GameObject( path, tileX, tileY )
