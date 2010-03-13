@@ -81,12 +81,26 @@ Level& PlayState::GetLevel() {
 
 
 int PlayState::LuaCreateGameObject( lua_State *L ) {
+  if( !lua_isstring( L, -3 ) ) {
+    return luaL_error( L, "Invalid filepath for CreateGameObject." );
+  }
+  std::string path = lua_tostring( L, -3 );
+  //lua_pop( L, -1 );
+  
+  if( !lua_isnumber( L, -2 ) ) {
+    return luaL_error( L, "Invalid tile x position for CreateGameObject." );
+  }
+  Uint tileX = static_cast<Uint>( lua_tointeger( L, -2 ) );
+
+  if( !lua_isnumber( L, -1 ) ) {
+    return luaL_error( L, "Invalid tile y position for CreateGameObject." );
+  }
+  Uint tileY = static_cast<Uint>( lua_tointeger( L, -1 ) );
+  
+
+
   m_instance->m_level.AddGameObject(
-    new GameObject(
-      lua_tostring( L, -1 ),
-      lua_tointeger( L, -1 ),
-      lua_tointeger( L, -1 )
-    )
+    new GameObject( path, tileX, tileY )
   );
 
   return 0;

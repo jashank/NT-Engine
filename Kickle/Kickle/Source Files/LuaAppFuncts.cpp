@@ -27,7 +27,8 @@ const luaL_Reg luaAppFuncts[] = {
 //  sf::Key::Down,
 //  sf::Key::Left,
 //  sf::Key::Right,
-//  sf::Key::Z
+//  sf::Key::Z,
+//  sf::Key::X
 //};
 
 
