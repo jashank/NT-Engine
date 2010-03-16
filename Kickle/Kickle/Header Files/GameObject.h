@@ -145,6 +145,24 @@ class GameObject : public sf::Sprite {
   - Returns collision box for game object
   **************************************************/
   sf::FloatRect &GetCollisionBox();
+
+  /*************************************************
+  IsSolid()
+  - Returns whether game object is solid
+  **************************************************/
+  bool IsSolid();
+
+  /*************************************************
+  GetTileX()
+  - Returns x-location of GameObject on game grid
+  **************************************************/
+  Uint GetTileX();
+
+  /*************************************************
+  GetTileY()
+  - Returns y-location of GameObject on game grid
+  **************************************************/
+  Uint GetTileY();
   
 	/************************************************
 	LuaMoveDir
@@ -211,10 +229,10 @@ class GameObject : public sf::Sprite {
 
 
 	const AnimData *m_animData; //Pointer to constant animation data
-  static  Level *m_level; // Level that GameObject is on
-
+  static Level *m_level; // Level that GameObject is on
   bool m_moving; // If true; keep moving in m_direction
 	bool m_play; // If true; animate GameObject
+  bool m_solid; // Solid objects completely restrict access to tile they are on
   Dir m_direction; // Current direction game object is moving
 	float m_frameTime; // Time left on current frame
   float m_distance; // Distance traveled from last grid location

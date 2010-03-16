@@ -42,13 +42,16 @@ public:
   IsTileSolid()
   -Wrapper function for the collision map.
   *****************************************/
-  bool IsTileSolid( const sf::Vector2f& position ) const;
+  bool IsTileSolid( const sf::Vector2f& position );
+  bool IsTileSolid( Uint x, Uint y );
 
-   /****************************************
-  IsTileSolid()
-  -Wrapper function for the collision map.
+  /****************************************
+  TileHasSolidObject()
+  - Returns whether the tile at the specified
+    location has a solid object on it.
   *****************************************/
-  bool IsTileSolid( int x, int y ) const;
+  bool TileHasSolidObject( const sf::Vector2f &position );
+  bool TileHasSolidObject( Uint x, Uint y );
 
   /********************************************
   GetTile()
@@ -83,6 +86,20 @@ private:
 	up all needed variables.
 	**************************************/
 	void Init();
+
+  /**************************************
+	GetVectorXTile()
+  - Returns x tile based on position
+    given by sf::Vector2f
+	**************************************/
+  Uint GetVectorXTile( const sf::Vector2f &position ) const;
+
+  /**************************************
+	GetVectorYTile()
+  - Returns y tile based on position
+    given by sf::Vector2f
+	**************************************/
+  Uint GetVectorYTile( const sf::Vector2f &position ) const;
 
 	TileMap m_tileMap;
   CollisionMap m_collisionMap;

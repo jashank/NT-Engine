@@ -12,6 +12,9 @@
   <typename>
     Kickle
   </typename>
+  <solid>
+    false
+  </solid>
   <solid_area_x>
     10
   </solid_area_x>

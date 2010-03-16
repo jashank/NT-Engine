@@ -24,8 +24,23 @@ class GameObjectMap {
 
     void AddGameObject( GameObject *gameObject );
     void RemoveGameObject( GameObject *gameObject );
-    
-    GameObject *DetectCollision( GameObject *gameObject);
+
+    /*************************************************
+    DetectCollision()
+    - Collision detection for non-solid GameObjects
+      using rectangular collision detection
+    - Returns GameObject that gameObject collided with,
+      or NULL otherwise
+    **************************************************/
+    GameObject* DetectCollision( GameObject *gameObject );
+
+    /*************************************************
+    ObjectOnTile()
+    - If an object is on the specified tile location,
+      that object is returned. Returns NULL otherwise.
+    **************************************************/ 
+    GameObject* ObjectOnTile( Uint x, Uint y );
+
   private:
     void Init();
 

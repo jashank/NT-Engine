@@ -194,7 +194,8 @@ void GameObject::MoveDir( Dir direction ) {
       default: {}
     }
 
-    if ( !m_level->IsTileSolid( tileToMoveTo ) ) {
+    if ( !m_level->IsTileSolid( tileToMoveTo ) &&
+         !m_level->TileHasSolidObject( tileToMoveTo ) ) {
       m_moving = true;
     } 
   }
@@ -337,6 +338,27 @@ sf::FloatRect &GameObject::GetCollisionBox() {
 }
 
 
+bool GameObject::IsSolid() {
+  return m_solid;
+}
+
+
+Uint GameObject::GetTileX() {
+  return (Uint)(this->GetPosition().x -
+                      Configuration::GetXPad()) /
+                      Configuration::GetTileSize();
+}
+  
+
+Uint GameObject::GetTileY() {
+return (Uint)( ( this->GetPosition().y +  
+                        m_animData->GetFrameHeight( m_animation )  % 
+                        Configuration::GetTileSize() ) - 
+                        Configuration::GetYPad() ) / 
+                        Configuration::GetTileSize();
+}
+
+
 int GameObject::LuaMoveDir( lua_State *L ) {
   if( !lua_isnumber( L, -1 ) ) {
     return luaL_error( L, "Invalid argument for MoveDir." );
@@ -373,6 +395,7 @@ int GameObject::LuaGetType( lua_State *L ) {
 /************************************************
 Private Methods
 ************************************************/
+
 void GameObject::AnimUpdate() {
   //If GameObject is set to play
 	if( m_play ) {
@@ -494,6 +517,10 @@ bool GameObject::LoadObjectData( const std::string &filepath ) {
 
   // Load in type of object
   m_type = root->FirstChildElement( "typename" )->GetText();
+
+  // Load in whether to use rectangular collision for this object
+  std::string solid = root->FirstChildElement( "solid" )->GetText();
+  m_solid = ( solid == "true" ) ? true : false;
 
   App* app= App::GetApp();
 

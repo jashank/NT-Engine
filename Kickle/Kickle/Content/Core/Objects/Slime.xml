@@ -12,6 +12,9 @@
   <typename>
     Slime
   </typename>
+  <solid>
+    false
+  </solid>
   <solid_area_x>
     0
   </solid_area_x>
