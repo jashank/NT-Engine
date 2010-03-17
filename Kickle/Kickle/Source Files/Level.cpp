@@ -28,7 +28,7 @@ void Level::Render() {
 }
 
 
-bool Level::IsTileSolid( const sf::Vector2f& position ) {
+bool Level::IsTileSolid( const sf::Vector2f& position ) const {
   Uint tileX = GetVectorXTile( position );
   Uint tileY = GetVectorYTile( position );
 
@@ -36,12 +36,12 @@ bool Level::IsTileSolid( const sf::Vector2f& position ) {
 }
 
 
-bool Level::IsTileSolid( Uint x, Uint y ) {
+bool Level::IsTileSolid( Uint x, Uint y ) const {
   return m_collisionMap.IsTileSolid( x, y );
 }
 
 
-bool Level::TileHasSolidObject( const sf::Vector2f &position )  {
+bool Level::TileHasSolidObject( const sf::Vector2f &position ) {
   Uint tileX = GetVectorXTile( position );
   Uint tileY = GetVectorYTile( position );
 
@@ -49,7 +49,7 @@ bool Level::TileHasSolidObject( const sf::Vector2f &position )  {
 }
 
 
-bool Level::TileHasSolidObject( Uint x, Uint y )  {
+bool Level::TileHasSolidObject( Uint x, Uint y ) {
   GameObject *gameObject = m_gameObjectMap.ObjectOnTile( x, y );
 
   if ( gameObject != NULL ) {
@@ -118,7 +118,7 @@ bool Level::SetLevel( std::string levelPath ) {
 }
 
 
-int Level::GetTile( int x, int y ) {
+int Level::GetTile( int x, int y ) const {
   return m_tileMap.GetTile( x, y );
 }
 
@@ -134,7 +134,7 @@ void Level::AddGameObject( GameObject *gameObject ) {
 }
 
 
-GameObject *Level::DetectObjectCollision( GameObject *gameObject ) {
+GameObject *Level::DetectObjectCollision( const GameObject *gameObject ) {
   return m_gameObjectMap.DetectCollision( gameObject );
 }
 

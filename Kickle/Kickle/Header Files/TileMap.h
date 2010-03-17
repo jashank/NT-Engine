@@ -40,7 +40,7 @@ public:
   GetTile()
   - Returns the id of the tile at that location.
   **********************************************/
-  int GetTile( int x, int y );
+  int GetTile( int x, int y ) const;
 
 private:
   /**********************************************

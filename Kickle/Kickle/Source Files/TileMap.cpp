@@ -100,7 +100,7 @@ void TileMap::SetTile( int x, int y, int tileId ) {
 GetTile()
 - Returns the id of the tile at that location.
 **********************************************/
-int TileMap::GetTile( int x, int y ) {
+int TileMap::GetTile( int x, int y ) const {
   if ( x < MAP_SIZE && x >= 0 && y < MAP_SIZE && y >= 0) {
     return m_layout[y][x];
   } else {

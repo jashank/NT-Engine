@@ -90,13 +90,13 @@ void GameObjectMap::RemoveGameObject( GameObject *gameObject ) {
 }
 
 
-GameObject* GameObjectMap::DetectCollision( GameObject *gameObject ) {
-  sf::FloatRect &mainObj = gameObject->GetCollisionBox();
+GameObject* GameObjectMap::DetectCollision( const GameObject *gameObject ) {
+  const sf::FloatRect &mainObj = gameObject->GetCollisionBox();
 
   for ( int i = 0; i < m_nextId; ++i ) {
     if ( m_gameObjects[i] != gameObject && 
          !m_gameObjects[i]->IsSolid() ) {
-      sf::FloatRect &otherObj = m_gameObjects[i]->GetCollisionBox();
+      const sf::FloatRect &otherObj = m_gameObjects[i]->GetCollisionBox();
       if( mainObj.Intersects( otherObj ) ) {
         return m_gameObjects[i];
       }

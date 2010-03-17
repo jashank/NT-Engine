@@ -74,6 +74,18 @@ class PlayState : public BaseState {
   static int LuaCreateGameObject( lua_State *L );
 
   /************************************************
+  LuaIsTileSolid
+  - Exposes Level's IsTileSolid to Lua
+  ************************************************/
+  static int LuaIsTileSolid( lua_State *L );
+
+  /************************************************
+  LuaTileHasSolidObject
+  - Exposes Level's TileHasSolidObject to Lua
+  ************************************************/
+  static int LuaTileHasSolidObject( lua_State *L );
+
+  /************************************************
   RegisterLuaPlayFuncts()
   - Registers functions associated with the
     PlayState to Lua.
@@ -89,7 +101,7 @@ class PlayState : public BaseState {
   PlayState( const PlayState &title );
   PlayState& operator=( const PlayState &title );
 
-  static const luaL_Reg luaPlayFuncts[2]; // Functions to register to Lua
+  static const luaL_Reg luaPlayFuncts[]; // Functions to register to Lua
   
   static PlayState *m_instance; // PlayState has one instance
   Level m_level;

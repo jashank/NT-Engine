@@ -138,31 +138,31 @@ class GameObject : public sf::Sprite {
   GetId()
   - Returns the member unique identifier (m_id)
   **************************************************/
-  int GetId();
+  int GetId() const;
 
   /*************************************************
   GetCollisionBox()
   - Returns collision box for game object
   **************************************************/
-  sf::FloatRect &GetCollisionBox();
+  const sf::FloatRect &GetCollisionBox() const;
 
   /*************************************************
   IsSolid()
   - Returns whether game object is solid
   **************************************************/
-  bool IsSolid();
+  bool IsSolid() const;
 
   /*************************************************
   GetTileX()
   - Returns x-location of GameObject on game grid
   **************************************************/
-  Uint GetTileX();
+  Uint GetTileX() const;
 
   /*************************************************
   GetTileY()
   - Returns y-location of GameObject on game grid
   **************************************************/
-  Uint GetTileY();
+  Uint GetTileY() const;
   
 	/************************************************
 	LuaMoveDir
@@ -171,8 +171,8 @@ class GameObject : public sf::Sprite {
   int LuaMoveDir( lua_State *L );
 
 	/************************************************
-	LuaMoveDir
-	-Wraps MoveDir to allow it to be exposed to Lua
+	LuaSetAnimation
+	-Wraps SetAnimation to allow it to be exposed to Lua
 	************************************************/
   int LuaSetAnimation( lua_State *L );
 
@@ -181,6 +181,18 @@ class GameObject : public sf::Sprite {
 	-Allows Lua to access type of GameObject
 	************************************************/
   int LuaGetType( lua_State *L );
+
+  /************************************************
+	LuaGetTileX
+	-Wraps GetTileX to allow it to be exposed to Lua
+	************************************************/
+  int LuaGetTileX( lua_State *L );
+
+  /************************************************
+	LuaGetTileY
+	-Wraps GetTileY to allow it to be exposed to Lua
+	************************************************/
+  int LuaGetTileY( lua_State *L );
 
   //Necessities for Lunar
   static const char className[];

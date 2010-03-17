@@ -42,8 +42,8 @@ public:
   IsTileSolid()
   -Wrapper function for the collision map.
   *****************************************/
-  bool IsTileSolid( const sf::Vector2f& position );
-  bool IsTileSolid( Uint x, Uint y );
+  bool IsTileSolid( const sf::Vector2f& position ) const;
+  bool IsTileSolid( Uint x, Uint y ) const;
 
   /****************************************
   TileHasSolidObject()
@@ -57,7 +57,7 @@ public:
   GetTile()
   - Returns the id of the tile at x, y else -1
   ********************************************/
-  int GetTile( int x, int y );
+  int GetTile( int x, int y ) const;
 
   /**************************************************
   SetTile()
@@ -76,7 +76,7 @@ public:
   - Returns whether gameObject has collided with
     another object
   ***************************************************/
-  GameObject *DetectObjectCollision( GameObject *gameObject );
+  GameObject *DetectObjectCollision( const GameObject *gameObject );
 
 
 private:

@@ -25,6 +25,8 @@ Lunar<GameObject>::RegType GameObject::methods[] = {
   { "MoveDir", &GameObject::LuaMoveDir },
   { "SetAnimation", &GameObject::LuaSetAnimation },
   { "GetType", &GameObject::LuaGetType },
+  { "GetTileX", &GameObject::LuaGetTileX },
+  { "GetTileY", &GameObject::LuaGetTileY },
   { 0, 0 }
 };
 
@@ -328,29 +330,29 @@ void GameObject::SetId( int id ) {
 }
   
 
-int GameObject::GetId() {
+int GameObject::GetId() const {
   return m_id;
 }
 
 
-sf::FloatRect &GameObject::GetCollisionBox() {
+const sf::FloatRect &GameObject::GetCollisionBox() const {
   return m_collisionRect;
 }
 
 
-bool GameObject::IsSolid() {
+bool GameObject::IsSolid() const {
   return m_solid;
 }
 
 
-Uint GameObject::GetTileX() {
+Uint GameObject::GetTileX() const {
   return (Uint)(this->GetPosition().x -
                       Configuration::GetXPad()) /
                       Configuration::GetTileSize();
 }
   
 
-Uint GameObject::GetTileY() {
+Uint GameObject::GetTileY() const {
 return (Uint)( ( this->GetPosition().y +  
                         m_animData->GetFrameHeight( m_animation )  % 
                         Configuration::GetTileSize() ) - 
@@ -387,6 +389,20 @@ int GameObject::LuaSetAnimation( lua_State *L ) {
 
 int GameObject::LuaGetType( lua_State *L ) {  
   lua_pushstring( L, m_type.c_str() );
+
+  return 1;
+}
+
+
+int GameObject::LuaGetTileX( lua_State *L ) {
+  lua_pushinteger( L, GetTileX() );
+
+  return 1;
+}
+
+
+int GameObject::LuaGetTileY( lua_State *L ) {
+  lua_pushinteger( L, GetTileY() );
 
   return 1;
 }

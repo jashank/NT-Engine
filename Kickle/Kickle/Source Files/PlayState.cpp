@@ -85,7 +85,6 @@ int PlayState::LuaCreateGameObject( lua_State *L ) {
     return luaL_error( L, "Invalid filepath for CreateGameObject." );
   }
   std::string path = lua_tostring( L, -3 );
-  //lua_pop( L, -1 );
   
   if( !lua_isnumber( L, -2 ) ) {
     return luaL_error( L, "Invalid tile x position for CreateGameObject." );
@@ -105,6 +104,40 @@ int PlayState::LuaCreateGameObject( lua_State *L ) {
 }
 
 
+int PlayState::LuaIsTileSolid( lua_State *L ) {
+  if ( !lua_isnumber( L, -2 ) ) {
+    return luaL_error( L, "Invalid tile x position for IsTileSolid." );
+  }
+  Uint tileX = static_cast<Uint>( lua_tointeger( L, -2 ) );
+
+  if ( !lua_isnumber( L, -1 ) ) {
+    return luaL_error( L, "Invalid tile y position for IsTileSolid." );
+  }
+  Uint tileY = static_cast<Uint>( lua_tointeger( L, -1 ) );
+
+  lua_pushboolean( L, m_instance->m_level.IsTileSolid( tileX, tileY ) );
+  
+  return 1;
+}
+
+
+int PlayState::LuaTileHasSolidObject( lua_State *L ) {
+  if ( !lua_isnumber( L, -2 ) ) {
+    return luaL_error( L, "Invalid tile x position for IsTileSolid." );
+  }
+  Uint tileX = static_cast<Uint>( lua_tointeger( L, -2 ) );
+
+  if ( !lua_isnumber( L, -1 ) ) {
+    return luaL_error( L, "Invalid tile y position for IsTileSolid." );
+  }
+  Uint tileY = static_cast<Uint>( lua_tointeger( L, -1 ) );
+
+  lua_pushboolean( L, m_instance->m_level.TileHasSolidObject( tileX, tileY ) );
+
+  return 1;
+}
+
+
 void PlayState::RegisterLuaPlayFuncts( lua_State *L ) {
   luaL_register( L, "Game", luaPlayFuncts );
 }
@@ -116,6 +149,8 @@ Private Member Functions
 
 const luaL_Reg PlayState::luaPlayFuncts[] = {
   { "CreateGameObject", LuaCreateGameObject },
+  { "IsTileSolid", LuaIsTileSolid },
+  { "TileHasSolidObject", LuaTileHasSolidObject },
   { 0, 0 }
 };
 

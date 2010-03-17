@@ -32,7 +32,7 @@ class GameObjectMap {
     - Returns GameObject that gameObject collided with,
       or NULL otherwise
     **************************************************/
-    GameObject* DetectCollision( GameObject *gameObject );
+    GameObject* DetectCollision( const GameObject *gameObject );
 
     /*************************************************
     ObjectOnTile()
