@@ -27,26 +27,26 @@ end
 function HandleUserInput( Kickle )
 	if( moveable == true ) then
 
-		if( Game.IsKeyDown( 293 ) ) then		-- 293 == value for the Up Arrow
+		if ( Game.IsKeyDown( 293 ) ) then		-- 293 == value for the Up Arrow
 			dir = 0;  -- set direction to UP
 			mode = 4; -- set mode to Walking
-		elseif( Game.IsKeyDown( 294 ) ) then	-- 294 == value for the Down Arrow
+		elseif ( Game.IsKeyDown( 294 ) ) then	-- 294 == value for the Down Arrow
 			dir = 1;  -- set direction to DOWN
 			mode = 4; -- set mode to Walking
-		elseif( Game.IsKeyDown( 291 ) ) then	-- 291 == value for the Left Arrow
+		elseif ( Game.IsKeyDown( 291 ) ) then	-- 291 == value for the Left Arrow
 			dir = 2;  -- set direction to LEFT
 			mode = 4; -- set mode to Walking
-		elseif( Game.IsKeyDown( 292 ) ) then	-- 292 == value for the Right Arrow
+		elseif ( Game.IsKeyDown( 292 ) ) then	-- 292 == value for the Right Arrow
 			dir = 3;  -- set direction to RIGHT
 			mode = 4; -- set mode to Walking
-		elseif( Game.IsKeyDown( 120 ) ) then
+		elseif ( Game.IsKeyDown( 120 ) ) then
 			Game.CreateGameObject( "Content/Core/Objects/Pillar.xml", 9, 7 );
 		else
 			-- No key was pressed so:
 			mode = 0; -- set mode to STANDING
 		end
 
-		if( mode == 4 ) then
+		if ( mode == 4 ) then
 			Kickle:MoveDir( dir );
 		end
 
