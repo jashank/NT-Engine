@@ -180,19 +180,15 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Header Files\AnimSprite.h"
+				>
+			</File>
+			<File
 				RelativePath=".\Header Files\App.h"
 				>
 			</File>
 			<File
-				RelativePath=".\Header Files\BasicTypeDefs.h"
-				>
-			</File>
-			<File
 				RelativePath=".\Header Files\Button.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Header Files\Configuration.h"
 				>
 			</File>
 			<File
@@ -201,10 +197,6 @@
 			</File>
 			<File
 				RelativePath=".\Header Files\Level.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Header Files\Utilities.h"
 				>
 			</File>
 			<Filter
@@ -283,6 +275,22 @@
 					>
 				</File>
 			</Filter>
+			<Filter
+				Name="Other"
+				>
+				<File
+					RelativePath=".\Header Files\BasicTypeDefs.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Header Files\Configuration.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Header Files\Utilities.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Resource Files"
@@ -300,15 +308,15 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Source Files\AnimSprite.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\Source Files\App.cpp"
 				>
 			</File>
 			<File
 				RelativePath=".\Source Files\Button.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\Source Files\Configuration.cpp"
 				>
 			</File>
 			<File
@@ -392,6 +400,14 @@
 				>
 				<File
 					RelativePath=".\Source Files\LuaAppFuncts.cpp"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="Other"
+				>
+				<File
+					RelativePath=".\Source Files\Configuration.cpp"
 					>
 				</File>
 			</Filter>

@@ -5,7 +5,6 @@
 
 #include "tinyxml.h"
 
-#include "AnimData.h"
 #include "App.h"
 #include "Configuration.h"
 #include "Level.h"
@@ -34,22 +33,18 @@ Lunar<GameObject>::RegType GameObject::methods[] = {
 Public Methods
 ************************************************/
 GameObject::GameObject( lua_State *L )
- : m_play( false ),
-   m_animation( 0 ),
-   m_frameTime( 0.0f ),
-   m_distance( 0.0f ),
-   m_animData( 0 ),
+ : m_distance( 0.0f ),
    m_moving( false ),
    m_id( -1 ),
-   m_luaState( luaL_newstate() ),
-   m_frame( 0 ) {
+   m_luaState( luaL_newstate() ) {
   if( !lua_isstring( L, -1 ) ) {
     luaL_error( L, "Invalid argument for GameObject." );
   }
 
-  std::string xmlPath( lua_tostring( L, -1 ) );
-  if( !LoadObjectData( xmlPath ) &&
-      !LoadCollisionData( xmlPath ) ) {
+  std::string filepath( lua_tostring( L, -1 ) );
+  if( !LoadObjectData( filepath ) &&
+      !LoadCollisionData( filepath ) &&
+      !LoadAnimData( filepath ) ) {
     lua_close( m_luaState );
     m_luaState = 0;
     throw "Cannon load GameObject XML file";
@@ -59,18 +54,14 @@ GameObject::GameObject( lua_State *L )
 }
 
 
-GameObject::GameObject( const std::string &xmlGameObjectPath )
- : m_play( false ),
-   m_animation( 0 ),
-   m_frameTime( 0.0f ),
-   m_distance( 0.0f ),
-   m_animData( 0 ),
+GameObject::GameObject( const std::string &filepath )
+ : m_distance( 0.0f ),
    m_moving( false ),
    m_id( -1 ),
-   m_luaState( luaL_newstate() ),
-   m_frame( 0 ) { 
-  if( !LoadObjectData( xmlGameObjectPath ) &&
-      !LoadCollisionData( xmlGameObjectPath )) {
+   m_luaState( luaL_newstate() ) {
+  if( !LoadObjectData( filepath ) &&
+      !LoadCollisionData( filepath ) &&
+      !LoadAnimData( filepath ) ) {
     lua_close( m_luaState );
     m_luaState = 0;
     throw "Cannot load GameObject XML file";
@@ -81,23 +72,25 @@ GameObject::GameObject( const std::string &xmlGameObjectPath )
 
 
 GameObject::GameObject( 
-  const std::string &xmlGameObjectPath, 
+  const std::string &filepath, 
   Uint tileX, 
   Uint tileY
 )
- : m_play( false ),
-   m_animation( 0 ),
-   m_frameTime( 0.0f ),
-   m_distance( 0.0f ),
-   m_animData( 0 ),
+ : m_distance( 0.0f ),
    m_moving( false ),
    m_id( -1 ),
-   m_luaState( luaL_newstate() ),
-   m_frame( 0 ) { 
-  if( !LoadObjectData( xmlGameObjectPath ) ) {
-  lua_close( m_luaState );
-  m_luaState = 0;
-  throw "Cannot load GameObject XML file";
+   m_luaState( luaL_newstate() ) {
+
+  if( !LoadAnimData( filepath ) ) {
+    lua_close( m_luaState );
+    m_luaState = 0;
+    throw "Cannot load AnimData XML file";
+  }
+
+  if( !LoadObjectData( filepath ) ) {
+    lua_close( m_luaState );
+    m_luaState = 0;
+    throw "Cannot load GameObject XML file";
   }
 
   //Calculate the float positions given tileX and tileY
@@ -121,11 +114,11 @@ GameObject::GameObject(
   //grid
 
   //Take into account the sprites that are taller than a normal tile
-  y -= m_animData->GetFrameHeight( m_animation ) % Configuration::GetTileSize();
+  y -= GetAnimData()->GetFrameHeight( GetAnimation() ) % Configuration::GetTileSize();
 
   SetPosition( x, y );
 
-  if( !LoadCollisionData( xmlGameObjectPath ) ) {
+  if( !LoadCollisionData( filepath ) ) {
     lua_close( m_luaState );
     m_luaState = 0;
     throw "Cannot load GameObject XML file";
@@ -144,19 +137,6 @@ GameObject::~GameObject() {
 }
 
 
-const AnimData *GameObject::GetAnimData() const {
-	  return m_animData;
-}
-
-
-Uint GameObject::GetFrame() const {
-	return m_frame;
-}
-
-
-Uint GameObject::GetAnimation() const {
-	return m_animation;
-}
 
 
 void GameObject::AssignLevel( Level *level ) {
@@ -174,7 +154,7 @@ void GameObject::MoveDir( Dir direction ) {
     
     //Take into account the sprites that are taller than a normal tile
     tileToMoveTo.y += 
-      m_animData->GetFrameHeight( m_animation ) % Configuration::GetTileSize();
+      GetAnimData()->GetFrameHeight( GetAnimation() ) % Configuration::GetTileSize();
 
     switch ( m_direction ) {
       case Up: {
@@ -204,81 +184,28 @@ void GameObject::MoveDir( Dir direction ) {
 }
 
 
-void GameObject::Play() {
-  if( m_animData ) {
-  	m_play = true;
-    //Set the GameObject's clip to the correct animation frame
-  	SetSubRect( m_animData->GetFrameRect( m_animation, m_frame ) );
-  }
-}
 
-
-void GameObject::Pause() {
-	m_play = false;
-}
-
-
-void GameObject::Restart() {
-  //If GameObject is animated
-	if( m_animData ) {
-    //Stop animation setting frame to 0
-	  Stop();
-    //Reset frame time
-	  m_frameTime = m_animData->GetFrameTime( m_animation, m_frame );
-    //Start animation again
-	  Start();
-  }
-}
-
-
-void GameObject::SetFrame( Uint frame ) {
-	m_frame = frame;
-}
-
-
-void GameObject::SetAnimation( Uint animation ) {
-  if( m_animation != animation ) {
-		m_animation = animation;
-    Restart();
-  }
-}
-
-
-void GameObject::SetAnimData( const AnimData &animData ) {
-	m_animData = &animData;
-}
-
-
-void GameObject::Start() {
-	Play();
-}
-
-
-void GameObject::Stop() {
-	Pause();
-  SetFrame( 0 );
-}
 
 
 void GameObject::StopMoving() {
-  static sf::Vector2f pos;
-  pos = GetPosition();
-  if( //aligned perfectly in grid(taking into account tilemap's offset)
-    static_cast<int>( pos.x - Configuration::GetXPad() ) % 
-                      Configuration::GetTileSize() == 0 &&
-    static_cast<int>(
-      pos.y + m_animData->GetFrameHeight( m_animation ) - 
-      Configuration::GetTileSize() -
-      Configuration::GetYPad() ) % 
-      Configuration::GetTileSize() == 0 
-  ) {
+  //static sf::Vector2f pos;
+  //pos = GetPosition();
+  //if( //aligned perfectly in grid(taking into account tilemap's offset)
+  //  static_cast<int>( pos.x - Configuration::GetXPad() ) % 
+  //                    Configuration::GetTileSize() == 0 &&
+  //  static_cast<int>(
+  //    pos.y + GetAnimData()->GetFrameHeight( GetAnimation() ) - 
+  //    Configuration::GetTileSize() -
+  //    Configuration::GetYPad() ) % 
+  //    Configuration::GetTileSize() == 0 
+  //) {
     m_moving = false;
-  }
+  //}
 }
 
 
 void GameObject::Update() {
-  AnimUpdate();
+  AnimSprite::Update();
 
   if( m_moving ) {
     MovementUpdate();
@@ -306,14 +233,6 @@ void GameObject::Update() {
   GameObject* collisionObj = m_level->DetectObjectCollision( this );
 
   if( collisionObj != NULL ) {
-    //DEBUG_STATEMENT(  
-    //  std::cout 
-    //  << "Object Collision Detected..\n"
-    //  << m_type << "\n"
-    //  //<< collisionObj->GetType() 
-    //  << std::endl;
-    //)
-
     //Call OnCollision lua function
     lua_getglobal( m_luaState, "HandleCollision" );
     if ( lua_isfunction( m_luaState, -1 )) {
@@ -330,7 +249,7 @@ void GameObject::Update() {
 void GameObject::SetId( int id ) {
   m_id = id;
 }
-  
+
 
 int GameObject::GetId() const {
   return m_id;
@@ -352,11 +271,11 @@ Uint GameObject::GetTileX() const {
                       Configuration::GetXPad()) /
                       Configuration::GetTileSize();
 }
-  
+
 
 Uint GameObject::GetTileY() const {
 return (Uint)( ( this->GetPosition().y +  
-                        m_animData->GetFrameHeight( m_animation )  % 
+                        GetAnimData()->GetFrameHeight( GetAnimation() )  % 
                         Configuration::GetTileSize() ) - 
                         Configuration::GetYPad() ) / 
                         Configuration::GetTileSize();
@@ -413,27 +332,6 @@ int GameObject::LuaGetTileY( lua_State *L ) {
 /************************************************
 Private Methods
 ************************************************/
-
-void GameObject::AnimUpdate() {
-  //If GameObject is set to play
-	if( m_play ) {
-  
-    //Count down the time to the next frame shift
-	  m_frameTime -= App::GetApp()->GetDeltaTime();
-
-    //If animation is ready to go to next frame
-	  if( m_frameTime <= 0.0f ) {
-      //Move on to the next frame
-		  NextFrame();
-      //Set the GameObject's clip to the correct animation frame
-		  SetSubRect( m_animData->GetFrameRect( m_animation, m_frame ) );
-      //Reset frame time
-		  m_frameTime = m_animData->GetFrameTime( m_animation, m_frame );
-	  }
-  }
-} 
-
-
 void GameObject::InitLua() {
   luaL_openlibs( m_luaState );
   Lunar<GameObject>::Register( m_luaState );
@@ -493,27 +391,6 @@ void GameObject::MovementUpdate() {
 }
 
 
-void GameObject::NextFrame() {
-  //Increment frame
-	++m_frame;
-
-  //If the animation has reached it's end
-	if( m_frame >= m_animData->GetNumFrames( m_animation ) ) {
-    //If animation is looped
-		if( m_animData->IsLooped( m_animation ) ) {
-      //Reset animation to first frame
-			m_frame = 0;
-		}
-		else {
-      //Set animation to last frame
-      m_frame = m_animData->GetNumFrames( m_animation )-1;
-      //Pause animation at last frame
-			Pause();
-		}
-	}
-}
-
-
 bool GameObject::LoadObjectData( const std::string &filepath ) {
   TiXmlDocument doc ( filepath.c_str() );
   
@@ -526,9 +403,6 @@ bool GameObject::LoadObjectData( const std::string &filepath ) {
 
   //Load in path to GameObject's spritesheet
   std::string spritePath( root->FirstChildElement( "sprite_path" )->GetText() );
-
-  //Load in path to animation's xml
-  std::string animPath( root->FirstChildElement( "animation_path" )->GetText() );
 
   //Load in path to GameObject's lua script
   m_luaScript =  root->FirstChildElement( "script_path" )->GetText();
@@ -548,10 +422,6 @@ bool GameObject::LoadObjectData( const std::string &filepath ) {
   img.CreateMaskFromColor( sf::Color( 255, 0, 255 ) );
   //Set the spritesheet image
   SetImage( img );
-
-  //Load/Set the animation data
-  AnimData& anim = app->LoadAnim( animPath.c_str() );
-  SetAnimData( anim );
 
   return true;
 }
