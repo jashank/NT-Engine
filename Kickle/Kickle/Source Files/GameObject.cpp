@@ -224,7 +224,7 @@ void GameObject::Restart() {
     //Stop animation setting frame to 0
 	  Stop();
     //Reset frame time
-	  m_frameTime = m_animData->GetFrameTime( m_animation, 0 );
+	  m_frameTime = m_animData->GetFrameTime( m_animation, m_frame );
     //Start animation again
 	  Start();
   }
@@ -237,8 +237,10 @@ void GameObject::SetFrame( Uint frame ) {
 
 
 void GameObject::SetAnimation( Uint animation ) {
+  if( m_animation != animation ) {
 		m_animation = animation;
-    //m_frameTime = m_animData->GetFrameTime( m_animation );
+    Restart();
+  }
 }
 
 
