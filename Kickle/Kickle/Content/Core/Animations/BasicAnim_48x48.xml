@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <anim_strips>
 
-  <num_anims>20</num_anims>
+  <num_anims>4</num_anims>
 
   <strip name="up_walking">
     <looped>true</looped>

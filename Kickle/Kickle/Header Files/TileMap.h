@@ -5,16 +5,23 @@ Author: Ben Wright (bwright.au@gmail.com)
 #ifndef TILE_MAP_H
 #define TILE_MAP_H
 
-#include "App.h"
-#include "Configuration.h"
-
-#include <SFML/Graphics.hpp>
 #include <string>
+
+#include "BasicTypeDefs.h"
+
+class AnimSprite;
 
 class TileMap {
 public:
 	TileMap();
 	virtual ~TileMap();
+
+	/*********************************************
+	LoadTileAnims()
+  - Loads the tilesheet
+	- Loads the tile animations from an xml file
+	**********************************************/
+  void LoadTileAnims( const std::string& tileSheet, const std::string &anims );
 
 	/*********************************************
 	Render()
@@ -23,12 +30,10 @@ public:
 	void Render();
 
 	/************************************************
-	SetTileMap()
-	- Called by the Level class trys to grab and load
-	  the tile map sheet and sets the buffer as given.
-	  The Tile Map does not deal directly with LUNA.
+	SetTileLayout()
+	- Sets the layout of the tiles in the map
 	*************************************************/
-	void SetTileMap( std::string mapPath , int layout[15][15] );
+	void SetTileLayout( int layout[15][15] );
 
   /************************************************************
   SetTile()
@@ -53,8 +58,8 @@ private:
 	static const int NULL_TILE = -1;
 	static const int TILE_SIZE = 48;
 
-	sf::Image m_tileSheet;
-	sf::Sprite m_tileSprite;
+  AnimSprite *m_tileSprites;
+  Uint m_numTiles;
 
 	int m_layout[MAP_SIZE][MAP_SIZE];
 };

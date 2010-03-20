@@ -42,9 +42,8 @@ GameObject::GameObject( lua_State *L )
   }
 
   std::string filepath( lua_tostring( L, -1 ) );
-  if( !LoadObjectData( filepath ) &&
-      !LoadCollisionData( filepath ) &&
-      !LoadAnimData( filepath ) ) {
+  if( !( LoadObjectData( filepath ) &&
+         LoadCollisionData( filepath ) ) ) {
     lua_close( m_luaState );
     m_luaState = 0;
     throw "Cannon load GameObject XML file";
@@ -59,9 +58,8 @@ GameObject::GameObject( const std::string &filepath )
    m_moving( false ),
    m_id( -1 ),
    m_luaState( luaL_newstate() ) {
-  if( !LoadObjectData( filepath ) &&
-      !LoadCollisionData( filepath ) &&
-      !LoadAnimData( filepath ) ) {
+  if( !( LoadObjectData( filepath ) &&
+         LoadCollisionData( filepath ) ) ) {
     lua_close( m_luaState );
     m_luaState = 0;
     throw "Cannot load GameObject XML file";
@@ -81,11 +79,11 @@ GameObject::GameObject(
    m_id( -1 ),
    m_luaState( luaL_newstate() ) {
 
-  if( !LoadAnimData( filepath ) ) {
-    lua_close( m_luaState );
-    m_luaState = 0;
-    throw "Cannot load AnimData XML file";
-  }
+  //if( !LoadAnimData( filepath ) ) {
+  //  lua_close( m_luaState );
+  //  m_luaState = 0;
+  //  throw "Cannot load AnimData XML file";
+  //}
 
   if( !LoadObjectData( filepath ) ) {
     lua_close( m_luaState );
@@ -413,6 +411,10 @@ bool GameObject::LoadObjectData( const std::string &filepath ) {
   // Load in whether to use rectangular collision for this object
   std::string solid = root->FirstChildElement( "solid" )->GetText();
   m_solid = ( solid == "true" ) ? true : false;
+
+  //Load in path to animation's xml
+  std::string animPath( root->FirstChildElement( "animation_path" )->GetText() );
+  LoadAnimData( animPath );
 
   App* app= App::GetApp();
 

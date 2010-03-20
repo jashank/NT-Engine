@@ -14,19 +14,10 @@
 Public Methods
 ************************************************/
 AnimData::AnimData()
- : m_numAnims( 0 ), 
-   m_anims( 0 ) {
+ : m_anims( 0 ), 
+   m_numAnims( 0 ) {
 
 }
-
-
-//AnimData::AnimData( const std::string &filename )
-// : m_numAnims( 0 ), 
-//   m_anims( 0 ) {
-//  if( !LoadFromFile( filename ) ) {
-//    throw "Unable to load animation data";
-//  }
-//}
 
 
 AnimData::~AnimData() {
@@ -144,11 +135,6 @@ bool AnimData::IsLooped( Uint animation ) const {
 }
 
 
-//float AnimData::GetFrameTime( Uint animation ) const {
-//  return GetFrameTime( animation, 0 );
-//}
-
-
 float AnimData::GetFrameTime( Uint animation, Uint frame ) const {
 	if( m_anims[animation].uniqueFrameTimes ) {
 		return m_anims[animation%m_numAnims].
@@ -197,9 +183,9 @@ sf::IntRect AnimData::GetFrameRect( Uint animation, Uint frame ) const {
 	rect.Top = m_anims[animation%m_numAnims].frameRect.Top;
 	rect.Left = m_anims[animation%m_numAnims].frameRect.Left + 
     (frame%m_anims[animation%m_numAnims].numFrames) * 
-    m_anims[animation%m_numAnims].frameRect.Right;
+    m_anims[animation%m_numAnims].frameRect.GetWidth();
 	rect.Bottom = m_anims[animation%m_numAnims].frameRect.Bottom;
-	rect.Right = rect.Left + m_anims[animation%m_numAnims].frameRect.Right;
+	rect.Right = rect.Left + m_anims[animation%m_numAnims].frameRect.GetWidth();
 
 	return rect;
 }

@@ -33,12 +33,11 @@ class AnimSprite : public sf::Sprite {
 	************************************************/
 	Uint GetAnimation() const;
 
-
 	/************************************************
 	GetAnimation
 	-Returns the current animation
 	************************************************/  
-  bool LoadAnimData( const std::string &filepath );
+  void LoadAnimData( const std::string &filepath );
 
 	/************************************************
 	Pause

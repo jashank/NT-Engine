@@ -69,6 +69,13 @@ bool Level::SetLevel( std::string levelPath ) {
 
   TiXmlElement* root = doc.FirstChildElement( "map" );
 
+
+  // Get the tile sheet
+  std::string tileSheet( root->FirstChildElement( "tile_sheet" )->GetText() );
+  // Get the tile animations
+  std::string tileAnims( root->FirstChildElement( "tile_anims" )->GetText() );
+
+
   // Load in tiles.
   Uint mapSize = Configuration::GetMapSize();
 
@@ -87,8 +94,7 @@ bool Level::SetLevel( std::string levelPath ) {
       }
     }
   }
-  // Get the sprite sheet
-  std::string tileSheet( root->FirstChildElement( "tile_sheet" )->GetText() );
+
   // Load In Collision Layout
   std::string collisionString( root->FirstChildElement( "collision_layout" )->GetText() );
   std::stringstream collisionMapStream( collisionString, std::ios_base::in );
@@ -106,12 +112,16 @@ bool Level::SetLevel( std::string levelPath ) {
   }
 
   // GameObjectMap parses its section by itself instead of in this method.
- if ( root->FirstChildElement( "game_objects" ) ) {
+  if ( root->FirstChildElement( "game_objects" ) ) {
     m_gameObjectMap.SetGameObjectMap( root->FirstChildElement( "game_objects" ) );
- }
+  }
 
-	// Send them to the appropriate functions.
-	m_tileMap.SetTileMap( tileSheet, tileLayout );
+  //Load the appropriate tile animation data 
+  //and tilesheet into the tile map
+  m_tileMap.LoadTileAnims( tileSheet, tileAnims );
+	
+  //Set tile/collision layouts
+	m_tileMap.SetTileLayout( tileLayout );
   m_collisionMap.SetCollisionMap( collisionLayout );
 
 	return true;

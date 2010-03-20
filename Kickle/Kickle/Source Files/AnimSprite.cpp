@@ -27,26 +27,12 @@ Uint AnimSprite::GetAnimation() const {
 	return m_animation;
 }
 
-bool AnimSprite::LoadAnimData( const std::string &filepath ) {
-  TiXmlDocument doc( filepath.c_str() );
-  
-  if ( !doc.LoadFile() ) {
-    return false;
-  }
-
-  TiXmlHandle handleDoc( &doc );
-  TiXmlElement* root = handleDoc.FirstChildElement( "game_object" ).Element();
-
-  //Load in path to animation's xml
-  std::string animPath( root->FirstChildElement( "animation_path" )->GetText() );
-
+void AnimSprite::LoadAnimData( const std::string &filepath ) {
   App* app= App::GetApp();
 
   //Load/Set the animation data
-  AnimData& anim = app->LoadAnim( animPath.c_str() );
+  AnimData& anim = app->LoadAnim( filepath.c_str() );
   SetAnimData( anim );
-
-  return true;
 }
 
 void AnimSprite::Play() {
