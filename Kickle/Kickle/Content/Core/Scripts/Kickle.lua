@@ -1,5 +1,8 @@
 -- Kickle's Script
 
+package.path = package.path .. ";Content/Core/Scripts/?.lua"
+require ("GameObjectUtilities");
+
 -- 0 UP, 1 DOWN, 2 LEFT, 3 RIGHT
 local dir = 0; -- Direction
 local moveable = true; -- If true then kickle is moveable
@@ -22,10 +25,9 @@ function HandleCollision( Kickle, Other )
 end
 
 
-
 -- [[ Function that is called to handle scripted user input events ]]
 function HandleUserInput( Kickle )
-	if( moveable == true ) then
+	if( moveable ) then
 
 		if ( Game.IsKeyDown( 293 ) ) then		-- 293 == value for the Up Arrow
 			dir = 0;  -- set direction to UP
@@ -40,7 +42,13 @@ function HandleUserInput( Kickle )
 			dir = 3;  -- set direction to RIGHT
 			mode = 4; -- set mode to Walking
 		elseif ( Game.IsKeyDown( 120 ) ) then
-			Game.CreateGameObject( "Content/Core/Objects/Pillar.xml", 9, 7 );
+			tileX, tileY = GetTileObjectFaces( Kickle, dir );
+
+			if ( not Game.IsTileSolid( tileX, tileY ) and
+			     not Game.TileHasSolidObject( tileX, tileY )) then
+				Game.CreateGameObject(
+					"Content/Core/Objects/Pillar.xml", tileX, tileY );
+			end
 		else
 			-- No key was pressed so:
 			mode = 0; -- set mode to STANDING
