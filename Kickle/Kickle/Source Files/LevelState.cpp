@@ -30,7 +30,7 @@ LevelState::~LevelState() {
 }
 
 
-BaseState* LevelState::GetInstance() {
+LevelState* LevelState::GetInstance() {
 	if( !m_instance ) {
 		m_instance = new LevelState();
 	}
@@ -47,8 +47,8 @@ void LevelState::Init() {
 	SetInit( true );
 	App::GetApp()->SetClearColor( sf::Color(0,49,139) );
 	// Create a LevelState with a place holder path.
-	SetLevel( "Content/Core/LevelStates/TestLevelState.xml" );
-  GameObject::AssignLevel( m_instance );
+	SetLevel( "Content/Core/Levels/TestLevel.xml" );
+  //GameObject::AssignLevel( m_instance );
 }
 
 

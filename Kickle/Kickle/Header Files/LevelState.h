@@ -22,7 +22,7 @@ class LevelState : public BaseState {
  public:
   virtual ~LevelState();
 
-  static BaseState* GetInstance();
+  static LevelState* GetInstance();
   static void DestroyInstance();
 
   /************************************************
