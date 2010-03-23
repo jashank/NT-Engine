@@ -4,7 +4,7 @@
 #include "App.h"
 #include "GameObject.h"
 #include "LuaAppFuncts.h"
-#include "PlayState.h"
+#include "LevelState.h"
 #include "TitleState.h"
 #include "Utilities.h"
 
@@ -49,7 +49,7 @@ App::App(
 App::~App() {
 	DEBUG_STATEMENT( std::cout << "Closing App..." << std::endl; )
 
-  PlayState::DestroyInstance();
+  LevelState::DestroyInstance();
 	TitleState::DestroyInstance();
 }
 

@@ -3,8 +3,8 @@
 #include <SFML/Graphics/Font.hpp>
 
 #include "App.h"
-#include "PlayState.h"
 #include "EditorState.h"
+#include "LevelState.h"
 #include "Utilities.h"
 
 /************************************************
@@ -115,7 +115,7 @@ Private Member Functions
 ************************************************/
 
 void TitleState::Play() {
-  App::GetApp()->SetNextState( PlayState::GetInstance() );
+  App::GetApp()->SetNextState( LevelState::GetInstance() );
 }
 
 void TitleState::Edit() {

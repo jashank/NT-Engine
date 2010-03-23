@@ -2,13 +2,14 @@
 #define EDITORSTATE_H
 
 #include "BaseState.h"
-#include "Level.h"
 
 #include <SFML/Graphics/String.hpp>
 class sf::Font;
 
 #include "Button.h"
 #include "BasicTypeDefs.h"
+
+class LevelState;
 
 /************************************************
 EditorState
@@ -96,8 +97,7 @@ class EditorState : public BaseState {
   EditorState& operator=( const EditorState &title );
 
   static EditorState *m_instance; // EditorState has one instance
-
-  Level m_level;
+  static LevelState *m_level; // Level to work with
 
   Button m_exit; // Go back to title screen.
   Button m_saveMap; // Button to save game

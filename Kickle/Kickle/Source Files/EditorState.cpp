@@ -3,7 +3,8 @@
 #include <SFML/Graphics/Font.hpp>
 
 #include "App.h"
-#include "PlayState.h"
+#include "Configuration.h"
+#include "LevelState.h"
 #include "TitleState.h"
 #include "Utilities.h"
 
@@ -11,6 +12,7 @@
 Data Members
 ************************************************/
 EditorState *EditorState::m_instance = 0;
+LevelState *EditorState::m_level = 0;
 
 
 /************************************************
@@ -48,6 +50,8 @@ void EditorState::Init() {
 
   CreateButtons();
   CreateSidePanel();
+
+  m_level = LevelState::GetInstance();
   
   m_font = new sf::Font();
   m_font->LoadFromFile( "Content/Core/Fonts/MICKEY.TTF" );
@@ -59,8 +63,6 @@ void EditorState::Init() {
   m_collisionLayer.SetText( sf::String( "Collision", *m_font, 20 ) );
   m_gameObjectLayer.SetText( sf::String( "Object", *m_font, 20 ) );
   m_exit.SetText( sf::String( "Exit", *m_font, 20 ) );
-
-
 }
 
 
@@ -96,12 +98,12 @@ void EditorState::HandleEvents() {
 
 
 void EditorState::Update() {
-  m_level.Update();
+  m_level->Update();
 }
 
 
 void EditorState::Render() {
-  m_level.Render();
+  m_level->Render();
   DrawGrid();
   DrawToolbar();
   DrawSideBar();

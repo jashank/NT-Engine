@@ -8,7 +8,7 @@
 #include "BasicTypeDefs.h"
 
 
-class Level;
+class LevelState;
 
 
 /************************************************
@@ -29,13 +29,6 @@ class GameObject : public AnimSprite {
 	GameObject( const std::string &filepath );
   GameObject( const std::string &filepath, Uint tileX, Uint tileY );
   ~GameObject();
-
-
-	/************************************************
-	AssignLevel
-	-Lets GameObject know what level it is on.
-	************************************************/
-  static void AssignLevel( Level *level );
 
 	/************************************************
 	MoveDir
@@ -156,7 +149,8 @@ class GameObject : public AnimSprite {
 
 
 
-  static Level *m_level; // Level that GameObject is on
+  static LevelState *m_level; // Level that GameObject is on
+
   bool m_moving; // If true; keep moving in m_direction
   bool m_solid; // Solid objects completely restrict access to tile they are on
   Dir m_direction; // Current direction game object is moving

@@ -7,14 +7,13 @@
 
 #include "App.h"
 #include "Configuration.h"
-#include "Level.h"
+#include "LevelState.h"
 #include "LuaAppFuncts.h"
-#include "PlayState.h"
 
 /************************************************
 Constant Members
 ************************************************/
-Level* GameObject::m_level = 0;
+LevelState* GameObject::m_level = 0;
 
 /************************************************
 Public Members
@@ -37,6 +36,8 @@ GameObject::GameObject( lua_State *L )
    m_moving( false ),
    m_id( -1 ),
    m_luaState( luaL_newstate() ) {
+  m_level = LevelState::GetInstance();
+
   if( !lua_isstring( L, -1 ) ) {
     luaL_error( L, "Invalid argument for GameObject." );
   }
@@ -58,6 +59,8 @@ GameObject::GameObject( const std::string &filepath )
    m_moving( false ),
    m_id( -1 ),
    m_luaState( luaL_newstate() ) {
+  m_level = LevelState::GetInstance();
+
   if( !( LoadObjectData( filepath ) &&
          LoadCollisionData( filepath ) ) ) {
     lua_close( m_luaState );
@@ -78,6 +81,7 @@ GameObject::GameObject(
    m_moving( false ),
    m_id( -1 ),
    m_luaState( luaL_newstate() ) {
+  m_level = LevelState::GetInstance();
 
   //if( !LoadAnimData( filepath ) ) {
   //  lua_close( m_luaState );
@@ -135,13 +139,6 @@ GameObject::~GameObject() {
 }
 
 
-
-
-void GameObject::AssignLevel( Level *level ) {
-  m_level = level;
-}
-
-
 void GameObject::MoveDir( Dir direction ) {
   if( !m_moving ) {
     m_direction = direction;
@@ -180,9 +177,6 @@ void GameObject::MoveDir( Dir direction ) {
     } 
   }
 }
-
-
-
 
 
 void GameObject::StopMoving() {
@@ -334,7 +328,7 @@ void GameObject::InitLua() {
   luaL_openlibs( m_luaState );
   Lunar<GameObject>::Register( m_luaState );
   LuaApp::RegisterLuaAppFuncts( m_luaState );
-  PlayState::RegisterLuaPlayFuncts( m_luaState );
+  LevelState::RegisterLuaPlayFuncts( m_luaState );
   luaL_dofile( m_luaState, m_luaScript.c_str() );
 }
 
