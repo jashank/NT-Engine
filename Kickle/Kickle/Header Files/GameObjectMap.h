@@ -2,6 +2,7 @@
 #define GAME_OBJECT_MAP_H
 
 #include <map>
+#include <string>
 #include <vector>
 
 #include "App.h"
@@ -40,6 +41,14 @@ class GameObjectMap {
       that object is returned. Returns NULL otherwise.
     **************************************************/ 
     GameObject* ObjectOnTile( Uint x, Uint y );
+
+    /**************************************************
+    GetGameObject()
+    - Returns a GameObject in the gameObjectMap with
+      the given 'objectType' as its type. Returns 
+      NULL if an object isn't found.
+    ***************************************************/
+    GameObject* GetGameObject( const std::string &objectType );
 
   private:
     void Init();

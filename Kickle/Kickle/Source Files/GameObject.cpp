@@ -274,6 +274,11 @@ return (Uint)( ( this->GetPosition().y +
 }
 
 
+const std::string& GameObject::GetType() const {
+  return m_type;
+}
+
+
 int GameObject::LuaMoveDir( lua_State *L ) {
   if( !lua_isnumber( L, -1 ) ) {
     return luaL_error( L, "Invalid argument for MoveDir." );

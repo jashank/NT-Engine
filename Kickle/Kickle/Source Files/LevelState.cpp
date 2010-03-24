@@ -16,6 +16,7 @@ const luaL_Reg LevelState::luaPlayFuncts[] = {
   { "CreateGameObject", LuaCreateGameObject },
   { "IsTileSolid", LuaIsTileSolid },
   { "TileHasSolidObject", LuaTileHasSolidObject },
+  { "GetGameObject", LuaGetGameObject },
   { 0, 0 }
 };
 
@@ -127,11 +128,6 @@ void LevelState::SetTile (int x, int y, int tileId, int collisionId ) {
 }
 
 
-void LevelState::AddGameObject( GameObject *gameObject ) {
-  m_gameObjectMap.AddGameObject( gameObject );
-}
-
-
 GameObject *LevelState::DetectObjectCollision( const GameObject *gameObject ) {
   return m_gameObjectMap.DetectCollision( gameObject );
 }
@@ -153,7 +149,7 @@ int LevelState::LuaCreateGameObject( lua_State *L ) {
   }
   Uint tileY = static_cast<Uint>( lua_tointeger( L, -1 ) );
 
-  m_instance->AddGameObject(
+  m_instance->m_gameObjectMap.AddGameObject(
     new GameObject( path, tileX, tileY )
   );
 
@@ -191,6 +187,18 @@ int LevelState::LuaTileHasSolidObject( lua_State *L ) {
 
   lua_pushboolean( L, m_instance->TileHasSolidObject( tileX, tileY ) );
 
+  return 1;
+}
+
+
+int LevelState::LuaGetGameObject( lua_State *L ) {
+  if ( !lua_isstring( L, -1 ) ) {
+    return luaL_error( L, "Did not pass a string to GetGameObject." );
+  }
+  std::string objectType = lua_tostring( L, -1 );
+
+  Lunar<GameObject>::push( L, m_instance->
+                           m_gameObjectMap.GetGameObject( objectType ));
   return 1;
 }
 

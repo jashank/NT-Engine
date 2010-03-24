@@ -83,6 +83,12 @@ class GameObject : public AnimSprite {
   - Returns y-location of GameObject on game grid
   **************************************************/
   Uint GetTileY() const;
+
+  /*************************************************
+  GetType()
+  - Returns type of GameObject
+  **************************************************/
+  const std::string& GetType() const;
   
 	/************************************************
 	LuaMoveDir
@@ -146,7 +152,6 @@ class GameObject : public AnimSprite {
 	-Updates the movement of GameObject
 	************************************************/
   void MovementUpdate();
-
 
 
   static LevelState *m_level; // Level that GameObject is on

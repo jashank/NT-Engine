@@ -93,12 +93,6 @@ class LevelState : public BaseState {
   - Sets the tile at x, y to that tile with that id
   ***************************************************/
   void SetTile ( int x, int y, int tileId, int collisionId );
-
-  /**************************************************
-  AddGameObject()
-  - Adds gameObject to the gameObjectMap
-  ***************************************************/
-  void AddGameObject( GameObject *gameObject );
   
   /**************************************************
   DetectObjectCollision()
@@ -124,6 +118,12 @@ class LevelState : public BaseState {
   - Exposes Level's TileHasSolidObject to Lua
   ************************************************/
   static int LuaTileHasSolidObject( lua_State *L );
+
+  /************************************************
+  LuaGetGameObject
+  - Allows Lua to grab a GameObject from the Level
+  ************************************************/
+  static int LuaGetGameObject( lua_State *L );
 
   /************************************************
   RegisterLuaPlayFuncts()
