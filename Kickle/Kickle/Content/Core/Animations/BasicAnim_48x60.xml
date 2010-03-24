@@ -159,8 +159,8 @@
   </strip>
 
 
-  <strip name="up_blowing">
-    <looped>true</looped>
+  <strip name="up_pillar">
+    <looped>false</looped>
     <num_frames>8</num_frames>
     <individual_times>false</individual_times>
     <frame_times> 0.1 </frame_times>
@@ -172,8 +172,8 @@
   </strip>
 
 
-  <strip name="down_blowing">
-    <looped>true</looped>
+  <strip name="down_pillar">
+    <looped>false</looped>
     <num_frames>8</num_frames>
     <individual_times>false</individual_times>
     <frame_times> 0.1 </frame_times>
@@ -185,8 +185,8 @@
   </strip>
 
 
-  <strip name="left_blowing">
-    <looped>true</looped>
+  <strip name="left_pillar">
+    <looped>false</looped>
     <num_frames>8</num_frames>
     <individual_times>false</individual_times>
     <frame_times> 0.1 </frame_times>
@@ -198,8 +198,8 @@
   </strip>
 
 
-  <strip name="right_blowing">
-    <looped>true</looped>
+  <strip name="right_pillar">
+    <looped>false</looped>
     <num_frames>8</num_frames>
     <individual_times>false</individual_times>
     <frame_times> 0.1 </frame_times>

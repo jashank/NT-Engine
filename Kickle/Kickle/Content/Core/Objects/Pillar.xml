@@ -12,6 +12,9 @@
   <typename>
     Pillar
   </typename>
+  <speed>
+    0
+  </speed>
   <solid>
     true
   </solid>

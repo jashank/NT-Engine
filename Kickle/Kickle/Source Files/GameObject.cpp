@@ -25,6 +25,7 @@ Lunar<GameObject>::RegType GameObject::methods[] = {
   { "GetType", &GameObject::LuaGetType },
   { "GetTileX", &GameObject::LuaGetTileX },
   { "GetTileY", &GameObject::LuaGetTileY },
+  { "IsAnimating", &GameObject::LuaIsAnimating },
   { 0, 0 }
 };
 
@@ -33,6 +34,7 @@ Public Methods
 ************************************************/
 GameObject::GameObject( lua_State *L )
  : m_distance( 0.0f ),
+   m_speed( 0.0f ),
    m_moving( false ),
    m_id( -1 ),
    m_luaState( luaL_newstate() ) {
@@ -56,6 +58,7 @@ GameObject::GameObject( lua_State *L )
 
 GameObject::GameObject( const std::string &filepath )
  : m_distance( 0.0f ),
+   m_speed( 0.0f ),
    m_moving( false ),
    m_id( -1 ),
    m_luaState( luaL_newstate() ) {
@@ -78,6 +81,7 @@ GameObject::GameObject(
   Uint tileY
 )
  : m_distance( 0.0f ),
+   m_speed( 0.0f ),
    m_moving( false ),
    m_id( -1 ),
    m_luaState( luaL_newstate() ) {
@@ -305,6 +309,13 @@ int GameObject::LuaSetAnimation( lua_State *L ) {
 }
 
 
+int GameObject::LuaIsAnimating( lua_State *L ) {
+  lua_pushboolean( L, IsAnimating() );
+
+  return 1;
+}
+
+
 int GameObject::LuaGetType( lua_State *L ) {  
   lua_pushstring( L, m_type.c_str() );
 
@@ -339,25 +350,24 @@ void GameObject::InitLua() {
 
 
 void GameObject::MovementUpdate() {
-  static const float SPEED = 1.0f;
-  m_distance += SPEED;
+  m_distance += m_speed;
 
   switch( m_direction ) {
   case Up:
-    Move( 0.0f, -SPEED );
-    m_collisionRect.Offset( 0.f, -SPEED );
+    Move( 0.0f, -m_speed );
+    m_collisionRect.Offset( 0.f, -m_speed );
     break;
   case Down:
-    Move( 0.0f, SPEED );
-    m_collisionRect.Offset( 0.f, SPEED );
+    Move( 0.0f, m_speed );
+    m_collisionRect.Offset( 0.f, m_speed );
     break;
   case Left:
-    Move( -SPEED, 0.0f );
-    m_collisionRect.Offset( -SPEED, 0.f );
+    Move( -m_speed, 0.0f );
+    m_collisionRect.Offset( -m_speed, 0.f );
     break;
   case Right:
-    Move( SPEED, 0.0f );
-    m_collisionRect.Offset( SPEED, 0.f );
+    Move( m_speed, 0.0f );
+    m_collisionRect.Offset( m_speed, 0.f );
     break;
   }
 
@@ -406,6 +416,10 @@ bool GameObject::LoadObjectData( const std::string &filepath ) {
 
   // Load in type of object
   m_type = root->FirstChildElement( "typename" )->GetText();
+
+  // Load in speed of object
+  std::string speed( root->FirstChildElement( "speed" )->GetText() );
+  m_speed = atof( speed.c_str() );
 
   // Load in whether to use rectangular collision for this object
   std::string solid = root->FirstChildElement( "solid" )->GetText();

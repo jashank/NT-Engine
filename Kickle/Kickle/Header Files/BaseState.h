@@ -1,6 +1,5 @@
 #ifndef BASESTATE_H
 #define BASESTATE_H
-//#include"StateManager.h"
 
 /********************************************************
 BaseState
@@ -8,6 +7,7 @@ BaseState
 -Inherited from to create game states
 -All game states will be managed by the StateManager
 ********************************************************/
+
 class BaseState {
  public:
   virtual ~BaseState();

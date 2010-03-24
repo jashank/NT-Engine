@@ -21,75 +21,44 @@ class TitleState : public BaseState {
   static BaseState* GetInstance();
   static void DestroyInstance();
 
-  /************************************************
-  Init
-  -Loads the resources required by TitleState
-  ************************************************/
+  // Loads the resources required by TitleState
   virtual void Init();
 
-  /************************************************
-  CleanUp
-  -Releases the resources acquired by TitleState
-  ************************************************/
+  // Releases the resources acquired by TitleState
   virtual void CleanUp();
 
-  /************************************************
-  Pause
-  -Pauses the TitleState
-  ************************************************/
+  // Pauses the TitleState
   virtual void Pause();
 
-  /************************************************
-  Resume
-  -Unpauses the TitleState
-  ************************************************/
+  // Unpauses the TitleState
   virtual void Resume();
 
-  /************************************************
-  HandleEvents
-  -Handle TitleState's user input events
-  ************************************************/
+  // Handle TitleState's user input events
   virtual void HandleEvents();
 
-  /************************************************
-  Update
-  -Update TitleState's frame
-  ************************************************/
+  // Update TitleState's frame
   virtual void Update();
 
-  /************************************************
-  Render
-  -Render TitleState's frame
-  ************************************************/
+  // Render TitleState's frame
   virtual void Render();
 
  private:	
-  /************************************************
-  Restricts construction, copy construction, 
-  and assignment.
-  ************************************************/
+  // Restricts construction, copy construction, and assignment
   TitleState();
   TitleState( const TitleState &title );
   TitleState& operator=( const TitleState &title );
 
-  /************************************************
-  Play
-  - Function called when player clicks play.
-  ************************************************/
+  // Function assigned to Play button. Puts player into game.
   static void Play();
 
+  // Function assigned to Edit button. Puts player into editor.
   static void Edit();
-  /************************************************
-  CreateButtons
-  - Creates the buttons for the Title Menu
-  ************************************************/
-  void CreateButtons();
 
-  
-  
+  // Creates the buttons for the Title Menu
+  void CreateButtons();
   
   Button m_play; // Button to play game
-  Button m_editor;
+  Button m_editor; // Button to enter editor
   sf::Font *m_font; // Font for the title menu
   sf::String m_title; // Title string
 

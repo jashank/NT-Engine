@@ -8,10 +8,7 @@ class Configuration {
   Configuration();
   virtual ~Configuration();
 
-  /********************************************************
-  Load
-  - Loads the configuration data.
-  ********************************************************/
+  // Loads the configuration data.
   static void Load();
 
   static void SetScreenWidth( Uint screenWidth );

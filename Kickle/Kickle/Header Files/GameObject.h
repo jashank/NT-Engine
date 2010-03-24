@@ -30,94 +30,54 @@ class GameObject : public AnimSprite {
   GameObject( const std::string &filepath, Uint tileX, Uint tileY );
   ~GameObject();
 
-	/************************************************
-	MoveDir
-	-Moves 1 tile length in the supplied direction
-	************************************************/	
+	// Moves 1 tile length in the supplied direction
   void MoveDir( Dir direction );
 
-	/************************************************
-	StopMoving
-	-Stops moving
-	************************************************/
+	// Stops movement
   void StopMoving();
 
-	/************************************************
-	Update
-	-Updates the GameObject
-	************************************************/
+	// Updates the GameObject
 	virtual void Update();
 
-  /**********************************************
-  SetId()
-  - Sets the member unique identifier.
-  ***********************************************/
+  // Sets the member unique identifier.
   void SetId( int id );
   
-  /*************************************************
-  GetId()
-  - Returns the member unique identifier (m_id)
-  **************************************************/
+  // Returns the member unique identifier (m_id)
   int GetId() const;
 
-  /*************************************************
-  GetCollisionBox()
-  - Returns collision box for game object
-  **************************************************/
+  // Returns collision box for game object
   const sf::FloatRect &GetCollisionBox() const;
 
-  /*************************************************
-  IsSolid()
-  - Returns whether game object is solid
-  **************************************************/
+  // Returns whether game object is solid
   bool IsSolid() const;
 
-  /*************************************************
-  GetTileX()
-  - Returns x-location of GameObject on game grid
-  **************************************************/
+  // Returns x-location of GameObject on game grid
   Uint GetTileX() const;
 
-  /*************************************************
-  GetTileY()
-  - Returns y-location of GameObject on game grid
-  **************************************************/
+  // Returns y-location of GameObject on game grid
   Uint GetTileY() const;
 
-  /*************************************************
-  GetType()
-  - Returns type of GameObject
-  **************************************************/
+  // Returns type of GameObject
   const std::string& GetType() const;
+
+  /************************************************
+  Lua Functions
+  ************************************************/
   
-	/************************************************
-	LuaMoveDir
-	-Wraps MoveDir to allow it to be exposed to Lua
-	************************************************/
+	// Wraps MoveDir to allow it to be exposed to Lua
   int LuaMoveDir( lua_State *L );
 
-	/************************************************
-	LuaSetAnimation
-	-Wraps SetAnimation to allow it to be exposed to Lua
-	************************************************/
+	// Wraps SetAnimation to allow it to be exposed to Lua
   int LuaSetAnimation( lua_State *L );
 
-  /************************************************
-	LuaGetType
-	-Allows Lua to access type of GameObject
-	************************************************/
+	// Returns whether GameObject is animating
+  int LuaIsAnimating( lua_State *L );
+
+	// Allows Lua to access type of GameObject
   int LuaGetType( lua_State *L );
 
-  /************************************************
-	LuaGetTileX
-	-Wraps GetTileX to allow it to be exposed to Lua
-	************************************************/
+  // Wrap GetTileX and GetTileY to allow it to be exposed to Lua
   int LuaGetTileX( lua_State *L );
-
-  /************************************************
-	LuaGetTileY
-	-Wraps GetTileY to allow it to be exposed to Lua
-	************************************************/
   int LuaGetTileY( lua_State *L );
 
   //Necessities for Lunar
@@ -125,32 +85,18 @@ class GameObject : public AnimSprite {
   static Lunar<GameObject>::RegType methods[];
 
  private:
-  /************************************************
-	LoadObjectData
-	-Loads a GameObject given a path to an xml file
-  -Returns true if loading was successful
-	************************************************/
+	// Loads a GameObject given a path to an xml file,
+  // returning true if loading was successful
   bool LoadObjectData( const std::string &filepath );
 
-  /************************************************
-	LoadCollisionData
-	-Loads GameObject's collision data given path to
-   xml file
-  -Returns true if loading was successful
-	************************************************/
+	// Loads GameObject's collision data given path to xml file,
+  // returning true if loading was successful
   bool LoadCollisionData( const std::string &filepath );
 
-	/************************************************
-	InitLua
-	-Initializes the lua script
-  - //TODO - Call OnCreation here
-	************************************************/  
+	// Initializes the lua script 
   void InitLua();
 
-	/************************************************
-	MovementUpdate
-	-Updates the movement of GameObject
-	************************************************/
+	//Updates the movement of GameObject
   void MovementUpdate();
 
 
@@ -160,6 +106,7 @@ class GameObject : public AnimSprite {
   bool m_solid; // Solid objects completely restrict access to tile they are on
   Dir m_direction; // Current direction game object is moving
   float m_distance; // Distance traveled from last grid location
+  float m_speed; // m_speed at which object moves ( 1.0 is "normal" i.e. Kickle )
   int m_id; // ID of object
   lua_State* m_luaState; // Mediator between C/C++ and Lua VM
   sf::FloatRect m_collisionRect; // Object's collision box

@@ -12,6 +12,9 @@
   <typename>
     Kickle
   </typename>
+  <speed>
+    1.0
+  </speed>
   <solid>
     false
   </solid>

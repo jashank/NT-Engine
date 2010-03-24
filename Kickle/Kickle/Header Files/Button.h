@@ -17,18 +17,13 @@ Button
 ********************************************************/
 class Button : public sf::Sprite {
  public:
-  /********************************************************
-  Typedefs
-  - Boost function pointer typedef'd to buttonAction.
-  ********************************************************/
+
+  // Boost function pointer typedef'd to buttonAction.
   typedef boost::function< void() > Action;
 
-  /********************************************************
-  Constructors
-  - All constructors take a buttonAction, an sf::vector2<float>,
-    and an sf::IntRect. Image may be provided.
-  - Default Constructor creates "non-existent" button.
-  ********************************************************/
+  // All constructors take a buttonAction, an sf::vector2<float>,
+  // and an sf::IntRect. Image may be provided.
+  // Default Constructor creates "non-existent" button.
   Button();
 
   Button( 
@@ -44,29 +39,17 @@ class Button : public sf::Sprite {
     const sf::Image &image
   );
 
-  /********************************************************
-  ContainsCursor
-  - Checks to see if cursor is positioned over button.
-  ********************************************************/
+  // Checks to see if cursor is positioned over button.
   bool ContainsCursor( int cursorX, int cursorY ) const;
 
-  /********************************************************
-  Activate
-  - Activates the button's action.
-  ********************************************************/
+  // Activates the button's action.
   void Activate() const;
   
-  /********************************************************
-  SetText
-  - Sets text to display over button.
-  ********************************************************/
+  // Sets text to display over button.
   void SetText( const sf::String &text );
   
  protected:
-  /********************************************************
-  Render
-  - Renders the button to the screen.
-  ********************************************************/
+  // Renders the button to the screen.
   virtual void Render( sf::RenderTarget &Target ) const;
 
  private:

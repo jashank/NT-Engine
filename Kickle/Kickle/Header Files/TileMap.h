@@ -16,44 +16,25 @@ public:
 	TileMap();
 	virtual ~TileMap();
 
-	/*********************************************
-	LoadTileAnims()
-  - Loads the tilesheet
-	- Loads the tile animations from an xml file
-	**********************************************/
+  // Loads the tilesheet and tile animations from xml file
   void LoadTileAnims( const std::string& tileSheet, const std::string &anims );
 
-	/*********************************************
-	Render()
-	- Called by the Level class and renders the map
-	**********************************************/
+  // Renders the map (called by LevelState)
 	void Render();
 
-	/************************************************
-	SetTileLayout()
-	- Sets the layout of the tiles in the map
-	*************************************************/
+  // Sets the layout of the tiles in the map
 	void SetTileLayout( int layout[15][15] );
 
-  /************************************************************
-  SetTile()
-  - Changes the value of the tile sheet to that value if it is 
-  valid else -1.
-  ************************************************************/
+  // Changes the value of the tile sheet to that value if it is valid, else -1.
   void SetTile( int x, int y, int tileId );
-  /**********************************************
-  GetTile()
-  - Returns the id of the tile at that location.
-  **********************************************/
+
+  // Returns id of tile at specified location.
   int GetTile( int x, int y ) const;
 
 private:
-  /**********************************************
-  Init()
-	- Called by the constructor and initializes the
-	  tile map.
-	***********************************************/
+  // Called by constructor and initializes tilemap.
 	void Init();
+
   static const int MAP_SIZE = 15;
 	static const int NULL_TILE = -1;
 	static const int TILE_SIZE = 48;

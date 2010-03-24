@@ -23,49 +23,28 @@ class EditorState : public BaseState {
   static BaseState* GetInstance();
   static void DestroyInstance();
 
-  /************************************************
-  Init
-  -Loads the resources required by EditorState
-  ************************************************/
+  // Loads resources required by EditorState
   virtual void Init();
 
-  /************************************************
-  CleanUp
-  -Releases the resources acquired by EditorState
-  ************************************************/
+  // Releases resources acquired by EditorState
   virtual void CleanUp();
 
-  /************************************************
-  Pause
-  -Pauses the EditorState
-  ************************************************/
+  // Pauses EditorState
   virtual void Pause();
 
-  /************************************************
-  Resume
-  -Unpauses the EditorState
-  ************************************************/
+  // Unpauses EditorState
   virtual void Resume();
 
-  /************************************************
-  HandleEvents
-  -Handle EditorState's user input events
-  ************************************************/
+  // Handles EditorState's user input events
   virtual void HandleEvents();
 
-  /************************************************
-  Update
-  -Update EditorState's frame
-  ************************************************/
+  // Update EditorState's frame
   virtual void Update();
 
-  /************************************************
-  Render
-  -Render EditorState's frame
-  ************************************************/
+  // Render EditorState's frame
   virtual void Render();
 
-  //GUI
+  //----GUI----
 
   // Side Panel
   void CreateSidePanel();
@@ -79,6 +58,7 @@ class EditorState : public BaseState {
   static void CollisionLayer();
   static void GameObjectLayer();
   static void Exit();
+
  private:
    void DrawGrid();
 
@@ -88,10 +68,8 @@ class EditorState : public BaseState {
    void DrawToolbar();
    void ToolbarEvents();
    void GridEvents();
-  /************************************************
-  Restricts construction, copy construction, 
-  and assignment.
-  ************************************************/
+
+  // Restricts construction, copy construction, and assignment.
   EditorState();
   EditorState( const EditorState &title );
   EditorState& operator=( const EditorState &title );

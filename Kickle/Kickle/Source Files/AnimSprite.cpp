@@ -112,8 +112,18 @@ void AnimSprite::Update() {
 
 
 /************************************************
+Protected Methods
+************************************************/
+
+bool AnimSprite::IsAnimating() {
+  return m_play;
+}
+
+
+/************************************************
 Private Methods
 ************************************************/
+
 void AnimSprite::NextFrame() {
   //Increment frame
 	++m_frame;

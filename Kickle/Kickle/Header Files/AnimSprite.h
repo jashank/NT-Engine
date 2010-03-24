@@ -15,96 +15,54 @@ class AnimSprite : public sf::Sprite {
   AnimSprite();
 
 
-	/************************************************
-	GetAnimData
-	-Returns the data used for the animation
-	************************************************/
+  // Returns the data used for the animation
 	const AnimData *GetAnimData() const;
 
-	/************************************************
-	GetFrame
-	-Returns the current animation frame
-	************************************************/
+  // Returns the current animation frame
 	Uint GetFrame() const;
 
-	/************************************************
-	GetAnimation
-	-Returns the current animation
-	************************************************/
+  // Returns the current animation
 	Uint GetAnimation() const;
 
-	/************************************************
-	GetAnimation
-	-Returns the current animation
-	************************************************/  
+  // Loads animation data from xml file passed
   void LoadAnimData( const std::string &filepath );
 
-	/************************************************
-	Pause
-	-Freezes animation on current frame
-	************************************************/	
+  // Freezes animation on current frame
 	void Pause();
 
-	/************************************************
-	Play
-	-Resumes animation from current frame
-	************************************************/
+  // Resumes animation from current frame
 	void Play();
 
-	/************************************************
-	Restart
-	-Stops animation then resumes from first frame
-	************************************************/
+  // Stops animation then resumes from first frame
 	void Restart();
 
-	/************************************************
-	SetFrame
-	-Sets the current animation frame
-	************************************************/
+  // Sets the current animation's frame
 	void SetFrame( Uint frame );
 
-	/************************************************
-	SetAnimation
-	-Sets the current animation
-	************************************************/
+  // Sets the current animation
 	void SetAnimation( Uint animation );
 
-	/************************************************
-	SetAnimData
-	-Sets the data to be used for the animation
-	************************************************/
+  // Sets the data to be used for the animation
 	void SetAnimData( const AnimData &animData );
 
-	/************************************************
-	Start
-	-Resumes animation from current frame
-	************************************************/
+  // Starts the animation from the first frame
 	void Start();
 
-	/************************************************
-	Stop
-	-Stops animation
-  -Sets animation to first frame
-	************************************************/
+  // Stops animation and sets it to first frame
 	void Stop();
 
-	/************************************************
-	Update
-	-Updates the AnimSprite
-	************************************************/
+  // Updates the AnimSprite
   virtual void Update();
 
+ protected:
+  // Returns whether sprite is still animating 
+  bool IsAnimating();
+
  private:
-	/************************************************
-	AnimUpdate
-	-Updates the animation
-	************************************************/
+  // Updates the animation
   void AnimUpdate();
 
-	/************************************************
-	NextFrame
-	-Selects next frame
-	************************************************/
+  // Selects the next frame
 	void NextFrame();
 
 

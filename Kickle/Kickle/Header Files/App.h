@@ -49,104 +49,48 @@ class App {
   ~App();
 
 
-  /************************************************
-  DestroyApp
-  -Destroys the instance of App
-  ************************************************/
+  // Destroys the instance of App
   static void DestroyApp();
 
-
-  /************************************************
-  Draw
-  -Draws any Drawable object to the screen
-  ************************************************/
+  // Draws any Drawable object to the screen
   void Draw( const sf::Drawable &object );
 
-
-  /************************************************
-  GetApp
-  -Returns an instance of App
-  -Insures that only one instance of App exists
-   at a time
-  ************************************************/
+  // Returns an instance of App, insuring that only one instance
+  // of App exists at a time
   static App* GetApp();
 
-
-  /************************************************
-  GetDeltaTime
-  -Returns the change in time since last frame
-  ************************************************/
+  // Returns the change in time since last frame
   float GetDeltaTime() const;
 
-
-  /************************************************
-  GetEvent
-  - Returns event in app
-  ************************************************/
+  // Returns event in app
   const sf::Event &GetEvent() const;  
 
-
-  /************************************************
-  GetInput
-  - Returns input in app.
-  ************************************************/
+  // Returns input in app.
   const sf::Input &GetInput() const;
 
-
-  /************************************************
-  LoadImage
-  -Returns an Image given a filename
-  -Insures that no duplicate Image is loaded into
-  memory
-  ************************************************/
+  // Returns an Image given a filename, insuring that no 
+  // duplicate Image is loaded into memory
   sf::Image& LoadImage( const std::string &filename );
 
-
-  /************************************************
-  LoadSound
-  -Returns an Sound given a filename
-  -Insures that no duplicate Sound is loaded into
-  memory
-  ************************************************/
+  // Returns a Sound given a filename, insuring that no
+  // duplicate Sound is loaded into memory
   sf::SoundBuffer& LoadSound( const std::string &filename );
 
-
-  /************************************************
-  LoadMusic
-  -Returns a Music given a filename
-  -Insures that no duplicate Music is loaded into
-  memory
-  ************************************************/
+  // Returns a Music given a filename, insuring that no
+  // duplicate Music is loaded into memory
   sf::Music& LoadMusic( const std::string &filename );
 
-
-  /************************************************
-  LoadAnim
-  -Returns an AnimData given a filename
-  -Insures that no duplicate AnimData is loaded into
-  memory
-  ************************************************/
+  // Returns an AnimData given a filename, insuring that no 
+  // duplicate AnimData is loaded into memory
   AnimData& LoadAnim( const std::string &filename );
 
-
-  /************************************************
-  Run
-  -Contains the main game loop
-  ************************************************/
+  // Contains the main game loop
   void Run();
 
-
-  /************************************************
-  SetClearColor
-  -Sets the screen's clear color
-  ************************************************/
+  // Sets the screen's clear color
   void SetClearColor( const sf::Color& color );
 
-
-  /***********************************************
-  SetNextState
-  -Wrapper for StateManager SetNextState
-  ***********************************************/
+  // Wrapper for StateManager SetNextState
   void SetNextState( BaseState *state );
 
 

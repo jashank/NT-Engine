@@ -12,6 +12,9 @@
   <typename>
     MoneyBag
   </typename>
+  <speed>
+    0
+  </speed>
   <solid>
     false
   </solid>
