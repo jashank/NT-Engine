@@ -176,12 +176,12 @@ int LevelState::LuaIsTileSolid( lua_State *L ) {
 
 int LevelState::LuaTileHasSolidObject( lua_State *L ) {
   if ( !lua_isnumber( L, -2 ) ) {
-    return luaL_error( L, "Invalid tile x position for IsTileSolid." );
+    return luaL_error( L, "Invalid tile x position for TileHasSolidObject." );
   }
   Uint tileX = static_cast<Uint>( lua_tointeger( L, -2 ) );
 
   if ( !lua_isnumber( L, -1 ) ) {
-    return luaL_error( L, "Invalid tile y position for IsTileSolid." );
+    return luaL_error( L, "Invalid tile y position for TileHasSolidObject." );
   }
   Uint tileY = static_cast<Uint>( lua_tointeger( L, -1 ) );
 
