@@ -3,49 +3,59 @@
 package.path = package.path .. ";Content/Core/Scripts/?.lua"
 require ("GameObjectUtilities");
 
+-- 0 UP, 1 DOWN, 2 LEFT, 3 RIGHT
+
+local dir = 0;
+
 function AILogic( Slime )
 
 	Kickle = Game.GetGameObject( "Kickle" );
-
 
 	if ( Kickle ) then
 		KickleX = Kickle:GetTileX();
 		KickleY = Kickle:GetTileY();
 
-
-		-- 0 UP, 1 DOWN, 2 LEFT, 3 RIGHT
 		SlimeX = Slime:GetTileX();
 		SlimeY = Slime:GetTileY();
-		SlimeUpX, SlimeUpY = GetTileObjectFaces( Slime, 0 );
-		SlimeDownX, SlimeDownY = GetTileObjectFaces( Slime, 1 );
-		SlimeLeftX, SlimeLeftY = GetTileObjectFaces( Slime, 2 );
-		SlimeRightX, SlimeRightY = GetTileObjectFaces( Slime, 3 );
 
-		if ( SlimeX < KickleX and
-		  not Game.IsTileSolid( SlimeRightX, SlimeRightY ) and
-		  not Game.TileHasSolidObject( SlimeRightX, SlimeRightY ) ) then
-			Slime:MoveDir( 3 );
-			Slime:SetAnimation( 3 );
-
-		elseif ( SlimeX > KickleX and
-		  not Game.IsTileSolid( SlimeLeftX, SlimeLeftY ) and
-		  not Game.TileHasSolidObject( SlimeLeftX, SlimeLeftY ) ) then
-			Slime:MoveDir( 2 );
-			Slime:SetAnimation( 2 );
-
-		elseif ( SlimeY < KickleY and
-		  not Game.IsTileSolid( SlimeDownX, SlimeDownY ) and
-		  not Game.TileHasSolidObject( SlimeDownX, SlimeDownY ) ) then
-			Slime:MoveDir( 1 );
-			Slime:SetAnimation( 1 );
-
-		elseif ( SlimeY > KickleY and
-		  not Game.IsTileSolid( SlimeUpX, SlimeUpY ) and
-		  not Game.TileHasSolidObject( SlimeUpX, SlimeUpY ) ) then
-		    Slime:MoveDir( 0 );
-			Slime:SetAnimation( 0 );
-
+		if ( SlimeX < KickleX ) then
+			dir = 3;
+		elseif ( SlimeX > KickleX ) then
+			dir = 2;
+		elseif ( SlimeY < KickleY ) then
+			dir = 1;
+		elseif ( SlimeY > KickleY ) then
+			dir = 0;
 		end
+
+		for i = 0,3 do
+			tileFacingX, tileFacingY = GetTileObjectFaces( Slime, dir );
+
+			if ( Game.IsTileSolid( tileFacingX, tileFacingY ) or
+				 Game.TileHasSolidObject( tileFacingX, tileFacingY ) ) then
+				if ( dir == 0 ) then
+					dir = 2;
+				elseif ( dir == 1 ) then
+					dir = 3;
+				elseif ( dir == 2 ) then
+					dir = 0;
+				elseif ( dir == 3 ) then
+					dir = 1;
+				end
+			else
+				break;
+			end
+		end
+
+		Slime:MoveDir( dir );
+		Slime:SetAnimation( dir );
 	end
 
+end
+
+
+function HandleCollision( Slime, Other )
+	if ( Other:GetType() == "Slime" ) then
+		dir = GetOppositeDirection( dir );
+	end
 end
