@@ -2,10 +2,10 @@
 
 package.path = package.path .. ";Content/Core/Scripts/?.lua"
 require ("GameObjectUtilities");
+math.randomseed( os.time() );
 
--- 0 UP, 1 DOWN, 2 LEFT, 3 RIGHT
-
-local dir = 0;
+local dir = UP;
+local tryingNewDirection = false;
 
 function AILogic( Slime )
 
@@ -18,33 +18,27 @@ function AILogic( Slime )
 		SlimeX = Slime:GetTileX();
 		SlimeY = Slime:GetTileY();
 
-		if ( SlimeX < KickleX ) then
-			dir = 3;
-		elseif ( SlimeX > KickleX ) then
-			dir = 2;
-		elseif ( SlimeY < KickleY ) then
-			dir = 1;
-		elseif ( SlimeY > KickleY ) then
-			dir = 0;
+		if ( SlimeX < KickleX and not tryingNewDirection ) then
+			dir = RIGHT;
+		elseif ( SlimeX > KickleX and not tryingNewDirection ) then
+			dir = LEFT;
+		elseif ( SlimeY < KickleY and not tryingNewDirection ) then
+			dir = DOWN;
+		elseif ( SlimeY > KickleY and not tryingNewDirection) then
+			dir = UP;
 		end
 
-		for i = 0,3 do
-			tileFacingX, tileFacingY = GetTileObjectFaces( Slime, dir );
+		tileFacingX, tileFacingY = GetTileObjectFaces( Slime, dir );
 
-			if ( Game.IsTileSolid( tileFacingX, tileFacingY ) or
-				 Game.TileHasSolidObject( tileFacingX, tileFacingY ) ) then
-				if ( dir == 0 ) then
-					dir = 2;
-				elseif ( dir == 1 ) then
-					dir = 3;
-				elseif ( dir == 2 ) then
-					dir = 0;
-				elseif ( dir == 3 ) then
-					dir = 1;
-				end
-			else
-				break;
+		if ( Game.IsTileSolid( tileFacingX, tileFacingY ) or
+			 Game.TileHasSolidObject( tileFacingX, tileFacingY ) ) then
+			dir = math.random( UP, RIGHT );
+			if ( dir > RIGHT ) then
+				dir = UP;
 			end
+			tryingNewDirection = true;
+		else
+			tryingNewDirection = false;
 		end
 
 		Slime:MoveDir( dir );

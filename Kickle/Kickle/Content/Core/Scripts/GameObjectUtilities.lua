@@ -1,6 +1,10 @@
 --GameObject Utilities
 
--- 0 UP, 1 DOWN, 2 LEFT, 3 RIGHT
+-- Direction constants for GameObjects
+UP = 0;
+DOWN = 1;
+LEFT = 2;
+RIGHT = 3;
 
 function GetTileObjectFaces( GameObject, dir )
 	tileX = GameObject:GetTileX();

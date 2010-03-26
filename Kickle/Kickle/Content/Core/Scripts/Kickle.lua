@@ -3,13 +3,16 @@
 package.path = package.path .. ";Content/Core/Scripts/?.lua"
 require ("GameObjectUtilities");
 
--- 0 UP, 1 DOWN, 2 LEFT, 3 RIGHT
-local dir = 0; -- Direction
-local moveable = true; -- If true then kickle is moveable
-
--- 0 STANDING, 4 WALKING, 8 KICKING, 12 PILLAR RAISE, 16 DYING
 -- These values are determined by the layout of Kickle's animation sheet
-local mode = 0;
+local STANDING = 0;
+local WALKING = 4;
+local KICKING = 8;
+local RAISE_PILLAR = 12;
+local DYING = 16;
+
+local dir = UP;
+local moveable = true;
+local mode = STANDING;
 
 -- Whether Kickle is taking an action ( ice breath, raise pillar, etc.)
 local inAction = false;
@@ -18,9 +21,7 @@ local inAction = false;
 -- [[ Function that is called to handle scripted collision response events ]]
 function HandleCollision( Kickle, Other )
 	if ( Other:GetType() == "Slime" ) then
-		-- Show death animation
-		Kickle:SetAnimation( dir + 16 );
-		-- Disable kickle's movement
+		Kickle:SetAnimation( dir + DYING );
 	     moveable = false;
 	end
 
@@ -32,33 +33,33 @@ function HandleUserInput( Kickle )
 	if( moveable ) then
 
 		if ( Game.IsKeyDown( 293 ) and not inAction ) then
-			dir = 0;
-			mode = 4;
+			dir = UP;
+			mode = WALKING;
 		elseif ( Game.IsKeyDown( 294 ) and not inAction ) then
-			dir = 1;
-			mode = 4;
+			dir = DOWN;
+			mode = WALKING;
 		elseif ( Game.IsKeyDown( 291 ) and not inAction ) then
-			dir = 2;
-			mode = 4;
+			dir = LEFT;
+			mode = WALKING;
 		elseif ( Game.IsKeyDown( 292 ) and not inAction ) then
-			dir = 3;
-			mode = 4;
+			dir = RIGHT;
+			mode = WALKING;
 		elseif ( Game.IsKeyDown( 120 ) ) then
 			tileX, tileY = GetTileObjectFaces( Kickle, dir );
 
 			if ( not Game.IsTileSolid( tileX, tileY ) and
 			     not Game.TileHasSolidObject( tileX, tileY )) then
-				mode = 12;
+				mode = RAISE_PILLAR;
 				inAction = true;
 				Game.CreateGameObject(
 					"Content/Core/Objects/Pillar.xml", tileX, tileY );
 			end
 
 		elseif ( not inAction ) then
-			mode = 0; -- set mode to STANDING
+			mode = STANDING;
 		end
 
-		if ( mode == 4 ) then
+		if ( mode == WALKING ) then
 			Kickle:MoveDir( dir );
 		end
 
