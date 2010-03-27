@@ -5,41 +5,51 @@ require ("GameObjectUtilities");
 math.randomseed( os.time() );
 
 local dir = UP;
-local tryingNewDirection = false;
+local slimeCollision = false;
+local lastTileX = 0;
+local lastTileY = 0;
 
 function AILogic( Slime )
 
 	Kickle = Game.GetGameObject( "Kickle" );
 
 	if ( Kickle ) then
-		KickleX = Kickle:GetTileX();
-		KickleY = Kickle:GetTileY();
 
 		SlimeX = Slime:GetTileX();
 		SlimeY = Slime:GetTileY();
 
-		if ( SlimeX < KickleX and not tryingNewDirection ) then
-			dir = RIGHT;
-		elseif ( SlimeX > KickleX and not tryingNewDirection ) then
-			dir = LEFT;
-		elseif ( SlimeY < KickleY and not tryingNewDirection ) then
-			dir = DOWN;
-		elseif ( SlimeY > KickleY and not tryingNewDirection) then
-			dir = UP;
-		end
+		if ( not slimeCollision ) then
+			KickleX = Kickle:GetTileX();
+			KickleY = Kickle:GetTileY();
 
-		tileFacingX, tileFacingY = GetTileObjectFaces( Slime, dir );
+			moveAxis = math.random( 0, 1 );
 
-		if ( Game.IsTileSolid( tileFacingX, tileFacingY ) or
-			 Game.TileHasSolidObject( tileFacingX, tileFacingY ) ) then
-			dir = math.random( UP, RIGHT );
-			if ( dir > RIGHT ) then
-				dir = UP;
+			if ( moveAxis == 0 ) then
+				if ( SlimeX < KickleX ) then
+					dir = RIGHT;
+				elseif ( SlimeX > KickleX ) then
+					dir = LEFT;
+				else
+					dir = math.random( LEFT, RIGHT );
+				end
+			else
+				if ( SlimeY < KickleY ) then
+					dir = DOWN;
+				elseif ( SlimeY > KickleY ) then
+					dir = UP;
+				else
+					dir = math.random( UP, DOWN );
+				end
 			end
-			tryingNewDirection = true;
-		else
-			tryingNewDirection = false;
 		end
+
+		if ( lastTileX == SlimeX and lastTileY == SlimeY ) then
+			dir = GetOppositeDirection( dir );
+		end
+
+		lastTileX = SlimeX;
+		lastTileY = SlimeY;
+		slimeCollision = false;
 
 		Slime:MoveDir( dir );
 		Slime:SetAnimation( dir );
@@ -51,5 +61,6 @@ end
 function HandleCollision( Slime, Other )
 	if ( Other:GetType() == "Slime" ) then
 		dir = GetOppositeDirection( dir );
+		slimeCollision = true;
 	end
 end

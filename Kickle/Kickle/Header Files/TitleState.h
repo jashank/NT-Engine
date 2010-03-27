@@ -51,14 +51,10 @@ class TitleState : public BaseState {
   // Function assigned to Play button. Puts player into game.
   static void Play();
 
-  // Function assigned to Edit button. Puts player into editor.
-  static void Edit();
-
   // Creates the buttons for the Title Menu
   void CreateButtons();
   
   Button m_play; // Button to play game
-  Button m_editor; // Button to enter editor
   sf::Font *m_font; // Font for the title menu
   sf::String m_title; // Title string
 

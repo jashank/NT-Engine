@@ -3,7 +3,6 @@
 #include <SFML/Graphics/Font.hpp>
 
 #include "App.h"
-#include "EditorState.h"
 #include "LevelState.h"
 #include "Utilities.h"
 
@@ -55,9 +54,6 @@ void TitleState::Init() {
   
   sf::String buttonText( "Play", *m_font, 60 );
   m_play.SetText( buttonText );
-
-  sf::String editButtonText( "Edit", *m_font, 60 );
-  m_editor.SetText( editButtonText );
 }
 
 
@@ -88,12 +84,6 @@ void TitleState::HandleEvents() {
          )) {
       m_play.Activate();
     }
-    if (  m_editor.ContainsCursor( 
-          App::GetApp()->GetInput().GetMouseX(), 
-          App::GetApp()->GetInput().GetMouseY()
-         )) {
-       m_editor.Activate();
-    }
   }
 }
 
@@ -106,7 +96,6 @@ void TitleState::Update() {
 void TitleState::Render() {
   App::GetApp()->Draw( m_title );
   App::GetApp()->Draw( m_play );
-  App::GetApp()->Draw( m_editor );
 }
 
 
@@ -118,9 +107,6 @@ void TitleState::Play() {
   App::GetApp()->SetNextState( LevelState::GetInstance() );
 }
 
-void TitleState::Edit() {
-   App::GetApp()->SetNextState( EditorState::GetInstance() );
-}
 
 void TitleState::CreateButtons() {
   const float PLAY_WIDTH = 200.f;
@@ -133,17 +119,4 @@ void TitleState::CreateButtons() {
     static_cast< int >( playPosition.y + PLAY_HEIGHT )
   );
   m_play = Button( Play, playPosition, playRect );
-
-
-  const float EDIT_WIDTH = 200.f;
-  const float EDIT_HEIGHT = 75.f;
-  sf::Vector2f editPosition( 400.f, 450.f );
-  sf::IntRect editRect( 
-    static_cast< int >( editPosition.x ), 
-    static_cast< int >( editPosition.y ), 
-    static_cast< int >( editPosition.x + EDIT_WIDTH ), 
-    static_cast< int >( editPosition.y + EDIT_HEIGHT )
-  );
-
-  m_editor = Button( Edit, editPosition, editRect );
 }

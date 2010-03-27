@@ -203,10 +203,6 @@
 					>
 				</File>
 				<File
-					RelativePath=".\Header Files\EditorState.h"
-					>
-				</File>
-				<File
 					RelativePath=".\Header Files\LevelState.h"
 					>
 				</File>
@@ -328,10 +324,6 @@
 				>
 				<File
 					RelativePath=".\Source Files\BaseState.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\Source Files\EditorState.cpp"
 					>
 				</File>
 				<File
