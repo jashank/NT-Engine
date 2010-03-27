@@ -95,7 +95,7 @@ GameObject* GameObjectMap::DetectCollision( const GameObject *gameObject ) {
 
   for ( int i = 0; i < m_nextId; ++i ) {
     if ( m_gameObjects[i] != gameObject && 
-         !m_gameObjects[i]->IsSolid() ) {
+         !m_gameObjects[i]->CollisionIsGridBased() ) {
       const sf::FloatRect &otherObj = m_gameObjects[i]->GetCollisionBox();
       if( mainObj.Intersects( otherObj ) ) {
         return m_gameObjects[i];

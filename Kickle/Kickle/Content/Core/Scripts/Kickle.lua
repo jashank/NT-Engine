@@ -47,8 +47,8 @@ function HandleUserInput( Kickle )
 		elseif ( Game.IsKeyDown( 120 ) ) then
 			tileX, tileY = GetTileObjectFaces( Kickle, dir );
 
-			if ( not Game.IsTileSolid( tileX, tileY ) and
-			     not Game.TileHasSolidObject( tileX, tileY )) then
+			if ( not Game.TileIsSolid( tileX, tileY ) and
+			     not Game.TileHasGridObject( tileX, tileY )) then
 				mode = RAISE_PILLAR;
 				inAction = true;
 				Game.CreateGameObject(

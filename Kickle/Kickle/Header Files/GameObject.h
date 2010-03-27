@@ -48,8 +48,8 @@ class GameObject : public AnimSprite {
   // Returns collision box for game object
   const sf::FloatRect &GetCollisionBox() const;
 
-  // Returns whether game object is solid
-  bool IsSolid() const;
+  // Returns whether game object's collision is grid-based
+  bool CollisionIsGridBased() const;
 
   // Returns x-location of GameObject on game grid
   Uint GetTileX() const;
@@ -103,7 +103,7 @@ class GameObject : public AnimSprite {
   static LevelState *m_level; // Level that GameObject is on
 
   bool m_moving; // If true; keep moving in m_direction
-  bool m_solid; // Solid objects completely restrict access to tile they are on
+  bool m_gridCollision; // Grid-based collision completely restricts access to tile
   Dir m_direction; // Current direction game object is moving
   float m_distance; // Distance traveled from last grid location
   float m_speed; // m_speed at which object moves ( 1.0 is "normal" i.e. Kickle )

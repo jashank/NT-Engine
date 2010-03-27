@@ -7,8 +7,6 @@
 namespace LuaApp {
 
 void RegisterLuaAppFuncts( lua_State *L ) {
-  //TODO - figure out how to create a table(with keys[i don't mean keyboard keys, but associative array keys) and expose it to Lua
-  //lua_createtable( L
   luaL_register( L, "Game", luaAppFuncts );
 }
 
@@ -19,20 +17,6 @@ const luaL_Reg luaAppFuncts[] = {
   { "GetDeltaTime", LuaGetDeltaTime },
   { 0, 0 }
 };
-
-//Contains the key values exposed to lua
-//const Uint numKeys = 5;
-//const int luaKeys[] = {
-//  sf::Key::Up,
-//  sf::Key::Down,
-//  sf::Key::Left,
-//  sf::Key::Right,
-//  sf::Key::Z,
-//  sf::Key::X
-//};
-
-
-//Functions exposed to Lua
 
 
 //Returns true if a specific key is pressed

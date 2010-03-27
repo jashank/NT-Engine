@@ -124,10 +124,12 @@ GameObject::GameObject(
 
   SetPosition( x, y );
 
-  if( !LoadCollisionData( filepath ) ) {
-    lua_close( m_luaState );
-    m_luaState = 0;
-    throw "Cannot load GameObject XML file";
+  if ( !m_gridCollision ) {
+    if( !LoadCollisionData( filepath ) ) {
+      lua_close( m_luaState );
+      m_luaState = 0;
+      throw "Cannot load GameObject XML file";
+    }
   }
 
   InitLua();
@@ -175,8 +177,8 @@ void GameObject::MoveDir( Dir direction ) {
       default: {}
     }
 
-    if ( !m_level->IsTileSolid( tileToMoveTo ) &&
-         !m_level->TileHasSolidObject( tileToMoveTo ) ) {
+    if ( !m_level->TileIsSolid( tileToMoveTo ) &&
+         !m_level->TileHasGridObject( tileToMoveTo ) ) {
       m_moving = true;
     } 
   }
@@ -257,8 +259,8 @@ const sf::FloatRect &GameObject::GetCollisionBox() const {
 }
 
 
-bool GameObject::IsSolid() const {
-  return m_solid;
+bool GameObject::CollisionIsGridBased() const {
+  return m_gridCollision;
 }
 
 
@@ -422,8 +424,8 @@ bool GameObject::LoadObjectData( const std::string &filepath ) {
   m_speed = atof( speed.c_str() );
 
   // Load in whether to use rectangular collision for this object
-  std::string solid = root->FirstChildElement( "solid" )->GetText();
-  m_solid = ( solid == "true" ) ? true : false;
+  std::string collisionType = root->FirstChildElement( "collision_type" )->GetText();
+  m_gridCollision = ( collisionType == "grid" );
 
   //Load in path to animation's xml
   std::string animPath( root->FirstChildElement( "animation_path" )->GetText() );
@@ -453,17 +455,17 @@ bool GameObject::LoadCollisionData( const std::string &filepath ) {
   TiXmlElement* root = handleDoc.FirstChildElement( "game_object" ).Element();
 
   m_collisionRect.Left = GetPosition().x;
-  std::string rectXOffset( root->FirstChildElement( "solid_area_x" )->GetText() );
+  std::string rectXOffset( root->FirstChildElement( "rect_x" )->GetText() );
   m_collisionRect.Left += atoi( rectXOffset.c_str() );
 
-  std::string width( root->FirstChildElement( "solid_area_width" )->GetText() );
+  std::string width( root->FirstChildElement( "rect_width" )->GetText() );
   m_collisionRect.Right = m_collisionRect.Left + atoi( width.c_str() );
 
   m_collisionRect.Top = GetPosition().y;
-  std::string rectYOffset( root->FirstChildElement( "solid_area_y" )->GetText() );
+  std::string rectYOffset( root->FirstChildElement( "rect_y" )->GetText() );
   m_collisionRect.Top += atoi( rectYOffset.c_str() );
 
-  std::string height( root->FirstChildElement( "solid_area_height" )->GetText() );
+  std::string height( root->FirstChildElement( "rect_height" )->GetText() );
   m_collisionRect.Bottom = m_collisionRect.Top + atoi( height.c_str() );
   
   return true;

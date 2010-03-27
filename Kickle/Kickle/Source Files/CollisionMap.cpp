@@ -44,7 +44,7 @@ bool CollisionMap::SetCollisionMap( int layout[MAP_SIZE][MAP_SIZE] ) {
 }
 
 
-bool CollisionMap::IsTileSolid( Uint x, Uint y ) const {
+bool CollisionMap::TileIsSolid( Uint x, Uint y ) const {
   /*
   Making sure that your not going to run off the array.
   */

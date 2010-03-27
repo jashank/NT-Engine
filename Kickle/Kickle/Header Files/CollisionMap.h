@@ -13,7 +13,7 @@ class CollisionMap {
   bool SetCollisionMap( int layout[15][15] );
 
   // Returns true if the tile at X Y is solid, else false;
-  bool IsTileSolid( Uint x, Uint y ) const;
+  bool TileIsSolid( Uint x, Uint y ) const;
 
   // Changes the value of the tile sheet to that value if it is valid. Else -1.
   void SetCollision( Uint x, Uint y, int collisionId );

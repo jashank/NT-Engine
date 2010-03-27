@@ -14,8 +14,8 @@ LevelState *LevelState::m_instance = 0;
 
 const luaL_Reg LevelState::luaPlayFuncts[] = {
   { "CreateGameObject", LuaCreateGameObject },
-  { "IsTileSolid", LuaIsTileSolid },
-  { "TileHasSolidObject", LuaTileHasSolidObject },
+  { "TileIsSolid", LuaTileIsSolid },
+  { "TileHasGridObject", LuaTileHasGridObject },
   { "GetGameObject", LuaGetGameObject },
   { 0, 0 }
 };
@@ -85,32 +85,32 @@ void LevelState::Render() {
 }
 
 
-bool LevelState::IsTileSolid( const sf::Vector2f& position ) const {
+bool LevelState::TileIsSolid( const sf::Vector2f& position ) const {
   Uint tileX = GetVectorXTile( position );
   Uint tileY = GetVectorYTile( position );
 
-  return ( m_collisionMap.IsTileSolid( tileX, tileY ) );
+  return ( m_collisionMap.TileIsSolid( tileX, tileY ) );
 }
 
 
-bool LevelState::IsTileSolid( Uint x, Uint y ) const {
-  return m_collisionMap.IsTileSolid( x, y );
+bool LevelState::TileIsSolid( Uint x, Uint y ) const {
+  return m_collisionMap.TileIsSolid( x, y );
 }
 
 
-bool LevelState::TileHasSolidObject( const sf::Vector2f &position ) {
+bool LevelState::TileHasGridObject( const sf::Vector2f &position ) {
   Uint tileX = GetVectorXTile( position );
   Uint tileY = GetVectorYTile( position );
 
-  return TileHasSolidObject( tileX, tileY );
+  return TileHasGridObject( tileX, tileY );
 }
 
 
-bool LevelState::TileHasSolidObject( Uint x, Uint y ) {
+bool LevelState::TileHasGridObject( Uint x, Uint y ) {
   GameObject *gameObject = m_gameObjectMap.ObjectOnTile( x, y );
 
   if ( gameObject != NULL ) {
-    return gameObject->IsSolid();
+    return gameObject->CollisionIsGridBased();
   }
 
   return false;
@@ -157,7 +157,7 @@ int LevelState::LuaCreateGameObject( lua_State *L ) {
 }
 
 
-int LevelState::LuaIsTileSolid( lua_State *L ) {
+int LevelState::LuaTileIsSolid( lua_State *L ) {
   if ( !lua_isnumber( L, -2 ) ) {
     return luaL_error( L, "Invalid tile x position for IsTileSolid." );
   }
@@ -168,13 +168,13 @@ int LevelState::LuaIsTileSolid( lua_State *L ) {
   }
   Uint tileY = static_cast<Uint>( lua_tointeger( L, -1 ) );
 
-  lua_pushboolean( L, m_instance->IsTileSolid( tileX, tileY ) );
+  lua_pushboolean( L, m_instance->TileIsSolid( tileX, tileY ) );
   
   return 1;
 }
 
 
-int LevelState::LuaTileHasSolidObject( lua_State *L ) {
+int LevelState::LuaTileHasGridObject( lua_State *L ) {
   if ( !lua_isnumber( L, -2 ) ) {
     return luaL_error( L, "Invalid tile x position for TileHasSolidObject." );
   }
@@ -185,7 +185,7 @@ int LevelState::LuaTileHasSolidObject( lua_State *L ) {
   }
   Uint tileY = static_cast<Uint>( lua_tointeger( L, -1 ) );
 
-  lua_pushboolean( L, m_instance->TileHasSolidObject( tileX, tileY ) );
+  lua_pushboolean( L, m_instance->TileHasGridObject( tileX, tileY ) );
 
   return 1;
 }
