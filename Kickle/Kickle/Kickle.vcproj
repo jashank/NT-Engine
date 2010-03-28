@@ -394,6 +394,10 @@
 					RelativePath=".\Source Files\Configuration.cpp"
 					>
 				</File>
+				<File
+					RelativePath=".\Utilities.cpp"
+					>
+				</File>
 			</Filter>
 		</Filter>
 	</Files>

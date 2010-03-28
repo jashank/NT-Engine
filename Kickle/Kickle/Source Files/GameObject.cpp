@@ -9,6 +9,7 @@
 #include "Configuration.h"
 #include "LevelState.h"
 #include "LuaAppFuncts.h"
+#include "Utilities.h"
 
 /************************************************
 Constant Members
@@ -385,17 +386,27 @@ void GameObject::MovementUpdate() {
     switch( m_direction ) {
     case Up:
       Move( 0.0f, diff );
+      m_collisionRect.Offset( 0.0f, diff );
       break;
     case Down:
       Move( 0.0f, -diff );
+      m_collisionRect.Offset( 0.0f, -diff );
       break;
     case Left:
       Move( diff, 0.0f );
+      m_collisionRect.Offset( diff, 0.0f );
       break;
     case Right:
       Move( -diff, 0.0f );
+      m_collisionRect.Offset( - diff, 0.0f );
       break;
     }
+
+    SetPosition( round( GetPosition().x ), round( GetPosition().y ) );
+    m_collisionRect.Top = round( m_collisionRect.Top );
+    m_collisionRect.Bottom = round( m_collisionRect.Bottom );
+    m_collisionRect.Left = round( m_collisionRect.Left );
+    m_collisionRect.Right = round( m_collisionRect.Right );
   }
 }
 

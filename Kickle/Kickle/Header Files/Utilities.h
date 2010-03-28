@@ -11,4 +11,7 @@
 #define DEBUG_STATEMENT(x) 
 #endif
 
+// Rounds a floating point number to an integer
+int round( float num );
+
 #endif
