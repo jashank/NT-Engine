@@ -421,7 +421,7 @@ bool GameObject::LoadObjectData( const std::string &filepath ) {
 
   // Load in speed of object
   std::string speed( root->FirstChildElement( "speed" )->GetText() );
-  m_speed = atof( speed.c_str() );
+  m_speed = (float)atof( speed.c_str() );
 
   // Load in whether to use rectangular collision for this object
   std::string collisionType = root->FirstChildElement( "collision_type" )->GetText();
