@@ -1,5 +1,5 @@
 #include <iostream>
-#include <deque>
+#include <queue>
 #include <algorithm>
 
 
@@ -36,18 +36,17 @@ void GameObjectMap::Update() {
 }
 
 void GameObjectMap::Render() {
-  std::deque< std::pair<float, GameObject*> > renderOrder;
+  std::priority_queue< std::pair<float, GameObject*> > renderOrder;
   for ( int i = 0; i < m_nextId; i++ ) {
     if ( m_gameObjects[i] != 0 ) {
-      renderOrder.push_back( 
-      std::pair<float, GameObject*>(m_gameObjects[i]->GetPosition().y, m_gameObjects[i] ) );
+      renderOrder.push( 
+      std::pair<float, GameObject*>( -(m_gameObjects[i]->GetPosition().y), m_gameObjects[i] ) );
     }
   }
-  std::sort(renderOrder.begin(), renderOrder.end());
-  
+
   while ( !renderOrder.empty() ) {
-    App::GetApp()->Draw( *renderOrder.front().second );
-    renderOrder.pop_front();
+    App::GetApp()->Draw( *renderOrder.top().second );
+    renderOrder.pop();
   }
 
 }
