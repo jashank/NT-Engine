@@ -12,6 +12,6 @@
 #endif
 
 // Rounds a floating point number to an integer
-int round( float num );
+float round( float num );
 
 #endif

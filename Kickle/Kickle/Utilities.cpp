@@ -2,6 +2,6 @@
 
 #include <cmath>
 
-int round( float num ) {
-    return ( num > 0.0 ) ? floor( num + 0.5 ) : ceil( num - 0.5 );
+float  round( float num ) {
+    return ( num > 0.0 ) ? (float) floor( num + 0.5 ) : (float) ceil( num - 0.5 );
 }
