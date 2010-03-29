@@ -53,8 +53,12 @@ function HandleUserInput( Kickle )
 				inAction = true;
 				Game.CreateGameObject(
 					"Content/Core/Objects/Pillar.xml", tileX, tileY );
+			elseif ( Game.TileHasGridObject( tileX, tileY ) and not inAction ) then
+				GameObjectOnTile = Game.GetGameObjectOnTile( tileX, tileY );
+				if ( GameObjectOnTile:GetType() == "Pillar" ) then
+				  Game.DestroyGameObject( GameObjectOnTile );
+				end
 			end
-
 		elseif ( not inAction ) then
 			mode = STANDING;
 		end

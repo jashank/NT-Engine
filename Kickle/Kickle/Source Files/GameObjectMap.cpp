@@ -115,7 +115,7 @@ GameObject* GameObjectMap::DetectCollision( const GameObject *gameObject ) {
   const sf::FloatRect &mainObj = gameObject->GetCollisionBox();
 
   for ( int i = 0; i < m_nextId; ++i ) {
-    if ( m_gameObjects[i] != gameObject && 
+    if ( m_gameObjects[i] != gameObject && m_gameObjects[i] != 0 && 
          !m_gameObjects[i]->CollisionIsGridBased() ) {
       const sf::FloatRect &otherObj = m_gameObjects[i]->GetCollisionBox();
       if( mainObj.Intersects( otherObj ) ) {
@@ -130,9 +130,11 @@ GameObject* GameObjectMap::DetectCollision( const GameObject *gameObject ) {
 
 GameObject* GameObjectMap::ObjectOnTile( Uint x, Uint y ) {
   for ( int i = 0; i < m_nextId; ++i ) {
-    if ( m_gameObjects[i]->GetTileX() == x &&
-         m_gameObjects[i]->GetTileY() == y ) {
-      return m_gameObjects[i];
+    if ( m_gameObjects[i] != 0 ) {
+      if ( m_gameObjects[i]->GetTileX() == x &&
+          m_gameObjects[i]->GetTileY() == y ) {
+        return m_gameObjects[i];
+      }
     }
   }
 

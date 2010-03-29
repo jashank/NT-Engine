@@ -70,6 +70,9 @@ class LevelState : public BaseState {
 
   // Allows a GameObject to be created from Lua
   static int LuaCreateGameObject( lua_State *L );
+  
+  // Allows a Gameobject to be destroyed from Lua
+  static int LuaDestroyGameObject( lua_State *L );
 
   // Exposes Level's IsTileSolid to Lua
   static int LuaTileIsSolid( lua_State *L );
@@ -79,6 +82,9 @@ class LevelState : public BaseState {
 
   // Allows Lua to grab a GameObject from the Level
   static int LuaGetGameObject( lua_State *L );
+
+  // Allows Lua to grab a GameObject from a tile.
+  static int LuaGetGameObjectOnTile( lua_State *L );
 
   // Registers functions associated with the LevelState to Lua
   static void RegisterLuaLevelFuncts( lua_State *L );

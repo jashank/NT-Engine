@@ -14,9 +14,11 @@ LevelState *LevelState::m_instance = 0;
 
 const luaL_Reg LevelState::luaLevelFuncts[] = {
   { "CreateGameObject", LuaCreateGameObject },
+  { "DestroyGameObject", LuaDestroyGameObject },
   { "TileIsSolid", LuaTileIsSolid },
   { "TileHasGridObject", LuaTileHasGridObject },
   { "GetGameObject", LuaGetGameObject },
+  { "GetGameObjectOnTile", LuaGetGameObjectOnTile },
   { 0, 0 }
 };
 
@@ -156,6 +158,14 @@ int LevelState::LuaCreateGameObject( lua_State *L ) {
   return 0;
 }
 
+int LevelState::LuaDestroyGameObject( lua_State *L ) {
+  GameObject *gameObjectToDestroy = Lunar<GameObject>::check(L, 1);
+  lua_remove(L, 1);
+  m_instance->m_gameObjectMap.RemoveGameObject( gameObjectToDestroy );
+
+  return 1;
+}
+
 
 int LevelState::LuaTileIsSolid( lua_State *L ) {
   if ( !lua_isnumber( L, -2 ) ) {
@@ -202,6 +212,21 @@ int LevelState::LuaGetGameObject( lua_State *L ) {
   return 1;
 }
 
+int LevelState::LuaGetGameObjectOnTile( lua_State *L ) {
+  if ( !lua_isnumber( L, -2 ) ) {
+    return luaL_error( L, "Invalid tile x position for GetGameObjectOnTile." );
+  }
+  Uint tileX = static_cast<Uint>( lua_tointeger( L, -2 ) );
+
+  if ( !lua_isnumber( L, -1 ) ) {
+    return luaL_error( L, "Invalid tile y position for GetGameObjectOnTile." );
+  }
+  Uint tileY = static_cast<Uint>( lua_tointeger( L, -1 ) );
+
+  Lunar<GameObject>::push( L,
+                  m_instance->m_gameObjectMap.ObjectOnTile(tileX, tileY) );
+  return 1;
+}
 
 void LevelState::RegisterLuaLevelFuncts( lua_State *L ) {
   luaL_register( L, "Game", luaLevelFuncts );
