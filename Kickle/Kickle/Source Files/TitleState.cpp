@@ -66,10 +66,13 @@ void TitleState::Init() {
   srand ( (Uint)Clock.GetElapsedTime() );
 
   for ( int i = 0; i < m_numFlakes; i++ ) {
-    m_snowflakes.push_back( sf::Sprite( m_snowflakeImage, 
+    m_snowflakes[i] = sf::Sprite( m_snowflakeImage, 
                       sf::Vector2f( (float)(rand()%m_snowflakeBuffer), 
-                                    (float)(-rand()%100) ) ) );
-    m_snowflakesSpeed.push_back( (float)(rand()%4+1) );
+                                    (float)(-rand()%(8*48)-(48*2)) ) );
+
+    float scale = (float)(1 + (float)i/m_numFlakes );
+    m_snowflakes[i].SetScale( scale, scale );
+    m_snowflakesSpeed[i] = scale;
 
   }
 
@@ -113,8 +116,7 @@ void TitleState::Update() {
   for ( int i = 0; i < m_numFlakes; i++ ) {
     if ( m_snowflakes[i].GetPosition().y > Configuration::GetScreenHeight() ) {
       m_snowflakes[i].SetPosition( (float)(rand()%m_snowflakeBuffer), 
-                                   (float)(-rand()%100) );
-      m_snowflakesSpeed[i] = (float)(rand()%4+1);
+                                   (float)(-rand()%(2*48)-(48*2)) );
     } else {
       m_snowflakes[i].Move( 0.2f*(-i%2), m_snowflakesSpeed[i] );
     }
@@ -123,7 +125,7 @@ void TitleState::Update() {
 
 
 void TitleState::Render() {
-  for ( int i = 0; i < m_numFlakes; i++ ) {
+  for ( int i = 0; i < m_numFlakes; i++ )  {
     App::GetApp()->Draw( m_snowflakes[i] );
   }
 

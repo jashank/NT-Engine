@@ -58,11 +58,11 @@ class TitleState : public BaseState {
   sf::Font *m_font; // Font for the title menu
   sf::String m_title; // Title string
 
-  std::vector<sf::Sprite> m_snowflakes; // A vector of snowflakes!
-  std::vector<float> m_snowflakesSpeed; // Each flake has a speed.
-  sf::Image m_snowflakeImage; // The snow flake impage
+  sf::Sprite m_snowflakes[100]; // A vector of snowflakes!
+  float m_snowflakesSpeed[100]; // Each flake has a speed.
+  sf::Image m_snowflakeImage; // The snow flake image
 
-  static const Uint m_numFlakes = 40; // Number of snow flakes to be generated
+  static const Uint m_numFlakes = 100; // Number of snow flakes to be generated
   Uint m_snowflakeBuffer; // Screen width - width of a snow flake.
 
   static TitleState *m_instance; // TitleState has one instance
