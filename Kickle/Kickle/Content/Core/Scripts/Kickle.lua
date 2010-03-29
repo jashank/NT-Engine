@@ -48,7 +48,7 @@ function HandleUserInput( Kickle )
 			tileX, tileY = GetTileObjectFaces( Kickle, dir );
 
 			if ( not Game.TileIsSolid( tileX, tileY ) and
-			     not Game.TileHasGridObject( tileX, tileY )) then
+			     not Game.TileHasGridObject( tileX, tileY ) and not inAction) then
 				mode = RAISE_PILLAR;
 				inAction = true;
 				Game.CreateGameObject(
@@ -56,6 +56,8 @@ function HandleUserInput( Kickle )
 			elseif ( Game.TileHasGridObject( tileX, tileY ) and not inAction ) then
 				GameObjectOnTile = Game.GetGameObjectOnTile( tileX, tileY );
 				if ( GameObjectOnTile:GetType() == "Pillar" ) then
+				  mode = RAISE_PILLAR;
+				  inAction = true;
 				  Game.DestroyGameObject( GameObjectOnTile );
 				end
 			end
