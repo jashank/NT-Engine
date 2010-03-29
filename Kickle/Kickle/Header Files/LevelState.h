@@ -11,6 +11,7 @@
 #include "CollisionMap.h"
 #include "GameObjectMap.h"
 #include "TileMap.h"
+#include "SoundList.h"
 
 class GameObject;
 
@@ -110,6 +111,7 @@ class LevelState : public BaseState {
   CollisionMap m_collisionMap;
   GameObjectMap m_gameObjectMap;
 	TileMap m_tileMap;
+  SoundList m_soundList;
 };
 
 #endif

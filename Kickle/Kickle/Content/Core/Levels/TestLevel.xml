@@ -58,5 +58,8 @@
 			<instance x="7" y="12" />
 		</entity>
 	</game_objects>
+	<music_playlist>
+		<song data="Content\\Core\\Sound\\stage_1.ogg"/>
+	</music_playlist>
 
 </map>

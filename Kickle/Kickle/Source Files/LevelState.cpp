@@ -80,6 +80,7 @@ void LevelState::HandleEvents() {
 
 void LevelState::Update() {
   m_gameObjectMap.Update();
+  m_soundList.Update();
 }
 
 
@@ -306,6 +307,11 @@ bool LevelState::SetLevel( std::string LevelStatePath ) {
   // GameObjectMap parses its section by itself instead of in this method.
   if ( root->FirstChildElement( "game_objects" ) ) {
     m_gameObjectMap.SetGameObjectMap( root->FirstChildElement( "game_objects" ) );
+  }
+
+  // SoundList parses its section by itself instead of in this method.
+  if ( root->FirstChildElement( "music_playlist" ) ) {
+    m_soundList.SetSoundList( root->FirstChildElement( "music_playlist" ) );
   }
 
   //Load the appropriate tile animation data 
