@@ -48,6 +48,8 @@ void TitleState::DestroyInstance() {
 void TitleState::Init() {
 	SetInit( true );
   
+  LevelState::DestroyInstance();
+
   App::GetApp()->SetClearColor( sf::Color(0,0,0) );
 
   m_font = new sf::Font();

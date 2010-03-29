@@ -6,6 +6,7 @@
 #include "Configuration.h"
 #include "GameObject.h"
 #include "Utilities.h"
+#include "TitleState.h"
 
 /************************************************
 Data Members
@@ -61,7 +62,6 @@ void LevelState::CleanUp() {
 
 
 void LevelState::Pause() {
-
 }
 
 
@@ -72,6 +72,9 @@ void LevelState::Resume() {
 
 void LevelState::HandleEvents() {
   // Does nothing
+  if ( App::GetApp()->GetInput().IsKeyDown( sf::Key::Escape ) ) {
+    App::GetApp()->SetNextState( TitleState::GetInstance() );
+  }
 }
 
 
