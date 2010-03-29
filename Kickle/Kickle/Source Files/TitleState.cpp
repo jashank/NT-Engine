@@ -5,6 +5,7 @@
 #include "App.h"
 #include "LevelState.h"
 #include "Utilities.h"
+#include "Configuration.h"
 
 /************************************************
 Data Members
@@ -16,7 +17,9 @@ TitleState *TitleState::m_instance = 0;
 Public Member Functions
 ************************************************/
 TitleState::TitleState()
-  : m_title( "Kickle Cubicle" ) {
+  : m_title( "Kickle Cubicle" ),
+    m_snowflakeBuffer( Configuration::GetScreenWidth()
+                      -Configuration::GetTileSize() ) {
   CreateButtons();
 
   m_title.SetSize( 72 );
@@ -54,6 +57,22 @@ void TitleState::Init() {
   
   sf::String buttonText( "Play", *m_font, 60 );
   m_play.SetText( buttonText );
+
+  sf::Clock Clock;
+
+  m_snowflakeImage.LoadFromFile("Content/Core/Sheets/snowflake_48x48.png");
+  m_snowflakeImage.CreateMaskFromColor( sf::Color( 255, 0, 255 ) );
+
+  srand ( (Uint)Clock.GetElapsedTime() );
+
+  for ( int i = 0; i < m_numFlakes; i++ ) {
+    m_snowflakes.push_back( sf::Sprite( m_snowflakeImage, 
+                      sf::Vector2f( (float)(rand()%m_snowflakeBuffer), 
+                                    (float)(-rand()%100) ) ) );
+    m_snowflakesSpeed.push_back( (float)(rand()%4+1) );
+
+  }
+
 }
 
 
@@ -84,16 +103,30 @@ void TitleState::HandleEvents() {
          )) {
       m_play.Activate();
     }
+  } else if ( App::GetApp()->GetInput().IsKeyDown( sf::Key::Return ) ) {
+    m_play.Activate();
   }
 }
 
 
 void TitleState::Update() {
-
+  for ( int i = 0; i < m_numFlakes; i++ ) {
+    if ( m_snowflakes[i].GetPosition().y > Configuration::GetScreenHeight() ) {
+      m_snowflakes[i].SetPosition( (float)(rand()%m_snowflakeBuffer), 
+                                   (float)(-rand()%100) );
+      m_snowflakesSpeed[i] = (float)(rand()%4+1);
+    } else {
+      m_snowflakes[i].Move( 0.2f*(-i%2), m_snowflakesSpeed[i] );
+    }
+  }
 }
 
 
 void TitleState::Render() {
+  for ( int i = 0; i < m_numFlakes; i++ ) {
+    App::GetApp()->Draw( m_snowflakes[i] );
+  }
+
   App::GetApp()->Draw( m_title );
   App::GetApp()->Draw( m_play );
 }
