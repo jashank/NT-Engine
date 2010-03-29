@@ -52,7 +52,7 @@ class AnimSprite : public sf::Sprite {
 	void Stop();
 
   // Updates the AnimSprite
-  virtual void Update();
+  void Update();
 
  protected:
   // Returns whether sprite is still animating 

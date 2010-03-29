@@ -24,18 +24,3 @@ function GetTileObjectFaces( GameObject, dir )
 
 end
 
-
-function GetOppositeDirection( dir )
-	if ( dir == 0 ) then
-		return 1;
-	elseif ( dir == 1 ) then
-		return 0;
-	elseif ( dir == 2 ) then
-		return 3;
-	else
-		return 2;
-	end
-end
-
-
-

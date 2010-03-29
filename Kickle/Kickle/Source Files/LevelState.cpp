@@ -12,7 +12,7 @@ Data Members
 ************************************************/
 LevelState *LevelState::m_instance = 0;
 
-const luaL_Reg LevelState::luaPlayFuncts[] = {
+const luaL_Reg LevelState::luaLevelFuncts[] = {
   { "CreateGameObject", LuaCreateGameObject },
   { "TileIsSolid", LuaTileIsSolid },
   { "TileHasGridObject", LuaTileHasGridObject },
@@ -203,8 +203,8 @@ int LevelState::LuaGetGameObject( lua_State *L ) {
 }
 
 
-void LevelState::RegisterLuaPlayFuncts( lua_State *L ) {
-  luaL_register( L, "Game", luaPlayFuncts );
+void LevelState::RegisterLuaLevelFuncts( lua_State *L ) {
+  luaL_register( L, "Game", luaLevelFuncts );
 }
 
 /************************************************

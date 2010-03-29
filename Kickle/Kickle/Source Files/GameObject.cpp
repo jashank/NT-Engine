@@ -27,6 +27,8 @@ Lunar<GameObject>::RegType GameObject::methods[] = {
   { "GetTileX", &GameObject::LuaGetTileX },
   { "GetTileY", &GameObject::LuaGetTileY },
   { "IsAnimating", &GameObject::LuaIsAnimating },
+  { "Stop", &GameObject::LuaStop },
+  { "Reverse", &GameObject::LuaReverse },
   { 0, 0 }
 };
 
@@ -150,8 +152,6 @@ void GameObject::MoveDir( Dir direction ) {
   if( !m_moving ) {
     m_direction = direction;
 
-    m_distance = 0.0f;
-
     sf::Vector2f tileToMoveTo( GetPosition() );
     
     //Take into account the sprites that are taller than a normal tile
@@ -186,26 +186,24 @@ void GameObject::MoveDir( Dir direction ) {
 }
 
 
-void GameObject::StopMoving() {
-  //static sf::Vector2f pos;
-  //pos = GetPosition();
-  //if( //aligned perfectly in grid(taking into account tilemap's offset)
-  //  static_cast<int>( pos.x - Configuration::GetXPad() ) % 
-  //                    Configuration::GetTileSize() == 0 &&
-  //  static_cast<int>(
-  //    pos.y + GetAnimData()->GetFrameHeight( GetAnimation() ) - 
-  //    Configuration::GetTileSize() -
-  //    Configuration::GetYPad() ) % 
-  //    Configuration::GetTileSize() == 0 
-  //) {
-    m_moving = false;
-  //}
+void GameObject::UpdateCollision() {
+  GameObject* collisionObj = m_level->DetectObjectCollision( this );
+
+  if( collisionObj != NULL ) {
+    //Call OnCollision lua function
+    lua_getglobal( m_luaState, "HandleCollision" );
+    if ( lua_isfunction( m_luaState, -1 )) {
+      Lunar<GameObject>::push( m_luaState, this );
+      Lunar<GameObject>::push( m_luaState, collisionObj );
+      lua_call( m_luaState, 2, 0 );
+    } else {
+      lua_pop( m_luaState, 1 );
+    }
+  }
 }
 
 
-void GameObject::Update() {
-  AnimSprite::Update();
-
+void GameObject::UpdateMovement() {
   if( m_moving ) {
     MovementUpdate();
   }
@@ -228,20 +226,11 @@ void GameObject::Update() {
       lua_pop( m_luaState, 1 );
     }
   }
+}
 
-  GameObject* collisionObj = m_level->DetectObjectCollision( this );
 
-  if( collisionObj != NULL ) {
-    //Call OnCollision lua function
-    lua_getglobal( m_luaState, "HandleCollision" );
-    if ( lua_isfunction( m_luaState, -1 )) {
-      Lunar<GameObject>::push( m_luaState, this );
-      Lunar<GameObject>::push( m_luaState, collisionObj );
-      lua_call( m_luaState, 2, 0 );
-    } else {
-      lua_pop( m_luaState, 1 );
-    }
-  }
+void GameObject::UpdateRendering() {
+  AnimSprite::Update();
 }
 
 
@@ -340,6 +329,40 @@ int GameObject::LuaGetTileY( lua_State *L ) {
 }
 
 
+int GameObject::LuaStop( lua_State *L ) {
+  m_moving = false;
+  return 0;
+}
+
+
+int GameObject::LuaReverse( lua_State *L ) {
+  Dir direction = Up;
+  switch( m_direction ) {
+    case Up: {
+      direction = Down;
+      break;
+    }
+    case Down: {
+      direction = Up;
+      break;
+    }
+    case Left: {
+      direction = Right;
+      break;
+    }
+    case Right: {
+      direction = Left;
+      break;
+    }
+    default: {}
+  }
+
+  lua_pushinteger( L, direction );
+  m_distance = Configuration::GetTileSize() - m_distance;
+  return 1;
+}
+
+
 /************************************************
 Private Methods
 ************************************************/
@@ -347,7 +370,7 @@ void GameObject::InitLua() {
   luaL_openlibs( m_luaState );
   Lunar<GameObject>::Register( m_luaState );
   LuaApp::RegisterLuaAppFuncts( m_luaState );
-  LevelState::RegisterLuaPlayFuncts( m_luaState );
+  LevelState::RegisterLuaLevelFuncts( m_luaState );
   luaL_dofile( m_luaState, m_luaScript.c_str() );
 }
 
@@ -356,58 +379,71 @@ void GameObject::MovementUpdate() {
   m_distance += m_speed;
 
   switch( m_direction ) {
-  case Up:
-    Move( 0.0f, -m_speed );
-    m_collisionRect.Offset( 0.f, -m_speed );
-    break;
-  case Down:
-    Move( 0.0f, m_speed );
-    m_collisionRect.Offset( 0.f, m_speed );
-    break;
-  case Left:
-    Move( -m_speed, 0.0f );
-    m_collisionRect.Offset( -m_speed, 0.f );
-    break;
-  case Right:
-    Move( m_speed, 0.0f );
-    m_collisionRect.Offset( m_speed, 0.f );
-    break;
+    case Up: {
+      Move( 0.0f, -m_speed );
+      m_collisionRect.Offset( 0.0f, -m_speed );
+      break;
+    }
+    case Down: {
+      Move( 0.0f, m_speed );
+      m_collisionRect.Offset( 0.0f, m_speed );
+      break;
+    }
+    case Left: {
+      Move( -m_speed, 0.0f );
+      m_collisionRect.Offset( -m_speed, 0.0f );
+      break;
+    }
+    case Right: {
+      Move( m_speed, 0.0f );
+      m_collisionRect.Offset( m_speed, 0.0f );
+      break;
+    }
+    default: {}
   }
 
-  //Corrects movements that exceed the next grid location
   if( m_distance >= Configuration::GetTileSize() ) {
     m_moving = false;
+    CorrectMovement();
+    m_distance = 0.0f;
+  }
+}
 
-    static float diff = 0.0f;
-    //Calculate the amount of distance to move back
-    diff = m_distance - Configuration::GetTileSize();
 
-    //Find the correct direction to move back
-    switch( m_direction ) {
-    case Up:
+void GameObject::CorrectMovement() {
+  static float diff = 0.0f;
+  //Calculate the amount of distance to move back
+  diff = m_distance - Configuration::GetTileSize();
+
+  //Find the correct direction to move back
+  switch( m_direction ) {
+    case Up: {
       Move( 0.0f, diff );
       m_collisionRect.Offset( 0.0f, diff );
       break;
-    case Down:
+    }
+    case Down: {
       Move( 0.0f, -diff );
       m_collisionRect.Offset( 0.0f, -diff );
       break;
-    case Left:
+    }
+    case Left: {
       Move( diff, 0.0f );
       m_collisionRect.Offset( diff, 0.0f );
       break;
-    case Right:
+    }
+    case Right: {
       Move( -diff, 0.0f );
       m_collisionRect.Offset( - diff, 0.0f );
       break;
     }
-
-    SetPosition( round( GetPosition().x ), round( GetPosition().y ) );
-    m_collisionRect.Top = round( m_collisionRect.Top );
-    m_collisionRect.Bottom = round( m_collisionRect.Bottom );
-    m_collisionRect.Left = round( m_collisionRect.Left );
-    m_collisionRect.Right = round( m_collisionRect.Right );
   }
+
+  SetPosition( round( GetPosition().x ), round( GetPosition().y ) );
+  m_collisionRect.Top = round( m_collisionRect.Top );
+  m_collisionRect.Bottom = round( m_collisionRect.Bottom );
+  m_collisionRect.Left = round( m_collisionRect.Left );
+  m_collisionRect.Right = round( m_collisionRect.Right );
 }
 
 

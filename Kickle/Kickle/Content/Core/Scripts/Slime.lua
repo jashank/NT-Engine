@@ -6,8 +6,8 @@ math.randomseed( os.time() );
 
 local dir = UP;
 local slimeCollision = false;
-local lastTileX = 0;
-local lastTileY = 0;
+local lastTileX = -1;
+local lastTileY = -1;
 
 function AILogic( Slime )
 
@@ -21,10 +21,10 @@ function AILogic( Slime )
 		if ( not slimeCollision ) then
 			KickleX = Kickle:GetTileX();
 			KickleY = Kickle:GetTileY();
+			distanceX = math.abs( SlimeX - KickleX );
+			distanceY = math.abs( SlimeY - KickleY );
 
-			moveAxis = math.random( 0, 1 );
-
-			if ( moveAxis == 0 ) then
+			if ( distanceX > distanceY ) then
 				if ( SlimeX < KickleX ) then
 					dir = RIGHT;
 				elseif ( SlimeX > KickleX ) then
@@ -41,26 +41,31 @@ function AILogic( Slime )
 					dir = math.random( UP, DOWN );
 				end
 			end
-		end
 
-		if ( lastTileX == SlimeX and lastTileY == SlimeY ) then
-			dir = GetOppositeDirection( dir );
+			-- Slime has been on same tile for 2 updates
+			if ( lastTileX == SlimeX and lastTileY == SlimeY ) then
+				dir = math.random( UP, RIGHT );
+			end
 		end
 
 		lastTileX = SlimeX;
 		lastTileY = SlimeY;
-		slimeCollision = false;
 
 		Slime:MoveDir( dir );
 		Slime:SetAnimation( dir );
+
 	end
 
 end
 
 
 function HandleCollision( Slime, Other )
-	if ( Other:GetType() == "Slime" ) then
-		dir = GetOppositeDirection( dir );
-		slimeCollision = true;
+	if ( not slimeCollision ) then
+		if ( Other:GetType() == "Slime" ) then
+			Slime:Stop();
+			dir = Slime:Reverse();
+			slimeCollision = true;
+		end
+	else slimeCollision = false;
 	end
 end

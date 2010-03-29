@@ -22,7 +22,7 @@ class GameObject : public AnimSprite {
     Up,
     Down,
     Left,
-    Right,
+    Right
   };
 
   GameObject( lua_State *L );
@@ -33,11 +33,14 @@ class GameObject : public AnimSprite {
 	// Moves 1 tile length in the supplied direction
   void MoveDir( Dir direction );
 
-	// Stops movement
-  void StopMoving();
+	// Updates the GameObject's collision
+	void UpdateCollision();
 
-	// Updates the GameObject
-	virtual void Update();
+	// Updates the GameObject's movement
+	void UpdateMovement();
+
+  // Updates the GameObject's rendering
+  void UpdateRendering();
 
   // Sets the member unique identifier.
   void SetId( int id );
@@ -80,6 +83,13 @@ class GameObject : public AnimSprite {
   int LuaGetTileX( lua_State *L );
   int LuaGetTileY( lua_State *L );
 
+  // Allows Lua to stop the object's movement
+  int LuaStop( lua_State *L );
+
+  // Allows Lua to reverse the object at any point in it's movement.
+  // Returns the reversed direction to Lua.
+  int LuaReverse( lua_State *L );
+
   //Necessities for Lunar
   static const char className[];
   static Lunar<GameObject>::RegType methods[];
@@ -98,6 +108,9 @@ class GameObject : public AnimSprite {
 
 	//Updates the movement of GameObject
   void MovementUpdate();
+
+  // Corrects movement of object when it exceeds next grid location
+  void CorrectMovement();
 
 
   static LevelState *m_level; // Level that GameObject is on

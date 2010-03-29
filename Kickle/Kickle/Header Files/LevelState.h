@@ -81,10 +81,10 @@ class LevelState : public BaseState {
   static int LuaGetGameObject( lua_State *L );
 
   // Registers functions associated with the LevelState to Lua
-  static void RegisterLuaPlayFuncts( lua_State *L );
+  static void RegisterLuaLevelFuncts( lua_State *L );
   
  private:	
-  static const luaL_Reg luaPlayFuncts[]; // Functions to register to Lua
+  static const luaL_Reg luaLevelFuncts[]; // Functions to register to Lua
 
   // Restricts construction, copy construction, and assignment.
   LevelState();

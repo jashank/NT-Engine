@@ -19,15 +19,15 @@
     rect
   </collision_type>
   <rect_x>
-    0
+    7
   </rect_x>
   <rect_y>
-    0
+    10
   </rect_y>
   <rect_width>
-    48
+    34
   </rect_width>
   <rect_height>
-    48
+    35
   </rect_height>
 </game_object>

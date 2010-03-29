@@ -30,7 +30,17 @@ void GameObjectMap::Init() {
 void GameObjectMap::Update() {
   for ( int i = 0; i < m_nextId; i++ ) {
     if ( m_gameObjects[i] != 0 ) {
-      m_gameObjects[i]->Update();
+      m_gameObjects[i]->UpdateCollision();
+    }
+  }
+  for ( int i = 0; i < m_nextId; i++ ) {
+    if ( m_gameObjects[i] != 0 ) {
+      m_gameObjects[i]->UpdateMovement();
+    }
+  }
+  for ( int i = 0; i < m_nextId; i++ ) {
+    if ( m_gameObjects[i] != 0 ) {
+      m_gameObjects[i]->UpdateRendering();
     }
   }
 }
