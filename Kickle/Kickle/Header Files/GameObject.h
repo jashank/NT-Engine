@@ -83,6 +83,9 @@ class GameObject : public AnimSprite {
   int LuaGetTileX( lua_State *L );
   int LuaGetTileY( lua_State *L );
 
+  // Allows Lua to move the GameObject back to it's previous position
+  int LuaRevertToPrevPos( lua_State *L );
+
   // Allows Lua to stop the object's movement
   int LuaStop( lua_State *L );
 
@@ -123,6 +126,8 @@ class GameObject : public AnimSprite {
   int m_id; // ID of object
   lua_State* m_luaState; // Mediator between C/C++ and Lua VM
   sf::FloatRect m_collisionRect; // Object's collision box
+  sf::FloatRect m_prevRect; // Previous position of collision rect
+  sf::Vector2f m_prevPos; // Previous position of the game object
   std::string m_luaScript; // Filepath to the lua script
   std::string m_type; // What type of game object (slime, kickle, etc.)
 };

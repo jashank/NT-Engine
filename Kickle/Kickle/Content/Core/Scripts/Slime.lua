@@ -50,22 +50,19 @@ function AILogic( Slime )
 
 		lastTileX = SlimeX;
 		lastTileY = SlimeY;
+		slimeCollision = false;
 
 		Slime:MoveDir( dir );
 		Slime:SetAnimation( dir );
-
 	end
-
 end
 
 
 function HandleCollision( Slime, Other )
-	if ( not slimeCollision ) then
-		if ( Other:GetType() == "Slime" ) then
-			Slime:Stop();
-			dir = Slime:Reverse();
-			slimeCollision = true;
-		end
-	else slimeCollision = false;
+	if ( Other:GetType() == "Slime" ) then
+		Slime:Stop();
+		Slime:RevertToPrevPos();
+		dir = Slime:Reverse();
+		slimeCollision = true;
 	end
 end
