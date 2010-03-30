@@ -9,6 +9,7 @@ extern "C" {
 #include "lua.h"
 }
 
+#include "KeyManager.h"
 #include "ResourceManager.h"
 #include "StateManager.h"
 #include "BaseState.h"
@@ -16,8 +17,7 @@ extern "C" {
 
 #include "BasicTypeDefs.h"
 
-class Input;
-class StateManager;
+//class StateManager;
 class AnimData;
 
 //Template specialization to handle sf::Music's OpenFromFile() 
@@ -62,6 +62,9 @@ class App {
   // Returns the change in time since last frame
   float GetDeltaTime() const;
 
+  // Returns the amount of time key has been held down
+  float GetKeyTime( sf::Key::Code key ) const;
+
   // Returns event in app
   const sf::Event &GetEvent() const;  
 
@@ -86,6 +89,9 @@ class App {
 
   // Contains the main game loop
   void Run();
+
+  // Registers a key for m_keyManager to monitor
+  void RegisterKey( sf::Key::Code key );
 
   // Sets the screen's clear color
   void SetClearColor( const sf::Color& color );
@@ -112,7 +118,8 @@ class App {
   float	m_deltaTime; //Time in seconds spent on last frame render
   float	m_fps; //Frames per Second
 
-
+  KeyManager m_keyManager; //Keeps track of how long registered keys are held
+  
   //Resource Managers
   ResourceManager< sf::Image > m_images;
   ResourceManager< sf::SoundBuffer > m_sounds;

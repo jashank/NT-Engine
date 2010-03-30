@@ -46,7 +46,7 @@
 
 	<game_objects>
 		<entity data="Content\\Core\\Objects\\Slime.xml">
-			<instance x="6" y="8" />
+			<instance x="4" y="8" />
 			<instance x="10" y="8" />
 		</entity>
 		<entity data="Content\\Core\\Objects\\MoneyBags.xml">

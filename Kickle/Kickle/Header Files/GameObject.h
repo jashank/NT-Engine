@@ -2,6 +2,7 @@
 #define GAMEOBJECT_H
 
 #include <string>
+#include <utility>
 #include "Lunar.h"
 
 #include "AnimSprite.h"
@@ -76,6 +77,9 @@ class GameObject : public AnimSprite {
 	// Returns whether GameObject is animating
   int LuaIsAnimating( lua_State *L );
 
+  // Returns whether GameObject is moving
+  int LuaIsMoving( lua_State *L );
+
 	// Allows Lua to access type of GameObject
   int LuaGetType( lua_State *L );
 
@@ -98,6 +102,13 @@ class GameObject : public AnimSprite {
   static Lunar<GameObject>::RegType methods[];
 
  private:
+  struct KeyTime {
+    KeyTime();
+    KeyTime( sf::Key::Code key, float delayTime );
+    sf::Key::Code key;
+    float time;
+  };
+  typedef std::pair< KeyTime, std::string > KeyEntry;
 	// Loads a GameObject given a path to an xml file,
   // returning true if loading was successful
   bool LoadObjectData( const std::string &filepath );
@@ -128,6 +139,11 @@ class GameObject : public AnimSprite {
   sf::FloatRect m_collisionRect; // Object's collision box
   sf::FloatRect m_prevRect; // Previous position of collision rect
   sf::Vector2f m_prevPos; // Previous position of the game object
+
+  //Array of KeyTime and string(lua script's function names) pairs
+  KeyEntry* m_keyRegistry; 
+  Uint m_numKeyEntries; //Number of KeyEntries in m_keyRegistry
+
   std::string m_luaScript; // Filepath to the lua script
   std::string m_type; // What type of game object (slime, kickle, etc.)
 };

@@ -10,70 +10,120 @@ local KICKING = 8;
 local RAISE_PILLAR = 12;
 local DYING = 16;
 
-local dir = UP;
-local moveable = true;
-local mode = STANDING;
-
--- Whether Kickle is taking an action ( ice breath, raise pillar, etc.)
-local inAction = false;
+local dir = DOWN; --Current direction kickle is moving
+local state = STANDING; --Current state kickle is in
 
 
--- [[ Function that is called to handle scripted collision response events ]]
+
+--[[ Function that is called to handle scripted collision response events ]]
 function HandleCollision( Kickle, Other )
 	if ( Other:GetType() == "Slime" ) then
-		Kickle:SetAnimation( dir + DYING );
-	     moveable = false;
+		state = DYING;
+		Kickle:SetAnimation( dir + state );
 	end
 
 end
 
 
--- [[ Function that is called to handle scripted user input events ]]
-function HandleUserInput( Kickle )
-	if( moveable ) then
 
-		if ( Game.IsKeyDown( 293 ) and not inAction ) then
-			dir = UP;
-			mode = WALKING;
-		elseif ( Game.IsKeyDown( 294 ) and not inAction ) then
-			dir = DOWN;
-			mode = WALKING;
-		elseif ( Game.IsKeyDown( 291 ) and not inAction ) then
-			dir = LEFT;
-			mode = WALKING;
-		elseif ( Game.IsKeyDown( 292 ) and not inAction ) then
-			dir = RIGHT;
-			mode = WALKING;
-		elseif ( Game.IsKeyDown( 120 ) ) then
-			tileX, tileY = GetTileObjectFaces( Kickle, dir );
+function AILogic( Kickle )
+	if( state ~= DYING ) then
+		if( state ~= RAISE_PILLAR and not Kickle:IsMoving() ) then
+			state = STANDING;
+		end
 
-			if ( not Game.TileIsSolid( tileX, tileY ) and
-			     not Game.TileHasGridObject( tileX, tileY ) and not inAction) then
-				mode = RAISE_PILLAR;
-				inAction = true;
-				Game.CreateGameObject(
-					"Content/Core/Objects/Pillar.xml", tileX, tileY );
-			elseif ( Game.TileHasGridObject( tileX, tileY ) and not inAction ) then
-				GameObjectOnTile = Game.GetGameObjectOnTile( tileX, tileY );
-				if ( GameObjectOnTile:GetType() == "Pillar" ) then
-				  mode = RAISE_PILLAR;
-				  inAction = true;
-				  Game.DestroyGameObject( GameObjectOnTile );
-				end
+		if ( state == RAISE_PILLAR and not Kickle:IsAnimating() ) then
+			state = STANDING;
+		end
+
+		Kickle:SetAnimation( dir + state );
+	end
+end
+
+
+function FaceUp( Kickle )
+	if( state == STANDING ) then
+		dir = UP;
+	end
+end
+
+
+function FaceDown( Kickle )
+	if( state == STANDING ) then
+		dir = DOWN;
+	end
+end
+
+
+function FaceLeft( Kickle )
+	if( state == STANDING ) then
+		dir = LEFT;
+	end
+end
+
+
+function FaceRight( Kickle )
+	if( state == STANDING ) then
+		dir = RIGHT;
+	end
+end
+
+
+function WalkUp( Kickle )
+	if( state == STANDING ) then
+		dir = UP;
+		state = WALKING;
+		Kickle:MoveDir( dir );
+	end
+end
+
+
+function WalkDown( Kickle )
+	if( state == STANDING ) then
+		dir = DOWN;
+		state = WALKING;
+		Kickle:MoveDir( dir );
+	end
+end
+
+
+function WalkLeft( Kickle )
+	if( state == STANDING ) then
+		dir = LEFT;
+		state = WALKING;
+		Kickle:MoveDir( dir );
+	end
+end
+
+
+function WalkRight( Kickle )
+	if( state == STANDING ) then
+		dir = RIGHT;
+		state = WALKING;
+		Kickle:MoveDir( dir );
+	end
+end
+
+
+function PerformPillar( Kickle )
+	if( state == STANDING ) then
+		tileX, tileY = GetTileObjectFaces( Kickle, dir );
+
+		if ( not Game.TileIsSolid( tileX, tileY ) and
+			 not Game.TileHasGridObject( tileX, tileY ) ) then
+
+			state = RAISE_PILLAR;
+			Game.CreateGameObject(
+				"Content/Core/Objects/Pillar.xml", tileX, tileY );
+
+		elseif ( Game.TileHasGridObject( tileX, tileY ) ) then
+
+			GameObjectOnTile = Game.GetGameObjectOnTile( tileX, tileY );
+
+			if ( GameObjectOnTile:GetType() == "Pillar" ) then
+				state = RAISE_PILLAR;
+				Game.DestroyGameObject( GameObjectOnTile );
 			end
-		elseif ( not inAction ) then
-			mode = STANDING;
 		end
-
-		if ( mode == WALKING ) then
-			Kickle:MoveDir( dir );
-		end
-
-		if ( not Kickle:IsAnimating() ) then
-			inAction = false;
-		end
-
-		Kickle:SetAnimation( dir + mode );
-
 	end
 end

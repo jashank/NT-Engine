@@ -227,6 +227,10 @@
 				Name="Managers"
 				>
 				<File
+					RelativePath=".\Header Files\KeyManager.h"
+					>
+				</File>
+				<File
 					RelativePath=".\Header Files\ResourceManager.h"
 					>
 				</File>
@@ -363,6 +367,10 @@
 				Name="Managers"
 				>
 				<File
+					RelativePath=".\Source Files\KeyManager.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\Source Files\StateManager.cpp"
 					>
 				</File>
@@ -403,7 +411,7 @@
 					>
 				</File>
 				<File
-					RelativePath=".\Utilities.cpp"
+					RelativePath=".\Source Files\Utilities.cpp"
 					>
 				</File>
 			</Filter>

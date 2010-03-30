@@ -24,6 +24,7 @@ Lunar<GameObject>::RegType GameObject::methods[] = {
   { "MoveDir", &GameObject::LuaMoveDir },
   { "SetAnimation", &GameObject::LuaSetAnimation },
   { "IsAnimating", &GameObject::LuaIsAnimating },
+  { "IsMoving", &GameObject::LuaIsMoving },
   { "GetType", &GameObject::LuaGetType },
   { "GetTileX", &GameObject::LuaGetTileX },
   { "GetTileY", &GameObject::LuaGetTileY },
@@ -32,6 +33,7 @@ Lunar<GameObject>::RegType GameObject::methods[] = {
   { "Reverse", &GameObject::LuaReverse },
   { 0, 0 }
 };
+
 
 /************************************************
 Public Methods
@@ -42,7 +44,9 @@ GameObject::GameObject( lua_State *L )
    m_distance( 0.0f ),
    m_speed( 0.0f ),
    m_id( -1 ),
-   m_luaState( luaL_newstate() ) {
+   m_luaState( luaL_newstate() ),
+   m_keyRegistry(0),
+   m_numKeyEntries(0) {
   m_level = LevelState::GetInstance();
 
   if( !lua_isstring( L, -1 ) ) {
@@ -66,7 +70,9 @@ GameObject::GameObject( const std::string &filepath )
    m_distance( 0.0f ),
    m_speed( 0.0f ),
    m_id( -1 ),
-   m_luaState( luaL_newstate() ) {
+   m_luaState( luaL_newstate() ),
+   m_keyRegistry(0),
+   m_numKeyEntries(0) {
   m_level = LevelState::GetInstance();
 
   if( !( LoadObjectData( filepath ) &&
@@ -89,14 +95,10 @@ GameObject::GameObject(
    m_speed( 0.0f ),
    m_moving( false ),
    m_id( -1 ),
-   m_luaState( luaL_newstate() ) {
+   m_luaState( luaL_newstate() ),
+   m_keyRegistry(0),
+   m_numKeyEntries(0) {
   m_level = LevelState::GetInstance();
-
-  //if( !LoadAnimData( filepath ) ) {
-  //  lua_close( m_luaState );
-  //  m_luaState = 0;
-  //  throw "Cannot load AnimData XML file";
-  //}
 
   if( !LoadObjectData( filepath ) ) {
     lua_close( m_luaState );
@@ -213,13 +215,33 @@ void GameObject::UpdateMovement() {
   }
   else {
     //Call HandleUserInput lua function
-    lua_getglobal( m_luaState, "HandleUserInput" );
-    if( lua_isfunction( m_luaState, -1 ) ) {
-      Lunar<GameObject>::push( m_luaState, this );
-      lua_call( m_luaState, 1, 0 );
-    } else {
-      lua_pop( m_luaState, 1 );
+    static float keyTime = 0.0f;
+    static App* app = App::GetApp();
+
+    for( Uint i = 0; i < m_numKeyEntries; ++i ) {
+      //Check if key is down
+      if( app->GetInput().IsKeyDown( m_keyRegistry[i].first.key ) ) {
+        keyTime = app->GetKeyTime( m_keyRegistry[i].first.key );
+        //Check if key has been held down long enough
+        if( keyTime >= m_keyRegistry[i].first.time ) {
+          lua_getglobal( m_luaState, m_keyRegistry[i].second.c_str() );
+          if( lua_isfunction( m_luaState, -1 ) ) {
+            Lunar<GameObject>::push( m_luaState, this );
+            lua_call( m_luaState, 1, 0 );
+          } else {
+            lua_pop( m_luaState, 1 );
+          }
+        }
+      }
     }
+
+    //lua_getglobal( m_luaState, "HandleUserInput" );
+    //if( lua_isfunction( m_luaState, -1 ) ) {
+    //  Lunar<GameObject>::push( m_luaState, this );
+    //  lua_call( m_luaState, 1, 0 );
+    //} else {
+    //  lua_pop( m_luaState, 1 );
+    //}
     
     //Call AILogic lua function
     lua_getglobal( m_luaState, "AILogic" );
@@ -309,6 +331,11 @@ int GameObject::LuaIsAnimating( lua_State *L ) {
 }
 
 
+int GameObject::LuaIsMoving( lua_State *L ) {
+  lua_pushboolean( L, m_moving );
+  return 1;
+}
+
 int GameObject::LuaGetType( lua_State *L ) {  
   lua_pushstring( L, m_type.c_str() );
   return 1;
@@ -372,6 +399,16 @@ int GameObject::LuaReverse( lua_State *L ) {
 /************************************************
 Private Methods
 ************************************************/
+GameObject::KeyTime::KeyTime()
+ : key( sf::Key::Code::Count ),
+   time( 0.0f ) {
+}
+GameObject::KeyTime::KeyTime(sf::Key::Code key, float delayTime)
+ : key( key ),
+   time(delayTime) {
+}
+
+
 void GameObject::InitLua() {
   luaL_openlibs( m_luaState );
   Lunar<GameObject>::Register( m_luaState );
@@ -455,6 +492,36 @@ void GameObject::CorrectMovement() {
 }
 
 
+bool GameObject::LoadCollisionData( const std::string &filepath ) {
+  TiXmlDocument doc ( filepath.c_str() );
+  
+  if ( !doc.LoadFile() ) {
+    return false;
+  }
+
+  TiXmlHandle handleDoc( &doc );
+  TiXmlElement* root = handleDoc.FirstChildElement( "game_object" ).Element();
+
+  m_collisionRect.Left = GetPosition().x;
+  std::string rectXOffset( root->FirstChildElement( "rect_x" )->GetText() );
+  m_prevRect.Left = m_collisionRect.Left += atoi( rectXOffset.c_str() );
+
+  std::string width( root->FirstChildElement( "rect_width" )->GetText() );
+  m_prevRect.Right = m_collisionRect.Right = 
+    m_collisionRect.Left + atoi( width.c_str() );
+
+  m_collisionRect.Top = GetPosition().y;
+  std::string rectYOffset( root->FirstChildElement( "rect_y" )->GetText() );
+  m_prevRect.Top = m_collisionRect.Top += atoi( rectYOffset.c_str() );
+
+  std::string height( root->FirstChildElement( "rect_height" )->GetText() );
+  m_prevRect.Bottom = m_collisionRect.Bottom = 
+    m_collisionRect.Top + atoi( height.c_str() );
+  
+  return true;
+}
+
+
 bool GameObject::LoadObjectData( const std::string &filepath ) {
   TiXmlDocument doc ( filepath.c_str() );
   
@@ -495,35 +562,46 @@ bool GameObject::LoadObjectData( const std::string &filepath ) {
   //Set the spritesheet image
   SetImage( img );
 
-  return true;
-}
-
-
-bool GameObject::LoadCollisionData( const std::string &filepath ) {
-  TiXmlDocument doc ( filepath.c_str() );
+  //Load Input Data
+  TiXmlElement* inputListRoot = root->FirstChildElement( "input_list" );
   
-  if ( !doc.LoadFile() ) {
-    return false;
+  //if an input_list tag exists :D
+  if( inputListRoot ) {
+    TiXmlElement* input = 0;
+    std::vector< std::pair<KeyTime, std::string> > tempList;
+    sf::Key::Code tempKey;
+
+    for ( input = inputListRoot->FirstChildElement( "input" ); 
+          input; 
+          input = input->NextSiblingElement( "input" ) ) {
+
+      std::string key = input->Attribute( "key" );
+      std::string delay = input->Attribute( "delay" );
+      std::string function = input->Attribute( "function" );
+
+      if( !KeyManager::InterpretKey( key, tempKey ) ) {
+        //Invalid key attribute in an input xml tag
+        return false;
+      }
+
+      KeyTime tempKeyTime( tempKey, static_cast<float>( atof( delay.c_str() ) ) );
+      tempList.push_back( std::make_pair( tempKeyTime, function ) );
+
+    }
+    m_numKeyEntries = static_cast<Uint>( tempList.size() );
+    m_keyRegistry = new KeyEntry[m_numKeyEntries];
+
+    for( Uint i = 0; i < m_numKeyEntries; ++i ) {
+      m_keyRegistry[i] = tempList[i];
+      App::GetApp()->RegisterKey( m_keyRegistry[i].first.key );
+
+      DEBUG_STATEMENT(
+        std::cout << m_type << " Input: " << std::endl;
+        std::cout << m_keyRegistry[i].first.key << " " 
+          << m_keyRegistry[i].first.time;
+        std::cout << " " << m_keyRegistry[i].second << std::endl;
+      )
+    }
   }
-
-  TiXmlHandle handleDoc( &doc );
-  TiXmlElement* root = handleDoc.FirstChildElement( "game_object" ).Element();
-
-  m_collisionRect.Left = GetPosition().x;
-  std::string rectXOffset( root->FirstChildElement( "rect_x" )->GetText() );
-  m_prevRect.Left = m_collisionRect.Left += atoi( rectXOffset.c_str() );
-
-  std::string width( root->FirstChildElement( "rect_width" )->GetText() );
-  m_prevRect.Right = m_collisionRect.Right = 
-    m_collisionRect.Left + atoi( width.c_str() );
-
-  m_collisionRect.Top = GetPosition().y;
-  std::string rectYOffset( root->FirstChildElement( "rect_y" )->GetText() );
-  m_prevRect.Top = m_collisionRect.Top += atoi( rectYOffset.c_str() );
-
-  std::string height( root->FirstChildElement( "rect_height" )->GetText() );
-  m_prevRect.Bottom = m_collisionRect.Bottom = 
-    m_collisionRect.Top + atoi( height.c_str() );
-  
   return true;
 }

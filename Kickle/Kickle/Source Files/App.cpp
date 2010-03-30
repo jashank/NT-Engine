@@ -43,6 +43,7 @@ App::App(
    m_deltaTime(0.0f), 
    m_fps(0.0f) {
 	m_window.SetFramerateLimit( framerate );
+  m_keyManager.Init( m_window.GetInput() );
 }
 
 
@@ -108,6 +109,11 @@ float App::GetDeltaTime() const {
 }
 
 
+float App::GetKeyTime( sf::Key::Code key ) const {
+  return m_keyManager.GetKeyTime( key );
+}
+
+
 const sf::Event& App::GetEvent() const  {
   return m_event;
 }
@@ -137,6 +143,9 @@ AnimData& App::LoadAnim( const std::string &filename ) {
 	return m_anims.Load( filename );
 }
 
+void App::RegisterKey( sf::Key::Code key ) {
+  m_keyManager.RegisterKey( key );
+}
 
 void App::Run() {
 	//Set the Initial State for the statemanager
@@ -151,6 +160,8 @@ void App::Run() {
 				m_window.Close();		
 			}
 		}
+
+    m_keyManager.Update();
 
 		m_stateManager.RefreshState();
 		m_stateManager->HandleEvents();
