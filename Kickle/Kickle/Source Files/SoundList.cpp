@@ -40,7 +40,7 @@ void SoundList::SetLoop( bool loop ) {
 }
 
 void SoundList::Update() {
-  if ( m_sound.GetStatus() == 0 ) {
+  if ( m_sound.GetStatus() == sf::Sound::Stopped ) {
     if ( m_currentSong < m_playlist.size() || m_loop == true ) {
       m_currentSong = m_currentSong%m_playlist.size();
       PlaySong( m_playlist[m_currentSong] );

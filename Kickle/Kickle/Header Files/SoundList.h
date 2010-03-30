@@ -8,21 +8,27 @@
 #include "Utilities.h"
 #include "tinyxml.h"
 
-// Feel free to change the name
 class SoundList {
  public:
    SoundList();
    ~SoundList();
 
+   // Parses a section of the level xml document <music_playlist>
    void SetSoundList( TiXmlElement* root );
+   // Adds a path of music to the playlist, this is called by SetSoundList
    void AddMusic( std::string musicPath );
    
+   // Sets m_play to true
    void Play();
+   // Sets m_play to false
    void Pause();
+   // Sets m_loop to loop
    void SetLoop( bool loop );
 
+   //Checks if the song is finished and if it should play the next song.
    void Update();
 
+   // Plays the song at that path. Called by Update
    void PlaySong( std::string musicPath );
 
  private:
