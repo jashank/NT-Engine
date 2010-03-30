@@ -4,7 +4,8 @@ SoundList::SoundList()
  : m_currentSong( 0 ), 
    m_duration( 0.0f ),
    m_loop( false ),
-   m_play( false ) {
+   m_play( false ),
+   m_nextBuffered( false ){
   SetLoop( true );
   Pause();
 }
@@ -45,13 +46,17 @@ void SoundList::Update() {
       m_currentSong = m_currentSong%m_playlist.size();
       PlaySong( m_playlist[m_currentSong] );
       m_currentSong++;
+      m_nextBuffered = false;
+    } else if ( m_nextBuffered == false ) {
+      m_nextBuffered = true;
     }
   }
 
 }
 
 void SoundList::PlaySong( std::string musicPath ) {
-  if ( !m_buffer.LoadFromFile( musicPath ) ) {
+  m_buffer = App::GetApp()->LoadSound( musicPath );
+  if ( &m_buffer == NULL ) {
     DEBUG_STATEMENT( std::cout << "Cannot Open Music: " << musicPath << std::endl; );
   } else {
     m_sound.SetBuffer( m_buffer );

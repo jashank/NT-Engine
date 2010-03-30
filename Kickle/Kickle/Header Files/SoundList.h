@@ -5,6 +5,7 @@
 #include <SFML/Audio.hpp>
 #include <vector>
 
+#include "App.h"
 #include "Utilities.h"
 #include "tinyxml.h"
 
@@ -37,7 +38,7 @@ class SoundList {
   
   bool m_play;
   bool m_loop;
-
+  bool m_nextBuffered;
   sf::Sound m_sound;
   sf::SoundBuffer m_buffer;
   
