@@ -400,7 +400,7 @@ int GameObject::LuaReverse( lua_State *L ) {
 Private Methods
 ************************************************/
 GameObject::KeyTime::KeyTime()
- : key( sf::Key::Code::Count ),
+ : key( sf::Key::Count ),
    time( 0.0f ) {
 }
 GameObject::KeyTime::KeyTime(sf::Key::Code key, float delayTime)
