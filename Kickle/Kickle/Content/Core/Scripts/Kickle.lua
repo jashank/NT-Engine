@@ -28,7 +28,7 @@ end
 
 function AILogic( Kickle )
 	if( state ~= DYING ) then
-		if( state ~= RAISE_PILLAR and not Kickle:IsMoving() ) then
+		if( state ~= RAISE_PILLAR ) then
 			state = STANDING;
 		end
 
@@ -74,6 +74,7 @@ function WalkUp( Kickle )
 		dir = UP;
 		state = WALKING;
 		Kickle:MoveDir( dir );
+		Kickle:SetAnimation( dir + state );
 	end
 end
 
@@ -83,6 +84,7 @@ function WalkDown( Kickle )
 		dir = DOWN;
 		state = WALKING;
 		Kickle:MoveDir( dir );
+		Kickle:SetAnimation( dir + state );
 	end
 end
 
@@ -92,6 +94,7 @@ function WalkLeft( Kickle )
 		dir = LEFT;
 		state = WALKING;
 		Kickle:MoveDir( dir );
+		Kickle:SetAnimation( dir + state );
 	end
 end
 
@@ -101,6 +104,7 @@ function WalkRight( Kickle )
 		dir = RIGHT;
 		state = WALKING;
 		Kickle:MoveDir( dir );
+		Kickle:SetAnimation( dir + state );
 	end
 end
 

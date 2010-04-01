@@ -24,7 +24,6 @@ Lunar<GameObject>::RegType GameObject::methods[] = {
   { "MoveDir", &GameObject::LuaMoveDir },
   { "SetAnimation", &GameObject::LuaSetAnimation },
   { "IsAnimating", &GameObject::LuaIsAnimating },
-  { "IsMoving", &GameObject::LuaIsMoving },
   { "GetType", &GameObject::LuaGetType },
   { "GetTileX", &GameObject::LuaGetTileX },
   { "GetTileY", &GameObject::LuaGetTileY },
@@ -214,6 +213,16 @@ void GameObject::UpdateMovement() {
     MovementUpdate();
   }
   else {
+
+    //Call AILogic lua function
+    lua_getglobal( m_luaState, "AILogic" );
+    if ( lua_isfunction( m_luaState, -1 )) {
+      Lunar<GameObject>::push( m_luaState, this );
+      lua_call( m_luaState, 1, 0 );
+    } else {
+      lua_pop( m_luaState, 1 );
+    }
+
     //Call HandleUserInput lua function
     static float keyTime = 0.0f;
     static App* app = App::GetApp();
@@ -233,23 +242,6 @@ void GameObject::UpdateMovement() {
           }
         }
       }
-    }
-
-    //lua_getglobal( m_luaState, "HandleUserInput" );
-    //if( lua_isfunction( m_luaState, -1 ) ) {
-    //  Lunar<GameObject>::push( m_luaState, this );
-    //  lua_call( m_luaState, 1, 0 );
-    //} else {
-    //  lua_pop( m_luaState, 1 );
-    //}
-    
-    //Call AILogic lua function
-    lua_getglobal( m_luaState, "AILogic" );
-    if ( lua_isfunction( m_luaState, -1 )) {
-      Lunar<GameObject>::push( m_luaState, this );
-      lua_call( m_luaState, 1, 0 );
-    } else {
-      lua_pop( m_luaState, 1 );
     }
   }
 }
@@ -330,11 +322,6 @@ int GameObject::LuaIsAnimating( lua_State *L ) {
   return 1;
 }
 
-
-int GameObject::LuaIsMoving( lua_State *L ) {
-  lua_pushboolean( L, m_moving );
-  return 1;
-}
 
 int GameObject::LuaGetType( lua_State *L ) {  
   lua_pushstring( L, m_type.c_str() );
