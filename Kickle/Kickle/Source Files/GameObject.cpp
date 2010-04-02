@@ -27,8 +27,6 @@ Lunar<GameObject>::RegType GameObject::methods[] = {
   { "GetType", &GameObject::LuaGetType },
   { "GetTileX", &GameObject::LuaGetTileX },
   { "GetTileY", &GameObject::LuaGetTileY },
-  { "RevertToPrevPos", &GameObject::LuaRevertToPrevPos },
-  { "Stop", &GameObject::LuaStop },
   { "Reverse", &GameObject::LuaReverse },
   { 0, 0 }
 };
@@ -42,6 +40,7 @@ GameObject::GameObject( lua_State *L )
    m_direction( Up ),
    m_distance( 0.0f ),
    m_speed( 0.0f ),
+   m_prevState( NULL ),
    m_id( -1 ),
    m_luaState( luaL_newstate() ),
    m_keyRegistry(0),
@@ -68,6 +67,7 @@ GameObject::GameObject( const std::string &filepath )
  : m_moving( false ),
    m_distance( 0.0f ),
    m_speed( 0.0f ),
+   m_prevState( NULL ),
    m_id( -1 ),
    m_luaState( luaL_newstate() ),
    m_keyRegistry(0),
@@ -90,9 +90,10 @@ GameObject::GameObject(
   Uint tileX, 
   Uint tileY
 )
- : m_distance( 0.0f ),
+ : m_moving( false ),
+   m_distance( 0.0f ),
    m_speed( 0.0f ),
-   m_moving( false ),
+   m_prevState( NULL ),
    m_id( -1 ),
    m_luaState( luaL_newstate() ),
    m_keyRegistry(0),
@@ -129,8 +130,6 @@ GameObject::GameObject(
   y -= GetAnimData()->GetFrameHeight( GetAnimation() ) % Configuration::GetTileSize();
 
   SetPosition( x, y );
-  m_prevPos.x = x;
-  m_prevPos.y = y;
 
   if ( !m_gridCollision ) {
     if( !LoadCollisionData( filepath ) ) {
@@ -341,44 +340,37 @@ int GameObject::LuaGetTileY( lua_State *L ) {
 }
 
 
-int GameObject::LuaRevertToPrevPos( lua_State *L ) {
-  m_collisionRect = m_prevRect;
-  SetPosition( m_prevPos );
-  m_distance -= m_speed;
-  return 0;
-}
-
-
-int GameObject::LuaStop( lua_State *L ) {
-  m_moving = false;
-  return 0;
-}
-
-
 int GameObject::LuaReverse( lua_State *L ) {
-  Dir direction = Up;
+  m_distance = Configuration::GetTileSize() - m_distance;
+
   switch( m_direction ) {
     case Up: {
-      direction = Down;
+      m_direction = Down;
+      lua_pushinteger( L, Down );
       break;
     }
     case Down: {
-      direction = Up;
+      m_direction = Up;
+      lua_pushinteger( L, Up );
       break;
     }
     case Left: {
-      direction = Right;
+      m_direction = Right;
+      lua_pushinteger( L, Right );
       break;
     }
     case Right: {
-      direction = Left;
+      m_direction = Left;
+      lua_pushinteger( L, Left );
       break;
     }
-    default: {}
+    default: {
+      return luaL_error( L, "Object has no direction." );
+    } 
   }
 
-  lua_pushinteger( L, direction );
-  m_distance = Configuration::GetTileSize() - m_distance;
+  m_moving = true;
+
   return 1;
 }
 
@@ -406,8 +398,7 @@ void GameObject::InitLua() {
 
 
 void GameObject::MovementUpdate() {
-  m_prevPos = GetPosition();
-  m_prevRect = m_collisionRect;
+  m_prevState = this;
   m_distance += m_speed;
 
   switch( m_direction ) {
@@ -491,19 +482,17 @@ bool GameObject::LoadCollisionData( const std::string &filepath ) {
 
   m_collisionRect.Left = GetPosition().x;
   std::string rectXOffset( root->FirstChildElement( "rect_x" )->GetText() );
-  m_prevRect.Left = m_collisionRect.Left += atoi( rectXOffset.c_str() );
+  m_collisionRect.Left += atoi( rectXOffset.c_str() );
 
   std::string width( root->FirstChildElement( "rect_width" )->GetText() );
-  m_prevRect.Right = m_collisionRect.Right = 
-    m_collisionRect.Left + atoi( width.c_str() );
+  m_collisionRect.Right = m_collisionRect.Left + atoi( width.c_str() );
 
   m_collisionRect.Top = GetPosition().y;
   std::string rectYOffset( root->FirstChildElement( "rect_y" )->GetText() );
-  m_prevRect.Top = m_collisionRect.Top += atoi( rectYOffset.c_str() );
+  m_collisionRect.Top += atoi( rectYOffset.c_str() );
 
   std::string height( root->FirstChildElement( "rect_height" )->GetText() );
-  m_prevRect.Bottom = m_collisionRect.Bottom = 
-    m_collisionRect.Top + atoi( height.c_str() );
+  m_collisionRect.Bottom = m_collisionRect.Top + atoi( height.c_str() );
   
   return true;
 }

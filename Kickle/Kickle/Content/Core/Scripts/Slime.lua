@@ -5,7 +5,6 @@ require ("GameObjectUtilities");
 math.randomseed( os.time() );
 
 local dir = UP;
-local slimeCollision = false;
 local lastTileX = -1;
 local lastTileY = -1;
 
@@ -18,39 +17,36 @@ function AILogic( Slime )
 		SlimeX = Slime:GetTileX();
 		SlimeY = Slime:GetTileY();
 
-		if ( not slimeCollision ) then
-			KickleX = Kickle:GetTileX();
-			KickleY = Kickle:GetTileY();
-			distanceX = math.abs( SlimeX - KickleX );
-			distanceY = math.abs( SlimeY - KickleY );
+		KickleX = Kickle:GetTileX();
+		KickleY = Kickle:GetTileY();
+		distanceX = math.abs( SlimeX - KickleX );
+		distanceY = math.abs( SlimeY - KickleY );
 
-			if ( distanceX > distanceY ) then
-				if ( SlimeX < KickleX ) then
-					dir = RIGHT;
-				elseif ( SlimeX > KickleX ) then
-					dir = LEFT;
-				else
-					dir = math.random( LEFT, RIGHT );
-				end
+		if ( distanceX > distanceY ) then
+			if ( SlimeX < KickleX ) then
+				dir = RIGHT;
+			elseif ( SlimeX > KickleX ) then
+				dir = LEFT;
 			else
-				if ( SlimeY < KickleY ) then
-					dir = DOWN;
-				elseif ( SlimeY > KickleY ) then
-					dir = UP;
-				else
-					dir = math.random( UP, DOWN );
-				end
+				dir = math.random( LEFT, RIGHT );
 			end
+		else
+			if ( SlimeY < KickleY ) then
+				dir = DOWN;
+			elseif ( SlimeY > KickleY ) then
+				dir = UP;
+			else
+				dir = math.random( UP, DOWN );
+			end
+		end
 
-			-- Slime has been on same tile for 2 updates
-			if ( lastTileX == SlimeX and lastTileY == SlimeY ) then
-				dir = math.random( UP, RIGHT );
-			end
+		-- Slime has been on same tile for 2 updates
+		if ( lastTileX == SlimeX and lastTileY == SlimeY ) then
+			dir = math.random( UP, RIGHT );
 		end
 
 		lastTileX = SlimeX;
 		lastTileY = SlimeY;
-		slimeCollision = false;
 
 		Slime:MoveDir( dir );
 		Slime:SetAnimation( dir );
@@ -60,9 +56,7 @@ end
 
 function HandleCollision( Slime, Other )
 	if ( Other:GetType() == "Slime" ) then
-		Slime:Stop();
-		Slime:RevertToPrevPos();
 		dir = Slime:Reverse();
-		slimeCollision = true;
+		Slime:SetAnimation( dir );
 	end
 end

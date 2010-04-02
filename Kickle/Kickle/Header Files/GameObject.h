@@ -84,14 +84,7 @@ class GameObject : public AnimSprite {
   int LuaGetTileX( lua_State *L );
   int LuaGetTileY( lua_State *L );
 
-  // Allows Lua to move the GameObject back to it's previous position
-  int LuaRevertToPrevPos( lua_State *L );
-
-  // Allows Lua to stop the object's movement
-  int LuaStop( lua_State *L );
-
-  // Allows Lua to reverse the object at any point in it's movement.
-  // Returns the reversed direction to Lua.
+  // Allows Lua to reverse direction of GameObject
   int LuaReverse( lua_State *L );
 
   //Necessities for Lunar
@@ -131,11 +124,10 @@ class GameObject : public AnimSprite {
   Dir m_direction; // Current direction game object is moving
   float m_distance; // Distance traveled from last grid location
   float m_speed; // m_speed at which object moves ( 1.0 is "normal" i.e. Kickle )
+  GameObject *m_prevState; // Previous state of the GameObject
   int m_id; // ID of object
   lua_State* m_luaState; // Mediator between C/C++ and Lua VM
   sf::FloatRect m_collisionRect; // Object's collision box
-  sf::FloatRect m_prevRect; // Previous position of collision rect
-  sf::Vector2f m_prevPos; // Previous position of the game object
 
   //Array of KeyTime and string(lua script's function names) pairs
   KeyEntry* m_keyRegistry; 
