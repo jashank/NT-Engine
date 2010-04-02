@@ -40,7 +40,6 @@ GameObject::GameObject( lua_State *L )
    m_direction( Up ),
    m_distance( 0.0f ),
    m_speed( 0.0f ),
-   m_prevState( NULL ),
    m_id( -1 ),
    m_luaState( luaL_newstate() ),
    m_keyRegistry(0),
@@ -67,7 +66,6 @@ GameObject::GameObject( const std::string &filepath )
  : m_moving( false ),
    m_distance( 0.0f ),
    m_speed( 0.0f ),
-   m_prevState( NULL ),
    m_id( -1 ),
    m_luaState( luaL_newstate() ),
    m_keyRegistry(0),
@@ -93,7 +91,6 @@ GameObject::GameObject(
  : m_moving( false ),
    m_distance( 0.0f ),
    m_speed( 0.0f ),
-   m_prevState( NULL ),
    m_id( -1 ),
    m_luaState( luaL_newstate() ),
    m_keyRegistry(0),
@@ -398,7 +395,6 @@ void GameObject::InitLua() {
 
 
 void GameObject::MovementUpdate() {
-  m_prevState = this;
   m_distance += m_speed;
 
   switch( m_direction ) {

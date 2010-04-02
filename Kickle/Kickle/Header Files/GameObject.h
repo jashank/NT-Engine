@@ -124,7 +124,6 @@ class GameObject : public AnimSprite {
   Dir m_direction; // Current direction game object is moving
   float m_distance; // Distance traveled from last grid location
   float m_speed; // m_speed at which object moves ( 1.0 is "normal" i.e. Kickle )
-  GameObject *m_prevState; // Previous state of the GameObject
   int m_id; // ID of object
   lua_State* m_luaState; // Mediator between C/C++ and Lua VM
   sf::FloatRect m_collisionRect; // Object's collision box
