@@ -225,10 +225,10 @@ void GameObject::UpdateMovement() {
 
     for( Uint i = 0; i < m_numKeyEntries; ++i ) {
       //Check if key is down
-      if( app->GetInput().IsKeyDown( m_keyRegistry[i].first.key ) ) {
-        keyTime = app->GetKeyTime( m_keyRegistry[i].first.key );
+      if( app->GetInput().IsKeyDown( m_keyRegistry[i].first.first ) ) {
+        keyTime = app->GetKeyTime( m_keyRegistry[i].first.first );
         //Check if key has been held down long enough
-        if( keyTime >= m_keyRegistry[i].first.time ) {
+        if( keyTime >= m_keyRegistry[i].first.second ) {
           lua_getglobal( m_luaState, m_keyRegistry[i].second.c_str() );
           if( lua_isfunction( m_luaState, -1 ) ) {
             Lunar<GameObject>::push( m_luaState, this );
@@ -375,16 +375,6 @@ int GameObject::LuaReverse( lua_State *L ) {
 /************************************************
 Private Methods
 ************************************************/
-GameObject::KeyTime::KeyTime()
- : key( sf::Key::Count ),
-   time( 0.0f ) {
-}
-GameObject::KeyTime::KeyTime(sf::Key::Code key, float delayTime)
- : key( key ),
-   time(delayTime) {
-}
-
-
 void GameObject::InitLua() {
   luaL_openlibs( m_luaState );
   Lunar<GameObject>::Register( m_luaState );
@@ -565,12 +555,12 @@ bool GameObject::LoadObjectData( const std::string &filepath ) {
 
     for( Uint i = 0; i < m_numKeyEntries; ++i ) {
       m_keyRegistry[i] = tempList[i];
-      App::GetApp()->RegisterKey( m_keyRegistry[i].first.key );
+      App::GetApp()->RegisterKey( m_keyRegistry[i].first.first );
 
       DEBUG_STATEMENT(
         std::cout << m_type << " Input: " << std::endl;
-        std::cout << m_keyRegistry[i].first.key << " " 
-          << m_keyRegistry[i].first.time;
+        std::cout << m_keyRegistry[i].first.first << " " 
+          << m_keyRegistry[i].first.second;
         std::cout << " " << m_keyRegistry[i].second << std::endl;
       )
     }

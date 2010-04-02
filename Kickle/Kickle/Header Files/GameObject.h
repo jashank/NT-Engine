@@ -92,12 +92,7 @@ class GameObject : public AnimSprite {
   static Lunar<GameObject>::RegType methods[];
 
  private:
-  struct KeyTime {
-    KeyTime();
-    KeyTime( sf::Key::Code key, float delayTime );
-    sf::Key::Code key;
-    float time;
-  };
+  typedef std::pair< sf::Key::Code, float > KeyTime;
   typedef std::pair< KeyTime, std::string > KeyEntry;
 	// Loads a GameObject given a path to an xml file,
   // returning true if loading was successful
