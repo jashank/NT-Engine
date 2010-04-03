@@ -46,6 +46,7 @@ void SoundList::Pause() {
 void SoundList::SetLoop( bool loop ) {
   m_loop = loop;
 }
+
 bool SoundList::IsPlaying() {
   return m_play;
 }

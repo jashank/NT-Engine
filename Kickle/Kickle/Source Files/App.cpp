@@ -66,12 +66,9 @@ App* App::CreateApp(
 ) {
 	if(  m_instance == 0 ) {
 		DEBUG_STATEMENT( 
-			std::cout 
-			<< "Creating App...\n-->Title: " << title
-			<< "\n-->Width: " << width
-			<< "\n-->Height: " << height
-			<< "\n-->Framerate: " << framerate 
-			<< std::endl; 
+      DebugMsg( " Creating App...\n-->Title: %s \n-->Width: %d  \
+                  \n-->Height: %d \n-->Framerate: %d \n" ,
+                  title.c_str(), width, height, framerate );
 		)
 		m_instance = new App( title, width, height, framerate );
 	}

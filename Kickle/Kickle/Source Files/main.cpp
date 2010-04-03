@@ -1,5 +1,6 @@
 #include <memory>
 #include <iostream>
+#include "Utilities.h"
 
 #include "tinyxml.h"
 
@@ -8,6 +9,8 @@
 
 
 int main() {
+  DEBUG_STATEMENT( ClearLogs(); )
+
   Configuration::Load();
 
 	std::auto_ptr< App > Game( 

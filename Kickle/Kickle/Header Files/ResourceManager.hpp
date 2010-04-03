@@ -17,6 +17,7 @@ resource_t* ResourceLoader< resource_t >::Load( const std::string &filename ) {
   if( !resource->LoadFromFile( filename ) ) {
     std::string err = "Unable to Load() resource: ";
     err += filename;
+
     throw err.c_str();
   }
   
@@ -46,19 +47,15 @@ template< typename resource_t, typename loader_t >
 resource_t& ResourceManager< resource_t, loader_t >::Load( 
   const std::string &filename ) {
   DEBUG_STATEMENT( 
-    std::cout 
-    << "Loading Resource...\n-->Filename: " << filename 
-    << std::endl; 
+    DebugMsg( "Loading Resource...\n-->Filename: %s \n", filename.c_str() );
   )
 
   //Check to see if resource has already been loaded, 
   //if so then return a reference to that resource
   map_t::iterator result = m_resources.find( filename );
   if( result != m_resources.end() ) {
-    DEBUG_STATEMENT( 
-      std::cout 
-      << "-->File already loaded\n-->Address: " << result->second 
-      << std::endl; 
+    DEBUG_STATEMENT(
+      DebugMsg( "-->File already loaded\n-->Address: %p \n", result->second );
     )
     return *(result->second);
   }
@@ -67,8 +64,8 @@ resource_t& ResourceManager< resource_t, loader_t >::Load(
   std::auto_ptr<resource_t> resource( m_loader.Load( filename ) );
 
   //Insert it into map and return a reference to that resource.
-  DEBUG_STATEMENT( 
-    std::cout << "-->Address: " << resource.get() << std::endl; 
+  DEBUG_STATEMENT(
+    DebugMsg( "-->Address: %p \n", resource.get() );
   )
   m_resources.insert( std::make_pair( filename, resource.get() ) );
 
