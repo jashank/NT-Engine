@@ -7,10 +7,21 @@ Private Methods
 ************************************************/
 AnimSprite::AnimSprite() 
  : m_play( false ),
+   m_reverse( false ),
    m_animation( 0 ),
    m_frameTime( 0.0f ),
    m_animData( 0 ),
    m_frame( 0 ) {
+}
+
+void AnimSprite::AnimateBackward() {
+  m_reverse = true;
+  Play();
+}
+
+void AnimSprite::AnimateForward() {
+  m_reverse = false;
+  Play();
 }
 
 const AnimData *AnimSprite::GetAnimData() const {
@@ -87,7 +98,12 @@ void AnimSprite::Start() {
 
 void AnimSprite::Stop() {
 	Pause();
-  SetFrame( 0 );
+  if( !m_reverse ) {
+    SetFrame( 0 );
+  }
+  else {
+    SetFrame( m_animData->GetNumFrames( m_animation )-1 );
+  }
 }
 
 
@@ -125,21 +141,42 @@ Private Methods
 ************************************************/
 
 void AnimSprite::NextFrame() {
-  //Increment frame
-	++m_frame;
+  if( !m_reverse ) {
+    //Increment frame
+	  ++m_frame;
 
-  //If the animation has reached it's end
-	if( m_frame >= m_animData->GetNumFrames( m_animation ) ) {
-    //If animation is looped
-		if( m_animData->IsLooped( m_animation ) ) {
-      //Reset animation to first frame
-			m_frame = 0;
-		}
-		else {
-      //Set animation to last frame
-      m_frame = m_animData->GetNumFrames( m_animation )-1;
-      //Pause animation at last frame
-			Pause();
-		}
-	}
+    //If the animation has reached it's end
+	  if( m_frame >= m_animData->GetNumFrames( m_animation ) ) {
+      //If animation is looped
+		  if( m_animData->IsLooped( m_animation ) ) {
+        //Reset animation to first frame
+			  m_frame = 0;
+		  }
+		  else {
+        //Set animation to last frame
+        m_frame = m_animData->GetNumFrames( m_animation )-1;
+        //Pause animation at last frame
+			  Pause();
+		  }
+	  }
+  }
+  else {
+    //Decrement frame
+	  --m_frame;
+
+    //If the animation has reached it's end
+	  if( m_frame == 0 ) {
+      //If animation is looped
+		  if( m_animData->IsLooped( m_animation ) ) {
+        //Reset animation to last frame
+			  m_frame = m_animData->GetNumFrames( m_animation )-1;
+		  }
+		  else {
+        //Set animation to last frame
+        m_frame = 0;
+        //Pause animation at last frame
+			  Pause();
+		  }
+	  }
+  }
 }

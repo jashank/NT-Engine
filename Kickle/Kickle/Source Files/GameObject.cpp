@@ -21,6 +21,8 @@ Public Members
 ************************************************/
 const char GameObject::className[] = "GameObject";
 Lunar<GameObject>::RegType GameObject::methods[] = {
+  { "AnimateBackward", &GameObject::LuaAnimateBackward },
+  { "AnimateForward", &GameObject::LuaAnimateForward },
   { "MoveDir", &GameObject::LuaMoveDir },
   { "SetAnimation", &GameObject::LuaSetAnimation },
   { "IsAnimating", &GameObject::LuaIsAnimating },
@@ -288,6 +290,17 @@ const std::string& GameObject::GetType() const {
   return m_type;
 }
 
+// Wraps AnimateBackward to allow it to be exposed t lua
+int GameObject::LuaAnimateBackward( lua_State* L ) {
+  AnimateBackward();
+  return 0;
+}
+
+// Wraps AnimateForward to allow it to be exposed t lua
+int GameObject::LuaAnimateForward( lua_State* L ) {
+  AnimateForward();
+  return 0;
+}
 
 int GameObject::LuaMoveDir( lua_State *L ) {
   if( !lua_isnumber( L, -1 ) ) {

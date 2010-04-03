@@ -13,7 +13,7 @@ local DYING = 16;
 local dir = DOWN; --Current direction kickle is moving
 local state = STANDING; --Current state kickle is in
 
-
+local pillar = nil;
 
 --[[ Function that is called to handle scripted collision response events ]]
 function HandleCollision( Kickle, Other )
@@ -34,6 +34,11 @@ function AILogic( Kickle )
 
 		if ( state == RAISE_PILLAR and not Kickle:IsAnimating() ) then
 			state = STANDING;
+			if( pillar ~= nil ) then
+				Kickle:AnimateForward();
+				Game.DestroyGameObject( pillar );
+				pillar = nil;
+			end
 		end
 
 		Kickle:SetAnimation( dir + state );
@@ -114,7 +119,8 @@ function PerformPillar( Kickle )
 		tileX, tileY = GetTileObjectFaces( Kickle, dir );
 
 		if ( not Game.TileIsSolid( tileX, tileY ) and
-			 not Game.TileHasGridObject( tileX, tileY ) ) then
+			 not Game.TileHasGridObject( tileX, tileY ) and
+			 not Game.GetGameObjectOnTile( tileX, tileY ) ) then
 
 			state = RAISE_PILLAR;
 			Game.CreateGameObject(
@@ -126,7 +132,9 @@ function PerformPillar( Kickle )
 
 			if ( GameObjectOnTile:GetType() == "Pillar" ) then
 				state = RAISE_PILLAR;
-				Game.DestroyGameObject( GameObjectOnTile );
+				Kickle:AnimateBackward();
+				GameObjectOnTile:AnimateBackward();
+				pillar = GameObjectOnTile;
 			end
 		end
 	end
