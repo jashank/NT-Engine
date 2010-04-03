@@ -1,33 +1,16 @@
 <?xml version="1.0"?>
 <game_object>
-  <sprite_path>
-    Content/Core/Sheets/slime_48x48.png
-  </sprite_path>
-  <animation_path>
-    Content/Core/Animations/BasicAnim_48x48.xml
-  </animation_path>
-  <script_path>
-    Content/Core/Scripts/Slime.lua
-  </script_path>
-  <typename>
-    Slime
-  </typename>
-  <speed>
-    0.5
-  </speed>
-  <collision_type>
-    rect
-  </collision_type>
-  <rect_x>
-    7
-  </rect_x>
-  <rect_y>
-    10
-  </rect_y>
-  <rect_width>
-    34
-  </rect_width>
-  <rect_height>
-    35
-  </rect_height>
+  <sprite_path data="Content/Core/Sheets/slime_48x48.png" />
+
+  <animation_path data="Content/Core/Animations/BasicAnim_48x48.xml" />
+
+  <script_path data="Content/Core/Scripts/Slime.lua" />
+
+  <typename data="Slime" />
+
+  <speed data="0.5" />
+ 
+  <rect x="7" y="10" width="34" height="35" />
+
+  <grid_collision data="false" />
 </game_object>

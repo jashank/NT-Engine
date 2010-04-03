@@ -2,6 +2,7 @@
 
 package.path = package.path .. ";Content/Core/Scripts/?.lua"
 require ("GameObjectUtilities");
+
 math.randomseed( os.time() );
 
 local dir = UP;
@@ -58,5 +59,7 @@ function HandleCollision( Slime, Other )
 	if ( Other:GetType() == "Slime" ) then
 		dir = Slime:Reverse();
 		Slime:SetAnimation( dir );
+	elseif ( Other:GetType() == "Pillar" ) then
+		Game.DestroyGameObject( Other );
 	end
 end

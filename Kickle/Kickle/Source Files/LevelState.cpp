@@ -126,7 +126,7 @@ bool LevelState::TileHasGridObject( Uint x, Uint y ) {
   GameObject *gameObject = m_gameObjectMap.ObjectOnTile( x, y );
 
   if ( gameObject != NULL ) {
-    return gameObject->CollisionIsGridBased();
+    return gameObject->HasGridCollision();
   }
 
   return false;
@@ -226,6 +226,7 @@ int LevelState::LuaGetGameObject( lua_State *L ) {
   return 1;
 }
 
+
 int LevelState::LuaGetGameObjectOnTile( lua_State *L ) {
   if ( !lua_isnumber( L, -2 ) ) {
     return luaL_error( L, "Invalid tile x position for GetGameObjectOnTile." );
@@ -241,6 +242,7 @@ int LevelState::LuaGetGameObjectOnTile( lua_State *L ) {
                   m_instance->m_gameObjectMap.ObjectOnTile(tileX, tileY) );
   return 1;
 }
+
 
 void LevelState::RegisterLuaLevelFuncts( lua_State *L ) {
   luaL_register( L, "Game", luaLevelFuncts );

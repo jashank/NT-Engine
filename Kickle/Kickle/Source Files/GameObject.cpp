@@ -39,6 +39,7 @@ Public Methods
 ************************************************/
 GameObject::GameObject( lua_State *L )
  : m_moving( false ),
+   m_gridCollision( false ),
    m_direction( Up ),
    m_distance( 0.0f ),
    m_speed( 0.0f ),
@@ -66,6 +67,7 @@ GameObject::GameObject( lua_State *L )
 
 GameObject::GameObject( const std::string &filepath )
  : m_moving( false ),
+   m_gridCollision( false ),
    m_distance( 0.0f ),
    m_speed( 0.0f ),
    m_id( -1 ),
@@ -91,6 +93,8 @@ GameObject::GameObject(
   Uint tileY
 )
  : m_moving( false ),
+   m_gridCollision( false ),
+   m_direction( Up ),
    m_distance( 0.0f ),
    m_speed( 0.0f ),
    m_id( -1 ),
@@ -265,7 +269,7 @@ const sf::FloatRect &GameObject::GetCollisionBox() const {
 }
 
 
-bool GameObject::CollisionIsGridBased() const {
+bool GameObject::HasGridCollision() const {
   return m_gridCollision;
 }
 
@@ -478,20 +482,25 @@ bool GameObject::LoadCollisionData( const std::string &filepath ) {
 
   TiXmlHandle handleDoc( &doc );
   TiXmlElement* root = handleDoc.FirstChildElement( "game_object" ).Element();
+  TiXmlElement* rect = root->FirstChildElement( "rect" );
 
   m_collisionRect.Left = GetPosition().x;
-  std::string rectXOffset( root->FirstChildElement( "rect_x" )->GetText() );
+  std::string rectXOffset = rect->Attribute( "x" );
   m_collisionRect.Left += atoi( rectXOffset.c_str() );
 
-  std::string width( root->FirstChildElement( "rect_width" )->GetText() );
+  std::string width = rect->Attribute( "width" );
   m_collisionRect.Right = m_collisionRect.Left + atoi( width.c_str() );
 
   m_collisionRect.Top = GetPosition().y;
-  std::string rectYOffset( root->FirstChildElement( "rect_y" )->GetText() );
+  std::string rectYOffset = rect->Attribute( "y" );
   m_collisionRect.Top += atoi( rectYOffset.c_str() );
 
-  std::string height( root->FirstChildElement( "rect_height" )->GetText() );
+  std::string height = rect->Attribute( "height" );
   m_collisionRect.Bottom = m_collisionRect.Top + atoi( height.c_str() );
+
+  std::string gridCollision = root->FirstChildElement( "grid_collision" )->
+                                Attribute( "data" );
+  m_gridCollision = ( gridCollision == "true" );
   
   return true;
 }
@@ -508,25 +517,23 @@ bool GameObject::LoadObjectData( const std::string &filepath ) {
   TiXmlElement* root = handleDoc.FirstChildElement( "game_object" ).Element();
 
   //Load in path to GameObject's spritesheet
-  std::string spritePath( root->FirstChildElement( "sprite_path" )->GetText() );
-
-  //Load in path to GameObject's lua script
-  m_luaScript =  root->FirstChildElement( "script_path" )->GetText();
-
-  // Load in type of object
-  m_type = root->FirstChildElement( "typename" )->GetText();
-
-  // Load in speed of object
-  std::string speed( root->FirstChildElement( "speed" )->GetText() );
-  m_speed = (float)atof( speed.c_str() );
-
-  // Load in whether to use rectangular collision for this object
-  std::string collisionType = root->FirstChildElement( "collision_type" )->GetText();
-  m_gridCollision = ( collisionType == "grid" );
+  std::string spritePath = root->FirstChildElement( "sprite_path" )->
+                            Attribute( "data" );
 
   //Load in path to animation's xml
-  std::string animPath( root->FirstChildElement( "animation_path" )->GetText() );
+  std::string animPath = root->FirstChildElement( "animation_path" )->
+                          Attribute( "data" );
   LoadAnimData( animPath );
+
+  //Load in path to GameObject's lua script
+  m_luaScript =  root->FirstChildElement( "script_path" )->Attribute( "data" );
+
+  // Load in type of object
+  m_type = root->FirstChildElement( "typename" )->Attribute( "data" );
+
+  // Load in speed of object
+  std::string speed = root->FirstChildElement( "speed" )->Attribute( "data" );
+  m_speed = (float)atof( speed.c_str() );
 
   App* app= App::GetApp();
 

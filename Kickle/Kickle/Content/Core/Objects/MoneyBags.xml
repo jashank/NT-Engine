@@ -1,21 +1,16 @@
 <?xml version="1.0"?>
 <game_object>
-  <sprite_path>
-    Content/Core/Sheets/moneyBags_48x48.png
-  </sprite_path>
-  <animation_path>
-    Content/Core/Animations/BasicAnim_48x48.xml
-  </animation_path>
-  <script_path>
-    Content/Core/Scripts/MoneyBags.lua
-  </script_path>
-  <typename>
-    MoneyBag
-  </typename>
-  <speed>
-    0
-  </speed>
-  <collision_type>
-    grid
-  </collision_type>
+  <sprite_path data="Content/Core/Sheets/moneyBags_48x48.png" />
+
+  <animation_path data="Content/Core/Animations/BasicAnim_48x48.xml" />
+
+  <script_path data="Content/Core/Scripts/MoneyBags.lua" />
+
+  <typename data="MoneyBag" />
+
+  <speed data="0" />
+
+  <rect x="0" y="0" width="48" height="48" />
+
+  <grid_collision data="false" />
 </game_object>

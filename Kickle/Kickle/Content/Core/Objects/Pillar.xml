@@ -1,21 +1,16 @@
 <?xml version="1.0"?>
 <game_object>
-  <sprite_path>
-    Content/Core/Sheets/pillar_48x48.png
-  </sprite_path>
-  <animation_path>
-    Content/Core/Animations/PillarAnim_48x48.xml
-  </animation_path>
-  <script_path>
-    Content/Core/Scripts/Pillar.lua
-  </script_path>
-  <typename>
-    Pillar
-  </typename>
-  <speed>
-    0
-  </speed>
-  <collision_type>
-    grid
-  </collision_type>
+  <sprite_path data="Content/Core/Sheets/pillar_48x48.png" />
+
+  <animation_path data="Content/Core/Animations/PillarAnim_48x48.xml" />
+
+  <script_path data="Content/Core/Scripts/Pillar.lua" />
+
+  <typename data="Pillar" />
+
+  <speed data="0" />
+
+  <rect x="0" y="0" width="48" height="48" />
+
+  <grid_collision data="true" />
 </game_object>

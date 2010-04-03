@@ -53,7 +53,7 @@ class GameObject : public AnimSprite {
   const sf::FloatRect &GetCollisionBox() const;
 
   // Returns whether game object's collision is grid-based
-  bool CollisionIsGridBased() const;
+  bool HasGridCollision() const;
 
   // Returns x-location of GameObject on game grid
   Uint GetTileX() const;

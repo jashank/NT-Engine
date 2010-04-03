@@ -123,8 +123,7 @@ function PerformPillar( Kickle )
 		tileX, tileY = GetTileObjectFaces( Kickle, dir );
 
 		if ( not Game.TileIsSolid( tileX, tileY ) and
-			 not Game.TileHasGridObject( tileX, tileY ) and
-			 not Game.GetGameObjectOnTile( tileX, tileY ) ) then
+			 not Game.TileHasGridObject( tileX, tileY ) ) then
 
 			state = RAISE_PILLAR;
 			Game.CreateGameObject(
