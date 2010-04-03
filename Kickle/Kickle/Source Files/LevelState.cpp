@@ -71,9 +71,19 @@ void LevelState::Resume() {
 
 
 void LevelState::HandleEvents() {
-  // Does nothing
   if ( App::GetApp()->GetInput().IsKeyDown( sf::Key::Escape ) ) {
     App::GetApp()->SetNextState( TitleState::GetInstance() );
+  }
+  // Music Toggle
+  if ( App::GetApp()->GetInput().IsKeyDown( sf::Key::P ) ) {
+    if ( m_soundList.IsPlaying() ) {
+      m_soundList.Pause();
+    }
+  }
+  if ( App::GetApp()->GetInput().IsKeyDown( sf::Key::O ) ) {
+    if ( !m_soundList.IsPlaying() ) {
+      m_soundList.Play();
+    }
   }
 }
 

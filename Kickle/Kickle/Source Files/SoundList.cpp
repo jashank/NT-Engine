@@ -5,12 +5,13 @@ SoundList::SoundList()
    m_duration( 0.0f ),
    m_loop( false ),
    m_play( false ),
-   m_nextBuffered( false ){
+   m_music( NULL ) {
   SetLoop( true );
   Pause();
 }
 
 SoundList::~SoundList() {
+  m_music->Stop();
 }
 
 void SoundList::SetSoundList( TiXmlElement* root ) {
@@ -30,38 +31,51 @@ void SoundList::AddMusic( std::string musicPath ) {
 
 void SoundList::Play() {
   m_play = true;
+  if ( m_music != NULL ) {
+    m_music->Play();
+  }
 }
 
 void SoundList::Pause() {
   m_play = false;
+  if ( m_music != NULL ) {
+    m_music->Pause();
+  }
 }
 
 void SoundList::SetLoop( bool loop ) {
   m_loop = loop;
 }
+bool SoundList::IsPlaying() {
+  return m_play;
+}
 
 void SoundList::Update() {
-  if ( m_sound.GetStatus() == sf::Sound::Stopped ) {
-    if ( m_currentSong < m_playlist.size() || m_loop == true ) {
-      m_currentSong = m_currentSong%m_playlist.size();
-      PlaySong( m_playlist[m_currentSong] );
-      m_currentSong++;
-      m_nextBuffered = false;
-    } else if ( m_nextBuffered == false ) {
-      m_nextBuffered = true;
+  if ( m_music != NULL ) {
+    if ( m_music->GetStatus() == sf::Sound::Stopped ) {
+      PlayNextSong();
     }
+  } else {
+    PlayNextSong();
   }
 
 }
 
 void SoundList::PlaySong( std::string musicPath ) {
-  m_buffer = App::GetApp()->LoadSound( musicPath );
-  if ( &m_buffer == NULL ) {
-    DEBUG_STATEMENT( std::cout << "Cannot Open Music: " << musicPath << std::endl; );
-  } else {
-    m_sound.SetBuffer( m_buffer );
-    m_duration = m_buffer.GetDuration();
-    m_sound.Play();
+  try {
+    m_music = &( App::GetApp()->LoadMusic( musicPath ) );
+  } catch ( const char* msg ) {
+    // Needs to be changed to a std::exception but for now
+    // it will throw a warning.
+    m_music = NULL;
   }
+  Play();
 }
 
+void SoundList::PlayNextSong() {
+  if ( m_currentSong < m_playlist.size() || m_loop == true ) {
+    m_currentSong = m_currentSong%m_playlist.size();
+    PlaySong( m_playlist[m_currentSong] );
+    m_currentSong++;
+  }
+}

@@ -60,6 +60,7 @@
 	</game_objects>
 	<music_playlist>
 		<song data="Content\\Core\\Sound\\stage_1.ogg"/>
+		<song data="Content\\Core\\Sound\\stage_2.ogg"/>
 	</music_playlist>
 
 </map>
