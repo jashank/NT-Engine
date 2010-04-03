@@ -19,6 +19,7 @@ local pillar = nil;
 function HandleCollision( Kickle, Other )
 	if ( Other:GetType() == "Slime" ) then
 		state = DYING;
+		Kickle:AnimateForward();
 		Kickle:SetAnimation( dir + state );
 	end
 
@@ -42,6 +43,9 @@ function AILogic( Kickle )
 		end
 
 		Kickle:SetAnimation( dir + state );
+	elseif( pillar ~= nil ) then
+		Game.DestroyGameObject( pillar );
+		pillar = nil;
 	end
 end
 
