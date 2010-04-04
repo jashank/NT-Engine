@@ -59,7 +59,5 @@ function HandleCollision( Slime, Other )
 	if ( Other:GetType() == "Slime" ) then
 		dir = Slime:Reverse();
 		Slime:SetAnimation( dir );
-	elseif ( Other:GetType() == "Pillar" ) then
-		Game.DestroyGameObject( Other );
 	end
 end

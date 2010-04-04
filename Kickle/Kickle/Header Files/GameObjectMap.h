@@ -44,11 +44,16 @@ class GameObjectMap {
  private:
   void Init();
 
+  // Correctly cleans up a GameObject when it is ready to be destroyed
+  void CleanUpGameObject( GameObject *gameObject );
+
   // This is a map of ids to game objects
   std::map<int, GameObject*> m_gameObjects;
   // This is a list of dead players ids that need to be reused
   std::vector<int> m_avaliableIds;
-  // This is the next possible expansion to the players ids.
+  // Holds GameObjects that were sent to be destroyed on the last update
+  std::vector<GameObject*> m_toBeDestroyed;
+  // Stores GameObjects that have tried to destroy themselves
   int m_nextId;
 
   static const int MAP_SIZE = 15;

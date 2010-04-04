@@ -2,6 +2,8 @@
 #include <queue>
 #include <algorithm>
 
+#include "boost/foreach.hpp"
+
 
 #include "GameObjectMap.h"
 
@@ -23,10 +25,6 @@ GameObjectMap::~GameObjectMap() {
 }
 
 
-void GameObjectMap::Init() {
-  m_nextId = 0;
-}
-
 void GameObjectMap::Update() {
   for ( int i = 0; i < m_nextId; i++ ) {
     if ( m_gameObjects[i] != 0 ) {
@@ -43,6 +41,11 @@ void GameObjectMap::Update() {
       m_gameObjects[i]->UpdateRendering();
     }
   }
+
+  BOOST_FOREACH( GameObject*& obj , m_toBeDestroyed ) {
+    CleanUpGameObject( obj );
+  }
+  m_toBeDestroyed.clear();
 }
 
 void GameObjectMap::Render() {
@@ -103,11 +106,7 @@ void GameObjectMap::AddGameObject( GameObject *gameObject ) {
 
 
 void GameObjectMap::RemoveGameObject( GameObject *gameObject ) {
-  int id = gameObject->GetId();
-  if ( id < m_nextId && m_gameObjects[id] != 0 ) {
-    m_avaliableIds.push_back( id );
-    SAFEDELETE( m_gameObjects[id] );
-  }
+  m_toBeDestroyed.push_back( gameObject );
 }
 
 
@@ -149,4 +148,21 @@ GameObject* GameObjectMap::GetGameObject( const std::string &objectType ) {
   }
   
   return NULL;
+}
+
+
+/******************************************
+Private Methods
+*******************************************/
+void GameObjectMap::Init() {
+  m_nextId = 0;
+}
+
+
+void GameObjectMap::CleanUpGameObject( GameObject *gameObject ) {
+  int id = gameObject->GetId();
+  if ( id < m_nextId && m_gameObjects[id] != 0 ) {
+    m_avaliableIds.push_back( id );
+    SAFEDELETE( m_gameObjects[id] );
+  }
 }

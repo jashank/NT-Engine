@@ -294,17 +294,20 @@ const std::string& GameObject::GetType() const {
   return m_type;
 }
 
+
 // Wraps AnimateBackward to allow it to be exposed t lua
 int GameObject::LuaAnimateBackward( lua_State* L ) {
   AnimateBackward();
   return 0;
 }
 
+
 // Wraps AnimateForward to allow it to be exposed t lua
 int GameObject::LuaAnimateForward( lua_State* L ) {
   AnimateForward();
   return 0;
 }
+
 
 int GameObject::LuaMoveDir( lua_State *L ) {
   if( !lua_isnumber( L, -1 ) ) {
@@ -485,21 +488,21 @@ bool GameObject::LoadCollisionData( const std::string &filepath ) {
   TiXmlElement* rect = root->FirstChildElement( "rect" );
 
   m_collisionRect.Left = GetPosition().x;
-  std::string rectXOffset = rect->Attribute( "x" );
+  std::string rectXOffset( rect->Attribute( "x" ) );
   m_collisionRect.Left += atoi( rectXOffset.c_str() );
 
-  std::string width = rect->Attribute( "width" );
+  std::string width( rect->Attribute( "width" ) );
   m_collisionRect.Right = m_collisionRect.Left + atoi( width.c_str() );
 
   m_collisionRect.Top = GetPosition().y;
-  std::string rectYOffset = rect->Attribute( "y" );
+  std::string rectYOffset( rect->Attribute( "y" ) );
   m_collisionRect.Top += atoi( rectYOffset.c_str() );
 
-  std::string height = rect->Attribute( "height" );
+  std::string height( rect->Attribute( "height" ) );
   m_collisionRect.Bottom = m_collisionRect.Top + atoi( height.c_str() );
 
-  std::string gridCollision = root->FirstChildElement( "grid_collision" )->
-                                Attribute( "data" );
+  std::string gridCollision( root->FirstChildElement( "grid_collision" )->
+                                Attribute( "data" ) );
   m_gridCollision = ( gridCollision == "true" );
   
   return true;
@@ -517,22 +520,22 @@ bool GameObject::LoadObjectData( const std::string &filepath ) {
   TiXmlElement* root = handleDoc.FirstChildElement( "game_object" ).Element();
 
   //Load in path to GameObject's spritesheet
-  std::string spritePath = root->FirstChildElement( "sprite_path" )->
-                            Attribute( "data" );
+  std::string spritePath( root->FirstChildElement( "sprite_path" )->
+                            Attribute( "data" ) );
 
   //Load in path to animation's xml
-  std::string animPath = root->FirstChildElement( "animation_path" )->
-                          Attribute( "data" );
+  std::string animPath( root->FirstChildElement( "animation_path" )->
+                          Attribute( "data" ) );
   LoadAnimData( animPath );
 
   //Load in path to GameObject's lua script
-  m_luaScript =  root->FirstChildElement( "script_path" )->Attribute( "data" );
+  m_luaScript = root->FirstChildElement( "script_path" )->Attribute( "data" );
 
   // Load in type of object
   m_type = root->FirstChildElement( "typename" )->Attribute( "data" );
 
   // Load in speed of object
-  std::string speed = root->FirstChildElement( "speed" )->Attribute( "data" );
+  std::string speed( root->FirstChildElement( "speed" )->Attribute( "data" ) );
   m_speed = (float)atof( speed.c_str() );
 
   App* app= App::GetApp();
