@@ -31,7 +31,7 @@ float Timer::GetElapsedTime() {
     m_elapsedTime += m_clock.GetElapsedTime() - m_elapsedTime;
   } else {
     m_elapsedTime -= 
-      m_clock.GetElapsedTime - ( m_startingTime - m_elapsedTime );
+      m_clock.GetElapsedTime() - ( m_startingTime - m_elapsedTime );
   }
   return m_elapsedTime;
 }
