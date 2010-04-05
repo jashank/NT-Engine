@@ -50,7 +50,7 @@ function AILogic( Slime )
 		lastTileX = SlimeX;
 		lastTileY = SlimeY;
 
-		SetDir( dir );
+		Slime:SetDir( dir );
 		Slime:Move();
 		Slime:SetAnimation( dir );
 	end
