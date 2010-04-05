@@ -31,9 +31,6 @@ class GameObject : public AnimSprite {
   GameObject( const std::string &filepath, Uint tileX, Uint tileY );
   ~GameObject();
 
-	// Moves 1 tile length in the supplied direction
-  void MoveDir( Dir direction );
-
 	// Updates the GameObject's collision
 	void UpdateCollision();
 
@@ -73,8 +70,8 @@ class GameObject : public AnimSprite {
   // Wraps AnimateForward to allow it to be exposed t lua
   int LuaAnimateForward( lua_State* L );
   
-	// Wraps MoveDir to allow it to be exposed to Lua
-  int LuaMoveDir( lua_State *L );
+	// Allows Lua to move the GameObject
+  int LuaMove( lua_State *L );
 
 	// Wraps SetAnimation to allow it to be exposed to Lua
   int LuaSetAnimation( lua_State *L );
@@ -88,6 +85,10 @@ class GameObject : public AnimSprite {
   // Wrap GetTileX and GetTileY to allow it to be exposed to Lua
   int LuaGetTileX( lua_State *L );
   int LuaGetTileY( lua_State *L );
+
+  // Allows user to get and set the GameObject's direction from Lua
+  int LuaGetDir( lua_State *L );
+  int LuaSetDir( lua_State *L );
 
   // Allows Lua to reverse direction of GameObject
   int LuaReverse( lua_State *L );

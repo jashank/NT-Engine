@@ -47,15 +47,11 @@ void TitleState::DestroyInstance() {
 
 void TitleState::Init() {
 	SetInit( true );
+  SetTitle( "Content/Core/States/Title.xml" );
   
   LevelState::DestroyInstance();
 
   App::GetApp()->SetClearColor( sf::Color(0,0,0) );
-
-  m_font = new sf::Font();
-  m_font->LoadFromFile( "Content/Core/Fonts/MICKEY.TTF" );
-  
-  m_title.SetFont( *m_font );
   
   sf::String buttonText( "Play", *m_font, 60 );
   m_play.SetText( buttonText );
@@ -139,6 +135,21 @@ void TitleState::Render() {
 /************************************************
 Private Member Functions
 ************************************************/
+
+bool TitleState::SetTitle( const std::string &filePath ) {
+  TiXmlDocument doc ( filePath.c_str() );
+  
+  if ( !doc.LoadFile() ) {
+    return false;
+  }
+
+  TiXmlElement* root = doc.FirstChildElement( "media" );
+
+  m_font = new sf::Font();
+  m_font->LoadFromFile( root->FirstChildElement( "font" )->Attribute( "path" ));
+  m_title.SetFont( *m_font );
+}
+  
 
 void TitleState::Play() {
   App::GetApp()->SetNextState( LevelState::GetInstance() );

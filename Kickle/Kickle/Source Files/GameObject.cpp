@@ -23,12 +23,14 @@ const char GameObject::className[] = "GameObject";
 Lunar<GameObject>::RegType GameObject::methods[] = {
   { "AnimateBackward", &GameObject::LuaAnimateBackward },
   { "AnimateForward", &GameObject::LuaAnimateForward },
-  { "MoveDir", &GameObject::LuaMoveDir },
+  { "Move", &GameObject::LuaMove },
   { "SetAnimation", &GameObject::LuaSetAnimation },
   { "IsAnimating", &GameObject::LuaIsAnimating },
   { "GetType", &GameObject::LuaGetType },
   { "GetTileX", &GameObject::LuaGetTileX },
   { "GetTileY", &GameObject::LuaGetTileY },
+  { "GetDir", &GameObject::LuaGetDir },
+  { "SetDir", &GameObject::LuaSetDir },
   { "Reverse", &GameObject::LuaReverse },
   { 0, 0 }
 };
@@ -155,44 +157,6 @@ GameObject::~GameObject() {
 }
 
 
-void GameObject::MoveDir( Dir direction ) {
-  if( !m_moving ) {
-    m_direction = direction;
-
-    sf::Vector2f tileToMoveTo( GetPosition() );
-    
-    //Take into account the sprites that are taller than a normal tile
-    tileToMoveTo.y += 
-      GetAnimData()->GetFrameHeight( GetAnimation() ) % Configuration::GetTileSize();
-
-    switch ( m_direction ) {
-      case Up: {
-        tileToMoveTo.y -= Configuration::GetTileSize();
-        break;
-      }
-      case Down: {
-        tileToMoveTo.y += Configuration::GetTileSize();
-        break;
-      }
-      case Left: {
-        tileToMoveTo.x -= Configuration::GetTileSize();
-        break;
-      }
-      case Right: {
-        tileToMoveTo.x += Configuration::GetTileSize();
-        break;
-      }
-      default: {}
-    }
-
-    if ( !m_level->TileIsSolid( tileToMoveTo ) &&
-         !m_level->TileHasGridObject( tileToMoveTo ) ) {
-      m_moving = true;
-    } 
-  }
-}
-
-
 void GameObject::UpdateCollision() {
   GameObject* collisionObj = m_level->DetectObjectCollision( this );
 
@@ -309,14 +273,40 @@ int GameObject::LuaAnimateForward( lua_State* L ) {
 }
 
 
-int GameObject::LuaMoveDir( lua_State *L ) {
-  if( !lua_isnumber( L, -1 ) ) {
-    return luaL_error( L, "Invalid argument for MoveDir." );
-  }
-  
-  int dir = lua_tointeger( L, -1 );
+int GameObject::LuaMove( lua_State *L ) {
+  if( !m_moving ) {
+    sf::Vector2f tileToMoveTo( GetPosition() );
+    
+    //Take into account the sprites that are taller than a normal tile
+    tileToMoveTo.y += 
+      GetAnimData()->GetFrameHeight( GetAnimation() ) % Configuration::GetTileSize();
 
-  MoveDir( static_cast<Dir>(dir) );
+    switch ( m_direction ) {
+      case Up: {
+        tileToMoveTo.y -= Configuration::GetTileSize();
+        break;
+      }
+      case Down: {
+        tileToMoveTo.y += Configuration::GetTileSize();
+        break;
+      }
+      case Left: {
+        tileToMoveTo.x -= Configuration::GetTileSize();
+        break;
+      }
+      case Right: {
+        tileToMoveTo.x += Configuration::GetTileSize();
+        break;
+      }
+      default: {}
+    }
+
+    if ( !m_level->TileIsSolid( tileToMoveTo ) &&
+         !m_level->TileHasGridObject( tileToMoveTo ) ) {
+      m_moving = true;
+    } 
+  }
+
   return 0;
 }
 
@@ -357,28 +347,40 @@ int GameObject::LuaGetTileY( lua_State *L ) {
 }
 
 
+int GameObject::LuaGetDir( lua_State *L ) {
+  lua_pushinteger( L, m_direction );
+  return 1;
+}
+
+
+int GameObject::LuaSetDir( lua_State *L ) {
+  if( !lua_isnumber( L, -1 ) ) {
+    return luaL_error( L, "Invalid argument for SetDir." );
+  }
+
+  m_direction = static_cast<Dir>( lua_tointeger( L, -1 ) );
+  return 0;
+}
+
+
 int GameObject::LuaReverse( lua_State *L ) {
   m_distance = Configuration::GetTileSize() - m_distance;
 
   switch( m_direction ) {
     case Up: {
       m_direction = Down;
-      lua_pushinteger( L, Down );
       break;
     }
     case Down: {
       m_direction = Up;
-      lua_pushinteger( L, Up );
       break;
     }
     case Left: {
       m_direction = Right;
-      lua_pushinteger( L, Right );
       break;
     }
     case Right: {
       m_direction = Left;
-      lua_pushinteger( L, Left );
       break;
     }
     default: {
@@ -388,7 +390,7 @@ int GameObject::LuaReverse( lua_State *L ) {
 
   m_moving = true;
 
-  return 1;
+  return 0;
 }
 
 

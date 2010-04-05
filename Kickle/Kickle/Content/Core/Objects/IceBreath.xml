@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<game_object>
+  <sprite_path data="???" />
+
+  <animation_path data="???" />
+
+  <script_path data="Content/Core/Scripts/IceBreath.lua" />
+
+  <typename data="IceBreath" />
+
+  <speed data="1.5" />
+
+  <rect x="0" y="0" width="48" height="48" />
+
+  <grid_collision data="false" />
+
+</game_object>

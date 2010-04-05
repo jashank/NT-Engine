@@ -6,15 +6,16 @@ DOWN = 1;
 LEFT = 2;
 RIGHT = 3;
 
-function GetTileObjectFaces( GameObject, dir )
+function GetTileObjectFaces( GameObject )
 	tileX = GameObject:GetTileX();
 	tileY = GameObject:GetTileY();
+	dir = GameObject:GetDir();
 
-	if ( dir == 0 ) then
+	if ( dir == UP ) then
 		tileY = tileY - 1;
-	elseif ( dir == 1 ) then
+	elseif ( dir == DOWN ) then
 		tileY = tileY + 1;
-	elseif ( dir == 2 ) then
+	elseif ( dir == LEFT ) then
 		tileX = tileX - 1;
 	else
 		tileX = tileX + 1;

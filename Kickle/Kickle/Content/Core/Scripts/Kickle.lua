@@ -10,7 +10,6 @@ local KICKING = 8;
 local RAISE_PILLAR = 12;
 local DYING = 16;
 
-local dir = DOWN; --Current direction kickle is moving
 local state = STANDING; --Current state kickle is in
 
 local pillar = nil;
@@ -20,7 +19,7 @@ function HandleCollision( Kickle, Other )
 	if ( Other:GetType() == "Slime" ) then
 		state = DYING;
 		Kickle:AnimateForward();
-		Kickle:SetAnimation( dir + state );
+		Kickle:SetAnimation( Kickle:GetDir() + state );
 	end
 
 end
@@ -42,7 +41,8 @@ function AILogic( Kickle )
 			end
 		end
 
-		Kickle:SetAnimation( dir + state );
+		Kickle:SetAnimation( Kickle:GetDir() + state );
+
 	elseif( pillar ~= nil ) then
 		Game.DestroyGameObject( pillar );
 		pillar = nil;
@@ -52,75 +52,75 @@ end
 
 function FaceUp( Kickle )
 	if( state == STANDING ) then
-		dir = UP;
+		Kickle:SetDir( UP );
 	end
 end
 
 
 function FaceDown( Kickle )
 	if( state == STANDING ) then
-		dir = DOWN;
+		Kickle:SetDir( DOWN );
 	end
 end
 
 
 function FaceLeft( Kickle )
 	if( state == STANDING ) then
-		dir = LEFT;
+		Kickle:SetDir( LEFT );
 	end
 end
 
 
 function FaceRight( Kickle )
 	if( state == STANDING ) then
-		dir = RIGHT;
+		Kickle:SetDir( RIGHT );
 	end
 end
 
 
 function WalkUp( Kickle )
 	if( state == STANDING ) then
-		dir = UP;
+		Kickle:SetDir( UP );
 		state = WALKING;
-		Kickle:MoveDir( dir );
-		Kickle:SetAnimation( dir + state );
+		Kickle:Move();
+		Kickle:SetAnimation( UP + state );
 	end
 end
 
 
 function WalkDown( Kickle )
 	if( state == STANDING ) then
-		dir = DOWN;
+		Kickle:SetDir( DOWN );
 		state = WALKING;
-		Kickle:MoveDir( dir );
-		Kickle:SetAnimation( dir + state );
+		Kickle:Move();
+		Kickle:SetAnimation( DOWN + state );
 	end
 end
 
 
 function WalkLeft( Kickle )
 	if( state == STANDING ) then
-		dir = LEFT;
+		Kickle:SetDir( LEFT );
 		state = WALKING;
-		Kickle:MoveDir( dir );
-		Kickle:SetAnimation( dir + state );
+		Kickle:Move();
+		Kickle:SetAnimation( LEFT + state );
 	end
 end
 
 
 function WalkRight( Kickle )
 	if( state == STANDING ) then
-		dir = RIGHT;
+		Kickle:SetDir( RIGHT );
 		state = WALKING;
-		Kickle:MoveDir( dir );
-		Kickle:SetAnimation( dir + state );
+		Kickle:Move();
+		Kickle:SetAnimation( RIGHT + state );
 	end
 end
 
 
 function PerformPillar( Kickle )
 	if( state == STANDING ) then
-		tileX, tileY = GetTileObjectFaces( Kickle, dir );
+		tileX, tileY = GetTileObjectFaces( Kickle );
 
 		if ( not Game.TileIsSolid( tileX, tileY ) and
 			 not Game.TileHasGridObject( tileX, tileY ) ) then

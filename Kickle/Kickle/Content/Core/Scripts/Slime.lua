@@ -5,7 +5,6 @@ require ("GameObjectUtilities");
 
 math.randomseed( os.time() );
 
-local dir = UP;
 local lastTileX = -1;
 local lastTileY = -1;
 
@@ -22,6 +21,8 @@ function AILogic( Slime )
 		KickleY = Kickle:GetTileY();
 		distanceX = math.abs( SlimeX - KickleX );
 		distanceY = math.abs( SlimeY - KickleY );
+
+		dir = UP;
 
 		if ( distanceX > distanceY ) then
 			if ( SlimeX < KickleX ) then
@@ -49,7 +50,8 @@ function AILogic( Slime )
 		lastTileX = SlimeX;
 		lastTileY = SlimeY;
 
-		Slime:MoveDir( dir );
+		SetDir( dir );
+		Slime:Move();
 		Slime:SetAnimation( dir );
 	end
 end
@@ -57,7 +59,7 @@ end
 
 function HandleCollision( Slime, Other )
 	if ( Other:GetType() == "Slime" ) then
-		dir = Slime:Reverse();
-		Slime:SetAnimation( dir );
+		Slime:Reverse();
+		Slime:SetAnimation( Slime:GetDir() );
 	end
 end

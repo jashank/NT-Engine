@@ -48,6 +48,10 @@ class TitleState : public BaseState {
   TitleState( const TitleState &title );
   TitleState& operator=( const TitleState &title );
 
+  // Given the path to an xml file, opens it and determines information
+  // needed for the TitleState
+	bool SetTitle( const std::string &filePath );
+
   // Function assigned to Play button. Puts player into game.
   static void Play();
 
