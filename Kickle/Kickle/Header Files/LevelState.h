@@ -11,6 +11,7 @@
 #include "CollisionMap.h"
 #include "GameObjectMap.h"
 #include "TileMap.h"
+#include "Timer.h"
 #include "SoundList.h"
 
 class GameObject;
@@ -111,6 +112,7 @@ class LevelState : public BaseState {
   CollisionMap m_collisionMap;
   GameObjectMap m_gameObjectMap;
 	TileMap m_tileMap;
+  Timer m_timer; // Timer for the level
   SoundList m_soundList;
 };
 

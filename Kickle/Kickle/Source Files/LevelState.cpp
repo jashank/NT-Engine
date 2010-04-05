@@ -52,7 +52,7 @@ void LevelState::Init() {
 	App::GetApp()->SetClearColor( sf::Color(0,49,139) );
 	// Create a LevelState with a place holder path.
 	SetLevel( "Content/Core/Levels/TestLevel.xml" );
-  //GameObject::AssignLevel( m_instance );
+  m_timer.Reset( 100.f, false );
 }
 
 

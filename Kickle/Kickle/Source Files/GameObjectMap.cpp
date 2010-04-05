@@ -2,9 +2,6 @@
 #include <queue>
 #include <algorithm>
 
-#include "boost/foreach.hpp"
-
-
 #include "GameObjectMap.h"
 
 #include "BasicTypeDefs.h"
@@ -41,9 +38,8 @@ void GameObjectMap::Update() {
       m_gameObjects[i]->UpdateRendering();
     }
   }
-
-  BOOST_FOREACH( GameObject*& obj , m_toBeDestroyed ) {
-    CleanUpGameObject( obj );
+  for ( Uint i = 0; i < m_toBeDestroyed.size(); i++ ) {
+    CleanUpGameObject( m_toBeDestroyed[i] );
   }
   m_toBeDestroyed.clear();
 }
