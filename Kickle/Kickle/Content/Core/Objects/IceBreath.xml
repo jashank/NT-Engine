@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <game_object>
-  <sprite_path data="???" />
+  <sprite_path data="Content/Core/Sheets/iceBreath_48x48.png" />
 
-  <animation_path data="???" />
+  <animation_path data="Content/Core/Animations/IceBreathAnim_48x48.xml" />
 
   <script_path data="Content/Core/Scripts/IceBreath.lua" />
 

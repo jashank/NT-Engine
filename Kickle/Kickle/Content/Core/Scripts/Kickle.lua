@@ -142,3 +142,17 @@ function PerformPillar( Kickle )
 		end
 	end
 end
+
+-- Spawns an icebreath object if there is not an iceblock infront of it. Else
+-- it will set the direction of the iceblock.
+function PerformAttack( Kickle )
+	if ( state == STANDING ) then
+		tileX, tileY = GetTileObjectFaces( Kickle );
+		if ( Game.TileHasGridObject( tileX, tileY ) and
+			  not Game.TileIsSolid( tileX, tileY ) ) then
+
+		elseif ( not Game.TileIsSolid( tileX, tileY) ) then
+
+		end
+	end
+end

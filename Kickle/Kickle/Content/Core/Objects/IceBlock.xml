@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<game_object>
+  <sprite_path data="Content/Core/Sheets/iceBlock_48x48.png" />
+
+  <animation_path data="Content/Core/Animations/NoAnim_48x60.xml" />
+
+  <script_path data="Content/Core/Scripts/IceBlock.lua" />
+
+  <typename data="IceBlock" />
+
+  <speed data="1.5" />
+
+  <rect x="0" y="0" width="48" height="48" />
+
+  <grid_collision data="false" />
+
+</game_object>
