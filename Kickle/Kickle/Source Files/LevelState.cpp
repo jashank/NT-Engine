@@ -165,11 +165,12 @@ int LevelState::LuaCreateGameObject( lua_State *L ) {
   }
   Uint tileY = static_cast<Uint>( lua_tointeger( L, -1 ) );
 
-  m_instance->m_gameObjectMap.AddGameObject(
-    new GameObject( path, tileX, tileY )
-  );
+  GameObject *newGameObject = new GameObject( path, tileX, tileY );
+  m_instance->m_gameObjectMap.AddGameObject( newGameObject );
 
-  return 0;
+  // Now we let the user grab the newGameObject on its creation
+  Lunar<GameObject>::push( L, newGameObject );
+  return 1;
 }
 
 

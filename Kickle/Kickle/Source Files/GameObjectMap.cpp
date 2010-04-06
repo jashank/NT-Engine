@@ -138,8 +138,10 @@ GameObject* GameObjectMap::ObjectOnTile( Uint x, Uint y ) {
 
 GameObject* GameObjectMap::GetGameObject( const std::string &objectType ) {
   for ( int i = 0; i < m_nextId; ++i ) {
-    if ( m_gameObjects[i]->GetType() == objectType ) {
-      return m_gameObjects[i];
+    if (m_gameObjects[i] != NULL ) {
+      if ( m_gameObjects[i]->GetType() == objectType ) {
+        return m_gameObjects[i];
+      }
     }
   }
   

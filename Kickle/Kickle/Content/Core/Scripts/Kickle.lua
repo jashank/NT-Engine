@@ -149,16 +149,18 @@ function PerformAttack( Kickle )
 	if ( state == STANDING ) then
 		tileX, tileY = GetTileObjectFaces( Kickle );
 		FacingObject = Game.GetGameObjectOnTile( tileX, tileY );
-
+		-- For now.
+		state = KICKING;
 		if ( FacingObject and FacingObject:GetType() == "IceBlock" ) then
 			-- kick the ice block
-		else
-			Game.CreateGameObject(
+		elseif ( FacingObject and FacingObject:GetType() == "IceBreath" ) then
+			-- Do nothing
+		elseif ( not Game.GetGameObject( "IceBreath" ) ) then
+			IceBreath = Game.CreateGameObject(
 				"Content/Core/Objects/IceBreath.xml", tileX, tileY );
-			IceBreath = Game.GetGameObjectOnTile( tileX, tileY );
-			dir = Kickle:GetDir();
-			IceBreath:SetDir( dir );
-			IceBreath:SetAnimation( dir );
+			IceBreathDir = Kickle:GetDir();
+			IceBreath:SetDir( IceBreathDir );
+			IceBreath:SetAnimation( IceBreathDir );
 		end
 	end
 end

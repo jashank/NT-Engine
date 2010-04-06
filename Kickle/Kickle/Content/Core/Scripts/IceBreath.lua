@@ -25,5 +25,6 @@ function HandleCollision( IceBreath, Other )
 			 Other:GetTileY()
 		);
 		Game.DestroyGameObject( Other );
+		Game.DestroyGameObject( IceBreath );
 	end
 end
