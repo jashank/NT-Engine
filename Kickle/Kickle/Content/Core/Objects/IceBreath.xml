@@ -8,7 +8,7 @@
 
   <typename data="IceBreath" />
 
-  <speed data="1.5" />
+  <speed data="3" />
 
   <rect x="0" y="0" width="48" height="48" />
 

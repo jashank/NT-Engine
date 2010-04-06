@@ -153,6 +153,9 @@ function PerformAttack( Kickle )
 		state = KICKING;
 		if ( FacingObject and FacingObject:GetType() == "IceBlock" ) then
 			-- kick the ice block
+			IceBlockDir = Kickle:GetDir();
+			FacingObject:SetDir( IceBlockDir );
+			FacingObject:Move();
 		elseif ( FacingObject and FacingObject:GetType() == "IceBreath" ) then
 			-- Do nothing
 		elseif ( not Game.GetGameObject( "IceBreath" ) ) then

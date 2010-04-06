@@ -124,7 +124,7 @@ GameObject* GameObjectMap::DetectCollision( const GameObject *gameObject ) {
 
 GameObject* GameObjectMap::ObjectOnTile( Uint x, Uint y ) {
   for ( int i = 0; i < m_nextId; ++i ) {
-    if ( m_gameObjects[i] != 0 ) {
+    if ( m_gameObjects[i] != NULL ) {
       if ( m_gameObjects[i]->GetTileX() == x &&
           m_gameObjects[i]->GetTileY() == y ) {
         return m_gameObjects[i];
