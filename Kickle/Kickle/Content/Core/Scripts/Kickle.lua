@@ -34,7 +34,7 @@ function AILogic( Kickle )
 
 		if ( state == RAISE_PILLAR and not Kickle:IsAnimating() ) then
 			state = STANDING;
-			if( pillar ~= nil ) then
+			if( pillar ) then
 				Kickle:AnimateForward();
 				Game.DestroyGameObject( pillar );
 				pillar = nil;
@@ -43,7 +43,7 @@ function AILogic( Kickle )
 
 		Kickle:SetAnimation( Kickle:GetDir() + state );
 
-	elseif( pillar ~= nil ) then
+	elseif( pillar ) then
 		Game.DestroyGameObject( pillar );
 		pillar = nil;
 	end
@@ -148,11 +148,17 @@ end
 function PerformAttack( Kickle )
 	if ( state == STANDING ) then
 		tileX, tileY = GetTileObjectFaces( Kickle );
-		if ( Game.TileHasGridObject( tileX, tileY ) and
-			  not Game.TileIsSolid( tileX, tileY ) ) then
+		FacingObject = Game.GetGameObjectOnTile( tileX, tileY );
 
-		elseif ( not Game.TileIsSolid( tileX, tileY) ) then
-
+		if ( FacingObject and FacingObject:GetType() == "IceBlock" ) then
+			-- kick the ice block
+		else
+			Game.CreateGameObject(
+				"Content/Core/Objects/IceBreath.xml", tileX, tileY );
+			IceBreath = Game.GetGameObjectOnTile( tileX, tileY );
+			dir = Kickle:GetDir();
+			IceBreath:SetDir( dir );
+			IceBreath:SetAnimation( dir );
 		end
 	end
 end

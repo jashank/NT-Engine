@@ -3,8 +3,8 @@
 
   <num_anims>4</num_anims>
 
-  <strip name="up_walking">
-    <looped>true</looped>
+  <strip name="up">
+    <looped>false</looped>
     <num_frames>1</num_frames>
     <individual_times>false</individual_times>
     <frame_times> 0.1 </frame_times>
@@ -16,8 +16,8 @@
   </strip>
 
 
-  <strip name="down_walking">
-    <looped>true</looped>
+  <strip name="down">
+    <looped>false</looped>
     <num_frames>1</num_frames>
     <individual_times>false</individual_times>
     <frame_times> 0.1 </frame_times>
@@ -29,8 +29,8 @@
   </strip>
 
 
-  <strip name="left_walking">
-    <looped>true</looped>
+  <strip name="left">
+    <looped>false</looped>
     <num_frames>1</num_frames>
     <individual_times>false</individual_times>
     <frame_times> 0.1 </frame_times>
@@ -42,8 +42,8 @@
   </strip>>
 
 
-  <strip name="right_walking">
-    <looped>true</looped>
+  <strip name="right">
+    <looped>false</looped>
     <num_frames>1</num_frames>
     <individual_times>false</individual_times>
     <frame_times> 0.1 </frame_times>

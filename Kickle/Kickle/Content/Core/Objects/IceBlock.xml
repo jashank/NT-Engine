@@ -2,7 +2,7 @@
 <game_object>
   <sprite_path data="Content/Core/Sheets/iceBlock_48x48.png" />
 
-  <animation_path data="Content/Core/Animations/NoAnim_48x60.xml" />
+  <animation_path data="Content/Core/Animations/NoAnim_48x48.xml" />
 
   <script_path data="Content/Core/Scripts/IceBlock.lua" />
 
