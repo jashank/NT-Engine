@@ -79,9 +79,11 @@ void AnimSprite::SetFrame( Uint frame ) {
 
 
 void AnimSprite::SetAnimation( Uint animation ) {
-  if( m_animation != animation ) {
-		m_animation = animation;
-    Restart();
+  if( m_animData ) {
+    if( m_animation != animation ) {
+		  m_animation = animation;
+      Restart();
+    }
   }
 }
 

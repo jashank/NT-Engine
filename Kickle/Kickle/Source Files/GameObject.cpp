@@ -127,13 +127,11 @@ GameObject::GameObject(
     ( tileY % Configuration::GetMapSize() )//number of tiles down tilemap
   );
   
-  //TODO - I need to handle this every time someone calls SetAnimation as well,
-  //just so animations with different frame heights will stll be aligned to the 
-  //grid
 
-  //Take into account the sprites that are taller than a normal tile
-  y -= GetAnimData()->GetFrameHeight( GetAnimation() ) % Configuration::GetTileSize();
-
+  if( GetAnimData() ) {
+    //Take into account the sprites that are taller than a normal tile
+    y -= GetAnimData()->GetFrameHeight( GetAnimation() ) % Configuration::GetTileSize();
+  }
   SetPosition( x, y );
 
   if ( !m_gridCollision ) {
@@ -247,7 +245,7 @@ Uint GameObject::GetTileX() const {
 
 Uint GameObject::GetTileY() const {
 return (Uint)( ( this->GetPosition().y +  
-                        GetAnimData()->GetFrameHeight( GetAnimation() )  % 
+                        GetSubRect().GetHeight()  % 
                         Configuration::GetTileSize() ) - 
                         Configuration::GetYPad() ) / 
                         Configuration::GetTileSize();
@@ -278,8 +276,7 @@ int GameObject::LuaMove( lua_State *L ) {
     sf::Vector2f tileToMoveTo( GetPosition() );
     
     //Take into account the sprites that are taller than a normal tile
-    tileToMoveTo.y += 
-      GetAnimData()->GetFrameHeight( GetAnimation() ) % Configuration::GetTileSize();
+    tileToMoveTo.y += GetSubRect().GetHeight() % Configuration::GetTileSize();
 
     switch ( m_direction ) {
       case Up: {
@@ -526,9 +523,11 @@ bool GameObject::LoadObjectData( const std::string &filepath ) {
                             Attribute( "data" ) );
 
   //Load in path to animation's xml
-  std::string animPath( root->FirstChildElement( "animation_path" )->
-                          Attribute( "data" ) );
-  LoadAnimData( animPath );
+  TiXmlElement* tempElem = root->FirstChildElement( "animation_path" );
+  if( tempElem != 0 ) {
+    std::string animPath( tempElem->Attribute( "data" ) );
+    LoadAnimData( animPath );
+  }
 
   //Load in path to GameObject's lua script
   m_luaScript = root->FirstChildElement( "script_path" )->Attribute( "data" );
