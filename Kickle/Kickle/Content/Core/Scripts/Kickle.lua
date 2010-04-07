@@ -152,6 +152,7 @@ function PerformAttack( Kickle )
 
 		if ( FacingObject and FacingObject:GetType() == "IceBlock" ) then
 			state = KICKING;
+
 			kickleDir = Kickle:GetDir();
 			Kickle:SetAnimation( kickleDir + state );
 			FacingObject:SetDir( kickleDir );

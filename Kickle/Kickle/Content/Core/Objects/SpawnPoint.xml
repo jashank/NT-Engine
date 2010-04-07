@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<game_object>
+  <sprite_path data="Content/Core/Sheets/spawnPoint_48x48.png" />
+
+  <script_path data="Content/Core/Scripts/SpawnPoint.lua" />
+
+  <typename data="SpawnPoint" />
+
+  <speed data="0" />
+
+  <rect x="0" y="0" width="48" height="48" />
+
+  <grid_collision data="true" />
+
+</game_object>

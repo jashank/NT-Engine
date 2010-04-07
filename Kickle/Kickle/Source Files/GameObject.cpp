@@ -27,6 +27,7 @@ Lunar<GameObject>::RegType GameObject::methods[] = {
   { "AnimateBackward", &GameObject::LuaAnimateBackward },
   { "AnimateForward", &GameObject::LuaAnimateForward },
   { "Move", &GameObject::LuaMove },
+  { "HasMoved", &GameObject::LuaHasMoved },
   { "SetAnimation", &GameObject::LuaSetAnimation },
   { "IsAnimating", &GameObject::LuaIsAnimating },
   { "GetType", &GameObject::LuaGetType },
@@ -49,6 +50,7 @@ GameObject::GameObject( lua_State *L )
    m_distance( 0.0f ),
    m_speed( 0.0f ),
    m_id( -1 ),
+   m_hasMoved( false ),
    m_luaState( luaL_newstate() ),
    m_keyRegistry(0),
    m_numKeyEntries(0) {
@@ -76,6 +78,7 @@ GameObject::GameObject( const std::string &filepath )
    m_distance( 0.0f ),
    m_speed( 0.0f ),
    m_id( -1 ),
+   m_hasMoved( false ),
    m_luaState( luaL_newstate() ),
    m_keyRegistry(0),
    m_numKeyEntries(0) {
@@ -103,6 +106,7 @@ GameObject::GameObject(
    m_distance( 0.0f ),
    m_speed( 0.0f ),
    m_id( -1 ),
+   m_hasMoved( false ),
    m_luaState( luaL_newstate() ),
    m_keyRegistry(0),
    m_numKeyEntries(0) {
@@ -304,12 +308,17 @@ int GameObject::LuaMove( lua_State *L ) {
     if ( !m_level->TileIsSolid( tileToMoveTo ) &&
          !m_level->TileHasGridObject( tileToMoveTo ) ) {
       m_moving = true;
+      m_hasMoved = true;
     } 
   }
 
   return 0;
 }
 
+int GameObject::LuaHasMoved( lua_State *L ) {
+  lua_pushboolean( L, m_hasMoved );
+  return 1;
+}
 
 int GameObject::LuaSetAnimation( lua_State *L ) {
   if( !lua_isnumber( L, -1 ) ) {

@@ -5,27 +5,23 @@
 package.path = package.path .. ";Content/Core/Scripts/?.lua"
 require ("GameObjectUtilities");
 
-local lastTileX = -1;
-local lastTileY = -1;
+
+local WATER = 10;
+local ICE = 1;
 
 function AILogic( IceBlock )
 	tileX = IceBlock:GetTileX();
 	tileY = IceBlock:GetTileY();
 
-	if ( lastTileX ~= -1 and lastTileY ~= -1 ) then
-		if ( lastTileX ~= tileX or lastTileY ~= tileY ) then
-			IceBlock:Move();
-		end
-
+	if ( IceBlock:HasMoved() ) then
+		IceBlock:Move();
 		facingX, facingY = GetTileObjectFaces( IceBlock );
-		-- if tille at facingX facingY is a water tile then
-		-- convert it to an ice tile
-		-- @Ben, I've made lua funcs available
+		if ( Level.GetTile( facingX, facingY ) == WATER ) then
+			Level.DestroyGameObject( IceBlock );
+			Level.SetTile( facingX, facingY, ICE, 0);
+			Level.CreateGameObject("Content/Core/Objects/Slime.xml", 11, 8 );
+		end
 	end
-
-	lastTileX = tileX;
-	lastTileY = tileY;
-
 end
 
 function HandleCollision( IceBlock, Other )

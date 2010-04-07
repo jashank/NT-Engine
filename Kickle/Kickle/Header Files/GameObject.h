@@ -73,6 +73,7 @@ class GameObject : public AnimSprite {
 	// Allows Lua to move the GameObject
   int LuaMove( lua_State *L );
 
+  int LuaHasMoved( lua_State *L );
 	// Wraps SetAnimation to allow it to be exposed to Lua
   int LuaSetAnimation( lua_State *L );
 
@@ -121,6 +122,7 @@ class GameObject : public AnimSprite {
   static LevelState *m_level; // Level that GameObject is on
 
   bool m_moving; // If true; keep moving in m_direction
+  bool m_hasMoved; // Returns true if the object has ever moved
   bool m_gridCollision; // Grid-based collision completely restricts access to tile
   Dir m_direction; // Current direction game object is moving
   float m_distance; // Distance traveled from last grid location
