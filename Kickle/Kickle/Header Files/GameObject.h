@@ -64,12 +64,6 @@ class GameObject : public AnimSprite {
   /************************************************
   Lua Functions
   ************************************************/
-  // Wraps AnimateBackward to allow it to be exposed t lua
-  int LuaAnimateBackward( lua_State* L );
-
-  // Wraps AnimateForward to allow it to be exposed t lua
-  int LuaAnimateForward( lua_State* L );
-  
 	// Allows Lua to move the GameObject
   int LuaMove( lua_State *L );
 

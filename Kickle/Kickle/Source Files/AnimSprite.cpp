@@ -7,21 +7,10 @@ Private Methods
 ************************************************/
 AnimSprite::AnimSprite() 
  : m_play( false ),
-   m_reverse( false ),
    m_animation( 0 ),
    m_frameTime( 0.0f ),
    m_animData( 0 ),
    m_frame( 0 ) {
-}
-
-void AnimSprite::AnimateBackward() {
-  m_reverse = true;
-  Play();
-}
-
-void AnimSprite::AnimateForward() {
-  m_reverse = false;
-  Play();
 }
 
 const AnimData *AnimSprite::GetAnimData() const {
@@ -63,7 +52,7 @@ void AnimSprite::Pause() {
 void AnimSprite::Restart() {
   //If AnimSprite is animated
 	if( m_animData ) {
-    //Stop animation setting frame to 0
+    //Stop animation
 	  Stop();
     //Reset frame time
 	  m_frameTime = m_animData->GetFrameTime( m_animation, m_frame );
@@ -90,6 +79,7 @@ void AnimSprite::SetAnimation( Uint animation ) {
 
 void AnimSprite::SetAnimData( const AnimData &animData ) {
 	m_animData = &animData;
+  m_frameTime = m_animData->GetFrameTime( m_animation, m_frame );
 }
 
 
@@ -100,7 +90,7 @@ void AnimSprite::Start() {
 
 void AnimSprite::Stop() {
 	Pause();
-  if( !m_reverse ) {
+  if( m_animData->GetPlayBack( m_animation ) ) {
     SetFrame( 0 );
   }
   else {
@@ -143,7 +133,7 @@ Private Methods
 ************************************************/
 
 void AnimSprite::NextFrame() {
-  if( !m_reverse ) {
+  if( m_animData->GetPlayBack( m_animation ) ) {
     //Increment frame
 	  ++m_frame;
 
@@ -156,7 +146,7 @@ void AnimSprite::NextFrame() {
 		  }
 		  else {
         //Set animation to last frame
-        m_frame = m_animData->GetNumFrames( m_animation )-1;
+        --m_frame;
         //Pause animation at last frame
 			  Pause();
 		  }
@@ -174,8 +164,6 @@ void AnimSprite::NextFrame() {
 			  m_frame = m_animData->GetNumFrames( m_animation )-1;
 		  }
 		  else {
-        //Set animation to last frame
-        m_frame = 0;
         //Pause animation at last frame
 			  Pause();
 		  }

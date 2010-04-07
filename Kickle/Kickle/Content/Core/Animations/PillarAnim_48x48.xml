@@ -1,13 +1,27 @@
 <?xml version="1.0"?>
 <anim_strips>
 
-  <num_anims>1</num_anims>
+  <num_anims>2</num_anims>
 
-  <strip name="pillar_rise">
+  <strip name="pillar_raise">
+    <playback>forward</playback>
     <looped>false</looped>
     <num_frames>4</num_frames>
-    <individual_times>false</individual_times>
-    <frame_times> 0.1 </frame_times>
+    <individual_times>true</individual_times>
+    <frame_times> 0.5 0.05 0.05 0.05  </frame_times>
+
+    <x_pos>0</x_pos>
+    <y_pos>0</y_pos>
+    <width>48</width>
+    <height>48</height>
+  </strip>
+
+  <strip name="pillar_lower">
+    <playback>backward</playback>
+    <looped>false</looped>
+    <num_frames>4</num_frames>
+    <individual_times>true</individual_times>
+    <frame_times> 0.05 0.05 0.05 0.5 </frame_times>
 
     <x_pos>0</x_pos>
     <y_pos>0</y_pos>

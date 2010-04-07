@@ -14,10 +14,6 @@ class AnimSprite : public sf::Sprite {
  public:
   AnimSprite();
 
-  //Change the order of animation
-  void AnimateBackward();
-  void AnimateForward();
-
   // Returns the data used for the animation
 	const AnimData *GetAnimData() const;
 
@@ -71,7 +67,6 @@ class AnimSprite : public sf::Sprite {
 
 	const AnimData *m_animData; //Pointer to constant animation data
 	bool m_play; //If true; animate AnimSprite
-  bool m_reverse; //If true; animate in reverse order
 	float m_frameTime; //Time left on current frame
 	Uint m_animation; //Current animation selections
 	Uint m_frame; //Current frame selection

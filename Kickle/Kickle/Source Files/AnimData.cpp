@@ -1,7 +1,8 @@
 #include "AnimData.h"
 
 
-
+#include <algorithm>
+#include <cctype>
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -27,18 +28,6 @@ AnimData::~AnimData() {
 
 bool AnimData::LoadFromFile( const std::string &filename ) {
 
-  //<strip name="up_standing">
-  //  <looped>true</looped>
-  //  <num_frames>8</num_frames>
-  //  <individual_times>false</individual_times>
-  //  <frame_times> 0.1 </frame_times>
-
-  //  <x_pos>0</x_pos>
-  //  <y_pos>0</y_pos>
-  //  <width>48</width>
-  //  <height>60</height>
-  //</strip>
-
   TiXmlDocument doc ( filename.c_str() );
   
   if ( !doc.LoadFile() ) {
@@ -60,27 +49,40 @@ bool AnimData::LoadFromFile( const std::string &filename ) {
  
   TiXmlElement* strip = root->FirstChildElement( "strip" );
   Uint i = 0;
-  for( 
-      ;
+  for( ;
       (i < m_numAnims) && strip; 
-      ++i, strip = strip->NextSiblingElement( "strip" ) 
-  ) {
+      ++i, strip = strip->NextSiblingElement( "strip" ) ) {
+
+
+    //Load "playback"
+    TiXmlElement* tempElem = strip->FirstChildElement( "playback" );
+    if( tempElem ) {
+      std::string playback = tempElem->GetText();
+      std::transform( 
+        playback.begin(), 
+        playback.end(), 
+        playback.begin(), 
+        std::tolower );
+      m_anims[i].forward = (playback == "forward") ? true : false;
+    }
 
     //Load "looped"
-    std::string looped = strip->FirstChildElement( "looped" )->GetText();
-    //Set whether or not animation is looped
-    m_anims[i].isLooped = (looped == "true") ? true : false;
-
+    tempElem = strip->FirstChildElement( "looped" );
+    if( tempElem ) {
+      std::string loop = tempElem->GetText();
+      std::transform( loop.begin(), loop.end(), loop.begin(), std::tolower );
+      m_anims[i].isLooped = (loop == "true") ? true : false;
+    }
 
     //Load "num_frames"
     ss.clear();
     ss << strip->FirstChildElement( "num_frames" )->GetText();
-    //Set the number of frames
     ss >> m_anims[i].numFrames;
    
  
     //Load "individual_times"
     std::string ind = strip->FirstChildElement( "individual_times" )->GetText();
+    std::transform( ind.begin(), ind.end(), ind.begin(), std::tolower );
     m_anims[i].uniqueFrameTimes = (ind == "true") ? true : false;
 
     //Load "frame_times"
@@ -90,14 +92,12 @@ bool AnimData::LoadFromFile( const std::string &filename ) {
     //Allocate floats to hold the correct number of frame times
     if( m_anims[i].uniqueFrameTimes ) {
       m_anims[i].frameTime = new float[m_anims[i].numFrames];
-      //Set the frame times
       for( Uint n = 0; n < m_anims[i].numFrames; ++n ) {
         ss >> m_anims[i].frameTime[n];
       }
     }
     else {
       m_anims[i].frameTime = new float(0.0f);
-      //Set the frame time
       ss >> m_anims[i].frameTime[0];
     }
 
@@ -172,6 +172,9 @@ Uint AnimData::GetNumFrames( Uint animation ) const {
 	return m_anims[animation%m_numAnims].numFrames;
 }
 
+bool AnimData::GetPlayBack( Uint animation ) const {
+  return m_anims[animation%m_numAnims].forward;
+}
 
 sf::IntRect AnimData::GetFrameRect( Uint animation, Uint frame ) const {
 	static sf::IntRect rect;
@@ -195,7 +198,11 @@ sf::IntRect AnimData::GetFrameRect( Uint animation, Uint frame ) const {
 Private Methods
 ************************************************/
 AnimData::Animation::Animation()
-: frameTime( 0 ) {
+: forward( true ),
+  uniqueFrameTimes( false ),
+  isLooped( false ),
+  frameTime( 0 ),
+  numFrames( 0 ) {
 }
 
 

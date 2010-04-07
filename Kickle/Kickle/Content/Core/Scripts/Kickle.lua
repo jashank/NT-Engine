@@ -3,12 +3,13 @@
 package.path = package.path .. ";Content/Core/Scripts/?.lua"
 require ("GameObjectUtilities");
 
--- These values are determined by the layout of Kickle's animation sheet
+-- These values are determined by the layout of Kickle's animation xml file
 local STANDING = 0;
 local WALKING = 4;
 local KICKING = 8;
 local RAISE_PILLAR = 12;
-local DYING = 16;
+local LOWER_PILLAR = 16;
+local DYING = 20;
 
 local state = STANDING; --Current state kickle is in
 
@@ -18,7 +19,6 @@ local pillar = nil;
 function HandleCollision( Kickle, Other )
 	if ( Other:GetType() == "Slime" ) then
 		state = DYING;
-		Kickle:AnimateForward();
 		Kickle:SetAnimation( Kickle:GetDir() + state );
 	end
 
@@ -28,22 +28,20 @@ end
 
 function AILogic( Kickle )
 	if( state ~= DYING ) then
-		if( state ~= RAISE_PILLAR ) then
-			state = STANDING;
-		end
-
-		if ( state == RAISE_PILLAR and not Kickle:IsAnimating() ) then
-			state = STANDING;
-			if( pillar ) then
-				Kickle:AnimateForward();
-				Level.DestroyGameObject( pillar );
-				pillar = nil;
-			end
-		end
-
 		Kickle:SetAnimation( Kickle:GetDir() + state );
 
-	elseif( pillar ) then
+		if( state ~= RAISE_PILLAR and state ~= LOWER_PILLAR ) then
+			state = STANDING;
+		end
+
+		if ( (state == RAISE_PILLAR
+			 or state == LOWER_PILLAR)
+			 and not Kickle:IsAnimating() ) then
+			 state = STANDING;
+		end
+	end
+
+	if( pillar and not pillar:IsAnimating() ) then
 		Level.DestroyGameObject( pillar );
 		pillar = nil;
 	end
@@ -133,11 +131,10 @@ function PerformPillar( Kickle )
 
 			GameObjectOnTile = Level.GetGameObjectOnTile( tileX, tileY );
 
-			if ( GameObjectOnTile:GetType() == "Pillar" ) then
-				state = RAISE_PILLAR;
-				Kickle:AnimateBackward();
-				GameObjectOnTile:AnimateBackward();
+			if( GameObjectOnTile:GetType() == "Pillar" ) then
+				state = LOWER_PILLAR;
 				pillar = GameObjectOnTile;
+				pillar:SetAnimation(1);
 			end
 		end
 	end

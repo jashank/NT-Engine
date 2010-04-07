@@ -1,7 +1,7 @@
 #include "KeyManager.h"
 
-#include <cctype>
 #include <algorithm>
+#include <cctype>
 
 #include "App.h"
 
@@ -10,12 +10,6 @@ KeyManager::KeyManager()
 }
 
 const std::string KeyManager::m_extraKeys[] = {
-//"a", "b", "c", "d", "e", "f", "g",
-//"h", "i", "j", "k", "l", "m", "n",
-//"o", "p", "q", "r", "s", "t", "u",
-//"v", "w", "x", "y", "z",
-//"0", "1", "2", "3", "4",
-//"5", "6", "7", "8", "9", 
 "escape",
 "lcontrol",
 "lshift",
@@ -54,6 +48,7 @@ const std::string KeyManager::m_extraKeys[] = {
 
 bool KeyManager::InterpretKey( const std::string &keyString, sf::Key::Code &keyResult ) {
   std::string lower = keyString;
+  //transforms lower to lowercase
   std::transform( 
         lower.begin(), 
         lower.end(),
@@ -72,14 +67,12 @@ bool KeyManager::InterpretKey( const std::string &keyString, sf::Key::Code &keyR
     return true;
   }  
 
-  //sf::Key::Code::X
-  
   //Calculate the amount of extra keys in the sf::key enum
   // Count - Escape(note escape is the first "extra" key in enum)
   static Uint count = static_cast<Uint>( sf::Key::Count ) -
     static_cast<Uint>( sf::Key::Escape );
 
-  
+  //Loops through the extaKeys array comparing to lower
   for( Uint i = 0; i < count; ++i ) {
     if( lower == m_extraKeys[i] ) {
       keyResult = static_cast<sf::Key::Code>( i + 
