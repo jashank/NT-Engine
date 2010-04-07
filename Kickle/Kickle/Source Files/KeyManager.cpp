@@ -85,15 +85,15 @@ bool KeyManager::InterpretKey( const std::string &keyString, sf::Key::Code &keyR
 }
 
 
-float KeyManager::GetKeyTime( sf::Key::Code key ) const {
+Key KeyManager::GetKeyTime( sf::Key::Code key ) const {
   if( m_input ) {
     for( int i = 0; i < static_cast<int>(m_keys.size()); ++i ) {
-      if( key == m_keys[i].first ) {
-        return m_keys[i].second;
+      if( key == m_keys[i].key ) {
+        return m_keys[i];
       }
     }
   }
-  return 0.0f;
+  return Key();
 }
 
 
@@ -104,22 +104,27 @@ void KeyManager::Init( const sf::Input &input ) {
 
 void KeyManager::RegisterKey( sf::Key::Code key ) {
   for( int i = 0; i < static_cast<int>(m_keys.size()); ++i ) {
-    if( key == m_keys[i].first ) {
+    if( key == m_keys[i].key ) {
       return;
     }
   }
-  m_keys.push_back( std::make_pair( key, 0.0f ) );
+  m_keys.push_back( Key( key ) );
 }
 
 
 void KeyManager::Update() {
   float deltatime = App::GetApp()->GetDeltaTime();
   for( int i = 0; i < static_cast<int>(m_keys.size()); ++i ) {
-    if( m_input->IsKeyDown( m_keys[i].first ) ) {
-      m_keys[i].second += deltatime;
+    if( m_input->IsKeyDown( m_keys[i].key ) ) {
+      m_keys[i].elapsedTime += deltatime;
+
+      if( m_keys[i].startTime == 0.0f ) {
+        m_keys[i].startTime = App::GetApp()->GetTime();
+      }
     }
     else {
-      m_keys[i].second = 0.0f;
+      m_keys[i].elapsedTime = 0.0f;
+      m_keys[i].startTime = 0.0f;
     }
   }
 }

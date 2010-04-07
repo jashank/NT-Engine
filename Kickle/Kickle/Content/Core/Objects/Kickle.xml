@@ -15,16 +15,16 @@
   <grid_collision data="false" />
 
   <input_list>
-    <input key="UP" delay="0" function="FaceUp"/>
-    <input key="DOWN" delay="0" function="FaceDown"/>
-    <input key="LEFT" delay="0" function="FaceLeft"/>
-    <input key="RIGHT" delay="0" function="FaceRight"/>
+    <input key="UP" repeat="true" delay="0" function="FaceUp"/>
+    <input key="DOWN" repeat="true" delay="0" function="FaceDown"/>
+    <input key="LEFT" repeat="true" delay="0" function="FaceLeft"/>
+    <input key="RIGHT" repeat="true" delay="0" function="FaceRight"/>
 
-    <input key="UP" delay="0.12" function="WalkUp"/>
-    <input key="DOWN" delay="0.12" function="WalkDown"/>
-    <input key="LEFT" delay="0.12" function="WalkLeft"/>
-    <input key="RIGHT" delay="0.12" function="WalkRight"/>
-    <input key="x" delay="0" function="PerformPillar"/>
-    <input key="z" delay="0" function="PerformAttack" />
+    <input key="UP" repeat="true" delay="0.12" function="WalkUp"/>
+    <input key="DOWN" repeat="true" delay="0.12" function="WalkDown"/>
+    <input key="LEFT" repeat="true" delay="0.12" function="WalkLeft"/>
+    <input key="RIGHT" repeat="true" delay="0.12" function="WalkRight"/>
+    <input key="x" repeat="false" delay="0" function="PerformPillar"/>
+    <input key="z" repeat="false" delay="0" function="PerformAttack" />
   </input_list>
 </game_object>

@@ -39,8 +39,9 @@ App::App(
   Uint framerate 
 ) 
  : m_window( sf::VideoMode( width, height ), title ), 
-   m_deltaTime(0.0f), 
-   m_fps(0.0f) {
+   m_time( 0.0f ),
+   m_deltaTime( 0.0f ), 
+   m_fps( 0.0f ) {
 	m_window.SetFramerateLimit( framerate );
   m_keyManager.Init( m_window.GetInput() );
 }
@@ -99,13 +100,16 @@ App* App::GetApp() {
 	}
 }
 
+float App::GetTime() const {
+  return m_time;
+}
 
 float App::GetDeltaTime() const {
 	return m_deltaTime;
 }
 
 
-float App::GetKeyTime( sf::Key::Code key ) const {
+Key App::GetKeyTime( sf::Key::Code key ) const {
   return m_keyManager.GetKeyTime( key );
 }
 
@@ -172,8 +176,9 @@ void App::Run() {
 		m_stateManager->Render();
 		m_window.Display();
 		
-		//Get the time it took to render the last frame and calculate the fps
+		//Get the time it took to render the last frame
 		m_deltaTime = m_window.GetFrameTime();
+    m_time += m_deltaTime;
 		m_fps = 1.0f/m_deltaTime;
 	}
 }

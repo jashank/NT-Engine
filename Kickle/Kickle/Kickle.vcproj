@@ -283,6 +283,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\Header Files\Key.h"
+					>
+				</File>
+				<File
 					RelativePath=".\Header Files\Timer.h"
 					>
 				</File>
@@ -404,6 +408,10 @@
 				>
 				<File
 					RelativePath=".\Source Files\Configuration.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Source Files\Key.cpp"
 					>
 				</File>
 				<File

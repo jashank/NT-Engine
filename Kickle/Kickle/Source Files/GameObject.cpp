@@ -1,5 +1,7 @@
 #include "GameObject.h"
 
+#include <algorithm>
+#include <cctype>
 #include <cstdlib>
 #include <iostream>
 
@@ -193,21 +195,41 @@ void GameObject::UpdateMovement() {
     }
 
     //Call HandleUserInput lua function
-    static float keyTime = 0.0f;
+    static Key keyTime;
     static App* app = App::GetApp();
 
     for( Uint i = 0; i < m_numKeyEntries; ++i ) {
       //Check if key is down
-      if( app->GetInput().IsKeyDown( m_keyRegistry[i].first.first ) ) {
-        keyTime = app->GetKeyTime( m_keyRegistry[i].first.first );
+      if( app->GetInput().IsKeyDown( m_keyRegistry[i].first.key ) ) {
+        keyTime = app->GetKeyTime( m_keyRegistry[i].first.key );
+
         //Check if key has been held down long enough
-        if( keyTime >= m_keyRegistry[i].first.second ) {
+        if( keyTime.elapsedTime >= m_keyRegistry[i].first.elapsedTime ) {
+
+          //They will only ever be equal if they have already
+          //been called once for this particular keypress.
+          if( m_keyRegistry[i].first.startTime == keyTime.startTime ) {
+            continue; //skip the rest of this iteration
+          }
+          
+          //Once the key is released and repressed 
+          //then keyTime.starTime will be a different time
+
+          //Call the lua function
           lua_getglobal( m_luaState, m_keyRegistry[i].second.c_str() );
           if( lua_isfunction( m_luaState, -1 ) ) {
             Lunar<GameObject>::push( m_luaState, this );
             lua_call( m_luaState, 1, 0 );
           } else {
             lua_pop( m_luaState, 1 );
+          }   
+
+          //If the key isn't supposed to be repeated(ie != -1)
+          if( m_keyRegistry[i].first.startTime != -1 ) {
+            //Set the key to equal this key presses current startTime
+            m_keyRegistry[i].first.startTime = keyTime.startTime;
+            //Making sure that this key won't be handled again until
+            //keyTime.startTime is changed(a key is re-pressed)
           }
         }
       }
@@ -549,24 +571,30 @@ bool GameObject::LoadObjectData( const std::string &filepath ) {
   //if an input_list tag exists :D
   if( inputListRoot ) {
     TiXmlElement* input = 0;
-    std::vector< std::pair<KeyTime, std::string> > tempList;
-    sf::Key::Code tempKey;
+    std::vector< KeyEntry > tempList;
+    sf::Key::Code k;
 
     for ( input = inputListRoot->FirstChildElement( "input" ); 
           input; 
           input = input->NextSiblingElement( "input" ) ) {
 
       std::string key = input->Attribute( "key" );
+      std::string repeat = input->Attribute( "repeat" );
       std::string delay = input->Attribute( "delay" );
       std::string function = input->Attribute( "function" );
 
-      if( !KeyManager::InterpretKey( key, tempKey ) ) {
+      if( !KeyManager::InterpretKey( key, k ) ) {
         //Invalid key attribute in an input xml tag
         return false;
       }
 
-      KeyTime tempKeyTime( tempKey, static_cast<float>( atof( delay.c_str() ) ) );
-      tempList.push_back( std::make_pair( tempKeyTime, function ) );
+      Key tempKey( k );
+
+      std::transform( repeat.begin(), repeat.end(), repeat.begin(), std::tolower );
+      tempKey.startTime = ( repeat == "true" ) ? -1.0f : 0.0f;
+
+      tempKey.elapsedTime = static_cast<float>( atof( delay.c_str() ) );
+      tempList.push_back( std::make_pair( tempKey, function ) );
 
     }
     m_numKeyEntries = static_cast<Uint>( tempList.size() );
@@ -574,12 +602,12 @@ bool GameObject::LoadObjectData( const std::string &filepath ) {
 
     for( Uint i = 0; i < m_numKeyEntries; ++i ) {
       m_keyRegistry[i] = tempList[i];
-      App::GetApp()->RegisterKey( m_keyRegistry[i].first.first );
+      App::GetApp()->RegisterKey( m_keyRegistry[i].first.key );
 
       DEBUG_STATEMENT(
         std::cout << m_type << " Input: " << std::endl;
-        std::cout << m_keyRegistry[i].first.first << " " 
-          << m_keyRegistry[i].first.second;
+        std::cout << m_keyRegistry[i].first.key << " " 
+          << m_keyRegistry[i].first.elapsedTime;
         std::cout << " " << m_keyRegistry[i].second << std::endl;
       )
     }

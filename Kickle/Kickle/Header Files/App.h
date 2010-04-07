@@ -59,11 +59,14 @@ class App {
   // of App exists at a time
   static App* GetApp();
 
+  // Returns the time since App was created.
+  float GetTime() const;
+
   // Returns the change in time since last frame
   float GetDeltaTime() const;
 
   // Returns the amount of time key has been held down
-  float GetKeyTime( sf::Key::Code key ) const;
+  Key GetKeyTime( sf::Key::Code key ) const;
 
   // Returns event in app
   const sf::Event &GetEvent() const;  
@@ -115,6 +118,7 @@ class App {
   static App *m_instance; //Single instance of App
 
   char m_fpsStrBuff[50]; //String for displaying current FPS
+  float m_time; //Total time since app was first created.
   float	m_deltaTime; //Time in seconds spent on last frame render
   float	m_fps; //Frames per Second
 

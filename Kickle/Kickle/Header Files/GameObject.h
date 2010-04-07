@@ -7,6 +7,7 @@
 
 #include "AnimSprite.h"
 #include "BasicTypeDefs.h"
+#include "Key.h"
 
 
 class LevelState;
@@ -93,8 +94,7 @@ class GameObject : public AnimSprite {
   static Lunar<GameObject>::RegType methods[];
 
  private:
-  typedef std::pair< sf::Key::Code, float > KeyTime;
-  typedef std::pair< KeyTime, std::string > KeyEntry;
+  typedef std::pair< Key, std::string > KeyEntry;
 	// Loads a GameObject given a path to an xml file,
   // returning true if loading was successful
   bool LoadObjectData( const std::string &filepath );
@@ -125,7 +125,7 @@ class GameObject : public AnimSprite {
   lua_State* m_luaState; // Mediator between C/C++ and Lua VM
   sf::FloatRect m_collisionRect; // Object's collision box
 
-  //Array of KeyTime and string(lua script's function names) pairs
+  //Array of Key and string(lua script's function names) pairs
   KeyEntry* m_keyRegistry; 
   Uint m_numKeyEntries; //Number of KeyEntries in m_keyRegistry
 
