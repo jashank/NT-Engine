@@ -15,7 +15,7 @@ GameObjectMap::GameObjectMap() {
 
 GameObjectMap::~GameObjectMap() {
   for ( int i = 0; i < m_nextId; i++ ) {
-    if ( m_gameObjects[i] != 0 ) {
+    if ( m_gameObjects[i] != NULL ) {
       SAFEDELETE( m_gameObjects[i] );
     }
   }
@@ -24,17 +24,17 @@ GameObjectMap::~GameObjectMap() {
 
 void GameObjectMap::Update() {
   for ( int i = 0; i < m_nextId; i++ ) {
-    if ( m_gameObjects[i] != 0 ) {
+    if ( m_gameObjects[i] != NULL ) {
       m_gameObjects[i]->UpdateCollision();
     }
   }
   for ( int i = 0; i < m_nextId; i++ ) {
-    if ( m_gameObjects[i] != 0 ) {
+    if ( m_gameObjects[i] != NULL ) {
       m_gameObjects[i]->UpdateMovement();
     }
   }
   for ( int i = 0; i < m_nextId; i++ ) {
-    if ( m_gameObjects[i] != 0 ) {
+    if ( m_gameObjects[i] != NULL ) {
       m_gameObjects[i]->UpdateRendering();
     }
   }
@@ -47,7 +47,7 @@ void GameObjectMap::Update() {
 void GameObjectMap::Render() {
   std::priority_queue< std::pair<float, GameObject*> > renderOrder;
   for ( int i = 0; i < m_nextId; i++ ) {
-    if ( m_gameObjects[i] != 0 ) {
+    if ( m_gameObjects[i] != NULL ) {
       renderOrder.push( 
       std::pair<float, GameObject*>( -(m_gameObjects[i]->GetPosition().y), m_gameObjects[i] ) );
     }
@@ -110,7 +110,7 @@ GameObject* GameObjectMap::DetectCollision( const GameObject *gameObject ) {
   const sf::FloatRect &mainObj = gameObject->GetCollisionBox();
 
   for ( int i = 0; i < m_nextId; ++i ) {
-    if ( m_gameObjects[i] != gameObject && m_gameObjects[i] != 0 ) {
+    if ( m_gameObjects[i] != gameObject && m_gameObjects[i] != NULL ) {
       const sf::FloatRect &otherObj = m_gameObjects[i]->GetCollisionBox();
       if( mainObj.Intersects( otherObj ) ) {
         return m_gameObjects[i];
@@ -138,7 +138,7 @@ GameObject* GameObjectMap::ObjectOnTile( Uint x, Uint y ) {
 
 GameObject* GameObjectMap::GetGameObject( const std::string &objectType ) {
   for ( int i = 0; i < m_nextId; ++i ) {
-    if (m_gameObjects[i] != NULL ) {
+    if ( m_gameObjects[i] != NULL ) {
       if ( m_gameObjects[i]->GetType() == objectType ) {
         return m_gameObjects[i];
       }

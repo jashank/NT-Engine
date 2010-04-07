@@ -2,6 +2,6 @@
 
 function HandleCollision( Pillar, Other )
 	if ( Other:GetType() == "Slime" ) then
-		Game.DestroyGameObject( Pillar );
+		Level.DestroyGameObject( Pillar );
 	end
 end

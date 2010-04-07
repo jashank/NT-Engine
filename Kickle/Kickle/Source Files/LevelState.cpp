@@ -20,6 +20,8 @@ const luaL_Reg LevelState::luaLevelFuncts[] = {
   { "TileHasGridObject", LuaTileHasGridObject },
   { "GetGameObject", LuaGetGameObject },
   { "GetGameObjectOnTile", LuaGetGameObjectOnTile },
+  { "GetTile", LuaGetTile },
+  { "SetTile", LuaSetTile },
   { 0, 0 }
 };
 
@@ -241,13 +243,56 @@ int LevelState::LuaGetGameObjectOnTile( lua_State *L ) {
   Uint tileY = static_cast<Uint>( lua_tointeger( L, -1 ) );
 
   Lunar<GameObject>::push( L,
-                  m_instance->m_gameObjectMap.ObjectOnTile(tileX, tileY) );
+                  m_instance->m_gameObjectMap.ObjectOnTile( tileX, tileY ));
   return 1;
 }
 
 
+int LevelState::LuaGetTile( lua_State *L ) {
+  if ( !lua_isnumber( L, -2 ) ) {
+    return luaL_error( L, "Invalid tile x position for GetTile." );
+  }
+  int tileX = lua_tointeger( L, -2 );
+
+  if ( !lua_isnumber( L, -1 ) ) {
+    return luaL_error( L, "Invalid tile y position for GetTile." );
+  }
+  int tileY = lua_tointeger( L, -1 );
+
+  lua_pushinteger( L, m_instance->GetTile( tileX, tileY ));
+
+  return 1;
+}
+
+
+int LevelState::LuaSetTile( lua_State *L ) {
+  if ( !lua_isnumber( L, -4 ) ) {
+    return luaL_error( L, "Invalid tile x position for SetTile." );
+  }
+  int tileX = lua_tointeger( L, -4 );
+
+  if ( !lua_isnumber( L, -3 ) ) {
+    return luaL_error( L, "Invalid tile y position for SetTile." );
+  }
+  int tileY = lua_tointeger( L, -3 );
+  
+  if ( !lua_isnumber( L, -2 ) ) {
+    return luaL_error( L, "Invalid tileID for SetTile." );
+  }
+  int tileID = lua_tointeger( L, -2 );
+
+  if ( !lua_isnumber( L, -1 ) ) {
+    return luaL_error( L, "Invalid collisionID for SetTile." );
+  }
+  int collisionID = lua_tointeger( L, -1 );
+
+  m_instance->SetTile( tileX, tileY, tileID, collisionID );
+  return 0;
+}
+  
+
 void LevelState::RegisterLuaLevelFuncts( lua_State *L ) {
-  luaL_register( L, "Game", luaLevelFuncts );
+  luaL_register( L, "Level", luaLevelFuncts );
 }
 
 /************************************************

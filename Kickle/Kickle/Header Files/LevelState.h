@@ -88,6 +88,12 @@ class LevelState : public BaseState {
   // Allows Lua to grab a GameObject from a tile.
   static int LuaGetGameObjectOnTile( lua_State *L );
 
+  // Allows Lua to access id of tile at specified position
+  static int LuaGetTile( lua_State *L );
+
+  // Allows Lua to set the tile at specified position
+  static int LuaSetTile( lua_State *L );
+
   // Registers functions associated with the LevelState to Lua
   static void RegisterLuaLevelFuncts( lua_State *L );
   

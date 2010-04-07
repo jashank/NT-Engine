@@ -10,7 +10,7 @@ local lastTileY = -1;
 
 function AILogic( Slime )
 
-	Kickle = Game.GetGameObject( "Kickle" );
+	Kickle = Level.GetGameObject( "Kickle" );
 
 	if ( Kickle ) then
 

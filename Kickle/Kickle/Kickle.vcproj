@@ -267,10 +267,6 @@
 				Name="Lua"
 				>
 				<File
-					RelativePath=".\Header Files\LuaAppFuncts.h"
-					>
-				</File>
-				<File
 					RelativePath=".\Header Files\Lunar.h"
 					>
 				</File>
@@ -402,10 +398,6 @@
 			<Filter
 				Name="Lua"
 				>
-				<File
-					RelativePath=".\Source Files\LuaAppFuncts.cpp"
-					>
-				</File>
 			</Filter>
 			<Filter
 				Name="Other"

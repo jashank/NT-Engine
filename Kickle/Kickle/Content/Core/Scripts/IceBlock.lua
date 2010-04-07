@@ -1,8 +1,12 @@
 --IceBlock's Script
 
+--IceBlock's Script
+
+package.path = package.path .. ";Content/Core/Scripts/?.lua"
+require ("GameObjectUtilities");
+
 local lastTileX = -1;
 local lastTileY = -1;
-local kicked = 0;
 
 function AILogic( IceBlock )
 	tileX = IceBlock:GetTileX();
@@ -12,6 +16,11 @@ function AILogic( IceBlock )
 		if ( lastTileX ~= tileX or lastTileY ~= tileY ) then
 			IceBlock:Move();
 		end
+
+		facingX, facingY = GetTileObjectFaces( IceBlock );
+		-- if tille at facingX facingY is a water tile then
+		-- convert it to an ice tile
+		-- @Ben, I've made lua funcs available
 	end
 
 	lastTileX = tileX;
@@ -21,8 +30,6 @@ end
 
 function HandleCollision( IceBlock, Other )
 	if ( Other:GetType() == "IceBreath" ) then
-		Game.DestroyGameObject( Other );
-	elseif ( Other:GetType() == "Kickle" ) then
-		Other:Reverse();
+		Level.DestroyGameObject( Other );
 	end
 end

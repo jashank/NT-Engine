@@ -36,7 +36,7 @@ function AILogic( Kickle )
 			state = STANDING;
 			if( pillar ) then
 				Kickle:AnimateForward();
-				Game.DestroyGameObject( pillar );
+				Level.DestroyGameObject( pillar );
 				pillar = nil;
 			end
 		end
@@ -44,7 +44,7 @@ function AILogic( Kickle )
 		Kickle:SetAnimation( Kickle:GetDir() + state );
 
 	elseif( pillar ) then
-		Game.DestroyGameObject( pillar );
+		Level.DestroyGameObject( pillar );
 		pillar = nil;
 	end
 end
@@ -122,16 +122,16 @@ function PerformPillar( Kickle )
 	if( state == STANDING ) then
 		tileX, tileY = GetTileObjectFaces( Kickle );
 
-		if ( not Game.TileIsSolid( tileX, tileY ) and
-			 not Game.TileHasGridObject( tileX, tileY ) ) then
+		if ( not Level.TileIsSolid( tileX, tileY ) and
+			 not Level.TileHasGridObject( tileX, tileY ) ) then
 
 			state = RAISE_PILLAR;
-			Game.CreateGameObject(
+			Level.CreateGameObject(
 				"Content/Core/Objects/Pillar.xml", tileX, tileY );
 
-		elseif ( Game.TileHasGridObject( tileX, tileY ) ) then
+		elseif ( Level.TileHasGridObject( tileX, tileY ) ) then
 
-			GameObjectOnTile = Game.GetGameObjectOnTile( tileX, tileY );
+			GameObjectOnTile = Level.GetGameObjectOnTile( tileX, tileY );
 
 			if ( GameObjectOnTile:GetType() == "Pillar" ) then
 				state = RAISE_PILLAR;
@@ -148,22 +148,26 @@ end
 function PerformAttack( Kickle )
 	if ( state == STANDING ) then
 		tileX, tileY = GetTileObjectFaces( Kickle );
-		FacingObject = Game.GetGameObjectOnTile( tileX, tileY );
-		-- For now.
-		state = KICKING;
+		FacingObject = Level.GetGameObjectOnTile( tileX, tileY );
+
 		if ( FacingObject and FacingObject:GetType() == "IceBlock" ) then
-			-- kick the ice block
-			IceBlockDir = Kickle:GetDir();
-			FacingObject:SetDir( IceBlockDir );
+			state = KICKING;
+			kickleDir = Kickle:GetDir();
+			Kickle:SetAnimation( kickleDir + state );
+			FacingObject:SetDir( kickleDir );
 			FacingObject:Move();
-		elseif ( FacingObject and FacingObject:GetType() == "IceBreath" ) then
-			-- Do nothing
-		elseif ( not Game.GetGameObject( "IceBreath" ) ) then
-			IceBreath = Game.CreateGameObject(
+			-- bug where after creation iceblock gets kicked will
+			-- be fixed when Nathan implements key events
+
+			-- first conditional here can be removed once events are implemented
+		elseif ( not Level.GetGameObject( "IceBreath" ) and
+				 not Level.TileIsSolid( tileX, tileY ) and
+				 not Level.TileHasGridObject( tileX, tileY ) ) then
+			IceBreath = Level.CreateGameObject(
 				"Content/Core/Objects/IceBreath.xml", tileX, tileY );
-			IceBreathDir = Kickle:GetDir();
-			IceBreath:SetDir( IceBreathDir );
-			IceBreath:SetAnimation( IceBreathDir );
+			iceBreathdir = Kickle:GetDir();
+			IceBreath:SetDir( iceBreathdir );
+			IceBreath:SetAnimation( iceBreathdir );
 		end
 	end
 end

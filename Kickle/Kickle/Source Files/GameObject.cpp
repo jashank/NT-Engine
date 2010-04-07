@@ -5,10 +5,13 @@
 
 #include "tinyxml.h"
 
+extern "C" {
+#include "lualib.h"
+}
+
 #include "App.h"
 #include "Configuration.h"
 #include "LevelState.h"
-#include "LuaAppFuncts.h"
 #include "Utilities.h"
 
 /************************************************
@@ -397,7 +400,6 @@ Private Methods
 void GameObject::InitLua() {
   luaL_openlibs( m_luaState );
   Lunar<GameObject>::Register( m_luaState );
-  LuaApp::RegisterLuaAppFuncts( m_luaState );
   LevelState::RegisterLuaLevelFuncts( m_luaState );
   luaL_dofile( m_luaState, m_luaScript.c_str() );
 }

@@ -3,7 +3,6 @@
 
 #include "App.h"
 #include "GameObject.h"
-#include "LuaAppFuncts.h"
 #include "LevelState.h"
 #include "TitleState.h"
 #include "Utilities.h"

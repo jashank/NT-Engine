@@ -8,7 +8,7 @@ function AILogic( IceBreath )
 	tileY = IceBreath:GetTileY();
 
 	if ( tileX == lastTileX and tileY == lastTileY ) then
-		Game.DestroyGameObject( IceBreath );
+		Level.DestroyGameObject( IceBreath );
 	else
 		lastTileX = tileX;
 		lastTileY = tileY;
@@ -19,12 +19,12 @@ end
 
 function HandleCollision( IceBreath, Other )
 	if ( Other:GetType() == "Slime" ) then
-		Game.CreateGameObject(
+		Level.CreateGameObject(
 			"Content/Core/Objects/IceBlock.xml",
 			 Other:GetTileX(),
 			 Other:GetTileY()
 		);
-		Game.DestroyGameObject( Other );
-		Game.DestroyGameObject( IceBreath );
+		Level.DestroyGameObject( Other );
+		Level.DestroyGameObject( IceBreath );
 	end
 end
