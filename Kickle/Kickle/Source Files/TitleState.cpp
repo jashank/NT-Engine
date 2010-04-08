@@ -3,9 +3,10 @@
 #include <SFML/Graphics/Font.hpp>
 
 #include "App.h"
-#include "LevelState.h"
 #include "Utilities.h"
 #include "Configuration.h"
+#include "StageState.h"
+#include "LevelState.h"
 
 /************************************************
 Data Members
@@ -154,7 +155,7 @@ bool TitleState::SetTitle( const std::string &filePath ) {
   
 
 void TitleState::Play() {
-  App::GetApp()->SetNextState( LevelState::GetInstance() );
+  App::GetApp()->SetNextState( StageState::GetInstance() );
 }
 
 
