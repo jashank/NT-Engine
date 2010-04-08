@@ -148,6 +148,8 @@ bool TitleState::SetTitle( const std::string &filePath ) {
   m_font = new sf::Font();
   m_font->LoadFromFile( root->FirstChildElement( "font" )->Attribute( "path" ));
   m_title.SetFont( *m_font );
+
+  return true;
 }
   
 

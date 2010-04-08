@@ -1,13 +1,9 @@
 --IceBlock's Script
 
---IceBlock's Script
 
 package.path = package.path .. ";Content/Core/Scripts/?.lua"
 require ("GameObjectUtilities");
 
-
-local WATER = 10;
-local ICE = 1;
 
 function AILogic( IceBlock )
 	tileX = IceBlock:GetTileX();

@@ -6,6 +6,10 @@ DOWN = 1;
 LEFT = 2;
 RIGHT = 3;
 
+-- Tile constants for setting tiles
+ICE = 1;
+WATER = 10;
+
 function GetTileObjectFaces( GameObject )
 	tileX = GameObject:GetTileX();
 	tileY = GameObject:GetTileY();

@@ -4,8 +4,8 @@
   <num_anims>4</num_anims>
 
   <strip name="up">
-    <looped>false</looped>
-    <num_frames>1</num_frames>
+    <looped>true</looped>
+    <num_frames>2</num_frames>
     <individual_times>false</individual_times>
     <frame_times> 0.1 </frame_times>
 
@@ -17,8 +17,8 @@
 
 
   <strip name="down">
-    <looped>false</looped>
-    <num_frames>1</num_frames>
+    <looped>true</looped>
+    <num_frames>2</num_frames>
     <individual_times>false</individual_times>
     <frame_times> 0.1 </frame_times>
 
@@ -30,8 +30,8 @@
 
 
   <strip name="left">
-    <looped>false</looped>
-    <num_frames>1</num_frames>
+    <looped>true</looped>
+    <num_frames>2</num_frames>
     <individual_times>false</individual_times>
     <frame_times> 0.1 </frame_times>
 
@@ -43,8 +43,8 @@
 
 
   <strip name="right">
-    <looped>false</looped>
-    <num_frames>1</num_frames>
+    <looped>true</looped>
+    <num_frames>2</num_frames>
     <individual_times>false</individual_times>
     <frame_times> 0.1 </frame_times>
 
