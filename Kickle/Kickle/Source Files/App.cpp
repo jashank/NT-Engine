@@ -192,3 +192,20 @@ void App::SetClearColor( const sf::Color& color ) {
 void App::SetNextState( BaseState *state ) {
 	m_stateManager.SetNextState( state );
 }
+
+
+std::string App::GetCurrentStage() {
+  return m_currentStage;
+}
+
+void App::SetCurrentStage( std::string newStage) {
+  m_currentStage = newStage;
+}
+
+std::string App::GetCurrentLevel() {
+  return m_currentLevel;
+}
+
+void App::SetCurrentLevel( std::string newLevel ) {
+  m_currentLevel = newLevel;
+}

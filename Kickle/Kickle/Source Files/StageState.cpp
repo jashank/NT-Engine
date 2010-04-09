@@ -94,9 +94,8 @@ void StageState::HandleEvents() {
       m_currentStage++;
     }
   } else if ( App::GetApp()->GetInput().IsKeyDown( sf::Key::Z ) ) {
-      // change to world state passing that map...
-      // BUT FOR NOW... We will just load the level state.
-      App::GetApp()->SetNextState( LevelState::GetInstance() );
+    App::GetApp()->SetCurrentStage( m_stagePaths[m_currentStage] );
+    App::GetApp()->SetNextState( WorldState::GetInstance() );
   }
 }
 

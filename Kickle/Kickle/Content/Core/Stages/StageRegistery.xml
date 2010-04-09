@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
 <stage_registery>
-	<stage name="IceWorld" path="Content\\Core\\Stages\\IceStage.xml" thumb="Content\\Core\\Stages\\IceStage.png" />
-	<stage name="FireWorld" path="Conent\\Core\\Stages\\FireStage.xml" thumb="Content\\Core\\Stages\\FireStage.png" />
+	<stage name="IceWorld" path="Content\\Core\\Stages\\IceWorld\\IceStage.xml" thumb="Content\\Core\\Stages\\IceWorld\\IceStage.png" />
+	<stage name="FireWorld" path="Conent\\Core\\Stages\\FireWorld\\FireStage.xml" thumb="Content\\Core\\Stages\\FireWorld\\FireStage.png" />
 </stage_registery>

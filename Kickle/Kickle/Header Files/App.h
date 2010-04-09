@@ -103,6 +103,22 @@ class App {
   void SetNextState( BaseState *state );
 
 
+  // These additions are a work around for basic messaging
+  // between states, we need to discuss a better fix soon
+  // however for now since app is static this will work.
+
+  // Returns the path to the current stage
+  std::string GetCurrentStage();
+
+  // Sets the path the current stage.
+  void SetCurrentStage( std::string newStage );
+
+  // Gets the path the current level.
+  std::string GetCurrentLevel();
+
+  // Sets the path the the current level.
+  void SetCurrentLevel( std::string newLevel );
+
  private:
   App( 
     const std::string &title, 
@@ -121,6 +137,9 @@ class App {
   float m_time; //Total time since app was first created.
   float	m_deltaTime; //Time in seconds spent on last frame render
   float	m_fps; //Frames per Second
+
+  std::string m_currentStage; // Current stage path
+  std::string m_currentLevel; // Current level path
 
   KeyManager m_keyManager; //Keeps track of how long registered keys are held
   
