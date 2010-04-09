@@ -26,6 +26,7 @@ StageState::StageState()
   m_currentStageName.SetSize( 50 );
   m_currentStageName.SetPosition( 360.0f, 150.0f );
 
+  LoadStages( "Content\\Core\\Stages\\StageRegistery.xml" );
 
 }
 
@@ -47,7 +48,6 @@ void StageState::DestroyInstance() {
 // Loads the resources required by StageState
 void StageState::Init() {
   SetInit( true );
-  LoadStages( "Content\\Core\\Stages\\StageRegistery.xml" );
 
   // Create fonts
   m_font = new sf::Font();
@@ -58,7 +58,7 @@ void StageState::Init() {
 
   // Load the first thumbnail
   if ( m_numStages > 0 ) {
-      m_currentImage.LoadFromFile( m_thumbnailPaths[0] );
+      m_currentImage.LoadFromFile( m_thumbnailPaths[m_currentStage] );
   }
 
   // Create a sprite, taking the current thumbnail (150,150) and place it

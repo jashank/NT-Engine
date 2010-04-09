@@ -8,6 +8,7 @@ Author: Ben Wright (bwright.au@gmail.com)
 #include <string>
 
 #include "BasicTypeDefs.h"
+#include "tinyxml.h"
 
 class AnimSprite;
 
@@ -23,7 +24,7 @@ public:
 	void Render();
 
   // Sets the layout of the tiles in the map
-	void SetTileLayout( int layout[15][15] );
+	void SetTileLayout( TiXmlElement* root );
 
   // Changes the value of the tile sheet to that value if it is valid, else -1.
   void SetTile( int x, int y, int tileId );

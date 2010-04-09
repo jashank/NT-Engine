@@ -312,7 +312,6 @@ Uint LevelState::GetVectorYTile( const sf::Vector2f &position ) const {
 
 
 bool LevelState::SetLevel( std::string LevelStatePath ) {
-
   TiXmlDocument doc ( LevelStatePath.c_str() );
   
   if ( !doc.LoadFile() ) {
@@ -321,46 +320,23 @@ bool LevelState::SetLevel( std::string LevelStatePath ) {
 
   TiXmlElement* root = doc.FirstChildElement( "map" );
 
-
   // Get the tile sheet
   std::string tileSheet( root->FirstChildElement( "tile_sheet" )->GetText() );
   // Get the tile animations
   std::string tileAnims( root->FirstChildElement( "tile_anims" )->GetText() );
 
+  //Load the appropriate tile animation data 
+  //and tilesheet into the tile map
+  m_tileMap.LoadTileAnims( tileSheet, tileAnims );
 
-  // Load in tiles.
-  Uint mapSize = Configuration::GetMapSize();
-
-  std::string tileString( root->FirstChildElement( "tile_layout" )->GetText() );
-  std::stringstream tileMapStream( tileString, std::ios_base::in );
-
-  int tileLayout[15][15]; // TODO fix to dynamic
- 
-  int currentTile = 0;
-  for( Uint i=0; i < mapSize; i++ ) {
-    for ( Uint j=0; j < mapSize; j++ ) {
-      if ( tileMapStream >> currentTile ) {
-        tileLayout[i][j] = currentTile;
-      } else {
-          tileLayout[i][j] = -1;
-      }
-    }
+  // The tile map parses its own layout.
+  if ( root->FirstChildElement( "tile_layout") ) {
+    m_tileMap.SetTileLayout( root->FirstChildElement( "tile_layout" ) );
   }
 
-  // Load In Collision Layout
-  std::string collisionString( root->FirstChildElement( "collision_layout" )->GetText() );
-  std::stringstream collisionMapStream( collisionString, std::ios_base::in );
-
-  int collisionLayout[15][15]; // TODO fix to dynamic
- 
-  for( Uint i=0; i < mapSize; i++ ) {
-    for ( Uint j=0; j < mapSize; j++ ) {
-      if ( collisionMapStream >> currentTile ) {
-          collisionLayout[i][j] = currentTile;
-      } else {
-          collisionLayout[i][j] = -1;
-      }
-    }
+  // THe collision map parses its own layout
+  if ( root->FirstChildElement( "collision_layout" )->GetText() ) {
+    m_collisionMap.SetCollisionMap( root->FirstChildElement( "collision_layout" ) );
   }
 
   // GameObjectMap parses its section by itself instead of in this method.
@@ -372,14 +348,6 @@ bool LevelState::SetLevel( std::string LevelStatePath ) {
   if ( root->FirstChildElement( "music_playlist" ) ) {
     m_soundList.SetSoundList( root->FirstChildElement( "music_playlist" ) );
   }
-
-  //Load the appropriate tile animation data 
-  //and tilesheet into the tile map
-  m_tileMap.LoadTileAnims( tileSheet, tileAnims );
-	
-  //Set tile/collision layouts
-	m_tileMap.SetTileLayout( tileLayout );
-  m_collisionMap.SetCollisionMap( collisionLayout );
 
 	return true;
 }

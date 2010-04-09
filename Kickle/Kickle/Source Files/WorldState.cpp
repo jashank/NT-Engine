@@ -1,5 +1,7 @@
 #include "WorldState.h"
+
 #include "Utilities.h"
+#include "StageState.h"
 #include "LevelState.h"
 
 WorldState *WorldState::m_instance = 0;
@@ -28,7 +30,10 @@ void WorldState::DestroyInstance() {
 // Loads the resources required by WorldState
 void WorldState::Init() {
   SetInit( true );
-  LoadStage( App::GetApp()->GetCurrentStage() );
+  if ( !LoadStage( App::GetApp()->GetCurrentStage() ) ) {
+    App::GetApp()->SetNextState( StageState::GetInstance() );
+  }
+
 }
 
 // Releases the resources acquired by WorldState
@@ -52,13 +57,13 @@ void WorldState::HandleEvents() {
 void WorldState::Update() {
   if ( m_currentLevel < m_nextLevel ) {
     if ( m_nextLevel >= m_numLevels) {
-      CleanUp(); // This need to "pop" back the previous state, the StageState
+      App::GetApp()->SetNextState( StageState::GetInstance() );
     } else {
       m_currentLevel = m_nextLevel;
+      m_nextLevel++;
       App::GetApp()->SetCurrentLevel( m_levelPaths[m_currentLevel] );
       App::GetApp()->SetNextState( LevelState::GetInstance() );
-      // After the state completes it should return here...
-      m_nextLevel++;
+
     }
   }
 }

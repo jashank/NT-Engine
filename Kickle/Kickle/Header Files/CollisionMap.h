@@ -2,6 +2,7 @@
 #define COLLISION_MAP_H
 
 #include "BasicTypeDefs.h"
+#include "tinyxml.h"
 
 class CollisionMap {
  public:
@@ -10,7 +11,7 @@ class CollisionMap {
 
   // Given a layout of 15 by 15, sets all the values in the collision layout 
   // to those values.
-  bool SetCollisionMap( int layout[15][15] );
+  bool SetCollisionMap( TiXmlElement* root );
 
   // Returns true if the tile at X Y is solid, else false;
   bool TileIsSolid( Uint x, Uint y ) const;
@@ -30,7 +31,7 @@ class CollisionMap {
   static const int SOLID = 1;
   static const int NOT_SOLID = 0;
 
-  int m_collision_layout[MAP_SIZE][MAP_SIZE];
+  int m_collisionLayout[MAP_SIZE][MAP_SIZE];
 };
 
 #endif

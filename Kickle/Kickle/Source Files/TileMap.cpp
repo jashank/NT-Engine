@@ -1,5 +1,7 @@
 #include "TileMap.h"
 
+#include <sstream>
+
 #include "App.h"
 #include "AnimData.h"
 #include "AnimSprite.h"
@@ -113,15 +115,33 @@ void TileMap::Render() {
 	SetTileLayout()
 	- Sets the layout of the tiles in the map
 	*************************************************/
-void TileMap::SetTileLayout( int layout[MAP_SIZE][MAP_SIZE] ) {
-	//m_tileSprite.SetImage( App::GetApp()->LoadImageW( mapPath ) );
+void TileMap::SetTileLayout( TiXmlElement* root ) {
+  Uint mapSize = Configuration::GetMapSize();
+
+  std::string tileString( root->GetText() );
+  std::stringstream tileMapStream( tileString, std::ios_base::in );
+
+  int currentTile = 0;
+
+  int tileLayout[15][15]; // TODO fix to dynamic
+ 
+  for( Uint i=0; i < mapSize; i++ ) {
+    for ( Uint j=0; j < mapSize; j++ ) {
+      if ( tileMapStream >> currentTile ) {
+        tileLayout[i][j] = currentTile;
+      } else {
+          tileLayout[i][j] = -1;
+      }
+    }
+  }
 	
 	// Set the layout to that of the parsed in argument.
 	for ( int i = 0; i < MAP_SIZE; i++ ) {
 		for ( int j = 0; j < MAP_SIZE; j++ ) {
-			 m_layout[i][j] = layout[i][j];
+			 m_layout[i][j] = tileLayout[i][j];
 		}
 	}
+
 }
 
 /************************************************************

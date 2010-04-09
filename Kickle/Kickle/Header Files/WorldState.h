@@ -2,6 +2,8 @@
 #define WORLD_STATE_H
 
 #include "BaseState.h"
+#include "TileMap.h"
+
 #include "Utilities.h"
 #include "BasicTypeDefs.h"
 #include "tinyxml.h"
@@ -41,6 +43,8 @@ class WorldState : public BaseState{
  private:
   WorldState();
   static WorldState *m_instance;
+
+  TileMap m_tileMap;
 
   int m_numLevels;
   int m_currentLevel;
