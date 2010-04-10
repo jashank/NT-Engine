@@ -8,7 +8,7 @@
 
   <typename data="Slime" />
 
-  <speed data="0.5" />
+  <speed data="0.7" />
  
   <rect x="7" y="10" width="34" height="35" />
 

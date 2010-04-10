@@ -8,7 +8,7 @@
 
   <typename data="Kickle" />
 
-  <speed data="1.0" />
+  <speed data="1.5" />
 
   <rect x="10" y="15" width="17" height="24" />
 

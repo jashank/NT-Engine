@@ -42,6 +42,7 @@ App::App(
    m_time( 0.0f ),
    m_deltaTime( 0.0f ), 
    m_fps( 0.0f ) {
+  m_window.UseVerticalSync( true );
 	m_window.SetFramerateLimit( framerate );
   m_keyManager.Init( m_window.GetInput() );
 }

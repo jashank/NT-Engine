@@ -154,13 +154,10 @@ function PerformAttack( Kickle )
 			Kickle:SetAnimation( kickleDir + state );
 			FacingObject:SetDir( kickleDir );
 			FacingObject:Move();
-			-- bug where after creation iceblock gets kicked will
-			-- be fixed when Nathan implements key events
 
-			-- first conditional here can be removed once events are implemented
-		elseif ( not Level.GetGameObject( "IceBreath" ) and
-				 not Level.TileIsSolid( tileX, tileY ) and
-				 not Level.TileHasGridObject( tileX, tileY ) ) then
+
+		elseif ( not Level.TileIsSolid( tileX, tileY ) and
+				 not Level.TileHasGridObject( tileX, tileY ) )then
 			IceBreath = Level.CreateGameObject(
 				"Content/Core/Objects/IceBreath.xml", tileX, tileY );
 			iceBreathdir = Kickle:GetDir();

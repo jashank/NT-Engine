@@ -6,9 +6,6 @@ require ("GameObjectUtilities");
 
 
 function AILogic( IceBlock )
-	tileX = IceBlock:GetTileX();
-	tileY = IceBlock:GetTileY();
-
 	if ( IceBlock:HasMoved() ) then
 		IceBlock:Move();
 		facingX, facingY = GetTileObjectFaces( IceBlock );
