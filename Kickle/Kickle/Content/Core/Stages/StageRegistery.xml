@@ -1,5 +1,14 @@
 <?xml version="1.0"?>
+
 <stage_registery>
-	<stage name="IceWorld" path="Content\\Core\\Stages\\IceWorld\\IceStage.xml" thumb="Content\\Core\\Stages\\IceWorld\\IceStage.png" />
-	<stage name="FireWorld" path="Conent\\Core\\Stages\\FireWorld\\FireStage.xml" thumb="Content\\Core\\Stages\\FireWorld\\FireStage.png" />
+	<stage name="IceWorld">
+		<path data="Content\\Core\\Stages\\IceWorld\\IceStage.xml" />
+		<thumb data="Content\\Core\\Stages\\IceWorld\\IceStage.png" />
+		<info author="Dev Team" num_levels="1"/>
+	</stage>
+	<stage name="FireWorld">
+		<path data="Conent\\Core\\Stages\\FireWorld\\FireStage.xml" />
+		<thumb data="Content\\Core\\Stages\\DefaultThumb.png" />
+		<info author="Dev Team" num_levels="0" />
+	</stage>
 </stage_registery>

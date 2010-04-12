@@ -50,6 +50,7 @@ void TitleState::Init() {
 	SetInit( true );
   SetTitle( "Content/Core/States/Title.xml" );
   
+  StageState::DestroyInstance();
   LevelState::DestroyInstance();
 
   App::GetApp()->SetClearColor( sf::Color(0,0,0) );

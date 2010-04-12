@@ -50,14 +50,20 @@ class StageState : public BaseState {
    bool LoadStages( std::string stageRegisteryPath );
 
    // Adds the stage to the vectors below, used in LoadStage
-   void AddStage( std::string stageName, std::string stagePath,
-                  std::string stageThumb );
+   void AddStage( std::string stageName, std::string stagePath, 
+                  std::string stageThumb, std::string stageInfo );
+
+   
+
+   sf::String m_playButtonText;
+   sf::String m_exitButtonText;
 
    // We use these data structures to store all the information
    // needed on the stage selection screen.
    std::vector<std::string> m_stageNames;
    std::vector<std::string> m_stagePaths;
    std::vector<std::string> m_thumbnailPaths;
+   std::vector<std::string> m_info;
 
    // The current image / signature to be loaded
    sf::Image m_currentImage;
@@ -65,7 +71,8 @@ class StageState : public BaseState {
 
    sf::Font *m_font;
    sf::String m_currentStageName;
-  
+   sf::String m_currentInfo;
+
    int m_previousStage;
    int m_currentStage;
    int m_numStages;
