@@ -11,23 +11,19 @@ StageState::StageState()
  : m_currentStage( 0 ),
    m_previousStage( -1 ),
    m_numStages( 0 ),
-   m_font( NULL ), 
-   m_title( "Stage Selector" ), 
+   m_font( NULL ),  
    m_currentStageName( "Stage Name" ),
+   m_currentSelection( 0 ),
    m_imageLoaded( false ) {
-
-  //Set text positions
-  m_thumbSprite.SetScale( 1.0f, 1.0f );
-  m_thumbSprite.Resize( 150, 150 );
-
-  m_title.SetSize( 72 );
-  m_title.SetPosition( 190.f, 10.f );
-  
-  m_currentStageName.SetSize( 50 );
-  m_currentStageName.SetPosition( 360.0f, 150.0f );
-
   LoadStages( "Content\\Core\\Stages\\StageRegistery.xml" );
+  
+  m_listPanel = sf::Shape::Rectangle( 10.0f, 10.0f, 512.0f,
+                       750.0f, sf::Color::Blue,3.0f, 
+                       sf::Color::Red );
 
+  m_infoPanel = sf::Shape::Rectangle( 522.0f, 10.0f, 1014.0f,
+                       500.0f, sf::Color::Blue, 3.0f, 
+                       sf::Color::Red);
 }
 
 StageState::~StageState() {
@@ -35,7 +31,7 @@ StageState::~StageState() {
 }
 
 StageState* StageState::GetInstance() {
-  	if( !m_instance ) {
+  if( !m_instance ) {
 		m_instance = new StageState();
 	}
 	return m_instance;
@@ -48,25 +44,9 @@ void StageState::DestroyInstance() {
 // Loads the resources required by StageState
 void StageState::Init() {
   SetInit( true );
-
-  // Create fonts
   m_font = new sf::Font();
   m_font->LoadFromFile( "Content/Core/Fonts/MICKEY.TTF" );
-  
-  m_title.SetFont( *m_font);
-  m_currentStageName.SetFont( *m_font);
-
-  // Load the first thumbnail
-  if ( m_numStages > 0 ) {
-      m_currentImage.LoadFromFile( m_thumbnailPaths[m_currentStage] );
-  }
-
-  // Create a sprite, taking the current thumbnail (150,150) and place it
-  // on the center of the screen.
-  m_thumbSprite = sf::Sprite( m_currentImage );
-  m_thumbSprite.SetPosition( 12.0f, 
-                             240.0f );
-
+  m_currentStageName.SetFont( *m_font );
 }
 
 // Releases the resources acquired by StageState
@@ -85,40 +65,64 @@ void StageState::Resume() {
 
 // Handle StageState's user input events
 void StageState::HandleEvents() {
-  if ( App::GetApp()->GetInput().IsKeyDown( sf::Key::Left ) ) {
-    if ( m_currentStage > 0  ) {
-      m_currentStage--;
+  // I will be cleaning this up shortly once I finish the specifications.
+  if ( App::GetApp()->GetInput().IsKeyDown( sf::Key::Up ) ) {
+    if ( m_currentSelection > 0 ) {
+      m_currentSelection--;
+    } else if ( m_currentSelection != m_currentStage ) {
     }
-  } else if ( App::GetApp()->GetInput().IsKeyDown( sf::Key::Right ) ) {
-    if ( (m_currentStage+1) < m_numStages ) {
-      m_currentStage++;
+  } else if ( App::GetApp()->GetInput().IsKeyDown( sf::Key::Down ) ) {
+    if ( m_currentSelection < 14 ) {
+      m_currentSelection++;
+    } else if ( m_currentSelection != m_currentStage ) {
+    
     }
   } else if ( App::GetApp()->GetInput().IsKeyDown( sf::Key::Z ) ) {
-    App::GetApp()->SetCurrentStage( m_stagePaths[m_currentStage] );
-    App::GetApp()->SetNextState( WorldState::GetInstance() );
+    if  ( m_currentSelection < m_numStages ) {
+      App::GetApp()->SetCurrentStage( m_stagePaths[m_currentSelection] );
+      App::GetApp()->SetNextState( WorldState::GetInstance() );
+    }
   }
+
+  // This is currently the best way for the engine to make a list box that
+  // is clickable with the mouse.
+  if ( App::GetApp()->GetInput().IsMouseButtonDown( sf::Mouse::Left )) {
+    float mouseXPos = (float)App::GetApp()->GetInput().GetMouseX();
+    if ( mouseXPos >= 10.0f && mouseXPos <= 512.0f ) {
+      float mouseYPos = (float)App::GetApp()->GetInput().GetMouseY();
+      if ( mouseYPos >=10.0f && mouseYPos < 750.0f ) {
+        m_currentSelection = (int)(mouseYPos/50.0f);
+      }
+    }
+  }
+
+  
 }
 
 // Update StageState's frame
 void StageState::Update() {
-  if ( m_previousStage != m_currentStage ) {
-    m_previousStage = m_currentStage;
-    m_currentStageName.SetText( m_stageNames[m_currentStage] );
-    if ( !m_currentImage.LoadFromFile( m_thumbnailPaths[m_currentStage] ) ) {
-      m_imageLoaded = false;
-    } else {
-      m_imageLoaded = true;
-    }
-  }
-
 }
 
 // Render StageState's frame
 void StageState::Render() {
-  App::GetApp()->Draw( m_title );
-  App::GetApp()->Draw( m_currentStageName );
-  if ( m_imageLoaded ) {
-    App::GetApp()->Draw( m_thumbSprite );
+
+  // Draw the left rectangle scroll bar
+  App::GetApp()->Draw( m_listPanel );
+
+  // Draw the right rectangle info panel
+  App::GetApp()->Draw( m_infoPanel );
+
+  // Draw the selector.
+  App::GetApp()->Draw( sf::Shape::Rectangle( 10.0f,
+                       (50.0f*m_currentSelection+10.0f), 512.0f,
+                       (50.0f*m_currentSelection+50.0f),
+                        sf::Color::Green ) );
+
+  // Draw the selections
+  for ( int i = 0; i < m_numStages; i++ ) {
+    m_currentStageName.SetText( m_stageNames[i] );
+    m_currentStageName.SetPosition( 10.0f, (i*50.0f + 10) );
+    App::GetApp()->Draw( m_currentStageName );
   }
 
 }

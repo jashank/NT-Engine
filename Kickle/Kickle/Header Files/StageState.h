@@ -64,12 +64,20 @@ class StageState : public BaseState {
    sf::Sprite m_thumbSprite;
 
    sf::Font *m_font;
-   sf::String m_title;
    sf::String m_currentStageName;
   
    int m_previousStage;
    int m_currentStage;
    int m_numStages;
+
+
+   sf::Shape m_listPanel;
+   sf::Shape m_infoPanel;
+   // This is used to calculate the position of the selector and is used
+   // to index the 15 current selectable items from the list.
+   int m_currentSelection;
+
+   // A bunch of constants for the graphical user interface
 
    // Only tries to draw the image if it is loaded, also 
    // allows us to set the sprite to a NO-IMAGE or default image.
