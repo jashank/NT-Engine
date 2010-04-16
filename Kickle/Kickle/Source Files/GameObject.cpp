@@ -27,7 +27,6 @@ Public Members
 const char GameObject::className[] = "GameObject";
 Lunar<GameObject>::RegType GameObject::methods[] = {
   { "Move", &GameObject::LuaMove },
-  { "HasMoved", &GameObject::LuaHasMoved },
   { "SetAnimation", &GameObject::LuaSetAnimation },
   { "IsAnimating", &GameObject::LuaIsAnimating },
   { "GetType", &GameObject::LuaGetType },
@@ -36,7 +35,8 @@ Lunar<GameObject>::RegType GameObject::methods[] = {
   { "GetDir", &GameObject::LuaGetDir },
   { "SetDir", &GameObject::LuaSetDir },
   { "Reverse", &GameObject::LuaReverse },
-  { 0, 0 }
+  { "GetTable", &GameObject::LuaGetTable },
+  { NULL, NULL }
 };
 
 
@@ -50,8 +50,6 @@ GameObject::GameObject( lua_State *L )
    m_distance( 0.0f ),
    m_speed( 0.0f ),
    m_id( -1 ),
-   m_hasMoved( false ),
-   m_luaState( luaL_newstate() ),
    m_keyRegistry(0),
    m_numKeyEntries(0) {
   m_level = LevelState::GetInstance();
@@ -63,9 +61,7 @@ GameObject::GameObject( lua_State *L )
   std::string filepath( lua_tostring( L, -1 ) );
   if( !( LoadObjectData( filepath ) &&
          LoadCollisionData( filepath ) ) ) {
-    lua_close( m_luaState );
-    m_luaState = 0;
-    throw "Cannon load GameObject XML file";
+    throw "Cannot load GameObject XML file";
   }
 
   InitLua();
@@ -78,16 +74,12 @@ GameObject::GameObject( const std::string &filepath )
    m_distance( 0.0f ),
    m_speed( 0.0f ),
    m_id( -1 ),
-   m_hasMoved( false ),
-   m_luaState( luaL_newstate() ),
    m_keyRegistry(0),
    m_numKeyEntries(0) {
   m_level = LevelState::GetInstance();
 
   if( !( LoadObjectData( filepath ) &&
          LoadCollisionData( filepath ) ) ) {
-    lua_close( m_luaState );
-    m_luaState = 0;
     throw "Cannot load GameObject XML file";
   }
   
@@ -106,15 +98,11 @@ GameObject::GameObject(
    m_distance( 0.0f ),
    m_speed( 0.0f ),
    m_id( -1 ),
-   m_hasMoved( false ),
-   m_luaState( luaL_newstate() ),
    m_keyRegistry(0),
    m_numKeyEntries(0) {
   m_level = LevelState::GetInstance();
 
   if( !LoadObjectData( filepath ) ) {
-    lua_close( m_luaState );
-    m_luaState = 0;
     throw "Cannot load GameObject XML file";
   }
 
@@ -143,8 +131,6 @@ GameObject::GameObject(
 
   if ( !m_gridCollision ) {
     if( !LoadCollisionData( filepath ) ) {
-      lua_close( m_luaState );
-      m_luaState = 0;
       throw "Cannot load GameObject XML file";
     }
   }
@@ -153,13 +139,7 @@ GameObject::GameObject(
 }
 
 
-GameObject::~GameObject() {
-  //Check to see if m_luaState not equal to 0
-  //because it WILL crash if closing a null pointer
-  if( m_luaState ) {
-    lua_close( m_luaState );
-  }
-}
+GameObject::~GameObject() {}
 
 
 void GameObject::UpdateCollision() {
@@ -167,14 +147,15 @@ void GameObject::UpdateCollision() {
 
   if( collisionObj != NULL ) {
     //Call OnCollision lua function
-    lua_getglobal( m_luaState, "HandleCollision" );
-    if ( lua_isfunction( m_luaState, -1 )) {
-      Lunar<GameObject>::push( m_luaState, this );
-      Lunar<GameObject>::push( m_luaState, collisionObj );
-      lua_call( m_luaState, 2, 0 );
-    } else {
-      lua_pop( m_luaState, 1 );
+    lua_State *L = m_level->GetLuaState();
+    lua_rawgeti( L, LUA_REGISTRYINDEX, m_id );
+    lua_getfield( L, -1, "HandleCollision" );
+    if ( lua_isfunction( L, -1 ) ) {
+      Lunar<GameObject>::push( L, this );
+      Lunar<GameObject>::push( L, collisionObj );
+      lua_call( L, 2, 0 );
     }
+    lua_settop( L, 0 );
   }
 }
 
@@ -184,15 +165,15 @@ void GameObject::UpdateMovement() {
     MovementUpdate();
   }
   else {
-
+    lua_State *L = m_level->GetLuaState();
     //Call AILogic lua function
-    lua_getglobal( m_luaState, "AILogic" );
-    if ( lua_isfunction( m_luaState, -1 )) {
-      Lunar<GameObject>::push( m_luaState, this );
-      lua_call( m_luaState, 1, 0 );
-    } else {
-      lua_pop( m_luaState, 1 );
+    lua_rawgeti( L, LUA_REGISTRYINDEX, m_id );
+    lua_getfield( L, -1, "AILogic" );
+    if ( lua_isfunction( L, -1 )) {
+      Lunar<GameObject>::push( L, this );
+      lua_call( L, 1, 0 );
     }
+    lua_settop( L, 0 );
 
     //Call HandleUserInput lua function
     static Key keyTime;
@@ -216,13 +197,13 @@ void GameObject::UpdateMovement() {
           //then keyTime.starTime will be a different time
 
           //Call the lua function
-          lua_getglobal( m_luaState, m_keyRegistry[i].second.c_str() );
-          if( lua_isfunction( m_luaState, -1 ) ) {
-            Lunar<GameObject>::push( m_luaState, this );
-            lua_call( m_luaState, 1, 0 );
-          } else {
-            lua_pop( m_luaState, 1 );
-          }   
+          lua_rawgeti( L, LUA_REGISTRYINDEX, m_id );
+          lua_getfield( L, -1, m_keyRegistry[i].second.c_str() );
+          if( lua_isfunction( L, -1 ) ) {
+            Lunar<GameObject>::push( L, this );
+            lua_call( L, 1, 0 );
+          }
+          lua_settop( L, 0 );  
 
           //If the key isn't supposed to be repeated(ie != -1)
           if( m_keyRegistry[i].first.startTime != -1 ) {
@@ -241,16 +222,6 @@ void GameObject::UpdateMovement() {
 
 void GameObject::UpdateRendering() {
   AnimSprite::Update();
-}
-
-
-void GameObject::SetId( int id ) {
-  m_id = id;
-}
-
-
-int GameObject::GetId() const {
-  return m_id;
 }
 
 
@@ -284,6 +255,7 @@ const std::string& GameObject::GetType() const {
   return m_type;
 }
 
+
 int GameObject::LuaMove( lua_State *L ) {
   if( !m_moving ) {
     sf::Vector2f tileToMoveTo( GetPosition() );
@@ -314,17 +286,12 @@ int GameObject::LuaMove( lua_State *L ) {
     if ( !m_level->TileIsSolid( tileToMoveTo ) &&
          !m_level->TileHasGridObject( tileToMoveTo ) ) {
       m_moving = true;
-      m_hasMoved = true;
     } 
   }
 
   return 0;
 }
 
-int GameObject::LuaHasMoved( lua_State *L ) {
-  lua_pushboolean( L, m_hasMoved );
-  return 1;
-}
 
 int GameObject::LuaSetAnimation( lua_State *L ) {
   if( !lua_isnumber( L, -1 ) ) {
@@ -404,8 +371,13 @@ int GameObject::LuaReverse( lua_State *L ) {
   }
 
   m_moving = true;
-
   return 0;
+}
+
+
+int GameObject::LuaGetTable( lua_State *L ) {
+  lua_rawgeti( L, LUA_REGISTRYINDEX, m_id );
+  return 1;
 }
 
 
@@ -413,10 +385,10 @@ int GameObject::LuaReverse( lua_State *L ) {
 Private Methods
 ************************************************/
 void GameObject::InitLua() {
-  luaL_openlibs( m_luaState );
-  Lunar<GameObject>::Register( m_luaState );
-  LevelState::RegisterLuaLevelFuncts( m_luaState );
-  luaL_dofile( m_luaState, m_luaScript.c_str() );
+  luaL_dofile( m_level->GetLuaState(), m_luaScript.c_str() );
+  if ( lua_istable( m_level->GetLuaState(), -1 )) {
+    m_id = luaL_ref( m_level->GetLuaState(), LUA_REGISTRYINDEX );
+  }
 }
 
 

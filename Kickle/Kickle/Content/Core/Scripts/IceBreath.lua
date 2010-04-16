@@ -1,30 +1,34 @@
--- IceBreath script
+-- IceBreath Behavior Table
 
-local lastTileX = -1;
-local lastTileY = -1;
+local IceBreathTable = {}
 
-function AILogic( IceBreath )
-	tileX = IceBreath:GetTileX();
-	tileY = IceBreath:GetTileY();
+IceBreathTable.lastTileX = -1
+IceBreathTable.lastTileY = -1
 
-	if ( tileX == lastTileX and tileY == lastTileY ) then
-		Level.DestroyGameObject( IceBreath );
+function IceBreathTable.AILogic( IceBreath )
+	local tileX = IceBreath:GetTileX()
+	local tileY = IceBreath:GetTileY()
+
+	if ( tileX == IceBreathTable.lastTileX and
+			 tileY == IceBreathTable.lastTileY ) then
+		Level.DestroyGameObject( IceBreath )
 	else
-		lastTileX = tileX;
-		lastTileY = tileY;
-		IceBreath:Move();
+		IceBreathTable.lastTileX = tileX
+		IceBreathTable.lastTileY = tileY
+		IceBreath:Move()
 	end
-
 end
 
-function HandleCollision( IceBreath, Other )
+function IceBreathTable.HandleCollision( IceBreath, Other )
 	if ( Other:GetType() == "Slime" ) then
 		Level.CreateGameObject(
 			"Content/Core/Objects/IceBlock.xml",
 			 Other:GetTileX(),
 			 Other:GetTileY()
 		);
-		Level.DestroyGameObject( Other );
-		Level.DestroyGameObject( IceBreath );
+		Level.DestroyGameObject( Other )
+		Level.DestroyGameObject( IceBreath )
 	end
 end
+
+return IceBreathTable

@@ -8,49 +8,62 @@
 #include "Configuration.h"
 #include "Utilities.h"
 
-GameObjectMap::GameObjectMap() {
-  Init();
-}
+GameObjectMap::GameObjectMap() {}
 
 
 GameObjectMap::~GameObjectMap() {
-  for ( int i = 0; i < m_nextId; i++ ) {
-    if ( m_gameObjects[i] != NULL ) {
-      SAFEDELETE( m_gameObjects[i] );
+  GameObjItr gameObj = m_gameObjects.begin();
+  while ( gameObj != m_gameObjects.end() ) {
+    if ( *gameObj != NULL ) {
+      SAFEDELETE( *gameObj );
     }
+    ++gameObj;
   }
 }
 
 
 void GameObjectMap::Update() {
-  for ( int i = 0; i < m_nextId; i++ ) {
-    if ( m_gameObjects[i] != NULL ) {
-      m_gameObjects[i]->UpdateCollision();
+  GameObjItr gameObj = m_gameObjects.begin();
+  while( gameObj != m_gameObjects.end() ) {
+    if ( *gameObj != NULL ) {
+      ( *gameObj )->UpdateCollision();
     }
+    ++gameObj;
   }
-  for ( int i = 0; i < m_nextId; i++ ) {
-    if ( m_gameObjects[i] != NULL ) {
-      m_gameObjects[i]->UpdateMovement();
+
+  gameObj = m_gameObjects.begin();
+  while( gameObj != m_gameObjects.end() ) {
+    if ( *gameObj != NULL ) {
+      ( *gameObj )->UpdateMovement();
     }
+    ++gameObj;
   }
-  for ( int i = 0; i < m_nextId; i++ ) {
-    if ( m_gameObjects[i] != NULL ) {
-      m_gameObjects[i]->UpdateRendering();
+
+  gameObj = m_gameObjects.begin();
+  while ( gameObj != m_gameObjects.end() ) {
+    if ( *gameObj != NULL ) {
+      ( *gameObj )->UpdateRendering();
     }
+    ++gameObj;
   }
+
   for ( Uint i = 0; i < m_toBeDestroyed.size(); i++ ) {
-    CleanUpGameObject( m_toBeDestroyed[i] );
+    m_gameObjects.remove( m_toBeDestroyed[i] );
+    SAFEDELETE( m_toBeDestroyed[i] );
   }
   m_toBeDestroyed.clear();
 }
 
 void GameObjectMap::Render() {
   std::priority_queue< std::pair<float, GameObject*> > renderOrder;
-  for ( int i = 0; i < m_nextId; i++ ) {
-    if ( m_gameObjects[i] != NULL ) {
+
+  GameObjItr gameObj = m_gameObjects.begin();
+  while( gameObj != m_gameObjects.end() ) {
+    if ( *gameObj != NULL ) {
       renderOrder.push( 
-      std::pair<float, GameObject*>( -(m_gameObjects[i]->GetPosition().y), m_gameObjects[i] ) );
+      std::pair<float, GameObject*>( -(( *gameObj )->GetPosition().y), *gameObj ) );
     }
+    ++gameObj;
   }
 
   while ( !renderOrder.empty() ) {
@@ -59,6 +72,7 @@ void GameObjectMap::Render() {
   }
 
 }
+
 
 bool GameObjectMap::SetGameObjectMap( TiXmlElement* root ) {
   TiXmlElement* currentEntity;
@@ -84,19 +98,7 @@ bool GameObjectMap::SetGameObjectMap( TiXmlElement* root ) {
 
 
 void GameObjectMap::AddGameObject( GameObject *gameObject ) {
-  int nextId;
-
-  if ( !m_avaliableIds.empty() ) {
-    nextId = m_avaliableIds.back();
-    m_avaliableIds.pop_back();
-  } else {
-    nextId = m_nextId;
-    m_nextId++;
-  }
-
-  m_gameObjects[nextId] = gameObject;
-  gameObject->SetId( nextId );
- 
+  m_gameObjects.push_back( gameObject );
   gameObject->Play();
 }
 
@@ -109,13 +111,15 @@ void GameObjectMap::RemoveGameObject( GameObject *gameObject ) {
 GameObject* GameObjectMap::DetectCollision( const GameObject *gameObject ) {
   const sf::FloatRect &mainObj = gameObject->GetCollisionBox();
 
-  for ( int i = 0; i < m_nextId; ++i ) {
-    if ( m_gameObjects[i] != gameObject && m_gameObjects[i] != NULL ) {
-      const sf::FloatRect &otherObj = m_gameObjects[i]->GetCollisionBox();
+  GameObjItr gameObj = m_gameObjects.begin();
+  while ( gameObj != m_gameObjects.end() ) {
+    if ( *gameObj != gameObject && *gameObj != NULL ) {
+      const sf::FloatRect &otherObj = ( *gameObj )->GetCollisionBox();
       if( mainObj.Intersects( otherObj ) ) {
-        return m_gameObjects[i];
+        return *gameObj;
       }
     }
+    ++gameObj;
   }
 
   return NULL;
@@ -123,13 +127,15 @@ GameObject* GameObjectMap::DetectCollision( const GameObject *gameObject ) {
 
 
 GameObject* GameObjectMap::ObjectOnTile( Uint x, Uint y ) {
-  for ( int i = 0; i < m_nextId; ++i ) {
-    if ( m_gameObjects[i] != NULL ) {
-      if ( m_gameObjects[i]->GetTileX() == x &&
-          m_gameObjects[i]->GetTileY() == y ) {
-        return m_gameObjects[i];
+  GameObjItr gameObj = m_gameObjects.begin();
+  while ( gameObj != m_gameObjects.end() ) {
+    if ( *gameObj != NULL ) {
+      if (( *gameObj )->GetTileX() == x &&
+          ( *gameObj )->GetTileY() == y ) {
+        return *gameObj;
       }
     }
+    ++gameObj;
   }
 
   return NULL;
@@ -137,30 +143,15 @@ GameObject* GameObjectMap::ObjectOnTile( Uint x, Uint y ) {
 
 
 GameObject* GameObjectMap::GetGameObject( const std::string &objectType ) {
-  for ( int i = 0; i < m_nextId; ++i ) {
-    if ( m_gameObjects[i] != NULL ) {
-      if ( m_gameObjects[i]->GetType() == objectType ) {
-        return m_gameObjects[i];
+  GameObjItr gameObj = m_gameObjects.begin();
+  while( gameObj != m_gameObjects.end() ) {
+    if ( *gameObj != NULL ) {
+      if (( *gameObj )->GetType() == objectType ) {
+        return *gameObj;
       }
     }
+    ++gameObj;
   }
   
   return NULL;
-}
-
-
-/******************************************
-Private Methods
-*******************************************/
-void GameObjectMap::Init() {
-  m_nextId = 0;
-}
-
-
-void GameObjectMap::CleanUpGameObject( GameObject *gameObject ) {
-  int id = gameObject->GetId();
-  if ( id < m_nextId && m_gameObjects[id] != 0 ) {
-    m_avaliableIds.push_back( id );
-    SAFEDELETE( m_gameObjects[id] );
-  }
 }

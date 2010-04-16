@@ -1,65 +1,69 @@
--- Slime's Script
-
 package.path = package.path .. ";Content/Core/Scripts/?.lua"
-require ("GameObjectUtilities");
+require ("GameObjectUtilities")
 
-math.randomseed( os.time() );
+math.randomseed( os.time() )
 
-local lastTileX = -1;
-local lastTileY = -1;
+--Slime Behavior Table
 
-function AILogic( Slime )
+local SlimeTable = {}
 
-	Kickle = Level.GetGameObject( "Kickle" );
+SlimeTable.lastTileX = -1
+SlimeTable.lastTileY = -1
+
+function SlimeTable.AILogic( Slime )
+
+	local Kickle = Level.GetGameObject( "Kickle" )
 
 	if ( Kickle ) then
+		local SlimeX = Slime:GetTileX()
+		local SlimeY = Slime:GetTileY()
+		local KickleX = Kickle:GetTileX()
+		local KickleY = Kickle:GetTileY()
 
-		SlimeX = Slime:GetTileX();
-		SlimeY = Slime:GetTileY();
+		local distanceX = math.abs( SlimeX - KickleX )
+		local distanceY = math.abs( SlimeY - KickleY )
 
-		KickleX = Kickle:GetTileX();
-		KickleY = Kickle:GetTileY();
-		distanceX = math.abs( SlimeX - KickleX );
-		distanceY = math.abs( SlimeY - KickleY );
-
-		dir = UP;
+		local dir = UP;
 
 		if ( distanceX > distanceY ) then
 			if ( SlimeX < KickleX ) then
-				dir = RIGHT;
+				dir = RIGHT
 			elseif ( SlimeX > KickleX ) then
-				dir = LEFT;
+				dir = LEFT
 			else
-				dir = math.random( LEFT, RIGHT );
+				dir = math.random( LEFT, RIGHT )
 			end
 		else
 			if ( SlimeY < KickleY ) then
-				dir = DOWN;
+				dir = DOWN
 			elseif ( SlimeY > KickleY ) then
-				dir = UP;
+				dir = UP
 			else
-				dir = math.random( UP, DOWN );
+				dir = math.random( UP, DOWN )
 			end
 		end
 
 		-- Slime has been on same tile for 2 updates
-		if ( lastTileX == SlimeX and lastTileY == SlimeY ) then
-			dir = math.random( UP, RIGHT );
+		if ( SlimeTable.lastTileX == SlimeX and
+				 SlimeTable.lastTileY == SlimeY ) then
+			dir = math.random( UP, RIGHT )
 		end
 
-		lastTileX = SlimeX;
-		lastTileY = SlimeY;
+		SlimeTable.lastTileX = SlimeX
+		SlimeTable.lastTileY = SlimeY
 
-		Slime:SetDir( dir );
-		Slime:Move();
-		Slime:SetAnimation( dir );
+		Slime:SetDir( dir )
+		Slime:Move()
+		Slime:SetAnimation( dir )
 	end
 end
 
 
-function HandleCollision( Slime, Other )
+function SlimeTable.HandleCollision( Slime, Other )
 	if ( Other:GetType() == "Slime" ) then
-		Slime:Reverse();
-		Slime:SetAnimation( Slime:GetDir() );
+		Slime:Reverse()
+		Slime:SetAnimation( Slime:GetDir() )
 	end
 end
+
+return SlimeTable

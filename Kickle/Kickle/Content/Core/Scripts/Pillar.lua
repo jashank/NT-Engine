@@ -1,7 +1,11 @@
--- Pillar's Script
+-- Pillar Behavior Table
 
-function HandleCollision( Pillar, Other )
+local PillarTable = {}
+
+function PillarTable.HandleCollision( Pillar, Other )
 	if ( Other:GetType() == "Slime" ) then
-		Level.DestroyGameObject( Pillar );
+		Level.DestroyGameObject( Pillar )
 	end
 end
+
+return PillarTable

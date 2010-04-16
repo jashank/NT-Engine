@@ -41,12 +41,6 @@ class GameObject : public AnimSprite {
   // Updates the GameObject's rendering
   void UpdateRendering();
 
-  // Sets the member unique identifier.
-  void SetId( int id );
-  
-  // Returns the member unique identifier (m_id)
-  int GetId() const;
-
   // Returns collision box for game object
   const sf::FloatRect &GetCollisionBox() const;
 
@@ -68,7 +62,6 @@ class GameObject : public AnimSprite {
 	// Allows Lua to move the GameObject
   int LuaMove( lua_State *L );
 
-  int LuaHasMoved( lua_State *L );
 	// Wraps SetAnimation to allow it to be exposed to Lua
   int LuaSetAnimation( lua_State *L );
 
@@ -88,6 +81,9 @@ class GameObject : public AnimSprite {
 
   // Allows Lua to reverse direction of GameObject
   int LuaReverse( lua_State *L );
+
+  // Allows user to get the GameObject's table (to change variables in it, etc.)
+  int LuaGetTable( lua_State *L );
 
   //Necessities for Lunar
   static const char className[];
@@ -116,13 +112,11 @@ class GameObject : public AnimSprite {
   static LevelState *m_level; // Level that GameObject is on
 
   bool m_moving; // If true; keep moving in m_direction
-  bool m_hasMoved; // Returns true if the object has ever moved
   bool m_gridCollision; // Grid-based collision completely restricts access to tile
   Dir m_direction; // Current direction game object is moving
   float m_distance; // Distance traveled from last grid location
   float m_speed; // m_speed at which object moves ( 1.0 is "normal" i.e. Kickle )
   int m_id; // ID of object
-  lua_State* m_luaState; // Mediator between C/C++ and Lua VM
   sf::FloatRect m_collisionRect; // Object's collision box
 
   //Array of Key and string(lua script's function names) pairs

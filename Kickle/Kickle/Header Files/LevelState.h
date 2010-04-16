@@ -5,6 +5,10 @@
 
 #include <string>
 
+extern "C" {
+  #include "lualib.h"
+}
+
 #include <SFML/Graphics.hpp>
 
 #include "BasicTypeDefs.h"
@@ -61,6 +65,9 @@ class LevelState : public BaseState {
 
   // Sets the tile at x, y to that tile with that id
   void SetTile ( int x, int y, int tileId, int collisionId );
+
+  // Returns lua state of level
+  lua_State* GetLuaState();
   
   // Detects whether 'gameObject' has collided with any other GameObjects.
   // Returns GameObject it has collided with, or NULL if no collision.
@@ -93,9 +100,6 @@ class LevelState : public BaseState {
 
   // Allows Lua to set the tile at specified position
   static int LuaSetTile( lua_State *L );
-
-  // Registers functions associated with the LevelState to Lua
-  static void RegisterLuaLevelFuncts( lua_State *L );
   
  private:	
   static const luaL_Reg luaLevelFuncts[]; // Functions to register to Lua
@@ -117,6 +121,7 @@ class LevelState : public BaseState {
 
   CollisionMap m_collisionMap;
   GameObjectMap m_gameObjectMap;
+  lua_State *m_luaState;// Lua state for level
 	TileMap m_tileMap;
   Timer m_timer; // Timer for the level
   SoundList m_soundList;

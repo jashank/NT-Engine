@@ -22,7 +22,7 @@ const luaL_Reg LevelState::luaLevelFuncts[] = {
   { "GetGameObjectOnTile", LuaGetGameObjectOnTile },
   { "GetTile", LuaGetTile },
   { "SetTile", LuaSetTile },
-  { 0, 0 }
+  { NULL, NULL }
 };
 
 /************************************************
@@ -51,6 +51,12 @@ void LevelState::DestroyInstance() {
 
 void LevelState::Init() {
 	SetInit( true );
+
+  m_luaState = luaL_newstate();
+  luaL_openlibs( m_luaState );
+  luaL_register( m_luaState, "Level", luaLevelFuncts );
+  Lunar<GameObject>::Register( m_luaState );
+
 	App::GetApp()->SetClearColor( sf::Color(0,49,139) );
 	// Create a LevelState with a place holder path.
   SetLevel( App::GetApp()->GetCurrentLevel() );
@@ -59,6 +65,12 @@ void LevelState::Init() {
 
 
 void LevelState::CleanUp() {
+  //Check to see if m_luaState not equal to 0
+  //because it WILL crash if closing a null pointer
+  if( m_luaState ) {
+    lua_close( m_luaState );
+    m_luaState = 0;
+  }
 	SetInit( false );
 }
 
@@ -97,7 +109,7 @@ void LevelState::Update() {
 
 
 void LevelState::Render() {
-  // The Rendering order is important.
+  // The rendering order is important.
 	m_tileMap.Render();
   m_gameObjectMap.Render();
 }
@@ -143,6 +155,11 @@ int LevelState::GetTile( int x, int y ) const {
 void LevelState::SetTile (int x, int y, int tileId, int collisionId ) {
   m_tileMap.SetTile( x, y, tileId );
   m_collisionMap.SetCollision( x, y, collisionId );
+}
+
+
+lua_State* LevelState::GetLuaState() {
+  return m_luaState;
 }
 
 
@@ -290,10 +307,6 @@ int LevelState::LuaSetTile( lua_State *L ) {
   return 0;
 }
   
-
-void LevelState::RegisterLuaLevelFuncts( lua_State *L ) {
-  luaL_register( L, "Level", luaLevelFuncts );
-}
 
 /************************************************
 Private Methods

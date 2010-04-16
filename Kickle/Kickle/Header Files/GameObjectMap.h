@@ -1,8 +1,8 @@
 #ifndef GAME_OBJECT_MAP_H
 #define GAME_OBJECT_MAP_H
 
-#include <map>
 #include <string>
+#include <list>
 #include <vector>
 
 #include "App.h"
@@ -42,19 +42,12 @@ class GameObjectMap {
   GameObject* GetGameObject( const std::string &objectType );
 
  private:
-  void Init();
+  typedef std::list<GameObject*>::iterator GameObjItr;
 
-  // Correctly cleans up a GameObject when it is ready to be destroyed
-  void CleanUpGameObject( GameObject *gameObject );
-
-  // This is a map of ids to game objects
-  std::map<int, GameObject*> m_gameObjects;
-  // This is a list of dead players ids that need to be reused
-  std::vector<int> m_avaliableIds;
+  // Vector of game objects on map
+  std::list<GameObject*> m_gameObjects;
   // Holds GameObjects that were sent to be destroyed on the last update
   std::vector<GameObject*> m_toBeDestroyed;
-  // Stores GameObjects that have tried to destroy themselves
-  int m_nextId;
 
   static const int MAP_SIZE = 15;
 };
