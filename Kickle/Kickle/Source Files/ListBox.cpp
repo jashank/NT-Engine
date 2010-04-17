@@ -57,7 +57,7 @@ void ListBox::HandleEvents() {
     if ( mouseX >= GetX() && mouseX <= GetX()+GetWidth() ) {
       int mouseY = App::GetApp()->GetInput().GetMouseY();
       if ( mouseY >= GetY() && mouseY <= GetY()+GetHeight() ) {
-        m_selection = (mouseY - GetY()) / m_selectorSize;
+        m_selection =  (Uint)((mouseY - GetY()) / m_selectorSize);
       }
     }
   } else if ( App::GetApp()->GetInput().IsKeyDown( sf::Key::Up ) ) {
