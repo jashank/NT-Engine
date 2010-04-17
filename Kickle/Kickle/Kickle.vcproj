@@ -188,10 +188,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Header Files\Button.h"
-				>
-			</File>
-			<File
 				RelativePath=".\Header Files\GameObject.h"
 				>
 			</File>
@@ -303,6 +299,30 @@
 					>
 				</File>
 			</Filter>
+			<Filter
+				Name="GUI"
+				>
+				<File
+					RelativePath=".\Header Files\Button.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Header Files\Container.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Header Files\Control.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Header Files\InfoPanel.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Header Files\ListBox.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Resource Files"
@@ -325,10 +345,6 @@
 			</File>
 			<File
 				RelativePath=".\Source Files\App.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\Source Files\Button.cpp"
 				>
 			</File>
 			<File
@@ -436,6 +452,30 @@
 				</File>
 				<File
 					RelativePath=".\Source Files\Utilities.cpp"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="GUI"
+				>
+				<File
+					RelativePath=".\Source Files\Button.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Source Files\Container.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Source Files\Control.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Source Files\InfoPanel.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Source Files\ListBox.cpp"
 					>
 				</File>
 			</Filter>

@@ -1,4 +1,5 @@
 <?xml version="1.0"?>
 <media>
   <font path="Content/Core/Fonts/MICKEY.TTF" />
+  <splash path="Content/Core/Sheets/titleBackground.png" />
 </media>

@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+
+<theme>
+  <font path="Content/Core/Fonts/MICKEY.TTF" />
+  <splash path="Content/Core/Sheets/background.png" />
+</theme>

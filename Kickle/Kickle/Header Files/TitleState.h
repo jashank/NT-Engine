@@ -2,6 +2,7 @@
 #define TITLESTATE_H
 
 #include "BaseState.h"
+#include "Container.h"
 
 #include <SFML/Graphics/String.hpp>
 class sf::Font;
@@ -60,13 +61,13 @@ class TitleState : public BaseState {
   
   Button m_play; // Button to play game
   sf::Font *m_font; // Font for the title menu
-  sf::String m_title; // Title string
 
-  sf::Sprite m_snowflakes[100]; // A vector of snowflakes!
-  float m_snowflakesSpeed[100]; // Each flake has a speed.
+  sf::Sprite m_snowflakes[50]; // A vector of snowflakes!
+  float m_snowflakesSpeed[50]; // Each flake has a speed.
   sf::Image m_snowflakeImage; // The snow flake image
 
-  static const Uint m_numFlakes = 100; // Number of snow flakes to be generated
+  Container m_container; // Main Container;
+  static const Uint m_numFlakes = 50; // Number of snow flakes to be generated
   Uint m_snowflakeBuffer; // Screen width - width of a snow flake.
 
   static TitleState *m_instance; // TitleState has one instance

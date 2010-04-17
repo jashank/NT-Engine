@@ -11,6 +11,9 @@
 #include <vector>
 #include <string>
 
+#include "ListBox.h"
+#include "InfoPanel.h"
+
 #include <SFML/Graphics.hpp>
 
 class StageState : public BaseState {
@@ -45,6 +48,10 @@ class StageState : public BaseState {
    StageState();
    static StageState *m_instance;
    
+   //This allows a lot of the data from this state to be loaded in
+   // instead of hard coded.
+   bool SetStateData( std::string dataPath );
+
    // Loads the stage from the stage registery, plan to make this
    // automatically find the stages in the directory later on.
    bool LoadStages( std::string stageRegisteryPath );
@@ -54,41 +61,21 @@ class StageState : public BaseState {
                   std::string stageThumb, std::string stageInfo );
 
    
+   Container m_container;
+   ListBox m_listbox;
+   InfoPanel m_infoPanel;
+
+   Uint m_previousSelection;
+   static const float BUFFER_SIZE;
+   static const float OUTLINE_SIZE;
+   static const float MENU_BUFFER;
 
    sf::String m_playButtonText;
    sf::String m_exitButtonText;
 
-   // We use these data structures to store all the information
-   // needed on the stage selection screen.
-   std::vector<std::string> m_stageNames;
    std::vector<std::string> m_stagePaths;
    std::vector<std::string> m_thumbnailPaths;
    std::vector<std::string> m_info;
-
-   // The current image / signature to be loaded
-   sf::Image m_currentImage;
-   sf::Sprite m_thumbSprite;
-
-   sf::Font *m_font;
-   sf::String m_currentStageName;
-   sf::String m_currentInfo;
-
-   int m_previousStage;
-   int m_currentStage;
-   int m_numStages;
-
-
-   sf::Shape m_listPanel;
-   sf::Shape m_infoPanel;
-   // This is used to calculate the position of the selector and is used
-   // to index the 15 current selectable items from the list.
-   int m_currentSelection;
-
-   // A bunch of constants for the graphical user interface
-
-   // Only tries to draw the image if it is loaded, also 
-   // allows us to set the sprite to a NO-IMAGE or default image.
-   bool m_imageLoaded;
 };
 
 #endif // STAGE_STATE_H
