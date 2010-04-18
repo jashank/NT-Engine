@@ -24,7 +24,6 @@ int main() {
 
 	Game->Run();
 	
-	//std::cin.get();
 
 	return 0;
 }

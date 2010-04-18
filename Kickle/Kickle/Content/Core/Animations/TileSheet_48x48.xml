@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <anim_strips>
 
-  <num_anims>11</num_anims>
+  <num_anims>19</num_anims>
 
   <strip name="black" id="0">
     <looped>false</looped>
@@ -120,7 +120,7 @@
   </strip>
 
 
-  <strip name="ice_hole" id="9">
+  <strip name="ice_border" id="9">
     <looped>false</looped>
     <num_frames>1</num_frames>
     <individual_times>false</individual_times>
@@ -132,8 +132,31 @@
     <height>48</height>
   </strip>
 
+  <strip name="ice_border" id="10">
+    <looped>false</looped>
+    <num_frames>1</num_frames>
+    <individual_times>false</individual_times>
+    <frame_times> 0.1 </frame_times>
 
-  <strip name="water" id="10">
+    <x_pos>480</x_pos>
+    <y_pos>0</y_pos>
+    <width>48</width>
+    <height>48</height>
+  </strip>
+
+  <strip name="ice_hole" id="11">
+    <looped>false</looped>
+    <num_frames>1</num_frames>
+    <individual_times>false</individual_times>
+    <frame_times> 0.1 </frame_times>
+
+    <x_pos>528</x_pos>
+    <y_pos>0</y_pos>
+    <width>48</width>
+    <height>48</height>
+  </strip>
+
+  <strip name="water" id="12">
     <looped>true</looped>
     <num_frames>3</num_frames>
     <individual_times>false</individual_times>
@@ -144,4 +167,77 @@
     <width>48</width>
     <height>48</height>
   </strip>
+
+  <strip name="water_left_border" id="13">
+    <looped>true</looped>
+    <num_frames>3</num_frames>
+    <individual_times>false</individual_times>
+    <frame_times> 0.2 </frame_times>
+
+    <x_pos>144</x_pos>
+    <y_pos>48</y_pos>
+    <width>48</width>
+    <height>48</height>
+  </strip>
+
+  <strip name="water_center_border" id="14">
+    <looped>true</looped>
+    <num_frames>3</num_frames>
+    <individual_times>false</individual_times>
+    <frame_times> 0.2 </frame_times>
+
+    <x_pos>288</x_pos>
+    <y_pos>48</y_pos>
+    <width>48</width>
+    <height>48</height>
+  </strip>
+
+  <strip name="water_right_border" id="15">
+    <looped>true</looped>
+    <num_frames>3</num_frames>
+    <individual_times>false</individual_times>
+    <frame_times> 0.2 </frame_times>
+
+    <x_pos>432</x_pos>
+    <y_pos>48</y_pos>
+    <width>48</width>
+    <height>48</height>
+  </strip>
+
+  <strip name="ice_border" id="16">
+    <looped>true</looped>
+    <num_frames>3</num_frames>
+    <individual_times>false</individual_times>
+    <frame_times> 0.2 </frame_times>
+
+    <x_pos>0</x_pos>
+    <y_pos>96</y_pos>
+    <width>48</width>
+    <height>48</height>
+  </strip>
+
+  <strip name="ice_border" id="17">
+    <looped>true</looped>
+    <num_frames>3</num_frames>
+    <individual_times>false</individual_times>
+    <frame_times> 0.2 </frame_times>
+
+    <x_pos>144</x_pos>
+    <y_pos>96</y_pos>
+    <width>48</width>
+    <height>48</height>
+  </strip>
+
+  <strip name="ice_border" id="18">
+    <looped>true</looped>
+    <num_frames>3</num_frames>
+    <individual_times>false</individual_times>
+    <frame_times> 0.2 </frame_times>
+
+    <x_pos>288</x_pos>
+    <y_pos>96</y_pos>
+    <width>48</width>
+    <height>48</height>
+  </strip>
+
 </anim_strips>
