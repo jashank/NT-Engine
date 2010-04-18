@@ -12,39 +12,35 @@ GameObjectMap::GameObjectMap() {}
 
 
 GameObjectMap::~GameObjectMap() {
-  GameObjItr gameObj = m_gameObjects.begin();
-  while ( gameObj != m_gameObjects.end() ) {
+  for ( GameObjItr gameObj = m_gameObjects.begin(); 
+        gameObj != m_gameObjects.end(); gameObj++ ) {
     if ( *gameObj != NULL ) {
       SAFEDELETE( *gameObj );
     }
-    ++gameObj;
   }
 }
 
 
 void GameObjectMap::Update() {
   GameObjItr gameObj = m_gameObjects.begin();
-  while( gameObj != m_gameObjects.end() ) {
+  for ( ; gameObj != m_gameObjects.end(); gameObj++ ) {
     if ( *gameObj != NULL ) {
       ( *gameObj )->UpdateCollision();
     }
-    ++gameObj;
   }
 
   gameObj = m_gameObjects.begin();
-  while( gameObj != m_gameObjects.end() ) {
+  for ( ; gameObj != m_gameObjects.end(); gameObj++ ) {
     if ( *gameObj != NULL ) {
       ( *gameObj )->UpdateMovement();
     }
-    ++gameObj;
   }
 
   gameObj = m_gameObjects.begin();
-  while ( gameObj != m_gameObjects.end() ) {
+  for ( ; gameObj != m_gameObjects.end(); gameObj++ ) {
     if ( *gameObj != NULL ) {
       ( *gameObj )->UpdateRendering();
     }
-    ++gameObj;
   }
 
   for ( Uint i = 0; i < m_toBeDestroyed.size(); i++ ) {
@@ -57,20 +53,18 @@ void GameObjectMap::Update() {
 void GameObjectMap::Render() {
   std::priority_queue< std::pair<float, GameObject*> > renderOrder;
 
-  GameObjItr gameObj = m_gameObjects.begin();
-  while( gameObj != m_gameObjects.end() ) {
+  for ( GameObjItr gameObj = m_gameObjects.begin(); 
+        gameObj != m_gameObjects.end(); gameObj++ ) {
     if ( *gameObj != NULL ) {
       renderOrder.push( 
       std::pair<float, GameObject*>( -(( *gameObj )->GetPosition().y), *gameObj ) );
     }
-    ++gameObj;
   }
 
   while ( !renderOrder.empty() ) {
     App::GetApp()->Draw( *renderOrder.top().second );
     renderOrder.pop();
   }
-
 }
 
 
@@ -111,15 +105,14 @@ void GameObjectMap::RemoveGameObject( GameObject *gameObject ) {
 GameObject* GameObjectMap::DetectCollision( const GameObject *gameObject ) {
   const sf::FloatRect &mainObj = gameObject->GetCollisionBox();
 
-  GameObjItr gameObj = m_gameObjects.begin();
-  while ( gameObj != m_gameObjects.end() ) {
+  for ( GameObjItr gameObj = m_gameObjects.begin(); 
+        gameObj != m_gameObjects.end(); gameObj++ ) {
     if ( *gameObj != gameObject && *gameObj != NULL ) {
       const sf::FloatRect &otherObj = ( *gameObj )->GetCollisionBox();
       if( mainObj.Intersects( otherObj ) ) {
         return *gameObj;
       }
     }
-    ++gameObj;
   }
 
   return NULL;
@@ -127,15 +120,14 @@ GameObject* GameObjectMap::DetectCollision( const GameObject *gameObject ) {
 
 
 GameObject* GameObjectMap::ObjectOnTile( Uint x, Uint y ) {
-  GameObjItr gameObj = m_gameObjects.begin();
-  while ( gameObj != m_gameObjects.end() ) {
+  for ( GameObjItr gameObj = m_gameObjects.begin(); 
+        gameObj != m_gameObjects.end(); gameObj++ ) {
     if ( *gameObj != NULL ) {
       if (( *gameObj )->GetTileX() == x &&
           ( *gameObj )->GetTileY() == y ) {
         return *gameObj;
       }
     }
-    ++gameObj;
   }
 
   return NULL;
@@ -143,14 +135,13 @@ GameObject* GameObjectMap::ObjectOnTile( Uint x, Uint y ) {
 
 
 GameObject* GameObjectMap::GetGameObject( const std::string &objectType ) {
-  GameObjItr gameObj = m_gameObjects.begin();
-  while( gameObj != m_gameObjects.end() ) {
+  for ( GameObjItr gameObj = m_gameObjects.begin(); 
+        gameObj != m_gameObjects.end(); gameObj++ ) {
     if ( *gameObj != NULL ) {
       if (( *gameObj )->GetType() == objectType ) {
         return *gameObj;
       }
     }
-    ++gameObj;
   }
   
   return NULL;

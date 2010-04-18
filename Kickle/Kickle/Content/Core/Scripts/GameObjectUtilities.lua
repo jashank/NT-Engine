@@ -10,11 +10,7 @@ RIGHT = 3
 ICE = 1
 WATER = 10
 
-function GetTileObjectFaces( GameObject )
-	local tileX = GameObject:GetTileX();
-	local tileY = GameObject:GetTileY();
-	local dir = GameObject:GetDir();
-
+local function GetTileInDir( tileX, tileY, dir )
 	if ( dir == UP ) then
 		tileY = tileY - 1
 	elseif ( dir == DOWN ) then
@@ -25,6 +21,36 @@ function GetTileObjectFaces( GameObject )
 		tileX = tileX + 1
 	end
 
-	return tileX, tileY;
+	return tileX, tileY
 end
 
+
+function GetTileObjectFaces( GameObject )
+	return GetTileInDir(
+          GameObject:GetTileX(),
+          GameObject:GetTileY(),
+          GameObject:GetDir()
+         )
+end
+
+
+function GetTileInDirection( GameObject, dir )
+	return GetTileInDir(
+          GameObject:GetTileX(),
+          GameObject:GetTileY(),
+          dir
+         )
+end
+
+
+function GetNextDir( dir )
+  if ( dir == UP ) then
+    return DOWN
+  elseif ( dir == DOWN ) then
+    return LEFT
+  elseif ( dir == LEFT ) then
+    return RIGHT
+  else
+    return UP
+  end
+end

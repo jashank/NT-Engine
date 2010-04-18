@@ -45,7 +45,7 @@ function KickleTable.AILogic( Kickle )
 		KickleTable.pillar = nil
 	end
 
-	if ( not Level.GetGameObject( "MoneyBag" ) ) then
+	if ( not Level.GetGameObject( "DreamBag" ) ) then
 		Level.NextLevel()
 	end
 end
@@ -151,7 +151,7 @@ function KickleTable.PerformAttack( Kickle )
 			KickleTable.state = KICKING
 			local kickleDir = Kickle:GetDir()
 			Kickle:SetAnimation( kickleDir + KickleTable.state );
-			objOnTile:GetTable().hasMoved = true
+			objOnTile:GetTable().moving = true
 			objOnTile:SetDir( kickleDir );
 			objOnTile:Move();
 

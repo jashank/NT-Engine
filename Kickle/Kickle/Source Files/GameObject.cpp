@@ -19,7 +19,7 @@ extern "C" {
 /************************************************
 Constant Members
 ************************************************/
-LevelState* GameObject::m_level = 0;
+LevelState* GameObject::m_level = NULL;
 
 /************************************************
 Public Members
@@ -237,7 +237,8 @@ bool GameObject::HasGridCollision() const {
 
 Uint GameObject::GetTileX() const {
   return (Uint)(this->GetPosition().x -
-                      Configuration::GetXPad()) /
+                      Configuration::GetXPad() + 
+                      Configuration::GetTileSize() / 2) /
                       Configuration::GetTileSize();
 }
 
@@ -246,7 +247,8 @@ Uint GameObject::GetTileY() const {
 return (Uint)( ( this->GetPosition().y +  
                         GetSubRect().GetHeight()  % 
                         Configuration::GetTileSize() ) - 
-                        Configuration::GetYPad() ) / 
+                        Configuration::GetYPad() + 
+                        Configuration::GetTileSize() / 2) / 
                         Configuration::GetTileSize();
 }
 

@@ -21,13 +21,13 @@ end
 
 function IceBreathTable.HandleCollision( IceBreath, Other )
 	if ( Other:GetType() == "Slime" ) then
-		Level.CreateGameObject(
-			"Content/Core/Objects/IceBlock.xml",
-			 Other:GetTileX(),
-			 Other:GetTileY()
-		);
-		Level.DestroyGameObject( Other )
-		Level.DestroyGameObject( IceBreath )
+    Level.CreateGameObject(
+      "Content/Core/Objects/IceBlock.xml",
+       Other:GetTileX(),
+       Other:GetTileY()
+    );
+    Level.DestroyGameObject( Other )
+    Level.DestroyGameObject( IceBreath )
 	end
 end
 

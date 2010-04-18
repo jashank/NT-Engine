@@ -5,10 +5,10 @@ require ("GameObjectUtilities")
 
 local IceBlockTable = {}
 
-IceBlockTable.hasMoved = false
+IceBlockTable.moving = false
 
 function IceBlockTable.AILogic( IceBlock )
-	if ( IceBlockTable.hasMoved ) then
+	if ( IceBlockTable.moving ) then
 		IceBlock:Move()
 
 		local facingX, facingY = GetTileObjectFaces( IceBlock )
