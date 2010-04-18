@@ -30,6 +30,9 @@ void WorldState::DestroyInstance() {
 // Loads the resources required by WorldState
 void WorldState::Init() {
   SetInit( true );
+  
+  LevelState::DestroyInstance();
+
   if ( !LoadStage( App::GetApp()->GetCurrentStage() ) ) {
     App::GetApp()->SetNextState( StageState::GetInstance() );
   }

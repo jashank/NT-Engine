@@ -100,6 +100,10 @@ class LevelState : public BaseState {
 
   // Allows Lua to set the tile at specified position
   static int LuaSetTile( lua_State *L );
+
+  // Iterates to the next level in the world state, to be used when a level
+  // finishes.
+  static int LuaNextLevel( lua_State *L );
   
  private:	
   static const luaL_Reg luaLevelFuncts[]; // Functions to register to Lua

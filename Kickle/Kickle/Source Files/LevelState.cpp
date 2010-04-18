@@ -7,7 +7,7 @@
 #include "GameObject.h"
 #include "Utilities.h"
 #include "TitleState.h"
-
+#include "WorldState.h"
 /************************************************
 Data Members
 ************************************************/
@@ -22,6 +22,7 @@ const luaL_Reg LevelState::luaLevelFuncts[] = {
   { "GetGameObjectOnTile", LuaGetGameObjectOnTile },
   { "GetTile", LuaGetTile },
   { "SetTile", LuaSetTile },
+  { "NextLevel", LuaNextLevel },
   { NULL, NULL }
 };
 
@@ -307,6 +308,10 @@ int LevelState::LuaSetTile( lua_State *L ) {
   return 0;
 }
   
+int LevelState::LuaNextLevel( lua_State *L ) {
+  App::GetApp()->SetNextState( WorldState::GetInstance() );
+  return 0;
+}
 
 /************************************************
 Private Methods

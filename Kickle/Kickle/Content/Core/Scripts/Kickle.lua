@@ -44,6 +44,10 @@ function KickleTable.AILogic( Kickle )
 		Level.DestroyGameObject( KickleTable.pillar )
 		KickleTable.pillar = nil
 	end
+
+	if ( not Level.GetGameObject( "MoneyBag" ) ) then
+		Level.NextLevel()
+	end
 end
 
 
