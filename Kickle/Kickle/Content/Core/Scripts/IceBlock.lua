@@ -14,7 +14,7 @@ function IceBlockTable.AILogic( IceBlock )
 		local facingX, facingY = GetTileObjectFaces( IceBlock )
 		if ( Level.GetTile( facingX, facingY ) == WATER ) then
 			Level.DestroyGameObject( IceBlock )
-			Level.SetTile( facingX, facingY, ICE, 0)
+			Level.SetTile( facingX, facingY, ICE, 0 )
 			Level.CreateGameObject("Content/Core/Objects/Slime.xml", 11, 8 )
 		end
 	end

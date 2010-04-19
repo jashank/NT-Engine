@@ -29,7 +29,7 @@ void Timer::Reset( float time, bool forward ) {
 }
 
 
-float Timer::GetElapsedTime() {
+float Timer::GetTime() {
   if ( m_forward ) {
     return m_startingTime + m_clock.GetElapsedTime() + m_offset;
   } else {

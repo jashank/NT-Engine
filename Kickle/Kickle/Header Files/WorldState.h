@@ -39,16 +39,20 @@ class WorldState : public BaseState{
 
   // Render WorldState's frame
   virtual void Render();
+  
+  // Adds to the WorldState's points
+  void AddPoints( int points );
 
  private:
   WorldState();
+  static int m_points;
   static WorldState *m_instance;
 
   TileMap m_tileMap;
 
-  int m_numLevels;
   int m_currentLevel;
   int m_nextLevel;
+  int m_numLevels;;
 
   std::vector< std::string > m_levelPaths;
 

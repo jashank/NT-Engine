@@ -125,10 +125,10 @@ class LevelState : public BaseState {
 
   CollisionMap m_collisionMap;
   GameObjectMap m_gameObjectMap;
-  lua_State *m_luaState;// Lua state for level
-	TileMap m_tileMap;
-  Timer m_timer; // Timer for the level
+  lua_State *m_luaState;
   SoundList m_soundList;
+	TileMap m_tileMap;
+  Timer m_timer;
 };
 
 #endif

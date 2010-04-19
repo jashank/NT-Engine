@@ -1,7 +1,5 @@
 #include "LevelState.h"
 
-#include <sstream>
-
 #include "App.h"
 #include "Configuration.h"
 #include "GameObject.h"
@@ -309,6 +307,8 @@ int LevelState::LuaSetTile( lua_State *L ) {
 }
   
 int LevelState::LuaNextLevel( lua_State *L ) {
+  WorldState::GetInstance()->AddPoints( 
+    (int) m_instance->m_timer.GetTime() * 10 );
   App::GetApp()->SetNextState( WorldState::GetInstance() );
   return 0;
 }

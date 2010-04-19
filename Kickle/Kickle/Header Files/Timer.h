@@ -24,8 +24,8 @@ class Timer {
   // Resets timer to the specified parameters. See Timer constructor.
   void Reset( float time, bool forward );
 
-  // Returns time elapsed (in seconds) since last reset
-  float GetElapsedTime();
+  // Returns time currently on timer
+  float GetTime();
 
   // Adds time onto the timer
   void AddTime( float time );

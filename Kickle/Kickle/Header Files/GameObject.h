@@ -108,7 +108,6 @@ class GameObject : public AnimSprite {
   // Corrects movement of object when it exceeds next grid location
   void CorrectMovement();
 
-
   static LevelState *m_level; // Level that GameObject is on
 
   bool m_moving; // If true; keep moving in m_direction

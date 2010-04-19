@@ -139,7 +139,12 @@ GameObject::GameObject(
 }
 
 
-GameObject::~GameObject() {}
+GameObject::~GameObject() {
+  lua_State *L = m_level->GetLuaState();
+  if ( L ) {
+    luaL_unref( m_level->GetLuaState(), LUA_REGISTRYINDEX, m_id );
+  }
+}
 
 
 void GameObject::UpdateCollision() {

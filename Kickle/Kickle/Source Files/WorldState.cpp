@@ -4,6 +4,16 @@
 #include "StageState.h"
 #include "LevelState.h"
 
+/******************************************
+Static Members
+******************************************/
+int WorldState::m_points = 0;
+
+
+/******************************************
+Public Methods
+******************************************/
+
 WorldState *WorldState::m_instance = 0;
 
 WorldState::WorldState()
@@ -74,6 +84,16 @@ void WorldState::Update() {
 // Render WorldState's frame
 void WorldState::Render() {
 }
+
+
+void WorldState::AddPoints( int points ) {
+  m_points += points;
+}
+
+
+/****************************************
+Private Methods
+****************************************/
 
 bool WorldState::LoadStage( std::string currentStage ) {
  TiXmlDocument doc ( currentStage.c_str() );
