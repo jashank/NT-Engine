@@ -21,7 +21,9 @@ TitleState::TitleState()
   : m_snowflakeBuffer( Configuration::GetScreenWidth()
                       -Configuration::GetTileSize() ),
     m_container( 0.0f, 0.0f, (float)Configuration::GetScreenWidth(),
-                 (float)Configuration::GetScreenHeight() ) {
+                (float)Configuration::GetScreenHeight() ),
+    m_frontalElements( 0.0f, 0.0f, (float)Configuration::GetScreenWidth(),
+                      (float)Configuration::GetScreenHeight() ) {
   CreateButtons();
 }
 
@@ -73,7 +75,8 @@ void TitleState::Init() {
 
   }
 
-  m_container.SetImage( "Content/Core/Sheets/titleBackground.png" );
+  m_container.SetImage( "Content/Core/Sheets/background.png" );
+  m_frontalElements.SetImage( "Content/Core/Sheets/frontalElements.png" );
 }
 
 
@@ -130,6 +133,8 @@ void TitleState::Render() {
   }
 
   App::GetApp()->Draw( m_play );
+
+  m_frontalElements.Render();
 }
 
 
@@ -148,7 +153,6 @@ bool TitleState::SetTitle( const std::string &filePath ) {
 
   m_font = new sf::Font();
   m_font->LoadFromFile( root->FirstChildElement( "font" )->Attribute( "path" ) );
-  m_container.SetImage( root->FirstChildElement( "splash" )->Attribute( "path" ) );
 
   return true;
 }

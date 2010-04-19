@@ -66,7 +66,9 @@ class TitleState : public BaseState {
   float m_snowflakesSpeed[50]; // Each flake has a speed.
   sf::Image m_snowflakeImage; // The snow flake image
 
-  Container m_container; // Main Container;
+  Container m_container; // Main Container / background
+  Container m_frontalElements; // Frontal elements.
+
   static const Uint m_numFlakes = 50; // Number of snow flakes to be generated
   Uint m_snowflakeBuffer; // Screen width - width of a snow flake.
 
