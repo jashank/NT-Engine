@@ -267,7 +267,7 @@
   </strip>
 
 
-  <strip name="up_dieing">
+  <strip name="up_dying">
     <looped>false</looped>
     <num_frames>8</num_frames>
     <individual_times>false</individual_times>
@@ -280,7 +280,7 @@
   </strip>
 
 
-  <strip name="down_dieing">
+  <strip name="down_dying">
     <looped>false</looped>
     <num_frames>8</num_frames>
     <individual_times>false</individual_times>
@@ -293,7 +293,7 @@
   </strip>
 
 
-  <strip name="left_dieing">
+  <strip name="left_dying">
     <looped>false</looped>
     <num_frames>8</num_frames>
     <individual_times>false</individual_times>
@@ -306,7 +306,7 @@
   </strip>
 
 
-  <strip name="right_dieing">
+  <strip name="right_dying">
     <looped>false</looped>
     <num_frames>8</num_frames>
     <individual_times>false</individual_times>

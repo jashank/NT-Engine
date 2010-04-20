@@ -12,7 +12,15 @@ function IceBlockTable.AILogic( IceBlock )
 		IceBlock:Move()
 
 		local facingX, facingY = GetTileObjectFaces( IceBlock )
-		if ( Level.GetTile( facingX, facingY ) == WATER ) then
+        tile = Level.GetTile( facingX, facingY );
+
+		if ( tile == Tiles.WATER  or
+             tile == Tiles.WATER_BOTTOM_LEFT or
+             tile == Tiles.WATER_BOTTOM_CENTER or
+             tile == Tiles.WATER_BOTTOM_RIGHT or
+             tile == Tiles.ICE_CLIFF_LEFT or
+             tile == Tiles.ICE_CLIFF_CENTER or
+             tile == Tiles.ICE_CLIFF_RIGHT ) then
 			Level.DestroyGameObject( IceBlock )
 			Level.SetTile( facingX, facingY, ICE, 0 )
 			Level.CreateGameObject("Content/Core/Objects/Slime.xml", 11, 8 )
