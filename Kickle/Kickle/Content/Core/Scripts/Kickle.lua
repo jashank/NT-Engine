@@ -25,6 +25,8 @@ end
 
 
 function KickleTable.AILogic( Kickle )
+    --Level.SetTile( 8, 8, Tiles.ICE_HOLE, 1 ); -- testing the new Tiles.ICE_HOLE feature
+
 	if( KickleTable.state ~= DYING ) then
 		Kickle:SetAnimation( Kickle:GetDir() + KickleTable.state )
 
@@ -84,7 +86,7 @@ function KickleTable.WalkUp( Kickle )
 		Kickle:SetDir( UP )
 		KickleTable.state = WALKING
 		Kickle:Move()
-		Kickle:SetAnimation( UP + KickleTable.state )
+		Kickle:SetAnimation( KickleAnimation.UP_WALKING )
 	end
 end
 
@@ -94,7 +96,7 @@ function KickleTable.WalkDown( Kickle )
 		Kickle:SetDir( DOWN )
 		KickleTable.state = WALKING
 		Kickle:Move()
-		Kickle:SetAnimation( DOWN + KickleTable.state )
+		Kickle:SetAnimation( KickleAnimation.DOWN_WALKING )
 	end
 end
 
@@ -104,7 +106,7 @@ function KickleTable.WalkLeft( Kickle )
 		Kickle:SetDir( LEFT )
 		KickleTable.state = WALKING
 		Kickle:Move()
-		Kickle:SetAnimation( LEFT + KickleTable.state )
+		Kickle:SetAnimation( KickleAnimation.LEFT_WALKING )
 	end
 end
 
@@ -114,7 +116,7 @@ function KickleTable.WalkRight( Kickle )
 		Kickle:SetDir( RIGHT )
 		KickleTable.state = WALKING
 		Kickle:Move()
-		Kickle:SetAnimation( RIGHT + KickleTable.state )
+		Kickle:SetAnimation( KickleAnimation.RIGHT_WALKING )
 	end
 end
 
@@ -134,7 +136,7 @@ function KickleTable.PerformPillar( Kickle )
 			if( objOnTile:GetType() == "Pillar" ) then
 				KickleTable.state = LOWER_PILLAR
 				KickleTable.pillar = objOnTile
-				KickleTable.pillar:SetAnimation( 1 )
+				KickleTable.pillar:SetAnimation( PillarAnimation.PILLAR_LOWER )
 			end
 		end
 	end
@@ -144,14 +146,14 @@ end
 -- it will set the direction of the iceblock.
 function KickleTable.PerformAttack( Kickle )
 	if ( KickleTable.state == STANDING ) then
-		local tileX, tileY = GetTileObjectFaces( Kickle )
-		local objOnTile = Level.GetGameObjectOnTile( tileX, tileY )
+		local tileX, tileY = GetTileObjectFaces( Kickle );
+		local objOnTile = Level.GetGameObjectOnTile( tileX, tileY );
+        local kickleDir = Kickle:GetDir();
 
 		if ( objOnTile and objOnTile:GetType() == "IceBlock" ) then
 			KickleTable.state = KICKING
-			local kickleDir = Kickle:GetDir()
-			Kickle:SetAnimation( kickleDir + KickleTable.state );
-			objOnTile:GetTable().moving = true
+			Kickle:SetAnimation( kickleDir + KickleAnimation.UP_KICKING );
+			objOnTile:GetTable().moving = true;
 			objOnTile:SetDir( kickleDir );
 			objOnTile:Move();
 
@@ -159,9 +161,8 @@ function KickleTable.PerformAttack( Kickle )
 				     not Level.TileHasGridObject( tileX, tileY ) )then
 			local iceBreath = Level.CreateGameObject(
 				"Content/Core/Objects/IceBreath.xml", tileX, tileY );
-			local iceBreathdir = Kickle:GetDir();
-			iceBreath:SetDir( iceBreathdir );
-			iceBreath:SetAnimation( iceBreathdir );
+			iceBreath:SetDir( kickleDir );
+			iceBreath:SetAnimation( kickleDir );
 		end
 	end
 end

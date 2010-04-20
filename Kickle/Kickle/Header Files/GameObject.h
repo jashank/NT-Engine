@@ -100,7 +100,10 @@ class GameObject : public AnimSprite {
   bool LoadCollisionData( const std::string &filepath );
 
 	// Initializes the lua script 
-  void InitLua();
+  void InitLua( const std::string &filepath );
+
+  // Sets up animation variables in the lua state
+  bool InitLuaAnimations( const std::string &filepath );
 
 	//Updates the movement of GameObject
   void MovementUpdate();
@@ -121,8 +124,6 @@ class GameObject : public AnimSprite {
   //Array of Key and string(lua script's function names) pairs
   KeyEntry* m_keyRegistry; 
   Uint m_numKeyEntries; //Number of KeyEntries in m_keyRegistry
-
-  std::string m_luaScript; // Filepath to the lua script
   std::string m_type; // What type of game object (slime, kickle, etc.)
 };
 

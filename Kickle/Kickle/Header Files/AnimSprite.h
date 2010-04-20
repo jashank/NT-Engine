@@ -1,4 +1,4 @@
-#ifndef ANIMSPITE_H
+#ifndef ANIMSPRITE_H
 #define ANIMSPRITE_H
 #include <SFML/Graphics.hpp>
 #include <string>

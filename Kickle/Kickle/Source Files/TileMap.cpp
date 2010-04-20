@@ -1,11 +1,15 @@
 #include "TileMap.h"
 
 #include <sstream>
+#include <string>
+#include <algorithm>
+#include <cctype>
 
 #include "App.h"
 #include "AnimData.h"
 #include "AnimSprite.h"
 #include "Configuration.h"
+#include "LevelState.h"
 
 /******************************
 Constructors and Destructors.
@@ -55,6 +59,42 @@ void TileMap::LoadTileAnims(
     m_tileSprites[i].SetAnimData( tileAnims );
     m_tileSprites[i].SetAnimation( i );
     m_tileSprites[i].Play();
+  }
+
+  lua_State* L = LevelState::GetInstance()->GetLuaState();
+  std::string tableName( "Tiles" );  
+  lua_getglobal( L, tableName.c_str() );
+  
+  //if the table(tableName) hasn't been created yet
+  if( lua_isnil( L, -1 ) ) {
+    TiXmlDocument doc ( anims.c_str() );
+    
+    if ( !doc.LoadFile() ) {
+      throw "Blahblahblah I am lazy.";
+    }
+    TiXmlHandle handleDoc( &doc ); //handle to the xml doc
+  
+    TiXmlElement* root = handleDoc.FirstChildElement( "anim_strips" ).Element();
+
+    lua_newtable( L ); //Create the lua table
+    int n = lua_gettop( L ); //save the table's index
+   
+    TiXmlElement* strip = root->FirstChildElement( "strip" );
+    Uint i = 0;
+    for( ; strip; ++i, strip = strip->NextSiblingElement( "strip" ) ) {
+        std::string animName( strip->Attribute( "name" ) );
+
+        std::transform( animName.begin(), animName.end(), 
+          animName.begin(), std::toupper );
+
+        lua_pushstring( L, animName.c_str() ); //push the key
+        lua_pushnumber( L, i ); //push the value
+        lua_rawset( L, n ); //add key/value to the table
+    }
+    
+    //Assign the new table we just made to 
+    //a lua variable called tableName
+    lua_setglobal( L, tableName.c_str() );
   }
 }
 

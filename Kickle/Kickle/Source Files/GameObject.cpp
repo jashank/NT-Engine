@@ -63,8 +63,6 @@ GameObject::GameObject( lua_State *L )
          LoadCollisionData( filepath ) ) ) {
     throw "Cannot load GameObject XML file";
   }
-
-  InitLua();
 }
 
 
@@ -82,8 +80,6 @@ GameObject::GameObject( const std::string &filepath )
          LoadCollisionData( filepath ) ) ) {
     throw "Cannot load GameObject XML file";
   }
-  
-  InitLua();
 }
 
 
@@ -134,8 +130,6 @@ GameObject::GameObject(
       throw "Cannot load GameObject XML file";
     }
   }
-
-  InitLua();
 }
 
 
@@ -391,11 +385,58 @@ int GameObject::LuaGetTable( lua_State *L ) {
 /************************************************
 Private Methods
 ************************************************/
-void GameObject::InitLua() {
-  luaL_dofile( m_level->GetLuaState(), m_luaScript.c_str() );
-  if ( lua_istable( m_level->GetLuaState(), -1 )) {
-    m_id = luaL_ref( m_level->GetLuaState(), LUA_REGISTRYINDEX );
+void GameObject::InitLua( const std::string &filepath ) {
+  lua_State* L = m_level->GetLuaState();
+  luaL_dofile( L, filepath.c_str() );
+  if ( lua_istable( L, -1 )) {
+    m_id = luaL_ref( L, LUA_REGISTRYINDEX );
   }
+}
+
+
+bool GameObject::InitLuaAnimations( const std::string &filepath ) {
+  lua_State* L = m_level->GetLuaState();
+  std::string tableName( m_type + "Animation" );  
+  lua_getglobal( L, tableName.c_str() );
+  
+  //if the table(tableName) hasn't been created yet
+  if( lua_isnil( L, -1 ) ) {
+    TiXmlDocument doc ( filepath.c_str() );
+    
+    if ( !doc.LoadFile() ) {
+      return false;
+    }
+    TiXmlHandle handleDoc( &doc ); //handle to the xml doc
+  
+    TiXmlElement* root = handleDoc.FirstChildElement( "anim_strips" ).Element();
+
+    lua_newtable( L ); //Create the lua table
+    int n = lua_gettop( L ); //save the table's index
+   
+    TiXmlElement* strip = root->FirstChildElement( "strip" );
+    Uint i = 0;
+    for( ; strip; ++i, strip = strip->NextSiblingElement( "strip" ) ) {
+        std::string animName( strip->Attribute( "name" ) );
+
+        std::transform( animName.begin(), animName.end(), 
+          animName.begin(), std::toupper );
+
+        lua_pushstring( L, animName.c_str() ); //push the key
+        lua_pushnumber( L, i ); //push the value
+        lua_rawset( L, n ); //add key/value to the table
+
+        //DEBUG_STATEMENT( 
+        //  std::cout << animName << " : " << i << std::endl;
+        //)
+    }
+    
+    //Assign the new table we just made to 
+    //a lua variable called tableName
+    lua_setglobal( L, tableName.c_str() );
+  }
+
+
+  return true;
 }
 
 
@@ -518,18 +559,21 @@ bool GameObject::LoadObjectData( const std::string &filepath ) {
   std::string spritePath( root->FirstChildElement( "sprite_path" )->
                             Attribute( "data" ) );
 
+  //Load in path to GameObject's lua script
+  std::string luaScript( root->FirstChildElement( "script_path" )->
+                            Attribute( "data" ) );
+  InitLua( luaScript );
+
+  // Load in type of object
+  m_type = root->FirstChildElement( "typename" )->Attribute( "data" );
+
   //Load in path to animation's xml
   TiXmlElement* tempElem = root->FirstChildElement( "animation_path" );
   if( tempElem != 0 ) {
     std::string animPath( tempElem->Attribute( "data" ) );
     LoadAnimData( animPath );
+    InitLuaAnimations( animPath );
   }
-
-  //Load in path to GameObject's lua script
-  m_luaScript = root->FirstChildElement( "script_path" )->Attribute( "data" );
-
-  // Load in type of object
-  m_type = root->FirstChildElement( "typename" )->Attribute( "data" );
 
   // Load in speed of object
   std::string speed( root->FirstChildElement( "speed" )->Attribute( "data" ) );
