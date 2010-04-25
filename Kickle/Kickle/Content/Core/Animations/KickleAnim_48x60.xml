@@ -108,7 +108,7 @@
 
 
   <strip name="up_kicking">
-    <looped>true</looped>
+    <looped>false</looped>
     <num_frames>8</num_frames>
     <individual_times>false</individual_times>
     <frame_times> 0.1 </frame_times>
@@ -121,7 +121,7 @@
 
 
   <strip name="down_kicking">
-    <looped>true</looped>
+    <looped>false</looped>
     <num_frames>8</num_frames>
     <individual_times>false</individual_times>
     <frame_times> 0.1 </frame_times>
@@ -134,7 +134,7 @@
 
 
   <strip name="left_kicking">
-    <looped>true</looped>
+    <looped>false</looped>
     <num_frames>8</num_frames>
     <individual_times>false</individual_times>
     <frame_times> 0.1 </frame_times>
@@ -147,7 +147,7 @@
 
 
   <strip name="right_kicking">
-    <looped>true</looped>
+    <looped>false</looped>
     <num_frames>8</num_frames>
     <individual_times>false</individual_times>
     <frame_times> 0.1 </frame_times>
@@ -267,7 +267,7 @@
   </strip>
 
 
-  <strip name="up_dying">
+  <strip name="up_dieing">
     <looped>false</looped>
     <num_frames>8</num_frames>
     <individual_times>false</individual_times>
@@ -280,7 +280,7 @@
   </strip>
 
 
-  <strip name="down_dying">
+  <strip name="down_dieing">
     <looped>false</looped>
     <num_frames>8</num_frames>
     <individual_times>false</individual_times>
@@ -293,7 +293,7 @@
   </strip>
 
 
-  <strip name="left_dying">
+  <strip name="left_dieing">
     <looped>false</looped>
     <num_frames>8</num_frames>
     <individual_times>false</individual_times>
@@ -306,7 +306,7 @@
   </strip>
 
 
-  <strip name="right_dying">
+  <strip name="right_dieing">
     <looped>false</looped>
     <num_frames>8</num_frames>
     <individual_times>false</individual_times>

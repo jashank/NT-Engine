@@ -12,11 +12,9 @@ const float StageState::OUTLINE_SIZE = 3.0f;
 const float StageState::MENU_BUFFER = 300.0f;
 
 StageState::StageState() 
- : m_listbox( BUFFER_SIZE, BUFFER_SIZE, 
-              (Configuration::GetScreenWidth() / 2) - 2*BUFFER_SIZE,
-              Configuration::GetScreenHeight() - 2*BUFFER_SIZE,
-              sf::Color( 20, 80, 200, 100 ), OUTLINE_SIZE, sf::Color::Blue,
-              sf::Color::Red, 50.0f ),
+ : m_listbox( 25.0f, 85.0f, 459.0f, 699.0f,
+              sf::Color( 0, 0, 0, 0 ), OUTLINE_SIZE, sf::Color( 0, 0, 0, 0 ),
+              sf::Color( 119, 255, 255, 100 ), 50.0f ),
    m_infoPanel( (Configuration::GetScreenWidth() + BUFFER_SIZE) / 2,
                 BUFFER_SIZE,
                 (Configuration::GetScreenWidth() / 2) - 2*BUFFER_SIZE,
@@ -24,10 +22,10 @@ StageState::StageState()
                 sf::Color( 20, 80, 200, 100 ), OUTLINE_SIZE, 
                 sf::Color::Blue ),
    m_container( 0.0f, 0.0f, (float)Configuration::GetScreenWidth(), 
-                (float)Configuration::GetScreenWidth() ),
+                (float)Configuration::GetScreenHeight() ),
    m_previousSelection( 0 ) {
 
-  LoadStages( "Content\\Core\\Stages\\StageRegistery.xml" );
+  LoadStages( "Content\\Core\\Stages\\StageRegistry.xml" );
 
   // Init the initial info panel images.
   if (  m_thumbnailPaths.size() > 0 ) {
@@ -133,7 +131,7 @@ bool StageState::LoadStages( std::string stageRegisteryPath ) {
     return false;
   }
 
-  TiXmlElement* root = doc.FirstChildElement( "stage_registery" );
+  TiXmlElement* root = doc.FirstChildElement( "stage_registry" );
 
   TiXmlElement* currentStage;
   std::string stageName;

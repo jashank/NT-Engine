@@ -24,7 +24,9 @@
     <input key="DOWN" repeat="true" delay="0.12" function="WalkDown"/>
     <input key="LEFT" repeat="true" delay="0.12" function="WalkLeft"/>
     <input key="RIGHT" repeat="true" delay="0.12" function="WalkRight"/>
+
     <input key="x" repeat="false" delay="0" function="PerformPillar"/>
     <input key="z" repeat="false" delay="0" function="PerformAttack" />
+    <input key="SPACE" repeat="false" delay="0" function="Suicide" />
   </input_list>
 </game_object>

@@ -45,17 +45,9 @@
 	</collision_layout>
 
 	<game_objects>
-		<entity data="Content\\Core\\Objects\\IceBlock.xml">
-			<instance x="6" y="8"/>
-			<instance x="7" y="8"/>
-			<instance x="8" y="8"/>
-			<instance x="6" y="10"/>
-			<instance x="7" y="10"/>
-			<instance x="8" y="10"/>
-		</entity>
 		<entity data="Content\\Core\\Objects\\Slime.xml">
-			<instance x="0" y="8" />
-			<instance x="14" y="8" />
+			<instance x="3" y="8" />
+			<instance x="11" y="8" />
 		</entity>
 		<entity data="Content\\Core\\Objects\\DreamBag.xml">
 			<instance x="6" y="2" />
@@ -63,7 +55,7 @@
 			<instance x="8" y="2" />
 		</entity>
 		<entity data="Content\\Core\\Objects\\Kickle.xml">
-			<instance x="7" y="9" />
+			<instance x="7" y="12" />
 		</entity>
 		<entity data="Content\\Core\\Objects\\SpawnPoint.xml">
 			<instance x="3" y="9" />

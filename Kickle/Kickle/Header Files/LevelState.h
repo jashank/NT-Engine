@@ -60,12 +60,6 @@ class LevelState : public BaseState {
   bool TileHasGridObject( const sf::Vector2f &position );
   bool TileHasGridObject( Uint x, Uint y );
 
-  // Returns the id of the tile at x, y, else -1
-  int GetTile( int x, int y ) const;
-
-  // Sets the tile at x, y to that tile with that id
-  void SetTile ( int x, int y, int tileId, int collisionId );
-
   // Returns lua state of level
   lua_State* GetLuaState();
   
@@ -95,7 +89,8 @@ class LevelState : public BaseState {
   // Allows Lua to grab a GameObject from a tile.
   static int LuaGetGameObjectOnTile( lua_State *L );
 
-  // Allows Lua to access id of tile at specified position
+  // Allows Lua to access type, name, and id (in that order)
+  // of tile at specified position
   static int LuaGetTile( lua_State *L );
 
   // Allows Lua to set the tile at specified position

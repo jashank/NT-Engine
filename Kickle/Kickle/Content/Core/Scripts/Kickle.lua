@@ -2,43 +2,36 @@ package.path = package.path .. ";Content/Core/Scripts/?.lua"
 require ("GameObjectUtilities")
 
 -- These values are determined by the layout of Kickle's animation xml file
-
+local STANDING = 0
+local WALKING = 4
+local KICKING = 8
+local RAISE_PILLAR = 12
+local LOWER_PILLAR = 16
+local DYING = 20
 
 --Kickle's Behavior Table
+
 local KickleTable = {}
 
-KickleTable.state = 0 -- Current state kickle is in
-KickleTable.pillar = nil
+KickleTable.state = STANDING --Current state kickle is in
 
 function KickleTable.HandleCollision( Kickle, Other )
 	if ( Other:GetType() == "Slime" ) then
-		KickleTable.state = KickleAnimation.UP_DYING
+		KickleTable.state = DYING
 		Kickle:SetAnimation( Kickle:GetDir() + KickleTable.state )
 	end
 end
 
 
 function KickleTable.AILogic( Kickle )
+  if ( KickleTable.state == WALKING ) then
+    KickleTable.state = STANDING
+    Kickle:SetAnimation( Kickle:GetDir() + KickleTable.state )
 
-	if( KickleTable.state ~= KickleAnimation.UP_DYING ) then
-		Kickle:SetAnimation( Kickle:GetDir() + KickleTable.state )
-
-		if( KickleTable.state ~= KickleAnimation.UP_RAISE_PILLAR  and
-			  KickleTable.state ~= KickleAnimation.UP_LOWER_PILLAR ) then
-			KickleTable.state = KickleAnimation.UP_STANDING
-		end
-
-		if (( KickleTable.state == KickleAnimation.UP_RAISE_PILLAR or
-			    KickleTable.state == KickleAnimation.UP_LOWER_PILLAR ) and not
-			    Kickle:IsAnimating() ) then
-			 KickleTable.state = KickleAnimation.UP_STANDING
-		end
-	end
-
-	if( KickleTable.pillar and not KickleTable.pillar:IsAnimating() ) then
-		Level.DestroyGameObject( KickleTable.pillar )
-		KickleTable.pillar = nil
-	end
+  elseif ( KickleTable.state ~= DYING and not Kickle:IsAnimating() ) then
+    KickleTable.state = STANDING
+    Kickle:SetAnimation( Kickle:GetDir() + KickleTable.state )
+  end
 
 	if ( not Level.GetGameObject( "DreamBag" ) ) then
 		Level.NextLevel()
@@ -47,115 +40,128 @@ end
 
 
 function KickleTable.FaceUp( Kickle )
-	if( KickleTable.state == KickleAnimation.UP_STANDING ) then
+	if ( KickleTable.state == STANDING ) then
 		Kickle:SetDir( UP )
+    Kickle:SetAnimation( UP + KickleTable.state )
 	end
 end
 
 
 function KickleTable.FaceDown( Kickle )
-	if( KickleTable.state == KickleAnimation.UP_STANDING ) then
+	if ( KickleTable.state == STANDING ) then
 		Kickle:SetDir( DOWN )
+    Kickle:SetAnimation( DOWN + KickleTable.state )
 	end
 end
 
 
 function KickleTable.FaceLeft( Kickle )
-	if( KickleTable.state == KickleAnimation.UP_STANDING ) then
+	if ( KickleTable.state == STANDING ) then
 		Kickle:SetDir( LEFT )
+    Kickle:SetAnimation( LEFT + KickleTable.state )
 	end
 end
 
 
 function KickleTable.FaceRight( Kickle )
-	if( KickleTable.state == KickleAnimation.UP_STANDING ) then
+	if ( KickleTable.state == STANDING ) then
 		Kickle:SetDir( RIGHT )
+    Kickle:SetAnimation( RIGHT + KickleTable.state )
 	end
 end
 
 
 function KickleTable.WalkUp( Kickle )
-	if( KickleTable.state == KickleAnimation.UP_STANDING ) then
+	if ( KickleTable.state == STANDING ) then
 		Kickle:SetDir( UP )
-		KickleTable.state = KickleAnimation.UP_WALKING
+		KickleTable.state = WALKING
 		Kickle:Move()
-		Kickle:SetAnimation( KickleTable.state )
+		Kickle:SetAnimation( UP + KickleTable.state )
 	end
 end
 
 
 function KickleTable.WalkDown( Kickle )
-	if( KickleTable.state == KickleAnimation.UP_STANDING ) then
+	if ( KickleTable.state == STANDING ) then
 		Kickle:SetDir( DOWN )
-		KickleTable.state = KickleAnimation.DOWN_WALKING
+		KickleTable.state = WALKING
 		Kickle:Move()
-		Kickle:SetAnimation( KickleTable.state )
+		Kickle:SetAnimation( DOWN + KickleTable.state )
 	end
 end
 
 
 function KickleTable.WalkLeft( Kickle )
-	if( KickleTable.state == KickleAnimation.UP_STANDING ) then
+	if ( KickleTable.state == STANDING ) then
 		Kickle:SetDir( LEFT )
-		KickleTable.state = KickleAnimation.LEFT_WALKING
+		KickleTable.state = WALKING
 		Kickle:Move()
-		Kickle:SetAnimation( KickleTable.state )
+		Kickle:SetAnimation( LEFT + KickleTable.state )
 	end
 end
 
 
 function KickleTable.WalkRight( Kickle )
-	if( KickleTable.state == KickleAnimation.UP_STANDING ) then
+	if ( KickleTable.state == STANDING ) then
 		Kickle:SetDir( RIGHT )
-		KickleTable.state = KickleAnimation.RIGHT_WALKING
+		KickleTable.state = WALKING
 		Kickle:Move()
-		Kickle:SetAnimation( KickleTable.state )
+		Kickle:SetAnimation( RIGHT + KickleTable.state )
 	end
 end
 
 
+function KickleTable.Suicide( Kickle )
+  if ( KickleTable.state ~= DYING ) then
+    KickleTable.state = DYING
+    Kickle:SetAnimation( Kickle:GetDir() + KickleTable.state )
+  end
+end
+
+
 function KickleTable.PerformPillar( Kickle )
-	if( KickleTable.state == KickleAnimation.UP_STANDING ) then
+	if( KickleTable.state == STANDING ) then
 		local tileX, tileY = GetTileObjectFaces( Kickle )
 
 		if ( not Level.TileIsSolid( tileX, tileY ) and
 			   not Level.TileHasGridObject( tileX, tileY ) ) then
-			KickleTable.state = KickleAnimation.UP_RAISE_PILLAR
-			Level.CreateGameObject(
+			KickleTable.state = RAISE_PILLAR
+      Kickle:SetAnimation( Kickle:GetDir() + KickleTable.state )
+			local pillar = Level.CreateGameObject(
 				"Content/Core/Objects/Pillar.xml", tileX, tileY )
 
 		elseif ( Level.TileHasGridObject( tileX, tileY ) ) then
 			local objOnTile = Level.GetGameObjectOnTile( tileX, tileY )
 			if( objOnTile:GetType() == "Pillar" ) then
-				KickleTable.state = KickleAnimation.UP_LOWER_PILLAR
-				KickleTable.pillar = objOnTile
-				KickleTable.pillar:SetAnimation( PillarAnimation.PILLAR_LOWER )
+				KickleTable.state = LOWER_PILLAR
+        Kickle:SetAnimation( Kickle:GetDir() + KickleTable.state )
+        objOnTile:GetTable().lower = true
+        objOnTile:SetAnimation( 1 )
 			end
 		end
 	end
 end
 
--- Spawns an icebreath object if there is not an iceblock infront of it. Else
--- it will set the direction of the iceblock.
+
 function KickleTable.PerformAttack( Kickle )
-	if ( KickleTable.state == KickleAnimation.UP_STANDING ) then
-		local tileX, tileY = GetTileObjectFaces( Kickle );
-		local objOnTile = Level.GetGameObjectOnTile( tileX, tileY );
-        local kickleDir = Kickle:GetDir();
+	if ( KickleTable.state == STANDING ) then
+		local tileX, tileY = GetTileObjectFaces( Kickle )
+		local objOnTile = Level.GetGameObjectOnTile( tileX, tileY )
 
 		if ( objOnTile and objOnTile:GetType() == "IceBlock" ) then
-			KickleTable.state = KickleAnimation.UP_KICKING
+			KickleTable.state = KICKING
+			local kickleDir = Kickle:GetDir()
 			Kickle:SetAnimation( kickleDir + KickleTable.state );
-			objOnTile:GetTable().moving = true;
+			objOnTile:GetTable().moving = true
 			objOnTile:SetDir( kickleDir );
-			objOnTile:Move();
 
 		elseif ( not Level.TileIsSolid( tileX, tileY ) and
 				     not Level.TileHasGridObject( tileX, tileY ) )then
 			local iceBreath = Level.CreateGameObject(
 				"Content/Core/Objects/IceBreath.xml", tileX, tileY );
-			iceBreath:SetDir( kickleDir );
-			iceBreath:SetAnimation( kickleDir );
+			local iceBreathdir = Kickle:GetDir();
+			iceBreath:SetDir( iceBreathdir );
+			iceBreath:SetAnimation( iceBreathdir );
 		end
 	end
 end

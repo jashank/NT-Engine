@@ -2,5 +2,5 @@
 
 <theme>
   <font path="Content/Core/Fonts/MICKEY.TTF" />
-  <splash path="Content/Core/Sheets/background.png" />
+  <splash path="Content/Core/Sheets/stage_background.png" />
 </theme>

@@ -23,30 +23,30 @@ function SlimeTable.AILogic( Slime )
 		local distanceX = math.abs( SlimeX - KickleX )
 		local distanceY = math.abs( SlimeY - KickleY )
 
-		local dir = SlimeAnimation.UP_WALKING;
+		local dir = UP;
 
 		if ( distanceX > distanceY ) then
 			if ( SlimeX < KickleX ) then
-				dir = SlimeAnimation.RIGHT_WALKING
+				dir = RIGHT
 			elseif ( SlimeX > KickleX ) then
-				dir = SlimeAnimation.LEFT_WALKING
+				dir = LEFT
 			else
 				dir = math.random( LEFT, RIGHT )
 			end
 		else
 			if ( SlimeY < KickleY ) then
-				dir = SlimeAnimation.DOWN_WALKING
+				dir = DOWN
 			elseif ( SlimeY > KickleY ) then
-				dir = SlimeAnimation.UP_WALKING
+				dir = UP
 			else
-				dir = math.random( SlimeAnimation.UP_WALKING, SlimeAnimation.DOWN_WALKING )
+				dir = math.random( UP, DOWN )
 			end
 		end
 
 		-- Slime has been on same tile for 2 updates
 		if ( SlimeTable.lastTileX == SlimeX and
 				 SlimeTable.lastTileY == SlimeY ) then
-			dir = math.random( SlimeAnimation.UP_WALKING, SlimeAnimation.DOWN_WALKING )
+			dir = math.random( UP, RIGHT )
 		end
 
 		SlimeTable.lastTileX = SlimeX

@@ -75,7 +75,7 @@ void TitleState::Init() {
 
   }
 
-  m_container.SetImage( "Content/Core/Sheets/background.png" );
+  m_container.SetImage( "Content/Core/Sheets/title_background.png" );
   m_frontalElements.SetImage( "Content/Core/Sheets/frontalElements.png" );
 }
 

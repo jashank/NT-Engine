@@ -6,10 +6,6 @@ DOWN = 1
 LEFT = 2
 RIGHT = 3
 
--- Tile constants for setting tiles
-ICE = 1
-WATER = 10
-
 local function GetTileInDir( tileX, tileY, dir )
 	if ( dir == UP ) then
 		tileY = tileY - 1

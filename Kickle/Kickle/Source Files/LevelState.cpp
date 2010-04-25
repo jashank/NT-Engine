@@ -146,17 +146,6 @@ bool LevelState::TileHasGridObject( Uint x, Uint y ) {
 }
 
 
-int LevelState::GetTile( int x, int y ) const {
-  return m_tileMap.GetTile( x, y );
-}
-
-
-void LevelState::SetTile (int x, int y, int tileId, int collisionId ) {
-  m_tileMap.SetTile( x, y, tileId );
-  m_collisionMap.SetCollision( x, y, collisionId );
-}
-
-
 lua_State* LevelState::GetLuaState() {
   return m_luaState;
 }
@@ -275,9 +264,11 @@ int LevelState::LuaGetTile( lua_State *L ) {
   }
   int tileY = lua_tointeger( L, -1 );
 
-  lua_pushinteger( L, m_instance->GetTile( tileX, tileY ));
-
-  return 1;
+  TileMap::tileInfo tile = m_instance->m_tileMap.GetTile( tileX, tileY );
+  lua_pushstring( L, std::tr1::get<0>( tile ).c_str() );
+  lua_pushstring( L, std::tr1::get<1>( tile ).c_str() );
+  lua_pushinteger( L, std::tr1::get<2>( tile ));
+  return 3;
 }
 
 
@@ -292,17 +283,18 @@ int LevelState::LuaSetTile( lua_State *L ) {
   }
   int tileY = lua_tointeger( L, -3 );
   
-  if ( !lua_isnumber( L, -2 ) ) {
-    return luaL_error( L, "Invalid tileID for SetTile." );
+  if ( !lua_isstring( L, -2 ) ) {
+    return luaL_error( L, "Invalid tileName for SetTile." );
   }
-  int tileID = lua_tointeger( L, -2 );
+  std::string tileName = lua_tostring( L, -2 );
 
   if ( !lua_isnumber( L, -1 ) ) {
     return luaL_error( L, "Invalid collisionID for SetTile." );
   }
   int collisionID = lua_tointeger( L, -1 );
 
-  m_instance->SetTile( tileX, tileY, tileID, collisionID );
+  m_instance->m_tileMap.SetTile( tileX, tileY, tileName );
+  m_instance->m_collisionMap.SetCollision( tileX, tileY, collisionID );
   return 0;
 }
   

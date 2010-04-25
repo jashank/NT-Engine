@@ -1,19 +1,25 @@
 #include "TileMap.h"
 
+#include <cstdlib>
 #include <sstream>
-#include <string>
-#include <algorithm>
-#include <cctype>
+
+#include <utility>
 
 #include "App.h"
 #include "AnimData.h"
 #include "AnimSprite.h"
 #include "Configuration.h"
-#include "LevelState.h"
+
+/*****************************
+Constants
+*****************************/
+const TileMap::tileInfo TileMap::NULL_TILE_INFO = 
+  std::tr1::make_tuple( "", "", -1 );
 
 /******************************
 Constructors and Destructors.
 ******************************/
+
 TileMap::TileMap()
  : m_tileSprites(0),
    m_numTiles(0) {
@@ -24,25 +30,11 @@ TileMap::~TileMap() {
   SAFEDELETEA( m_tileSprites );
 }
 
-/**********************************************
-Init()
-- Called by the constructor and initializes the
-	tile map.
-***********************************************/
-void TileMap::Init() {
-  // Set the intial layout to null.
-	for ( int i = 0; i < MAP_SIZE; i++ ) {
-		for ( int j = 0; j < MAP_SIZE; j++ ) {
-			 m_layout[i][j] = NULL_TILE;
-		}
-	}
-}
 
-/*********************************************
-LoadTileAnims()
-- Loads the tilesheet
-- Loads the tile animations from an xml file
-**********************************************/
+/***************************************
+Public Methods
+***************************************/
+
 void TileMap::LoadTileAnims( 
   const std::string& tileSheet,
   const std::string &anims ) {
@@ -54,107 +46,60 @@ void TileMap::LoadTileAnims(
   m_numTiles = tileAnims.GetNumAnims();
   m_tileSprites = new AnimSprite[m_numTiles];
   
-  for( Uint i = 0; i < m_numTiles; ++i ) {
+  for ( Uint i = 0; i < m_numTiles; ++i ) {
     m_tileSprites[i].SetImage( sheet );
     m_tileSprites[i].SetAnimData( tileAnims );
     m_tileSprites[i].SetAnimation( i );
     m_tileSprites[i].Play();
   }
 
-  lua_State* L = LevelState::GetInstance()->GetLuaState();
-  std::string tableName( "Tiles" );  
-  lua_getglobal( L, tableName.c_str() );
-  
-  //if the table(tableName) hasn't been created yet
-  if( lua_isnil( L, -1 ) ) {
-    TiXmlDocument doc ( anims.c_str() );
-    
-    if ( !doc.LoadFile() ) {
-      throw "Blahblahblah I am lazy.";
-    }
-    TiXmlHandle handleDoc( &doc ); //handle to the xml doc
-  
-    TiXmlElement* root = handleDoc.FirstChildElement( "anim_strips" ).Element();
-
-    lua_newtable( L ); //Create the lua table
-    int n = lua_gettop( L ); //save the table's index
-   
-    TiXmlElement* strip = root->FirstChildElement( "strip" );
-    Uint i = 0;
-    for( ; strip; ++i, strip = strip->NextSiblingElement( "strip" ) ) {
-        std::string animName( strip->Attribute( "name" ) );
-
-        std::transform( animName.begin(), animName.end(), 
-          animName.begin(), std::toupper );
-
-        lua_pushstring( L, animName.c_str() ); //push the key
-        lua_pushnumber( L, i ); //push the value
-        lua_rawset( L, n ); //add key/value to the table
-    }
-    
-    //Assign the new table we just made to 
-    //a lua variable called tableName
-    lua_setglobal( L, tableName.c_str() );
+  TiXmlDocument doc( anims.c_str() );
+  if ( !doc.LoadFile() ) {
+    throw "Tile animation file could not load.";
   }
+  TiXmlHandle handleDoc( &doc );
+
+  TiXmlElement* root = handleDoc.FirstChildElement( "anim_strips" ).Element();
+  TiXmlElement* strip = root->FirstChildElement( "strip" );
+
+  do {
+    std::string type( strip->Attribute( "type" ));
+    std::string name( strip->Attribute( "name" ));
+    int id = atoi( strip->Attribute( "id" ));
+    tileInfo tile( type, name, id );
+
+    m_tileDataName.insert( 
+      std::pair<std::string, tileInfo>( name, tile ));
+    m_tileDataId.insert(
+      std::pair<int, tileInfo>( id, tile ));
+  }
+  while ( strip = strip->NextSiblingElement( "strip" ));
 }
 
-/***********************************************
-Render()
-- Called by the Level class and renders the map
-************************************************/
+
 void TileMap::Render() {
   static App* app = App::GetApp();
 
-
-  //Updates animated tiles
   for( Uint i = 0; i < m_numTiles; ++i ) {
     m_tileSprites[i].Update();
   }
 
-	/*
-	The current tile refers to the integer identifier that specifies
-	which 48x48 tile on the 720x720 sprite sheet is selected.
-	*/
 	int tile = 0;
   static float x, y = 0.0f;
 	for ( int i = 0; i < MAP_SIZE; i++ ) {
 		for ( int j = 0; j < MAP_SIZE; j++ ) {
 			tile = m_layout[i][j]; 
 			if (tile != NULL_TILE) {
-				/*
-				Given the layouts current tile determines which tile it is
-				refering to in the level sprite sheet. Note this relies on
-				the properties of integer division.
-				*/
-
-				//m_tileSprites[tile].SetSubRect(
-				//	sf::IntRect((tile%MAP_SIZE)*TILE_SIZE, 
-				//	(tile/MAP_SIZE)*TILE_SIZE, 
-				//	((tile%MAP_SIZE)*TILE_SIZE+TILE_SIZE), 
-				//	((tile/MAP_SIZE)*TILE_SIZE+TILE_SIZE)));
-				
-				/*
-				The sprite is then placed on the desired location on the map. Note the
-				inverse of the J and I so that the map reads correctly.
-				*/
         x = (float)j * TILE_SIZE + Configuration::GetXPad();
         y = (float)i * TILE_SIZE + Configuration::GetYPad();
         m_tileSprites[tile].SetPosition( x, y );
-
-				/*
-				Once we find the sprites sub rect on the level sprite sheet and
-				have its position to be placed we draw it to the screen.
-				*/
 				app->Draw( m_tileSprites[tile] );
 			}
 		}
 	}
 }
 
-	/************************************************
-	SetTileLayout()
-	- Sets the layout of the tiles in the map
-	*************************************************/
+
 void TileMap::SetTileLayout( TiXmlElement* root ) {
   Uint mapSize = Configuration::GetMapSize();
 
@@ -184,26 +129,31 @@ void TileMap::SetTileLayout( TiXmlElement* root ) {
 
 }
 
-/************************************************************
-SetTile()
-- Changes the value of the tile sheet to that value if it is 
- valid else -1.
-************************************************************/
-void TileMap::SetTile( int x, int y, int tileId ) {
-  if ( x < MAP_SIZE && x >= 0 && y < MAP_SIZE && y >= 0) {
-    m_layout[y][x] = tileId;
-  }
 
+void TileMap::SetTile( int x, int y, const std::string &tileName ) {
+  m_layout[y][x] = std::tr1::get<2>( m_tileDataName[tileName] );
 }
 
-/**********************************************
-GetTile()
-- Returns the id of the tile at that location.
-**********************************************/
-int TileMap::GetTile( int x, int y ) const {
-  if ( x < MAP_SIZE && x >= 0 && y < MAP_SIZE && y >= 0) {
-    return m_layout[y][x];
+
+const TileMap::tileInfo& TileMap::GetTile( int x, int y ) {
+  if ( x < MAP_SIZE && x >= 0 && y < MAP_SIZE && y >= 0 ) {
+    int id = m_layout[y][x];
+    return m_tileDataId[id];
   } else {
-    return NULL_TILE;
+    return NULL_TILE_INFO;
   }
+}
+
+
+/*****************************************
+Private Methods
+*****************************************/
+
+void TileMap::Init() {
+  // Set the intial layout to null.
+	for ( int i = 0; i < MAP_SIZE; i++ ) {
+		for ( int j = 0; j < MAP_SIZE; j++ ) {
+			 m_layout[i][j] = NULL_TILE;
+		}
+	}
 }
