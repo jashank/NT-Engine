@@ -16,11 +16,9 @@ StageState::StageState()
               sf::Color( 0, 0, 0, 0 ), OUTLINE_SIZE, sf::Color( 0, 0, 0, 0 ),
               sf::Color( 119, 255, 255, 100 ), 50.0f ),
    m_infoPanel( (Configuration::GetScreenWidth() + BUFFER_SIZE) / 2,
-                BUFFER_SIZE,
+                2*BUFFER_SIZE,
                 (Configuration::GetScreenWidth() / 2) - 2*BUFFER_SIZE,
-                Configuration::GetScreenHeight() - MENU_BUFFER, 
-                sf::Color( 20, 80, 200, 100 ), OUTLINE_SIZE, 
-                sf::Color::Blue ),
+                Configuration::GetScreenHeight() - MENU_BUFFER ),
    m_container( 0.0f, 0.0f, (float)Configuration::GetScreenWidth(), 
                 (float)Configuration::GetScreenHeight() ),
    m_previousSelection( 0 ) {
