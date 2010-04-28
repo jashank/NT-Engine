@@ -111,7 +111,7 @@
     <looped>false</looped>
     <num_frames>8</num_frames>
     <individual_times>false</individual_times>
-    <frame_times> 0.1 </frame_times>
+    <frame_times> 0.05 </frame_times>
 
     <x_pos>0</x_pos>
     <y_pos>480</y_pos>
@@ -124,7 +124,7 @@
     <looped>false</looped>
     <num_frames>8</num_frames>
     <individual_times>false</individual_times>
-    <frame_times> 0.1 </frame_times>
+    <frame_times> 0.05 </frame_times>
 
     <x_pos>0</x_pos>
     <y_pos>540</y_pos>
@@ -137,7 +137,7 @@
     <looped>false</looped>
     <num_frames>8</num_frames>
     <individual_times>false</individual_times>
-    <frame_times> 0.1 </frame_times>
+    <frame_times> 0.05 </frame_times>
 
     <x_pos>0</x_pos>
     <y_pos>600</y_pos>
@@ -150,7 +150,7 @@
     <looped>false</looped>
     <num_frames>8</num_frames>
     <individual_times>false</individual_times>
-    <frame_times> 0.1 </frame_times>
+    <frame_times> 0.05 </frame_times>
 
     <x_pos>0</x_pos>
     <y_pos>660</y_pos>
@@ -163,7 +163,7 @@
     <looped>false</looped>
     <num_frames>8</num_frames>
     <individual_times>false</individual_times>
-    <frame_times> 0.1 </frame_times>
+    <frame_times> 0.05 </frame_times>
 
     <x_pos>0</x_pos>
     <y_pos>720</y_pos>
@@ -176,7 +176,7 @@
     <looped>false</looped>
     <num_frames>8</num_frames>
     <individual_times>false</individual_times>
-    <frame_times> 0.1 </frame_times>
+    <frame_times> 0.05 </frame_times>
 
     <x_pos>0</x_pos>
     <y_pos>780</y_pos>
@@ -189,7 +189,7 @@
     <looped>false</looped>
     <num_frames>8</num_frames>
     <individual_times>false</individual_times>
-    <frame_times> 0.1 </frame_times>
+    <frame_times> 0.05 </frame_times>
 
     <x_pos>0</x_pos>
     <y_pos>840</y_pos>
@@ -202,7 +202,7 @@
     <looped>false</looped>
     <num_frames>8</num_frames>
     <individual_times>false</individual_times>
-    <frame_times> 0.1 </frame_times>
+    <frame_times> 0.05 </frame_times>
 
     <x_pos>0</x_pos>
     <y_pos>900</y_pos>
@@ -216,7 +216,7 @@
     <playback>backward</playback>
     <num_frames>8</num_frames>
     <individual_times>false</individual_times>
-    <frame_times> 0.1 </frame_times>
+    <frame_times> 0.05 </frame_times>
 
     <x_pos>0</x_pos>
     <y_pos>720</y_pos>
@@ -230,7 +230,7 @@
     <playback>backward</playback>
     <num_frames>8</num_frames>
     <individual_times>false</individual_times>
-    <frame_times> 0.1 </frame_times>
+    <frame_times> 0.05 </frame_times>
 
     <x_pos>0</x_pos>
     <y_pos>780</y_pos>
@@ -244,7 +244,7 @@
     <playback>backward</playback>
     <num_frames>8</num_frames>
     <individual_times>false</individual_times>
-    <frame_times> 0.1 </frame_times>
+    <frame_times> 0.05 </frame_times>
 
     <x_pos>0</x_pos>
     <y_pos>840</y_pos>
@@ -258,7 +258,7 @@
     <playback>backward</playback>
     <num_frames>8</num_frames>
     <individual_times>false</individual_times>
-    <frame_times> 0.1 </frame_times>
+    <frame_times> 0.05 </frame_times>
 
     <x_pos>0</x_pos>
     <y_pos>900</y_pos>
@@ -267,7 +267,7 @@
   </strip>
 
 
-  <strip name="up_dieing">
+  <strip name="up_dying">
     <looped>false</looped>
     <num_frames>8</num_frames>
     <individual_times>false</individual_times>
@@ -280,7 +280,7 @@
   </strip>
 
 
-  <strip name="down_dieing">
+  <strip name="down_dying">
     <looped>false</looped>
     <num_frames>8</num_frames>
     <individual_times>false</individual_times>
@@ -293,7 +293,7 @@
   </strip>
 
 
-  <strip name="left_dieing">
+  <strip name="left_dying">
     <looped>false</looped>
     <num_frames>8</num_frames>
     <individual_times>false</individual_times>
@@ -306,7 +306,7 @@
   </strip>
 
 
-  <strip name="right_dieing">
+  <strip name="right_dying">
     <looped>false</looped>
     <num_frames>8</num_frames>
     <individual_times>false</individual_times>

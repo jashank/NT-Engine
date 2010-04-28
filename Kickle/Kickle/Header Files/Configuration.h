@@ -1,7 +1,6 @@
 #ifndef CONFIGURATION_H
 #define CONFIGURATION_H
 
-#include "BasicTypeDefs.h"
 
 class Configuration {
  public:
@@ -11,40 +10,40 @@ class Configuration {
   // Loads the configuration data.
   static void Load();
 
-  static void SetScreenWidth( Uint screenWidth );
-  static Uint GetScreenWidth();
+  static void SetScreenWidth( unsigned int screenWidth );
+  static unsigned int GetScreenWidth();
 
-  static void SetScreenHeight( Uint screenHeight );
-  static Uint GetScreenHeight();
+  static void SetScreenHeight( unsigned int screenHeight );
+  static unsigned int GetScreenHeight();
 
-  static void SetFPS( Uint FPS );
-  static Uint GetFPS();
+  static void SetFPS( unsigned int FPS );
+  static unsigned int GetFPS();
 
-  static void SetMapSize( Uint mapSize );
-  static Uint GetMapSize();
+  static void SetMapSize( unsigned int mapSize );
+  static unsigned int GetMapSize();
 
-  static void SetTileSize( Uint tileSize );
-  static Uint GetTileSize();
+  static void SetTileSize( unsigned int tileSize );
+  static unsigned int GetTileSize();
 
-  static void SetXPad( Uint xPad );
-  static Uint GetXPad();
+  static void SetXPad( unsigned int xPad );
+  static unsigned int GetXPad();
 
-  static void SetYPad( Uint yPad );
-  static Uint GetYPad();
+  static void SetYPad( unsigned int yPad );
+  static unsigned int GetYPad();
 
   // Returns MAP_SIZE*TILE_SIZE
-  static Uint GetMapPixelSize();
+  static unsigned int GetMapPixelSize();
 
-  static bool IsTileValid( Uint x, Uint y );
+  static bool IsTileValid( unsigned int x, unsigned int y );
 
 private:
-  static Uint m_screenWidth;
-  static Uint m_screenHeight;
-  static Uint m_FPS;
-  static Uint m_mapSize;
-  static Uint m_tileSize;
-  static Uint m_xPad;
-  static Uint m_yPad;
+  static unsigned int m_screenWidth;
+  static unsigned int m_screenHeight;
+  static unsigned int m_FPS;
+  static unsigned int m_mapSize;
+  static unsigned int m_tileSize;
+  static unsigned int m_xPad;
+  static unsigned int m_yPad;
 };
 
 #endif

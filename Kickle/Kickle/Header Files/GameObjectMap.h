@@ -5,11 +5,11 @@
 #include <list>
 #include <vector>
 
+#include "tinyxml.h"
+
 #include "App.h"
-#include "BasicTypeDefs.h"
 #include "GameObject.h"
 #include "Utilities.h"
-#include "tinyxml.h"
 
 class GameObjectMap {
  public:
@@ -35,7 +35,7 @@ class GameObjectMap {
 
   // If an object is on the specified tile location, that object is returned. 
   // Returns NULL otherwise.
-  GameObject* ObjectOnTile( Uint x, Uint y );
+  GameObject* ObjectOnTile( unsigned int x, unsigned int y );
 
   // Returns a GameObject in the gameObjectMap with the given 'objectType' 
   // as its type. Returns NULL if an object isn't found.

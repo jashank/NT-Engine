@@ -15,7 +15,7 @@ extern "C" {
 #include "BaseState.h"
 #include "AnimData.h"
 
-#include "BasicTypeDefs.h"
+
 
 //class StateManager;
 class AnimData;
@@ -40,9 +40,9 @@ class App {
  public:
   static App* CreateApp( 
     const std::string &title, 
-    Uint width, 
-    Uint height, 
-    Uint framerate 
+    unsigned int width, 
+    unsigned int height, 
+    unsigned int framerate 
   );
 
 
@@ -122,9 +122,9 @@ class App {
  private:
   App( 
     const std::string &title, 
-    Uint width, 
-    Uint height, 
-    Uint framerate 
+    unsigned int width, 
+    unsigned int height, 
+    unsigned int framerate 
   );
 
 

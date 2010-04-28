@@ -48,7 +48,7 @@ bool AnimData::LoadFromFile( const std::string &filename ) {
   m_anims = new Animation[m_numAnims];
  
   TiXmlElement* strip = root->FirstChildElement( "strip" );
-  Uint i = 0;
+  unsigned int i = 0;
   for( ;
       (i < m_numAnims) && strip; 
       ++i, strip = strip->NextSiblingElement( "strip" ) ) {
@@ -92,7 +92,7 @@ bool AnimData::LoadFromFile( const std::string &filename ) {
     //Allocate floats to hold the correct number of frame times
     if( m_anims[i].uniqueFrameTimes ) {
       m_anims[i].frameTime = new float[m_anims[i].numFrames];
-      for( Uint n = 0; n < m_anims[i].numFrames; ++n ) {
+      for( unsigned int n = 0; n < m_anims[i].numFrames; ++n ) {
         ss >> m_anims[i].frameTime[n];
       }
     }
@@ -130,12 +130,12 @@ bool AnimData::LoadFromFile( const std::string &filename ) {
 }
 
 
-bool AnimData::IsLooped( Uint animation ) const {
+bool AnimData::IsLooped( unsigned int animation ) const {
 	return m_anims[animation%m_numAnims].isLooped;
 }
 
 
-float AnimData::GetFrameTime( Uint animation, Uint frame ) const {
+float AnimData::GetFrameTime( unsigned int animation, unsigned int frame ) const {
 	if( m_anims[animation].uniqueFrameTimes ) {
 		return m_anims[animation%m_numAnims].
 			frameTime[frame%(m_anims[animation%m_numAnims].numFrames)];
@@ -144,43 +144,43 @@ float AnimData::GetFrameTime( Uint animation, Uint frame ) const {
 }
 
 
-int AnimData::GetAnimX( Uint animation ) const {
+int AnimData::GetAnimX( unsigned int animation ) const {
 	return m_anims[animation%m_numAnims].frameRect.Left;
 }
 
 
-int AnimData::GetAnimY( Uint animation ) const {
+int AnimData::GetAnimY( unsigned int animation ) const {
 	return m_anims[animation%m_numAnims].frameRect.Top;
 }
 
-int AnimData::GetFrameWidth( Uint animation ) const {
+int AnimData::GetFrameWidth( unsigned int animation ) const {
 	return m_anims[animation%m_numAnims].frameRect.GetWidth();
 }
 
 
-int AnimData::GetFrameHeight( Uint animation ) const {
+int AnimData::GetFrameHeight( unsigned int animation ) const {
 	return m_anims[animation%m_numAnims].frameRect.GetHeight();
 }
 
 
-Uint AnimData::GetNumAnims() const {
+unsigned int AnimData::GetNumAnims() const {
 	return m_numAnims;
 }
 
 
-Uint AnimData::GetNumFrames( Uint animation ) const {
+unsigned int AnimData::GetNumFrames( unsigned int animation ) const {
 	return m_anims[animation%m_numAnims].numFrames;
 }
 
-bool AnimData::GetPlayBack( Uint animation ) const {
+bool AnimData::GetPlayBack( unsigned int animation ) const {
   return m_anims[animation%m_numAnims].forward;
 }
 
-sf::IntRect AnimData::GetFrameRect( Uint animation, Uint frame ) const {
+sf::IntRect AnimData::GetFrameRect( unsigned int animation, unsigned int frame ) const {
 	static sf::IntRect rect;
 
-  //Uint a = (frame%m_anims[animation%m_numAnims].numFrames) * m_anims[animation%m_numAnims].frameRect.Right;
-  //Uint f = m_anims[animation%m_numAnims].frameRect.Left;
+  //unsigned int a = (frame%m_anims[animation%m_numAnims].numFrames) * m_anims[animation%m_numAnims].frameRect.Right;
+  //unsigned int f = m_anims[animation%m_numAnims].frameRect.Left;
  
 
 	rect.Top = m_anims[animation%m_numAnims].frameRect.Top;

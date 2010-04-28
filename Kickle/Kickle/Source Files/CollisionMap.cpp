@@ -32,7 +32,7 @@ void CollisionMap::Init() {
 
 
 bool CollisionMap::SetCollisionMap( TiXmlElement* root ) {
-  Uint mapSize = Configuration::GetMapSize();
+  unsigned int mapSize = Configuration::GetMapSize();
 
   std::string collisionString( root->GetText() );
   std::stringstream collisionMapStream( collisionString, std::ios_base::in );
@@ -41,8 +41,8 @@ bool CollisionMap::SetCollisionMap( TiXmlElement* root ) {
 
   int collisionLayout[15][15]; // TODO fix to dynamic
 
-  for( Uint i=0; i < mapSize; i++ ) {
-    for ( Uint j=0; j < mapSize; j++ ) {
+  for( unsigned int i=0; i < mapSize; i++ ) {
+    for ( unsigned int j=0; j < mapSize; j++ ) {
       if ( collisionMapStream >> currentTile ) {
           collisionLayout[i][j] = currentTile;
       } else {
@@ -66,7 +66,7 @@ bool CollisionMap::SetCollisionMap( TiXmlElement* root ) {
 }
 
 
-bool CollisionMap::TileIsSolid( Uint x, Uint y ) const {
+bool CollisionMap::TileIsSolid( unsigned int x, unsigned int y ) const {
   /*
   Making sure that you're not going to run off the array.
   */
@@ -82,7 +82,7 @@ bool CollisionMap::TileIsSolid( Uint x, Uint y ) const {
 }
 
 
-void CollisionMap::SetCollision( Uint x, Uint y, int collisionId ) {
+void CollisionMap::SetCollision( unsigned int x, unsigned int y, int collisionId ) {
   if ( Configuration::IsTileValid( x, y ) ) {
     m_collisionLayout[y][x] = collisionId;
   }
@@ -90,7 +90,7 @@ void CollisionMap::SetCollision( Uint x, Uint y, int collisionId ) {
 }
 
 
-int CollisionMap::GetCollision( Uint x, Uint y ) {
+int CollisionMap::GetCollision( unsigned int x, unsigned int y ) {
   if ( Configuration::IsTileValid( x, y ) ) {
     return m_collisionLayout[y][x];
   } else {

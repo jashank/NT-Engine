@@ -25,18 +25,18 @@ class ListBox : public Container {
   void SetFont( sf::Font font );
   void AddOption( std::string option );
 
-  Uint GetSelection();
-  void SetSelection( Uint selection );
+  unsigned int GetSelection();
+  void SetSelection( unsigned int selection );
  private:
    sf::Color m_selectionColor;
    float m_selectorSize;
 
    sf::String m_currentListString;
    std::vector<std::string> m_list; // List of selectables.
-   Uint m_listOffset; // Offsets the list if it is greater than
+   unsigned int m_listOffset; // Offsets the list if it is greater than
                       // possible selections.
-   Uint m_selection;
-   Uint m_maxSelections; // Each box can only show n selections given by size.
+   unsigned int m_selection;
+   unsigned int m_maxSelections; // Each box can only show n selections given by size.
 };
 
 #endif // LIST_BOX_H

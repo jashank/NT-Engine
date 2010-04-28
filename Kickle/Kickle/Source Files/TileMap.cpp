@@ -46,7 +46,7 @@ void TileMap::LoadTileAnims(
   m_numTiles = tileAnims.GetNumAnims();
   m_tileSprites = new AnimSprite[m_numTiles];
   
-  for ( Uint i = 0; i < m_numTiles; ++i ) {
+  for ( unsigned int i = 0; i < m_numTiles; ++i ) {
     m_tileSprites[i].SetImage( sheet );
     m_tileSprites[i].SetAnimData( tileAnims );
     m_tileSprites[i].SetAnimation( i );
@@ -71,7 +71,7 @@ void TileMap::LoadTileAnims(
     m_tileDataName.insert( 
       std::pair<std::string, tileInfo>( name, tile ));
     m_tileDataId.insert(
-      std::pair<int, tileInfo>( id, tile ));
+      std::pair<int, tileInfo*>( id, &m_tileDataName[name] ));
   }
   while ( strip = strip->NextSiblingElement( "strip" ));
 }
@@ -80,7 +80,7 @@ void TileMap::LoadTileAnims(
 void TileMap::Render() {
   static App* app = App::GetApp();
 
-  for( Uint i = 0; i < m_numTiles; ++i ) {
+  for( unsigned int i = 0; i < m_numTiles; ++i ) {
     m_tileSprites[i].Update();
   }
 
@@ -101,17 +101,17 @@ void TileMap::Render() {
 
 
 void TileMap::SetTileLayout( TiXmlElement* root ) {
-  Uint mapSize = Configuration::GetMapSize();
+  unsigned int mapSize = Configuration::GetMapSize();
 
   std::string tileString( root->GetText() );
   std::stringstream tileMapStream( tileString, std::ios_base::in );
 
   int currentTile = 0;
 
-  int tileLayout[15][15]; // TODO fix to dynamic
+  int tileLayout[15][15];
  
-  for( Uint i=0; i < mapSize; i++ ) {
-    for ( Uint j=0; j < mapSize; j++ ) {
+  for( unsigned int i=0; i < mapSize; i++ ) {
+    for ( unsigned int j=0; j < mapSize; j++ ) {
       if ( tileMapStream >> currentTile ) {
         tileLayout[i][j] = currentTile;
       } else {
@@ -131,14 +131,18 @@ void TileMap::SetTileLayout( TiXmlElement* root ) {
 
 
 void TileMap::SetTile( int x, int y, const std::string &tileName ) {
-  m_layout[y][x] = std::tr1::get<2>( m_tileDataName[tileName] );
+  std::map<std::string, tileInfo>::iterator tileDataItr
+   = m_tileDataName.find( tileName );
+  if ( tileDataItr != m_tileDataName.end() ) {
+    m_layout[y][x] = std::tr1::get<2>( tileDataItr->second );
+  }
 }
 
 
 const TileMap::tileInfo& TileMap::GetTile( int x, int y ) {
   if ( x < MAP_SIZE && x >= 0 && y < MAP_SIZE && y >= 0 ) {
     int id = m_layout[y][x];
-    return m_tileDataId[id];
+    return *m_tileDataId[id];
   } else {
     return NULL_TILE_INFO;
   }

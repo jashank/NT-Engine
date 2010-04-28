@@ -24,7 +24,7 @@ ListBox::ListBox( float x, float y, float width, float height, sf::Color baseCol
   SetOutlineColor( outlineColor );
   SetOutlineSize( outline );
   m_selectionColor = selectionColor;
-  m_maxSelections = (Uint)GetHeight()/(Uint)m_selectorSize;
+  m_maxSelections = (unsigned int)GetHeight()/(unsigned int)m_selectorSize;
 }
 
 
@@ -43,7 +43,7 @@ void ListBox::Render() {
                                              m_selectionColor ) );
 
   // Draws selectable items
-  for ( Uint i = 0; i < m_list.size(); i++ ) {
+  for ( unsigned int i = 0; i < m_list.size(); i++ ) {
     m_currentListString.SetText( m_list[i] );
     m_currentListString.SetPosition( GetX()+m_outline, (i*m_selectorSize + 10 + GetY()) );
     App::GetApp()->Draw( m_currentListString );
@@ -57,7 +57,7 @@ void ListBox::HandleEvents() {
     if ( mouseX >= GetX() && mouseX <= GetX()+GetWidth() ) {
       int mouseY = App::GetApp()->GetInput().GetMouseY();
       if ( mouseY >= GetY() && mouseY <= GetY()+GetHeight() ) {
-        m_selection =  (Uint)((mouseY - GetY()) / m_selectorSize);
+        m_selection =  (unsigned int)((mouseY - GetY()) / m_selectorSize);
       }
     }
   } else if ( App::GetApp()->GetInput().IsKeyDown( sf::Key::Up ) ) {
@@ -79,10 +79,10 @@ void ListBox::AddOption( std::string option ) {
   m_list.push_back( option );
 }
 
-Uint ListBox::GetSelection() {
+unsigned int ListBox::GetSelection() {
   return m_selection;
 }
 
-void ListBox::SetSelection( Uint selection ) {
+void ListBox::SetSelection( unsigned int selection ) {
   m_selection = selection;
 }

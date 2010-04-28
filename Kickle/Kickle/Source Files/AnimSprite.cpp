@@ -18,12 +18,12 @@ const AnimData *AnimSprite::GetAnimData() const {
 }
 
 
-Uint AnimSprite::GetFrame() const {
+unsigned int AnimSprite::GetFrame() const {
 	return m_frame;
 }
 
 
-Uint AnimSprite::GetAnimation() const {
+unsigned int AnimSprite::GetAnimation() const {
 	return m_animation;
 }
 
@@ -62,12 +62,12 @@ void AnimSprite::Restart() {
 }
 
 
-void AnimSprite::SetFrame( Uint frame ) {
+void AnimSprite::SetFrame( unsigned int frame ) {
 	m_frame = frame;
 }
 
 
-void AnimSprite::SetAnimation( Uint animation ) {
+void AnimSprite::SetAnimation( unsigned int animation ) {
   if( m_animData ) {
     if( m_animation != animation ) {
 		  m_animation = animation;

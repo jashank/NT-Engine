@@ -7,8 +7,8 @@
     <playback>forward</playback>
     <looped>false</looped>
     <num_frames>4</num_frames>
-    <individual_times>true</individual_times>
-    <frame_times> 0.5 0.05 0.05 0.05  </frame_times>
+    <individual_times>false</individual_times>
+    <frame_times> 0.05 </frame_times>
 
     <x_pos>0</x_pos>
     <y_pos>0</y_pos>
@@ -20,8 +20,8 @@
     <playback>backward</playback>
     <looped>false</looped>
     <num_frames>4</num_frames>
-    <individual_times>true</individual_times>
-    <frame_times> 0.05 0.05 0.05 0.5 </frame_times>
+    <individual_times>false</individual_times>
+    <frame_times> 0.05 </frame_times>
 
     <x_pos>0</x_pos>
     <y_pos>0</y_pos>

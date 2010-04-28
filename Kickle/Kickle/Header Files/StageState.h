@@ -2,19 +2,20 @@
 #define STAGE_STATE_H
 
 #include "BaseState.h"
-#include "Utilities.h"
-#include "Button.h"
-#include "BasicTypeDefs.h"
+
 #include "tinyxml.h"
 
 #include <iostream>
 #include <vector>
 #include <string>
 
-#include "ListBox.h"
-#include "InfoPanel.h"
-
 #include <SFML/Graphics.hpp>
+
+#include "Button.h"
+#include "InfoPanel.h"
+#include "ListBox.h"
+#include "Utilities.h"
+
 
 class StageState : public BaseState {
  public:
@@ -65,7 +66,7 @@ class StageState : public BaseState {
    ListBox m_listbox;
    InfoPanel m_infoPanel;
 
-   Uint m_previousSelection;
+   unsigned int m_previousSelection;
    static const float BUFFER_SIZE;
    static const float OUTLINE_SIZE;
    static const float MENU_BUFFER;

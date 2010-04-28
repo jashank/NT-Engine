@@ -54,10 +54,10 @@ float Control::GetWidth() {
   return (m_rect.Right-m_rect.Left);
 }
 
-void Control::SetId( Uint id ) {
+void Control::SetId( unsigned int id ) {
   m_id = id;
 }
 
-Uint Control::GetId() {
+unsigned int Control::GetId() {
   return m_id;
 }

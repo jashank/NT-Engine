@@ -115,27 +115,27 @@ void LevelState::Render() {
 
 
 bool LevelState::TileIsSolid( const sf::Vector2f& position ) const {
-  Uint tileX = GetVectorXTile( position );
-  Uint tileY = GetVectorYTile( position );
+  unsigned int tileX = GetVectorXTile( position );
+  unsigned int tileY = GetVectorYTile( position );
 
   return ( m_collisionMap.TileIsSolid( tileX, tileY ) );
 }
 
 
-bool LevelState::TileIsSolid( Uint x, Uint y ) const {
+bool LevelState::TileIsSolid( unsigned int x, unsigned int y ) const {
   return m_collisionMap.TileIsSolid( x, y );
 }
 
 
 bool LevelState::TileHasGridObject( const sf::Vector2f &position ) {
-  Uint tileX = GetVectorXTile( position );
-  Uint tileY = GetVectorYTile( position );
+  unsigned int tileX = GetVectorXTile( position );
+  unsigned int tileY = GetVectorYTile( position );
 
   return TileHasGridObject( tileX, tileY );
 }
 
 
-bool LevelState::TileHasGridObject( Uint x, Uint y ) {
+bool LevelState::TileHasGridObject( unsigned int x, unsigned int y ) {
   GameObject *gameObject = m_gameObjectMap.ObjectOnTile( x, y );
 
   if ( gameObject != NULL ) {
@@ -165,12 +165,12 @@ int LevelState::LuaCreateGameObject( lua_State *L ) {
   if( !lua_isnumber( L, -2 ) ) {
     return luaL_error( L, "Invalid tile x position for CreateGameObject." );
   }
-  Uint tileX = static_cast<Uint>( lua_tointeger( L, -2 ) );
+  unsigned int tileX = static_cast<unsigned int>( lua_tointeger( L, -2 ) );
 
   if( !lua_isnumber( L, -1 ) ) {
     return luaL_error( L, "Invalid tile y position for CreateGameObject." );
   }
-  Uint tileY = static_cast<Uint>( lua_tointeger( L, -1 ) );
+  unsigned int tileY = static_cast<unsigned int>( lua_tointeger( L, -1 ) );
 
   GameObject *newGameObject = new GameObject( path, tileX, tileY );
   m_instance->m_gameObjectMap.AddGameObject( newGameObject );
@@ -194,12 +194,12 @@ int LevelState::LuaTileIsSolid( lua_State *L ) {
   if ( !lua_isnumber( L, -2 ) ) {
     return luaL_error( L, "Invalid tile x position for IsTileSolid." );
   }
-  Uint tileX = static_cast<Uint>( lua_tointeger( L, -2 ) );
+  unsigned int tileX = static_cast<unsigned int>( lua_tointeger( L, -2 ) );
 
   if ( !lua_isnumber( L, -1 ) ) {
     return luaL_error( L, "Invalid tile y position for IsTileSolid." );
   }
-  Uint tileY = static_cast<Uint>( lua_tointeger( L, -1 ) );
+  unsigned int tileY = static_cast<unsigned int>( lua_tointeger( L, -1 ) );
 
   lua_pushboolean( L, m_instance->TileIsSolid( tileX, tileY ) );
   
@@ -211,12 +211,12 @@ int LevelState::LuaTileHasGridObject( lua_State *L ) {
   if ( !lua_isnumber( L, -2 ) ) {
     return luaL_error( L, "Invalid tile x position for TileHasSolidObject." );
   }
-  Uint tileX = static_cast<Uint>( lua_tointeger( L, -2 ) );
+  unsigned int tileX = static_cast<unsigned int>( lua_tointeger( L, -2 ) );
 
   if ( !lua_isnumber( L, -1 ) ) {
     return luaL_error( L, "Invalid tile y position for TileHasSolidObject." );
   }
-  Uint tileY = static_cast<Uint>( lua_tointeger( L, -1 ) );
+  unsigned int tileY = static_cast<unsigned int>( lua_tointeger( L, -1 ) );
 
   lua_pushboolean( L, m_instance->TileHasGridObject( tileX, tileY ) );
 
@@ -240,12 +240,12 @@ int LevelState::LuaGetGameObjectOnTile( lua_State *L ) {
   if ( !lua_isnumber( L, -2 ) ) {
     return luaL_error( L, "Invalid tile x position for GetGameObjectOnTile." );
   }
-  Uint tileX = static_cast<Uint>( lua_tointeger( L, -2 ) );
+  unsigned int tileX = static_cast<unsigned int>( lua_tointeger( L, -2 ) );
 
   if ( !lua_isnumber( L, -1 ) ) {
     return luaL_error( L, "Invalid tile y position for GetGameObjectOnTile." );
   }
-  Uint tileY = static_cast<Uint>( lua_tointeger( L, -1 ) );
+  unsigned int tileY = static_cast<unsigned int>( lua_tointeger( L, -1 ) );
 
   Lunar<GameObject>::push( L,
                   m_instance->m_gameObjectMap.ObjectOnTile( tileX, tileY ));
@@ -309,14 +309,14 @@ int LevelState::LuaNextLevel( lua_State *L ) {
 Private Methods
 ************************************************/
 
-Uint LevelState::GetVectorXTile( const sf::Vector2f &position ) const {
-  return (Uint)( position.x - Configuration::GetXPad() ) / 
+unsigned int LevelState::GetVectorXTile( const sf::Vector2f &position ) const {
+  return (unsigned int)( position.x - Configuration::GetXPad() ) / 
                  Configuration::GetTileSize();
 }
 
 
-Uint LevelState::GetVectorYTile( const sf::Vector2f &position ) const {
-  return (Uint)( position.y - Configuration::GetYPad() ) / 
+unsigned int LevelState::GetVectorYTile( const sf::Vector2f &position ) const {
+  return (unsigned int)( position.y - Configuration::GetYPad() ) / 
                  Configuration::GetTileSize();
 }
 

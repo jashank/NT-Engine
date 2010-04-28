@@ -69,14 +69,14 @@ bool KeyManager::InterpretKey( const std::string &keyString, sf::Key::Code &keyR
 
   //Calculate the amount of extra keys in the sf::key enum
   // Count - Escape(note escape is the first "extra" key in enum)
-  static Uint count = static_cast<Uint>( sf::Key::Count ) -
-    static_cast<Uint>( sf::Key::Escape );
+  static unsigned int count = static_cast<unsigned int>( sf::Key::Count ) -
+    static_cast<unsigned int>( sf::Key::Escape );
 
   //Loops through the extaKeys array comparing to lower
-  for( Uint i = 0; i < count; ++i ) {
+  for( unsigned int i = 0; i < count; ++i ) {
     if( lower == m_extraKeys[i] ) {
       keyResult = static_cast<sf::Key::Code>( i + 
-        static_cast<Uint>(sf::Key::Escape) ); 
+        static_cast<unsigned int>(sf::Key::Escape) ); 
       return true;
     }
   }

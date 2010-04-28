@@ -90,7 +90,7 @@ void StageState::Update() {
   m_infoPanel.Update();
 
   if ( m_listbox.GetSelection() != m_previousSelection ) {
-    Uint currentSelection = m_listbox.GetSelection();
+    unsigned int currentSelection = m_listbox.GetSelection();
     m_previousSelection = currentSelection;
     if ( currentSelection < m_thumbnailPaths.size() ) {
       m_infoPanel.SetThumbnail( m_thumbnailPaths[ currentSelection ] );

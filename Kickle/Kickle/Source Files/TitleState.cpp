@@ -62,7 +62,7 @@ void TitleState::Init() {
 
   m_snowflakeImage.LoadFromFile("Content/Core/Sheets/snowflake_48x48.png");
   m_snowflakeImage.CreateMaskFromColor( sf::Color( 4, 28, 90 ) );
-  srand ( (Uint)Clock.GetElapsedTime() );
+  srand ( (unsigned int)Clock.GetElapsedTime() );
 
   for ( int i = 0; i < m_numFlakes; i++ ) {
     m_snowflakes[i] = sf::Sprite( m_snowflakeImage, 

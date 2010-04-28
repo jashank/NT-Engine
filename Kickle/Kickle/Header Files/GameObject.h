@@ -6,7 +6,6 @@
 #include "Lunar.h"
 
 #include "AnimSprite.h"
-#include "BasicTypeDefs.h"
 #include "Key.h"
 
 
@@ -29,7 +28,7 @@ class GameObject : public AnimSprite {
 
   GameObject( lua_State *L );
 	GameObject( const std::string &filepath );
-  GameObject( const std::string &filepath, Uint tileX, Uint tileY );
+  GameObject( const std::string &filepath, unsigned int tileX, unsigned int tileY );
   ~GameObject();
 
 	// Updates the GameObject's collision
@@ -48,10 +47,10 @@ class GameObject : public AnimSprite {
   bool HasGridCollision() const;
 
   // Returns x-location of GameObject on game grid
-  Uint GetTileX() const;
+  unsigned int GetTileX() const;
 
   // Returns y-location of GameObject on game grid
-  Uint GetTileY() const;
+  unsigned int GetTileY() const;
 
   // Returns type of GameObject
   const std::string& GetType() const;
@@ -120,7 +119,7 @@ class GameObject : public AnimSprite {
 
   //Array of Key and string(lua script's function names) pairs
   KeyEntry* m_keyRegistry; 
-  Uint m_numKeyEntries; //Number of KeyEntries in m_keyRegistry
+  unsigned int m_numKeyEntries; //Number of KeyEntries in m_keyRegistry
 
   std::string m_luaScript; // Filepath to the lua script
   std::string m_type; // What type of game object (slime, kickle, etc.)

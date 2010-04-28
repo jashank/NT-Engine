@@ -2,7 +2,6 @@
 #define CONTROL_H
 
 #include <SFML/Graphics.hpp>
-#include "BasicTypeDefs.h"
 
 class Control {
  public:
@@ -26,11 +25,11 @@ class Control {
   virtual void SetWidth( float width );
   virtual void SetHeight( float height );
  protected:
-  void SetId( Uint id );
-  Uint GetId();
+  void SetId( unsigned int id );
+  unsigned int GetId();
 
   sf::Rect< float > m_rect;
-  Uint m_id; // A distinct idenifier for all controllers.
+  unsigned int m_id; // A distinct idenifier for all controllers.
 };
 
 #endif

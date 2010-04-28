@@ -6,7 +6,7 @@
 #include "tinyxml.h"
 
 #include "AnimData.h"
-#include "BasicTypeDefs.h"
+
 
 class AnimData;
 
@@ -18,10 +18,10 @@ class AnimSprite : public sf::Sprite {
 	const AnimData *GetAnimData() const;
 
   // Returns the current animation frame
-	Uint GetFrame() const;
+	unsigned int GetFrame() const;
 
   // Returns the current animation
-	Uint GetAnimation() const;
+	unsigned int GetAnimation() const;
 
   // Loads animation data from xml file passed
   void LoadAnimData( const std::string &filepath );
@@ -36,10 +36,10 @@ class AnimSprite : public sf::Sprite {
 	void Restart();
 
   // Sets the current animation's frame
-	void SetFrame( Uint frame );
+	void SetFrame( unsigned int frame );
 
   // Sets the current animation
-	void SetAnimation( Uint animation );
+	void SetAnimation( unsigned int animation );
 
   // Sets the data to be used for the animation
 	void SetAnimData( const AnimData &animData );
@@ -68,8 +68,8 @@ class AnimSprite : public sf::Sprite {
 	const AnimData *m_animData; //Pointer to constant animation data
 	bool m_play; //If true; animate AnimSprite
 	float m_frameTime; //Time left on current frame
-	Uint m_animation; //Current animation selections
-	Uint m_frame; //Current frame selection
+	unsigned int m_animation; //Current animation selections
+	unsigned int m_frame; //Current frame selection
 };
 
 #endif

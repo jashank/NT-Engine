@@ -89,8 +89,8 @@ GameObject::GameObject( const std::string &filepath )
 
 GameObject::GameObject( 
   const std::string &filepath, 
-  Uint tileX, 
-  Uint tileY
+  unsigned int tileX, 
+  unsigned int tileY
 )
  : m_moving( false ),
    m_gridCollision( false ),
@@ -184,7 +184,7 @@ void GameObject::UpdateMovement() {
     static Key keyTime;
     static App* app = App::GetApp();
 
-    for( Uint i = 0; i < m_numKeyEntries; ++i ) {
+    for( unsigned int i = 0; i < m_numKeyEntries; ++i ) {
       //Check if key is down
       if( app->GetInput().IsKeyDown( m_keyRegistry[i].first.key ) ) {
         keyTime = app->GetKeyTime( m_keyRegistry[i].first.key );
@@ -240,16 +240,16 @@ bool GameObject::HasGridCollision() const {
 }
 
 
-Uint GameObject::GetTileX() const {
-  return (Uint)(this->GetPosition().x -
+unsigned int GameObject::GetTileX() const {
+  return (unsigned int)(this->GetPosition().x -
                       Configuration::GetXPad() + 
                       Configuration::GetTileSize() / 2) /
                       Configuration::GetTileSize();
 }
 
 
-Uint GameObject::GetTileY() const {
-return (Uint)( ( this->GetPosition().y +  
+unsigned int GameObject::GetTileY() const {
+return (unsigned int)( ( this->GetPosition().y +  
                         GetSubRect().GetHeight()  % 
                         Configuration::GetTileSize() ) - 
                         Configuration::GetYPad() + 
@@ -305,7 +305,7 @@ int GameObject::LuaSetAnimation( lua_State *L ) {
     return luaL_error( L, "Invalid argument for SetAnimation." );
   }
   
-  Uint animation = lua_tointeger( L, -1 );
+  unsigned int animation = lua_tointeger( L, -1 );
 
   SetAnimation( animation );
   return 0;
@@ -576,10 +576,10 @@ bool GameObject::LoadObjectData( const std::string &filepath ) {
       tempList.push_back( std::make_pair( tempKey, function ) );
 
     }
-    m_numKeyEntries = static_cast<Uint>( tempList.size() );
+    m_numKeyEntries = static_cast<unsigned int>( tempList.size() );
     m_keyRegistry = new KeyEntry[m_numKeyEntries];
 
-    for( Uint i = 0; i < m_numKeyEntries; ++i ) {
+    for( unsigned int i = 0; i < m_numKeyEntries; ++i ) {
       m_keyRegistry[i] = tempList[i];
       App::GetApp()->RegisterKey( m_keyRegistry[i].first.key );
 

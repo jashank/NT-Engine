@@ -9,8 +9,17 @@ local SlimeTable = {}
 
 SlimeTable.lastTileX = -1
 SlimeTable.lastTileY = -1
+SlimeTable.spawnPointX = -1
+SlimeTable.spawnPointY = -1
+SlimeTable.hasMoved = false
 
 function SlimeTable.AILogic( Slime )
+
+  if ( not SlimeTable.hasMoved ) then
+    SlimeTable.spawnPointX = Slime:GetTileX()
+    SlimeTable.spawnPointY = Slime:GetTileY()
+    SlimeTable.hasMoved = true
+  end
 
 	local Kickle = Level.GetGameObject( "Kickle" )
 

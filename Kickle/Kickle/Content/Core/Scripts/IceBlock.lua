@@ -6,6 +6,8 @@ require ("GameObjectUtilities")
 local IceBlockTable = {}
 
 IceBlockTable.moving = false
+IceBlockTable.slimeSpawnX = -1;
+IceBlockTable.slimeSpawnY = -1;
 
 function IceBlockTable.AILogic( IceBlock )
 	if ( IceBlockTable.moving ) then
@@ -18,8 +20,20 @@ function IceBlockTable.AILogic( IceBlock )
         Level.GetTile( IceBlock:GetTileX(), IceBlock:GetTileY() )
       Level.SetTile( facingX, facingY, tileName, 0 )
 			Level.DestroyGameObject( IceBlock )
-			Level.CreateGameObject("Content/Core/Objects/Slime.xml", 11, 8 )
-		end
+      Level.CreateGameObject(
+        "Content/Core/Objects/Slime.xml",
+        IceBlockTable.slimeSpawnX,
+        IceBlockTable.slimeSpawnY
+      )
+
+    elseif ( tileType == "" ) then
+      Level.DestroyGameObject( IceBlock )
+      Level.CreateGameObject(
+        "Content/Core/Objects/Slime.xml",
+        IceBlockTable.slimeSpawnX,
+        IceBlockTable.slimeSpawnY
+      )
+    end
 	end
 end
 

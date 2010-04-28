@@ -34,9 +34,9 @@ Constructor and Destructor
 ************************************************/
 App::App( 
   const std::string &title, 
-  Uint width, 
-  Uint height, 
-  Uint framerate 
+  unsigned int width, 
+  unsigned int height, 
+  unsigned int framerate 
 ) 
  : m_window( sf::VideoMode( width, height ), title ), 
    m_time( 0.0f ),
@@ -61,9 +61,9 @@ Public Member Functions
 ************************************************/
 App* App::CreateApp( 
   const std::string& title, 
-  Uint width, 
-  Uint height, 
-  Uint framerate 
+  unsigned int width, 
+  unsigned int height, 
+  unsigned int framerate 
 ) {
 	if(  m_instance == 0 ) {
 		DEBUG_STATEMENT( 

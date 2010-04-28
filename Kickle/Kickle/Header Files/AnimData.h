@@ -4,40 +4,38 @@
 #include <SFML/Graphics/Image.hpp>
 #include <string>
 
-#include "BasicTypeDefs.h"
-
 class AnimData {
 public:
   AnimData();
   ~AnimData();
 
   // Returns true if given animation is looped
-  bool IsLooped( Uint animation ) const;
+  bool IsLooped( unsigned int animation ) const;
 
   // Returns frame time for given animation and frame
-  float GetFrameTime( Uint animation, Uint frame ) const;
+  float GetFrameTime( unsigned int animation, unsigned int frame ) const;
 
   // Returns first frame's x and y for given animation
-  int GetAnimX( Uint animation ) const;
-  int GetAnimY( Uint animation ) const;
+  int GetAnimX( unsigned int animation ) const;
+  int GetAnimY( unsigned int animation ) const;
 
   // Returns frame height from given animation
-  int GetFrameHeight( Uint animation ) const;
+  int GetFrameHeight( unsigned int animation ) const;
 
   // Returns frame width for given animation
-  int GetFrameWidth( Uint animation ) const;
+  int GetFrameWidth( unsigned int animation ) const;
 
   //Returns number of animations held by AnimData
-  Uint GetNumAnims() const;
+  unsigned int GetNumAnims() const;
 
   // Returns number of frames for given animation
-  Uint GetNumFrames( Uint animation ) const;	
+  unsigned int GetNumFrames( unsigned int animation ) const;	
 
   // Returns true if played forward false if played backward
-  bool GetPlayBack( Uint animation ) const;
+  bool GetPlayBack( unsigned int animation ) const;
 
   // Returns the Rect for the given animation and frame
-  sf::IntRect GetFrameRect( Uint animation,  Uint frame ) const;
+  sf::IntRect GetFrameRect( unsigned int animation,  unsigned int frame ) const;
 
   // Loads AnimData from an xml file
   bool LoadFromFile( const std::string &filename );
@@ -50,12 +48,12 @@ private:
     bool uniqueFrameTimes; //True if each frame has it's own time
     bool isLooped; //True if animation is looped
     float *frameTime; //Individual times for each frame
-    Uint numFrames; //Total frames in animation
+    unsigned int numFrames; //Total frames in animation
     sf::IntRect	frameRect; //(x,y)-first frame (w,h)-frame sizes
   };
 
   Animation *m_anims; //Holds information on all animations in animsheet
-  Uint m_numAnims; //The number of Animations
+  unsigned int m_numAnims; //The number of Animations
 };
 
 #endif

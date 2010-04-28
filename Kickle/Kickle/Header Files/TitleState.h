@@ -2,13 +2,12 @@
 #define TITLESTATE_H
 
 #include "BaseState.h"
-#include "Container.h"
 
 #include <SFML/Graphics/String.hpp>
 class sf::Font;
 
 #include "Button.h"
-#include "BasicTypeDefs.h"
+#include "Container.h"
 
 /************************************************
 TitleState
@@ -69,8 +68,8 @@ class TitleState : public BaseState {
   Container m_container; // Main Container / background
   Container m_frontalElements; // Frontal elements.
 
-  static const Uint m_numFlakes = 50; // Number of snow flakes to be generated
-  Uint m_snowflakeBuffer; // Screen width - width of a snow flake.
+  static const unsigned int m_numFlakes = 50; // Number of snow flakes to be generated
+  unsigned int m_snowflakeBuffer; // Screen width - width of a snow flake.
 
   static TitleState *m_instance; // TitleState has one instance
 };

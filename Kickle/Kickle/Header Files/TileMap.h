@@ -9,7 +9,6 @@ Author: Ben Wright (bwright.au@gmail.com)
 #include <string>
 #include <tuple>
 
-#include "BasicTypeDefs.h"
 #include "tinyxml.h"
 
 class AnimSprite;
@@ -47,13 +46,14 @@ class TileMap {
   static const tileInfo NULL_TILE_INFO;
 
   AnimSprite *m_tileSprites;
-  Uint m_numTiles;
+  unsigned int m_numTiles;
 
 	int m_layout[MAP_SIZE][MAP_SIZE];
   // Name of tile is key. Used for setting tiles.
   std::map<std::string, tileInfo> m_tileDataName;
   // Id of tile is key. Used for getting tiles.
-  std::map<int, tileInfo> m_tileDataId;
+  // Holds references to data stored in m_tileDataName.
+  std::map<int, tileInfo*> m_tileDataId;
 };
 
 #endif

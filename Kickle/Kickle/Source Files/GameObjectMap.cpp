@@ -1,10 +1,9 @@
+#include <algorithm>
 #include <iostream>
 #include <queue>
-#include <algorithm>
 
 #include "GameObjectMap.h"
 
-#include "BasicTypeDefs.h"
 #include "Configuration.h"
 #include "Utilities.h"
 
@@ -43,7 +42,7 @@ void GameObjectMap::Update() {
     }
   }
 
-  for ( Uint i = 0; i < m_toBeDestroyed.size(); i++ ) {
+  for ( unsigned int i = 0; i < m_toBeDestroyed.size(); i++ ) {
     m_gameObjects.remove( m_toBeDestroyed[i] );
     SAFEDELETE( m_toBeDestroyed[i] );
   }
@@ -84,7 +83,7 @@ bool GameObjectMap::SetGameObjectMap( TiXmlElement* root ) {
       currentEntityInstance ; currentEntityInstance = currentEntityInstance->NextSiblingElement() ) {
         currentEntityInstance->Attribute( "x", &positionX );
         currentEntityInstance->Attribute( "y", &positionY );
-        AddGameObject( new GameObject( entityData, (Uint)positionX, (Uint)positionY ));
+        AddGameObject( new GameObject( entityData, (unsigned int)positionX, (unsigned int)positionY ));
     }
   }
   return false;
@@ -119,7 +118,7 @@ GameObject* GameObjectMap::DetectCollision( const GameObject *gameObject ) {
 }
 
 
-GameObject* GameObjectMap::ObjectOnTile( Uint x, Uint y ) {
+GameObject* GameObjectMap::ObjectOnTile( unsigned int x, unsigned int y ) {
   for ( GameObjItr gameObj = m_gameObjects.begin(); 
         gameObj != m_gameObjects.end(); gameObj++ ) {
     if ( *gameObj != NULL ) {

@@ -2,14 +2,14 @@
 #define WORLD_STATE_H
 
 #include "BaseState.h"
-#include "TileMap.h"
-
-#include "Utilities.h"
-#include "BasicTypeDefs.h"
-#include "tinyxml.h"
 
 #include <vector>
 #include <string>
+
+#include "tinyxml.h"
+
+#include "TileMap.h"
+#include "Utilities.h"
 
 
 class WorldState : public BaseState{

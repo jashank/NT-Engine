@@ -11,7 +11,6 @@ extern "C" {
 
 #include <SFML/Graphics.hpp>
 
-#include "BasicTypeDefs.h"
 #include "CollisionMap.h"
 #include "GameObjectMap.h"
 #include "TileMap.h"
@@ -54,11 +53,11 @@ class LevelState : public BaseState {
 
   // Returns whether 'position' or 'tile' passed is solid
   bool TileIsSolid( const sf::Vector2f& position ) const;
-  bool TileIsSolid( Uint x, Uint y ) const;
+  bool TileIsSolid( unsigned int x, unsigned int y ) const;
 
   // Returns whether 'position' or 'tile' passed has a solid object on it
   bool TileHasGridObject( const sf::Vector2f &position );
-  bool TileHasGridObject( Uint x, Uint y );
+  bool TileHasGridObject( unsigned int x, unsigned int y );
 
   // Returns lua state of level
   lua_State* GetLuaState();
@@ -90,7 +89,7 @@ class LevelState : public BaseState {
   static int LuaGetGameObjectOnTile( lua_State *L );
 
   // Allows Lua to access type, name, and id (in that order)
-  // of tile at specified position
+  // of tile at specified position. Returns ("", "", -1) if no tile there.
   static int LuaGetTile( lua_State *L );
 
   // Allows Lua to set the tile at specified position
@@ -113,8 +112,8 @@ class LevelState : public BaseState {
 	bool SetLevel( std::string levelPath );
 
   // Returns x/y tile based on position given by sf::Vector2f
-  Uint GetVectorXTile( const sf::Vector2f &position ) const;
-  Uint GetVectorYTile( const sf::Vector2f &position ) const;
+  unsigned int GetVectorXTile( const sf::Vector2f &position ) const;
+  unsigned int GetVectorYTile( const sf::Vector2f &position ) const;
   
   static LevelState *m_instance; // LevelState has one instance
 
