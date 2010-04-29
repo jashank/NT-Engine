@@ -6,8 +6,7 @@ IceBreathTable.lastTileX = -1
 IceBreathTable.lastTileY = -1
 
 function IceBreathTable.AILogic( IceBreath )
-	local tileX = IceBreath:GetTileX()
-	local tileY = IceBreath:GetTileY()
+	local tileX, tileY = IceBreath:GetTilePos()
 
 	if ( tileX == IceBreathTable.lastTileX and
 			 tileY == IceBreathTable.lastTileY ) then
@@ -23,8 +22,7 @@ function IceBreathTable.HandleCollision( IceBreath, Other )
 	if ( Other:GetType() == "Slime" ) then
     IceBlock = Level.CreateGameObject(
       "Content/Core/Objects/IceBlock.xml",
-       Other:GetTileX(),
-       Other:GetTileY()
+      Other:GetTilePos()
     );
     IceBlock:GetTable().slimeSpawnX = Other:GetTable().spawnPointX
     IceBlock:GetTable().slimeSpawnY = Other:GetTable().spawnPointY

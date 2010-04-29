@@ -30,8 +30,7 @@ Lunar<GameObject>::RegType GameObject::methods[] = {
   { "SetAnimation", &GameObject::LuaSetAnimation },
   { "IsAnimating", &GameObject::LuaIsAnimating },
   { "GetType", &GameObject::LuaGetType },
-  { "GetTileX", &GameObject::LuaGetTileX },
-  { "GetTileY", &GameObject::LuaGetTileY },
+  { "GetTilePos", &GameObject::LuaGetTilePos },
   { "GetDir", &GameObject::LuaGetDir },
   { "SetDir", &GameObject::LuaSetDir },
   { "Reverse", &GameObject::LuaReverse },
@@ -324,15 +323,10 @@ int GameObject::LuaGetType( lua_State *L ) {
 }
 
 
-int GameObject::LuaGetTileX( lua_State *L ) {
+int GameObject::LuaGetTilePos( lua_State *L ) {
   lua_pushinteger( L, GetTileX() );
-  return 1;
-}
-
-
-int GameObject::LuaGetTileY( lua_State *L ) {
   lua_pushinteger( L, GetTileY() );
-  return 1;
+  return 2;
 }
 
 

@@ -97,7 +97,10 @@ void GameObjectMap::AddGameObject( GameObject *gameObject ) {
 
 
 void GameObjectMap::RemoveGameObject( GameObject *gameObject ) {
-  m_toBeDestroyed.push_back( gameObject );
+  if ( std::find( m_toBeDestroyed.begin(), m_toBeDestroyed.end(), gameObject ) == 
+    m_toBeDestroyed.end() ) {
+    m_toBeDestroyed.push_back( gameObject );
+  }
 }
 
 

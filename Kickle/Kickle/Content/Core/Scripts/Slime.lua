@@ -16,18 +16,15 @@ SlimeTable.hasMoved = false
 function SlimeTable.AILogic( Slime )
 
   if ( not SlimeTable.hasMoved ) then
-    SlimeTable.spawnPointX = Slime:GetTileX()
-    SlimeTable.spawnPointY = Slime:GetTileY()
+    SlimeTable.spawnPointX, SlimeTable.spawnPointY = Slime:GetTilePos()
     SlimeTable.hasMoved = true
   end
 
 	local Kickle = Level.GetGameObject( "Kickle" )
 
 	if ( Kickle ) then
-		local SlimeX = Slime:GetTileX()
-		local SlimeY = Slime:GetTileY()
-		local KickleX = Kickle:GetTileX()
-		local KickleY = Kickle:GetTileY()
+    local SlimeX, SlimeY = Slime:GetTilePos()
+    local KickleX, KickleY = Kickle:GetTilePos()
 
 		local distanceX = math.abs( SlimeX - KickleX )
 		local distanceY = math.abs( SlimeY - KickleY )

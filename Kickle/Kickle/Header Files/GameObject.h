@@ -71,8 +71,7 @@ class GameObject : public AnimSprite {
   int LuaGetType( lua_State *L );
 
   // Wrap GetTileX and GetTileY to allow it to be exposed to Lua
-  int LuaGetTileX( lua_State *L );
-  int LuaGetTileY( lua_State *L );
+  int LuaGetTilePos( lua_State *L );
 
   // Allows user to get and set the GameObject's direction from Lua
   int LuaGetDir( lua_State *L );

@@ -6,7 +6,7 @@ DOWN = 1
 LEFT = 2
 RIGHT = 3
 
-local function GetTileInDir( tileX, tileY, dir )
+local function GetTileInDir( dir, tileX, tileY )
 	if ( dir == UP ) then
 		tileY = tileY - 1
 	elseif ( dir == DOWN ) then
@@ -22,20 +22,12 @@ end
 
 
 function GetTileObjectFaces( GameObject )
-	return GetTileInDir(
-          GameObject:GetTileX(),
-          GameObject:GetTileY(),
-          GameObject:GetDir()
-         )
+	return GetTileInDir( GameObject:GetDir(), GameObject:GetTilePos())
 end
 
 
 function GetTileInDirection( GameObject, dir )
-	return GetTileInDir(
-          GameObject:GetTileX(),
-          GameObject:GetTileY(),
-          dir
-         )
+	return GetTileInDir( dir, GameObject:GetTilePos() )
 end
 
 

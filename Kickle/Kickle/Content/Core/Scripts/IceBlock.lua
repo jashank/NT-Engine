@@ -17,7 +17,7 @@ function IceBlockTable.AILogic( IceBlock )
     local tileType = Level.GetTile( facingX, facingY )
 		if ( tileType == "water" ) then
       local tileType, tileName =
-        Level.GetTile( IceBlock:GetTileX(), IceBlock:GetTileY() )
+        Level.GetTile( IceBlock:GetTilePos() )
       Level.SetTile( facingX, facingY, tileName, 0 )
 			Level.DestroyGameObject( IceBlock )
       Level.CreateGameObject(
@@ -41,6 +41,19 @@ end
 function IceBlockTable.HandleCollision( IceBlock, Other )
 	if ( Other:GetType() == "IceBreath" ) then
 		Level.DestroyGameObject( Other )
+
+  elseif ( Other:GetType() == "Slime" ) then
+    local slimeSpawnX = Other:GetTable().spawnPointX;
+    local slimeSpawnY = Other:GetTable().spawnPointY;
+    if ( slimeSpawnX ~= IceBlockTable.slimeSpawnX or
+         slimeSpawnY ~= IceBlockTable.slimeSpawnY ) then
+      Level.DestroyGameObject( Other )
+      Level.CreateGameObject(
+        "Content/Core/Objects/Slime.xml",
+        slimeSpawnX,
+        slimeSpawnY
+      )
+    end
 	end
 end
 

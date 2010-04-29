@@ -183,10 +183,12 @@ int LevelState::LuaCreateGameObject( lua_State *L ) {
 
 int LevelState::LuaDestroyGameObject( lua_State *L ) {
   GameObject *gameObjectToDestroy = Lunar<GameObject>::check(L, 1);
-  lua_remove(L, 1);
-  m_instance->m_gameObjectMap.RemoveGameObject( gameObjectToDestroy );
+  if ( gameObjectToDestroy ) {
+    lua_remove(L, 1);
+    m_instance->m_gameObjectMap.RemoveGameObject( gameObjectToDestroy );
+  }
 
-  return 1;
+  return 0;
 }
 
 

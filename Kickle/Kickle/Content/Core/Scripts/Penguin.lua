@@ -10,10 +10,8 @@ function PenguinTable.AILogic( Penguin )
 	local Kickle = Level.GetGameObject( "Kickle" )
 
 	if ( Kickle ) then
-		local PenguinX = Penguin:GetTileX()
-		local PenguinY = Penguin:GetTileY()
-		local KickleX = Kickle:GetTileX()
-		local KickleY = Kickle:GetTileY()
+		local PenguinX, PenguinY = Penguin:GetTilePos()
+    local KickleX, KickleY = Kickle:GetTilePos()
 
 		local distanceX = math.abs( PenguinX - KickleX )
 		local distanceY = math.abs( PenguinY - KickleY )
