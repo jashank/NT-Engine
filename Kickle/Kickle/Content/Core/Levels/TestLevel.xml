@@ -46,8 +46,8 @@
 
 	<game_objects>
 		<entity data="Content\\Core\\Objects\\Slime.xml">
-			<instance x="3" y="8" />
-			<instance x="11" y="8" />
+			<instance x="4" y="9" />
+			<instance x="10" y="9" />
 		</entity>
 		<entity data="Content\\Core\\Objects\\DreamBag.xml">
 			<instance x="6" y="2" />

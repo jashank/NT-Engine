@@ -49,10 +49,10 @@ void GameObjectMap::Update() {
   m_toBeDestroyed.clear();
 }
 
-void GameObjectMap::Render() {
+void GameObjectMap::Render() const {
   std::priority_queue< std::pair<float, GameObject*> > renderOrder;
 
-  for ( GameObjItr gameObj = m_gameObjects.begin(); 
+  for ( GameObjItrConst gameObj = m_gameObjects.begin(); 
         gameObj != m_gameObjects.end(); gameObj++ ) {
     if ( *gameObj != NULL ) {
       renderOrder.push( 
@@ -104,10 +104,10 @@ void GameObjectMap::RemoveGameObject( GameObject *gameObject ) {
 }
 
 
-GameObject* GameObjectMap::DetectCollision( const GameObject *gameObject ) {
+GameObject* GameObjectMap::DetectCollision( const GameObject *gameObject ) const {
   const sf::FloatRect &mainObj = gameObject->GetCollisionBox();
 
-  for ( GameObjItr gameObj = m_gameObjects.begin(); 
+  for ( GameObjItrConst gameObj = m_gameObjects.begin(); 
         gameObj != m_gameObjects.end(); gameObj++ ) {
     if ( *gameObj != gameObject && *gameObj != NULL ) {
       const sf::FloatRect &otherObj = ( *gameObj )->GetCollisionBox();
@@ -121,8 +121,8 @@ GameObject* GameObjectMap::DetectCollision( const GameObject *gameObject ) {
 }
 
 
-GameObject* GameObjectMap::ObjectOnTile( unsigned int x, unsigned int y ) {
-  for ( GameObjItr gameObj = m_gameObjects.begin(); 
+GameObject* GameObjectMap::ObjectOnTile( unsigned int x, unsigned int y ) const {
+  for ( GameObjItrConst gameObj = m_gameObjects.begin(); 
         gameObj != m_gameObjects.end(); gameObj++ ) {
     if ( *gameObj != NULL ) {
       if (( *gameObj )->GetTileX() == x &&
@@ -136,8 +136,8 @@ GameObject* GameObjectMap::ObjectOnTile( unsigned int x, unsigned int y ) {
 }
 
 
-GameObject* GameObjectMap::GetGameObject( const std::string &objectType ) {
-  for ( GameObjItr gameObj = m_gameObjects.begin(); 
+GameObject* GameObjectMap::GetGameObject( const std::string &objectType ) const {
+  for ( GameObjItrConst gameObj = m_gameObjects.begin(); 
         gameObj != m_gameObjects.end(); gameObj++ ) {
     if ( *gameObj != NULL ) {
       if (( *gameObj )->GetType() == objectType ) {

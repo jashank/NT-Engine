@@ -45,8 +45,10 @@ function IceBlockTable.HandleCollision( IceBlock, Other )
   elseif ( Other:GetType() == "Slime" ) then
     local slimeSpawnX = Other:GetTable().spawnPointX;
     local slimeSpawnY = Other:GetTable().spawnPointY;
-    if ( slimeSpawnX ~= IceBlockTable.slimeSpawnX or
-         slimeSpawnY ~= IceBlockTable.slimeSpawnY ) then
+
+    if (( slimeSpawnX ~= -1 and slimeSpawnY ~= -1 ) and
+        ( slimeSpawnX ~= IceBlockTable.slimeSpawnX or
+          slimeSpawnY ~= IceBlockTable.slimeSpawnY )) then
       Level.DestroyGameObject( Other )
       Level.CreateGameObject(
         "Content/Core/Objects/Slime.xml",

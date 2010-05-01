@@ -7,8 +7,6 @@ math.randomseed( os.time() )
 
 local DreamBagTable = {}
 
-
-
 function DreamBagTable.HandleCollision( DreamBag, Other )
   if ( Other:GetType() == "Slime" or Other:GetType() == "Penguin" ) then
     local dir = math.random( UP, RIGHT )
@@ -26,6 +24,7 @@ function DreamBagTable.HandleCollision( DreamBag, Other )
 
     DreamBag:SetDir( dir )
     DreamBag:Move()
+    DreamBagTable.isMoving = true
 
   elseif ( Other:GetType() == "Kickle" ) then
     Level.DestroyGameObject( DreamBag )

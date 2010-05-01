@@ -41,7 +41,7 @@ class GameObject : public AnimSprite {
   void UpdateRendering();
 
   // Returns collision box for game object
-  const sf::FloatRect &GetCollisionBox() const;
+  const sf::FloatRect& GetCollisionBox() const;
 
   // Returns whether game object's collision is grid-based
   bool HasGridCollision() const;

@@ -20,7 +20,7 @@ class GameObjectMap {
   
   // Update and render the objects in the map.
   void Update(); 
-  void Render();
+  void Render() const;
 
   bool SetGameObjectMap( TiXmlElement* root );
 
@@ -31,18 +31,19 @@ class GameObjectMap {
   // Collision detection for non-solid GameObjects using rectangular
   // collision detection. Returns GameObject that 'gameObject' collided with,
   // or NULL otherwise.
-  GameObject* DetectCollision( const GameObject *gameObject );
+  GameObject* DetectCollision( const GameObject *gameObject ) const;
 
   // If an object is on the specified tile location, that object is returned. 
   // Returns NULL otherwise.
-  GameObject* ObjectOnTile( unsigned int x, unsigned int y );
+  GameObject* ObjectOnTile( unsigned int x, unsigned int y ) const;
 
   // Returns a GameObject in the gameObjectMap with the given 'objectType' 
   // as its type. Returns NULL if an object isn't found.
-  GameObject* GetGameObject( const std::string &objectType );
+  GameObject* GetGameObject( const std::string &objectType ) const;
 
  private:
   typedef std::list<GameObject*>::iterator GameObjItr;
+  typedef std::list<GameObject*>::const_iterator GameObjItrConst;
 
   // Vector of game objects on map
   std::list<GameObject*> m_gameObjects;
