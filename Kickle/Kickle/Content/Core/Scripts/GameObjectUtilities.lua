@@ -22,12 +22,12 @@ end
 
 
 function GetTileObjectFaces( GameObject )
-	return GetTileInDir( GameObject:GetDir(), GameObject:GetTilePos())
+	return GetTileInDir( GameObject:GetDir(), GameObject:GetTile())
 end
 
 
 function GetTileInDirection( GameObject, dir )
-	return GetTileInDir( dir, GameObject:GetTilePos() )
+	return GetTileInDir( dir, GameObject:GetTile() )
 end
 
 

@@ -51,9 +51,9 @@ class LevelState : public BaseState {
   // Render LevelState's frame
   virtual void Render();
 
-  // Returns whether 'position' or 'tile' passed is solid
-  bool TileIsSolid( const sf::Vector2f& position ) const;
-  bool TileIsSolid( unsigned int x, unsigned int y ) const;
+  // Returns whether 'position' or 'tile' passed can be accessed
+  bool TileIsCrossable( const sf::Vector2f& position ) const;
+  bool TileIsCrossable( unsigned int x, unsigned int y ) const;
 
   // Returns whether 'position' or 'tile' passed has a solid object on it
   bool TileHasGridObject( const sf::Vector2f &position );
@@ -77,7 +77,7 @@ class LevelState : public BaseState {
   static int LuaDestroyGameObject( lua_State *L );
 
   // Exposes Level's IsTileSolid to Lua
-  static int LuaTileIsSolid( lua_State *L );
+  static int LuaTileIsCrossable( lua_State *L );
 
   // Exposes Level's TileHasSolidObject to Lua
   static int LuaTileHasGridObject( lua_State *L );
@@ -90,7 +90,7 @@ class LevelState : public BaseState {
 
   // Allows Lua to access type, name, and id (in that order)
   // of tile at specified position. Returns ("", "", -1) if no tile there.
-  static int LuaGetTile( lua_State *L );
+  static int LuaGetTileInfo( lua_State *L );
 
   // Allows Lua to set the tile at specified position
   static int LuaSetTile( lua_State *L );

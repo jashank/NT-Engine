@@ -30,11 +30,12 @@ Lunar<GameObject>::RegType GameObject::methods[] = {
   { "SetAnimation", &GameObject::LuaSetAnimation },
   { "IsAnimating", &GameObject::LuaIsAnimating },
   { "GetType", &GameObject::LuaGetType },
-  { "GetTilePos", &GameObject::LuaGetTilePos },
+  { "GetTile", &GameObject::LuaGetTile },
   { "GetDir", &GameObject::LuaGetDir },
   { "SetDir", &GameObject::LuaSetDir },
   { "Reverse", &GameObject::LuaReverse },
   { "GetTable", &GameObject::LuaGetTable },
+  { "SetNoClip", &GameObject::LuaSetNoClip },
   { NULL, NULL }
 };
 
@@ -45,6 +46,7 @@ Public Methods
 GameObject::GameObject( lua_State *L )
  : m_moving( false ),
    m_gridCollision( false ),
+   m_noClip( false ),
    m_direction( Up ),
    m_distance( 0.0f ),
    m_speed( 0.0f ),
@@ -70,6 +72,7 @@ GameObject::GameObject( lua_State *L )
 GameObject::GameObject( const std::string &filepath )
  : m_moving( false ),
    m_gridCollision( false ),
+   m_noClip( false ),
    m_distance( 0.0f ),
    m_speed( 0.0f ),
    m_id( -1 ),
@@ -93,6 +96,7 @@ GameObject::GameObject(
 )
  : m_moving( false ),
    m_gridCollision( false ),
+   m_noClip( false ),
    m_direction( Up ),
    m_distance( 0.0f ),
    m_speed( 0.0f ),
@@ -289,8 +293,8 @@ int GameObject::LuaMove( lua_State *L ) {
       default: {}
     }
 
-    if ( !m_level->TileIsSolid( tileToMoveTo ) &&
-         !m_level->TileHasGridObject( tileToMoveTo ) ) {
+    if (( m_noClip ) || ( m_level->TileIsCrossable( tileToMoveTo ) &&
+         !m_level->TileHasGridObject( tileToMoveTo ))) {
       m_moving = true;
     } 
   }
@@ -323,7 +327,7 @@ int GameObject::LuaGetType( lua_State *L ) {
 }
 
 
-int GameObject::LuaGetTilePos( lua_State *L ) {
+int GameObject::LuaGetTile( lua_State *L ) {
   lua_pushinteger( L, GetTileX() );
   lua_pushinteger( L, GetTileY() );
   return 2;
@@ -379,6 +383,15 @@ int GameObject::LuaReverse( lua_State *L ) {
 int GameObject::LuaGetTable( lua_State *L ) {
   lua_rawgeti( L, LUA_REGISTRYINDEX, m_id );
   return 1;
+}
+
+
+int GameObject::LuaSetNoClip( lua_State *L ) {
+  if ( !lua_isboolean( L, -1 )) {
+    return luaL_error( L, "Did not pass boolean to SetNoClip" );
+  }
+  m_noClip = lua_toboolean( L, -1 ) != 0;
+  return 0;
 }
 
 

@@ -14,10 +14,10 @@ function IceBlockTable.AILogic( IceBlock )
 		IceBlock:Move()
 
 		local facingX, facingY = GetTileObjectFaces( IceBlock )
-    local tileType = Level.GetTile( facingX, facingY )
+    local tileType = Level.GetTileInfo( facingX, facingY )
 		if ( tileType == "water" ) then
       local tileType, tileName =
-        Level.GetTile( IceBlock:GetTilePos() )
+        Level.GetTileInfo( IceBlock:GetTile() )
       Level.SetTile( facingX, facingY, tileName, 0 )
 			Level.DestroyGameObject( IceBlock )
       Level.CreateGameObject(

@@ -21,11 +21,11 @@ Public Member Functions
 
 void CollisionMap::Init() {
   /*
-  Initialize the collision map to all being not solid.
+  Initialize the collision map to all being crossable.
   */
   for ( int i = 0; i < MAP_SIZE; i++ ) {
     for ( int j = 0; j < MAP_SIZE; j++ ) {
-      m_collisionLayout[i][j] = NOT_SOLID;
+      m_collisionLayout[i][j] = CROSSABLE;
     }
   }
 }
@@ -53,12 +53,9 @@ bool CollisionMap::SetCollisionMap( TiXmlElement* root ) {
 
   for ( int i = 0; i < MAP_SIZE; i++ ) {
     for ( int j = 0; j < MAP_SIZE; j++ ) {
-      if ( collisionLayout[i][j] == SOLID ) {
-        m_collisionLayout[i][j] = SOLID;
-      } else {
-        m_collisionLayout[i][j] = NOT_SOLID;
-      }
-
+      ( collisionLayout[i][j] == CROSSABLE ) ? 
+          m_collisionLayout[i][j] = CROSSABLE : 
+          m_collisionLayout[i][j] = NOT_CROSSABLE;
     }
   }
 
@@ -66,19 +63,12 @@ bool CollisionMap::SetCollisionMap( TiXmlElement* root ) {
 }
 
 
-bool CollisionMap::TileIsSolid( unsigned int x, unsigned int y ) const {
-  /*
-  Making sure that you're not going to run off the array.
-  */
-  if ( Configuration::IsTileValid( x, y ) ) {
-    if ( m_collisionLayout[y][x] == SOLID ) {
-      return true;
-    }
+bool CollisionMap::TileIsCrossable( unsigned int x, unsigned int y ) const {
+  if ( !Configuration::IsTileValid( x, y )) {
+    return false;
   } else {
-    return true; // Off the map is always solid.
+    return m_collisionLayout[y][x] == CROSSABLE;
   }
-
-  return false;
 }
 
 
@@ -94,6 +84,6 @@ int CollisionMap::GetCollision( unsigned int x, unsigned int y ) {
   if ( Configuration::IsTileValid( x, y ) ) {
     return m_collisionLayout[y][x];
   } else {
-    return SOLID;
+    return NOT_CROSSABLE;
   }
 }

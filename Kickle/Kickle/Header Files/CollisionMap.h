@@ -13,7 +13,7 @@ class CollisionMap {
   bool SetCollisionMap( TiXmlElement* root );
 
   // Returns true if the tile at X Y is solid, else false;
-  bool TileIsSolid( unsigned int x, unsigned int y ) const;
+  bool TileIsCrossable( unsigned int x, unsigned int y ) const;
 
   // Changes the value of the tile sheet to that value if it is valid. Else -1.
   void SetCollision( unsigned int x, unsigned int y, int collisionId );
@@ -27,8 +27,8 @@ class CollisionMap {
   void Init();
 
   static const unsigned int MAP_SIZE = 15;
-  static const int SOLID = 1;
-  static const int NOT_SOLID = 0;
+  static const int NOT_CROSSABLE = 1;
+  static const int CROSSABLE = 0;
 
   int m_collisionLayout[MAP_SIZE][MAP_SIZE];
 };

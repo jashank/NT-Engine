@@ -14,11 +14,11 @@ LevelState *LevelState::m_instance = 0;
 const luaL_Reg LevelState::luaLevelFuncts[] = {
   { "CreateGameObject", LuaCreateGameObject },
   { "DestroyGameObject", LuaDestroyGameObject },
-  { "TileIsSolid", LuaTileIsSolid },
+  { "TileIsCrossable", LuaTileIsCrossable },
   { "TileHasGridObject", LuaTileHasGridObject },
   { "GetGameObject", LuaGetGameObject },
   { "GetGameObjectOnTile", LuaGetGameObjectOnTile },
-  { "GetTile", LuaGetTile },
+  { "GetTileInfo", LuaGetTileInfo },
   { "SetTile", LuaSetTile },
   { "NextLevel", LuaNextLevel },
   { NULL, NULL }
@@ -114,16 +114,16 @@ void LevelState::Render() {
 }
 
 
-bool LevelState::TileIsSolid( const sf::Vector2f& position ) const {
+bool LevelState::TileIsCrossable( const sf::Vector2f& position ) const {
   unsigned int tileX = GetVectorXTile( position );
   unsigned int tileY = GetVectorYTile( position );
 
-  return ( m_collisionMap.TileIsSolid( tileX, tileY ) );
+  return ( m_collisionMap.TileIsCrossable( tileX, tileY ) );
 }
 
 
-bool LevelState::TileIsSolid( unsigned int x, unsigned int y ) const {
-  return m_collisionMap.TileIsSolid( x, y );
+bool LevelState::TileIsCrossable( unsigned int x, unsigned int y ) const {
+  return m_collisionMap.TileIsCrossable( x, y );
 }
 
 
@@ -192,7 +192,7 @@ int LevelState::LuaDestroyGameObject( lua_State *L ) {
 }
 
 
-int LevelState::LuaTileIsSolid( lua_State *L ) {
+int LevelState::LuaTileIsCrossable( lua_State *L ) {
   if ( !lua_isnumber( L, -2 ) ) {
     return luaL_error( L, "Invalid tile x position for IsTileSolid." );
   }
@@ -203,7 +203,7 @@ int LevelState::LuaTileIsSolid( lua_State *L ) {
   }
   unsigned int tileY = static_cast<unsigned int>( lua_tointeger( L, -1 ) );
 
-  lua_pushboolean( L, m_instance->TileIsSolid( tileX, tileY ) );
+  lua_pushboolean( L, m_instance->TileIsCrossable( tileX, tileY ) );
   
   return 1;
 }
@@ -255,7 +255,7 @@ int LevelState::LuaGetGameObjectOnTile( lua_State *L ) {
 }
 
 
-int LevelState::LuaGetTile( lua_State *L ) {
+int LevelState::LuaGetTileInfo( lua_State *L ) {
   if ( !lua_isnumber( L, -2 ) ) {
     return luaL_error( L, "Invalid tile x position for GetTile." );
   }

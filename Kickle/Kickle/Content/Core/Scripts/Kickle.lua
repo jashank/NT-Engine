@@ -123,7 +123,7 @@ function KickleTable.PerformPillar( Kickle )
 	if( KickleTable.state == STANDING ) then
 		local tileX, tileY = GetTileObjectFaces( Kickle )
 
-		if ( not Level.TileIsSolid( tileX, tileY ) and
+		if ( Level.TileIsCrossable( tileX, tileY ) and
 			   not Level.TileHasGridObject( tileX, tileY ) ) then
 			KickleTable.state = RAISE_PILLAR
       Kickle:SetAnimation( Kickle:GetDir() + KickleTable.state )
@@ -155,8 +155,9 @@ function KickleTable.PerformAttack( Kickle )
 			objOnTile:GetTable().moving = true
 			objOnTile:SetDir( kickleDir );
 
-		elseif ( not Level.TileIsSolid( tileX, tileY ) and
-				     not Level.TileHasGridObject( tileX, tileY ) )then
+		elseif (( Level.TileIsCrossable( tileX, tileY ) or
+              Level.GetTileInfo( tileX, tileY ) == "water" ) and
+              not Level.TileHasGridObject( tileX, tileY ) ) then
 			local iceBreath = Level.CreateGameObject(
 				"Content/Core/Objects/IceBreath.xml", tileX, tileY );
 			local iceBreathdir = Kickle:GetDir();

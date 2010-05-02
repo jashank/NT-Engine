@@ -1,3 +1,6 @@
+package.path = package.path .. ";Content/Core/Scripts/?.lua"
+require ("GameObjectUtilities")
+
 -- IceBreath Behavior Table
 
 local IceBreathTable = {}
@@ -6,12 +9,15 @@ IceBreathTable.lastTileX = -1
 IceBreathTable.lastTileY = -1
 
 function IceBreathTable.AILogic( IceBreath )
-	local tileX, tileY = IceBreath:GetTilePos()
+	local tileX, tileY = IceBreath:GetTile()
 
 	if ( tileX == IceBreathTable.lastTileX and
 			 tileY == IceBreathTable.lastTileY ) then
 		Level.DestroyGameObject( IceBreath )
+
 	else
+    local tileType = Level.GetTileInfo( GetTileObjectFaces( IceBreath ) )
+    IceBreath:SetNoClip( tileType == "water" )
 		IceBreathTable.lastTileX = tileX
 		IceBreathTable.lastTileY = tileY
 		IceBreath:Move()
@@ -22,7 +28,7 @@ function IceBreathTable.HandleCollision( IceBreath, Other )
 	if ( Other:GetType() == "Slime" ) then
     IceBlock = Level.CreateGameObject(
       "Content/Core/Objects/IceBlock.xml",
-      Other:GetTilePos()
+      Other:GetTile()
     );
     IceBlock:GetTable().slimeSpawnX = Other:GetTable().spawnPointX
     IceBlock:GetTable().slimeSpawnY = Other:GetTable().spawnPointY

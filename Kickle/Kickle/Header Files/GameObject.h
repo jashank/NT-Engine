@@ -71,7 +71,7 @@ class GameObject : public AnimSprite {
   int LuaGetType( lua_State *L );
 
   // Wrap GetTileX and GetTileY to allow it to be exposed to Lua
-  int LuaGetTilePos( lua_State *L );
+  int LuaGetTile( lua_State *L );
 
   // Allows user to get and set the GameObject's direction from Lua
   int LuaGetDir( lua_State *L );
@@ -82,6 +82,9 @@ class GameObject : public AnimSprite {
 
   // Allows user to get the GameObject's table (to change variables in it, etc.)
   int LuaGetTable( lua_State *L );
+
+  // Sets the GameObject's `noClip` to true or false
+  int LuaSetNoClip( lua_State *L );
 
   //Necessities for Lunar
   static const char className[];
@@ -110,6 +113,7 @@ class GameObject : public AnimSprite {
 
   bool m_moving; // If true; keep moving in m_direction
   bool m_gridCollision; // Grid-based collision completely restricts access to tile
+  bool m_noClip; // When true, allows object to pass through solid objects and tiles
   Dir m_direction; // Current direction game object is moving
   float m_distance; // Distance traveled from last grid location
   float m_speed; // m_speed at which object moves ( 1.0 is "normal" i.e. Kickle )
