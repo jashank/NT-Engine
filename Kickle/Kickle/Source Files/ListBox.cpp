@@ -16,10 +16,10 @@ ListBox::ListBox( float x, float y, float width, float height, sf::Color baseCol
  : m_listOffset( 0 ) ,
    m_selection( 0 ),
    m_selectorSize( m_selectorSize ){
-  SetX( x );
-  SetY( y );
-  SetWidth( width );
-  SetHeight( height );
+  SetX( x*Configuration::GetScreenWidth() );
+  SetY( y*Configuration::GetScreenHeight() );
+  SetWidth( width*Configuration::GetScreenWidth() );
+  SetHeight( height*Configuration::GetScreenHeight() );
   SetBaseColor( baseColor );
   SetOutlineColor( outlineColor );
   SetOutlineSize( outline );

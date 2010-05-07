@@ -3,6 +3,7 @@
 
 #include "Control.h"
 #include "App.h"
+#include "Configuration.h"
 
 class Container: public Control {
  public:

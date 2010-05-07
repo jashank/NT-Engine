@@ -1,5 +1,6 @@
 #include "Container.h"
 
+
 Container::Container() 
 : m_outline( 0.0f ),
   m_baseColor( 0, 0, 0, 0 ),
@@ -11,10 +12,10 @@ Container::Container( float x, float y, float width, float height )
   m_baseColor( 0, 0, 0, 0 ),
   m_outlineColor( 0, 0, 0, 0 ) {
   
-  SetX( x );
-  SetY( y );
-  SetWidth( width );
-  SetHeight( height );
+    SetX( x*Configuration::GetScreenWidth() );
+    SetY( y*Configuration::GetScreenHeight() );
+    SetWidth( width*Configuration::GetScreenWidth() );
+    SetHeight( height* Configuration::GetScreenHeight() );
 }
 
 Container::~Container() {

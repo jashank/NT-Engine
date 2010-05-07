@@ -20,10 +20,8 @@ Public Member Functions
 TitleState::TitleState()
   : m_snowflakeBuffer( Configuration::GetScreenWidth()
                       -Configuration::GetTileSize() ),
-    m_container( 0.0f, 0.0f, (float)Configuration::GetScreenWidth(),
-                (float)Configuration::GetScreenHeight() ),
-    m_frontalElements( 0.0f, 0.0f, (float)Configuration::GetScreenWidth(),
-                      (float)Configuration::GetScreenHeight() ) {
+    m_container( 0.0f, 0.0f, 1.0f, 1.0f ),
+    m_frontalElements( 0.0f, 0.0f, 1.0f, 1.0f ) {
   CreateButtons();
 }
 

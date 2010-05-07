@@ -6,10 +6,10 @@ InfoPanel::InfoPanel() {
 InfoPanel::InfoPanel( float x, float y, float width, float height,
                       sf::Color baseColor, float outline,
                       sf::Color outlineColor, float padding ) {
-  SetX( x );
-  SetY( y );
-  SetWidth( width );
-  SetHeight( height );
+  SetX( x*Configuration::GetScreenWidth() );
+  SetY( y*Configuration::GetScreenHeight() );
+  SetWidth( width*Configuration::GetScreenWidth() );
+  SetHeight( height*Configuration::GetScreenHeight() );
   SetBaseColor( baseColor );
   SetOutlineColor( outlineColor );
   SetOutlineSize( outline );

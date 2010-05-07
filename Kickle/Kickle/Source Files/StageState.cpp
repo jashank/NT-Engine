@@ -12,15 +12,11 @@ const float StageState::OUTLINE_SIZE = 3.0f;
 const float StageState::MENU_BUFFER = 300.0f;
 
 StageState::StageState() 
- : m_listbox( 25.0f, 85.0f, 459.0f, 699.0f,
+ : m_listbox( 0.05f, 0.1f, 0.4f, 0.8f,
               sf::Color( 0, 0, 0, 0 ), OUTLINE_SIZE, sf::Color( 0, 0, 0, 0 ),
               sf::Color( 119, 255, 255, 100 ), 50.0f ),
-   m_infoPanel( (Configuration::GetScreenWidth() + BUFFER_SIZE) / 2,
-                2*BUFFER_SIZE,
-                (Configuration::GetScreenWidth() / 2) - 2*BUFFER_SIZE,
-                Configuration::GetScreenHeight() - MENU_BUFFER ),
-   m_container( 0.0f, 0.0f, (float)Configuration::GetScreenWidth(), 
-                (float)Configuration::GetScreenHeight() ),
+   m_infoPanel( 0.54f, 0.05f, 0.4f, 0.55f ),
+   m_container( 0.0f, 0.0f, 1.0f, 1.0f ),
    m_previousSelection( 0 ) {
 
   LoadStages( "Content\\Core\\Stages\\StageRegistry.xml" );
