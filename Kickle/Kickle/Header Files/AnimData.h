@@ -7,7 +7,10 @@
 class AnimData {
 public:
   AnimData();
+  AnimData( const AnimData& ad );
   ~AnimData();
+
+  AnimData& operator=( const AnimData& ad );
 
   // Returns true if given animation is looped
   bool IsLooped( unsigned int animation ) const;
@@ -43,7 +46,11 @@ public:
 private:
   struct Animation {
     Animation();
+    Animation( const Animation& a );
     ~Animation();
+
+    Animation& operator=( const Animation& a );
+
     bool forward;
     bool uniqueFrameTimes; //True if each frame has it's own time
     bool isLooped; //True if animation is looped

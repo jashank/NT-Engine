@@ -1,12 +1,9 @@
 <?xml version="1.0"?>
 <anim_strips>
 
-  <num_anims>4</num_anims>
-
   <strip name="up_walking">
     <looped>true</looped>
     <num_frames>8</num_frames>
-    <individual_times>false</individual_times>
     <frame_times> 0.1 </frame_times>
 
     <x_pos>0</x_pos>
@@ -19,7 +16,6 @@
   <strip name="down_walking">
     <looped>true</looped>
     <num_frames>8</num_frames>
-    <individual_times>false</individual_times>
     <frame_times> 0.1 </frame_times>
 
     <x_pos>0</x_pos>
@@ -32,7 +28,6 @@
   <strip name="left_walking">
     <looped>true</looped>
     <num_frames>8</num_frames>
-    <individual_times>false</individual_times>
     <frame_times> 0.1 </frame_times>
 
     <x_pos>0</x_pos>
@@ -45,7 +40,6 @@
   <strip name="right_walking">
     <looped>true</looped>
     <num_frames>8</num_frames>
-    <individual_times>false</individual_times>
     <frame_times> 0.1 </frame_times>
 
     <x_pos>0</x_pos>

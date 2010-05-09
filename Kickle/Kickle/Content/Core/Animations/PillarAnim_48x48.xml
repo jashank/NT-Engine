@@ -1,13 +1,8 @@
 <?xml version="1.0"?>
 <anim_strips>
 
-  <num_anims>2</num_anims>
-
   <strip name="pillar_raise">
-    <playback>forward</playback>
-    <looped>false</looped>
     <num_frames>4</num_frames>
-    <individual_times>false</individual_times>
     <frame_times> 0.05 </frame_times>
 
     <x_pos>0</x_pos>
@@ -18,9 +13,7 @@
 
   <strip name="pillar_lower">
     <playback>backward</playback>
-    <looped>false</looped>
     <num_frames>4</num_frames>
-    <individual_times>false</individual_times>
     <frame_times> 0.05 </frame_times>
 
     <x_pos>0</x_pos>

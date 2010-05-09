@@ -1,12 +1,8 @@
 <?xml version="1.0"?>
 <anim_strips>
 
-  <num_anims>19</num_anims>
-
   <strip type="color" name="black" id="0">
-    <looped>false</looped>
     <num_frames>1</num_frames>
-    <individual_times>false</individual_times>
     <frame_times> 0.1 </frame_times>
 
     <x_pos>0</x_pos>
@@ -17,9 +13,7 @@
 
 
   <strip type="ice" name="ice_center" id="1">
-    <looped>false</looped>
     <num_frames>1</num_frames>
-    <individual_times>false</individual_times>
     <frame_times> 0.1 </frame_times>
 
     <x_pos>48</x_pos>
@@ -30,9 +24,7 @@
 
 
   <strip type="junk" name="boulder" id="2">
-    <looped>false</looped>
     <num_frames>1</num_frames>
-    <individual_times>false</individual_times>
     <frame_times> 0.1 </frame_times>
 
     <x_pos>96</x_pos>
@@ -43,9 +35,7 @@
 
 
   <strip type="ice" name="ice_top_left" id="3">
-    <looped>false</looped>
     <num_frames>1</num_frames>
-    <individual_times>false</individual_times>
     <frame_times> 0.1 </frame_times>
 
     <x_pos>144</x_pos>
@@ -56,9 +46,7 @@
 
 
   <strip type="ice" name="ice_top_center" id="4">
-    <looped>false</looped>
     <num_frames>1</num_frames>
-    <individual_times>false</individual_times>
     <frame_times> 0.1 </frame_times>
 
     <x_pos>192</x_pos>
@@ -69,9 +57,7 @@
 
 
   <strip type="ice" name="ice_top_right" id="5">
-    <looped>false</looped>
     <num_frames>1</num_frames>
-    <individual_times>false</individual_times>
     <frame_times> 0.1 </frame_times>
 
     <x_pos>240</x_pos>
@@ -82,9 +68,7 @@
 
 
   <strip type="ice" name="ice_bottom_left" id="6">
-    <looped>false</looped>
     <num_frames>1</num_frames>
-    <individual_times>false</individual_times>
     <frame_times> 0.1 </frame_times>
 
     <x_pos>288</x_pos>
@@ -95,9 +79,7 @@
 
 
   <strip type="ice" name="ice_bottom_center" id="7">
-    <looped>false</looped>
     <num_frames>1</num_frames>
-    <individual_times>false</individual_times>
     <frame_times> 0.1 </frame_times>
 
     <x_pos>336</x_pos>
@@ -108,9 +90,7 @@
 
 
   <strip type="ice" name="ice_bottom_right" id="8">
-    <looped>false</looped>
     <num_frames>1</num_frames>
-    <individual_times>false</individual_times>
     <frame_times> 0.1 </frame_times>
 
     <x_pos>384</x_pos>
@@ -121,9 +101,7 @@
 
 
   <strip type="ice" name="ice_side_left" id="9">
-    <looped>false</looped>
     <num_frames>1</num_frames>
-    <individual_times>false</individual_times>
     <frame_times> 0.1 </frame_times>
 
     <x_pos>432</x_pos>
@@ -133,9 +111,7 @@
   </strip>
 
   <strip type="ice" name="ice_side_right" id="10">
-    <looped>false</looped>
     <num_frames>1</num_frames>
-    <individual_times>false</individual_times>
     <frame_times> 0.1 </frame_times>
 
     <x_pos>480</x_pos>
@@ -145,9 +121,7 @@
   </strip>
 
   <strip type="junk" name="ice_hole" id="11">
-    <looped>false</looped>
     <num_frames>1</num_frames>
-    <individual_times>false</individual_times>
     <frame_times> 0.1 </frame_times>
 
     <x_pos>528</x_pos>
@@ -159,7 +133,6 @@
   <strip type="water" name="water_center" id="12">
     <looped>true</looped>
     <num_frames>3</num_frames>
-    <individual_times>false</individual_times>
     <frame_times> 0.2 </frame_times>
 
     <x_pos>0</x_pos>
@@ -171,7 +144,6 @@
   <strip type="water" name="water_left_border" id="13">
     <looped>true</looped>
     <num_frames>3</num_frames>
-    <individual_times>false</individual_times>
     <frame_times> 0.2 </frame_times>
 
     <x_pos>144</x_pos>
@@ -183,7 +155,6 @@
   <strip type="water" name="water_center_border" id="14">
     <looped>true</looped>
     <num_frames>3</num_frames>
-    <individual_times>false</individual_times>
     <frame_times> 0.2 </frame_times>
 
     <x_pos>288</x_pos>
@@ -195,7 +166,6 @@
   <strip type="water" name="water_right_border" id="15">
     <looped>true</looped>
     <num_frames>3</num_frames>
-    <individual_times>false</individual_times>
     <frame_times> 0.2 </frame_times>
 
     <x_pos>432</x_pos>
@@ -207,7 +177,6 @@
   <strip type="water" name="ice_left_border" id="16">
     <looped>true</looped>
     <num_frames>3</num_frames>
-    <individual_times>false</individual_times>
     <frame_times> 0.2 </frame_times>
 
     <x_pos>0</x_pos>
@@ -219,7 +188,6 @@
   <strip type="water" name="ice_center_border" id="17">
     <looped>true</looped>
     <num_frames>3</num_frames>
-    <individual_times>false</individual_times>
     <frame_times> 0.2 </frame_times>
 
     <x_pos>144</x_pos>
@@ -231,7 +199,6 @@
   <strip type="water" name="ice_right_border" id="18">
     <looped>true</looped>
     <num_frames>3</num_frames>
-    <individual_times>false</individual_times>
     <frame_times> 0.2 </frame_times>
 
     <x_pos>288</x_pos>

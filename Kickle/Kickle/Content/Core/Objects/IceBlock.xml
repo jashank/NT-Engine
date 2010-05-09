@@ -4,8 +4,6 @@
 
   <script_path data="Content/Core/Scripts/IceBlock.lua" />
 
-  <typename data="IceBlock" />
-
   <speed data="4.0" />
 
   <rect x="0" y="0" width="48" height="48" />

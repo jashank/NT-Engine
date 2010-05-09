@@ -6,8 +6,6 @@
 
   <script_path data="Content/Core/Scripts/Penguin.lua" />
 
-  <typename data="Penguin" />
-
   <speed data="1.0" />
 
   <rect x="5" y="5" width="38" height="62" />

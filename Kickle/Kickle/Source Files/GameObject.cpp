@@ -518,6 +518,24 @@ bool GameObject::LoadObjectData( const std::string &filepath ) {
     return false;
   }
 
+  // Determine type by the name of the xml file
+  size_t lastPeriod = filepath.find_last_of( '.' );
+  size_t lastSlash = filepath.find_last_of( '\\' );
+  if( lastSlash == std::string::npos ) {
+    lastSlash = filepath.find_last_of( '/' );
+  }
+
+  if( lastPeriod == std::string::npos || 
+      lastSlash == std::string::npos ||
+      lastPeriod < lastSlash ) {
+    // Improper filepath, unable to determine type
+    return false;
+  }
+  
+  // Grab the filename substring between lastSlash and lastPeriod
+  m_type = filepath.substr( lastSlash+1, (lastPeriod-lastSlash)-1 );
+
+
   TiXmlHandle handleDoc( &doc );
   TiXmlElement* root = handleDoc.FirstChildElement( "game_object" ).Element();
 
@@ -535,8 +553,8 @@ bool GameObject::LoadObjectData( const std::string &filepath ) {
   //Load in path to GameObject's lua script
   m_luaScript = root->FirstChildElement( "script_path" )->Attribute( "data" );
 
-  // Load in type of object
-  m_type = root->FirstChildElement( "typename" )->Attribute( "data" );
+  //// Load in type of object
+  //m_type = root->FirstChildElement( "typename" )->Attribute( "data" );
 
   // Load in speed of object
   std::string speed( root->FirstChildElement( "speed" )->Attribute( "data" ) );

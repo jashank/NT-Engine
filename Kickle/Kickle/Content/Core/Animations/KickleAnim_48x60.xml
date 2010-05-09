@@ -1,12 +1,9 @@
 <?xml version="1.0"?>
 <anim_strips>
 
-  <num_anims>24</num_anims>
-
   <strip name="up_standing">
     <looped>true</looped>
     <num_frames>8</num_frames>
-    <individual_times>false</individual_times>
     <frame_times> 0.1 </frame_times>
 
     <x_pos>0</x_pos>
@@ -19,7 +16,6 @@
   <strip name="down_standing">
     <looped>true</looped>
     <num_frames>8</num_frames>
-    <individual_times>false</individual_times>
     <frame_times> 0.1 </frame_times>
 
     <x_pos>0</x_pos>
@@ -32,7 +28,6 @@
   <strip name="left_standing">
     <looped>true</looped>
     <num_frames>8</num_frames>
-    <individual_times>false</individual_times>
     <frame_times> 0.1 </frame_times>
 
     <x_pos>0</x_pos>
@@ -45,7 +40,6 @@
   <strip name="right_standing">
     <looped>true</looped>
     <num_frames>8</num_frames>
-    <individual_times>false</individual_times>
     <frame_times> 0.1 </frame_times>
 
     <x_pos>0</x_pos>
@@ -58,7 +52,6 @@
   <strip name="up_walking">
     <looped>true</looped>
     <num_frames>8</num_frames>
-    <individual_times>false</individual_times>
     <frame_times> 0.07 </frame_times>
 
     <x_pos>0</x_pos>
@@ -71,7 +64,6 @@
   <strip name="down_walking">
     <looped>true</looped>
     <num_frames>8</num_frames>
-    <individual_times>false</individual_times>
     <frame_times> 0.07 </frame_times>
 
     <x_pos>0</x_pos>
@@ -84,7 +76,6 @@
   <strip name="left_walking">
     <looped>true</looped>
     <num_frames>8</num_frames>
-    <individual_times>false</individual_times>
     <frame_times> 0.07 </frame_times>
 
     <x_pos>0</x_pos>
@@ -97,7 +88,6 @@
   <strip name="right_walking">
     <looped>true</looped>
     <num_frames>8</num_frames>
-    <individual_times>false</individual_times>
     <frame_times> 0.07 </frame_times>
 
     <x_pos>0</x_pos>
@@ -108,9 +98,7 @@
 
 
   <strip name="up_kicking">
-    <looped>false</looped>
     <num_frames>8</num_frames>
-    <individual_times>false</individual_times>
     <frame_times> 0.05 </frame_times>
 
     <x_pos>0</x_pos>
@@ -121,9 +109,7 @@
 
 
   <strip name="down_kicking">
-    <looped>false</looped>
     <num_frames>8</num_frames>
-    <individual_times>false</individual_times>
     <frame_times> 0.05 </frame_times>
 
     <x_pos>0</x_pos>
@@ -134,9 +120,7 @@
 
 
   <strip name="left_kicking">
-    <looped>false</looped>
     <num_frames>8</num_frames>
-    <individual_times>false</individual_times>
     <frame_times> 0.05 </frame_times>
 
     <x_pos>0</x_pos>
@@ -147,9 +131,7 @@
 
 
   <strip name="right_kicking">
-    <looped>false</looped>
     <num_frames>8</num_frames>
-    <individual_times>false</individual_times>
     <frame_times> 0.05 </frame_times>
 
     <x_pos>0</x_pos>
@@ -160,9 +142,7 @@
 
 
   <strip name="up_raise_pillar">
-    <looped>false</looped>
     <num_frames>8</num_frames>
-    <individual_times>false</individual_times>
     <frame_times> 0.05 </frame_times>
 
     <x_pos>0</x_pos>
@@ -173,9 +153,7 @@
 
 
   <strip name="down_raise_pillar">
-    <looped>false</looped>
     <num_frames>8</num_frames>
-    <individual_times>false</individual_times>
     <frame_times> 0.05 </frame_times>
 
     <x_pos>0</x_pos>
@@ -186,9 +164,7 @@
 
 
   <strip name="left_raise_pillar">
-    <looped>false</looped>
     <num_frames>8</num_frames>
-    <individual_times>false</individual_times>
     <frame_times> 0.05 </frame_times>
 
     <x_pos>0</x_pos>
@@ -199,9 +175,7 @@
 
 
   <strip name="right_raise_pillar">
-    <looped>false</looped>
     <num_frames>8</num_frames>
-    <individual_times>false</individual_times>
     <frame_times> 0.05 </frame_times>
 
     <x_pos>0</x_pos>
@@ -212,10 +186,8 @@
 
 
   <strip name="up_lower_pillar">
-    <looped>false</looped>
     <playback>backward</playback>
     <num_frames>8</num_frames>
-    <individual_times>false</individual_times>
     <frame_times> 0.05 </frame_times>
 
     <x_pos>0</x_pos>
@@ -226,10 +198,8 @@
 
 
   <strip name="down_lower_pillar">
-    <looped>false</looped>
     <playback>backward</playback>
     <num_frames>8</num_frames>
-    <individual_times>false</individual_times>
     <frame_times> 0.05 </frame_times>
 
     <x_pos>0</x_pos>
@@ -240,10 +210,8 @@
 
 
   <strip name="left_lower_pillar">
-    <looped>false</looped>
     <playback>backward</playback>
     <num_frames>8</num_frames>
-    <individual_times>false</individual_times>
     <frame_times> 0.05 </frame_times>
 
     <x_pos>0</x_pos>
@@ -254,10 +222,8 @@
 
 
   <strip name="right_lower_pillar">
-    <looped>false</looped>
     <playback>backward</playback>
     <num_frames>8</num_frames>
-    <individual_times>false</individual_times>
     <frame_times> 0.05 </frame_times>
 
     <x_pos>0</x_pos>
@@ -268,9 +234,7 @@
 
 
   <strip name="up_dying">
-    <looped>false</looped>
     <num_frames>8</num_frames>
-    <individual_times>false</individual_times>
     <frame_times> 0.1 </frame_times>
 
     <x_pos>0</x_pos>
@@ -281,9 +245,7 @@
 
 
   <strip name="down_dying">
-    <looped>false</looped>
     <num_frames>8</num_frames>
-    <individual_times>false</individual_times>
     <frame_times> 0.1 </frame_times>
 
     <x_pos>0</x_pos>
@@ -294,9 +256,7 @@
 
 
   <strip name="left_dying">
-    <looped>false</looped>
     <num_frames>8</num_frames>
-    <individual_times>false</individual_times>
     <frame_times> 0.1 </frame_times>
 
     <x_pos>0</x_pos>
@@ -307,9 +267,7 @@
 
 
   <strip name="right_dying">
-    <looped>false</looped>
     <num_frames>8</num_frames>
-    <individual_times>false</individual_times>
     <frame_times> 0.1 </frame_times>
 
     <x_pos>0</x_pos>
@@ -317,4 +275,5 @@
     <width>48</width>
     <height>60</height>
   </strip>
+
 </anim_strips>
