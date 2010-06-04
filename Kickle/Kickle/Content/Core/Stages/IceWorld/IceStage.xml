@@ -1,6 +1,0 @@
-<?xml version="1.0"?>
-<stage>
-	<level_playlist>
-		<level path="Content//Core//Levels//TestLevel.xml" />
-	</level_playlist>
-</stage>
