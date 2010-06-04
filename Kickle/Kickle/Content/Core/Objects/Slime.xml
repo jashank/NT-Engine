@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<game_object>
+  <animation path="Content/Core/Animations/SlimeAnim_48x48.xml" />
+
+  <script path="Content/Core/Scripts/Slime.lua" />
+
+  <speed data="0.7" />
+ 
+  <rect x="7" y="10" width="34" height="35" />
+
+  <grid_collision data="false" />
+</game_object>

@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<game_object>
+  <animation path="Content/Core/Animations/PenguinAnim_48x72.xml" />
+
+  <script path="Content/Core/Scripts/Penguin.lua" />
+
+  <speed data="1.0" />
+
+  <rect x="5" y="5" width="38" height="62" />
+
+  <grid_collision data="false" />
+
+</game_object>

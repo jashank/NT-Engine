@@ -1,0 +1,77 @@
+<?xml version="1.0"?>
+
+<state>
+
+  <tiles>
+    <tile_anims path="Content/Core/Animations/TileSheet_48x48.xml" />
+    <tile_layout>
+      12 12 12 12 12 12 12 12 12 12 12 12 12 12 12
+      12 12 12 12 12 12 12  4 12 12 12 12 12 12 12
+      12 12 12 12 12 12  6  7  8 12 12 12 12 12 12
+      12 12 12 12 12 12 16 17 18 12 12 12 12 12 12
+      12 12  3  4  4  4  4  4  4  4  4  4  5 12 12
+      12  6  7  7  7  7  7  7  7  7  7  7  7  8 12
+      12 16 17 17 17 17 17 17 17 17 17 17 17 18 12
+      12  6  1  1  1  1  1  1  1  1  1  1  1  8 12
+      12 16  6  1  1  1  1  1  1  1  1  1  8 18 12
+      12 13 16  6  1  2  1  1  1  2  1  8 18 15 12
+      12 12 13 16  6  1  1  1  1  1  8 18 15 12 12
+      12 12 12 13 16  6  1  1  1  8 18 15 12 12 12
+      12 12 12 12 13 16  6  1  8 18 15 12 12 12 12
+      12 12 12 12 12 13 16  7 18 15 12 12 12 12 12
+      12 12 12 12 12 12 13 17 15 12 12 12 12 12 12	
+    </tile_layout>
+  </tiles>
+  
+  <collision_layout>
+	  1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+		1 1 1 1 1 1 1 0 1 1 1 1 1 1 1
+		1 1 1 1 1 1 0 0 0 1 1 1 1 1 1
+		1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+		1 1 0 0 0 0 0 0 0 0 0 0 0 1 1
+		1 0 0 0 0 0 0 0 0 0 0 0 0 0 1
+		1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+		1 0 0 0 0 0 0 0 0 0 0 0 0 0 1
+		1 1 0 0 0 0 0 0 0 0 0 0 0 1 1
+		1 1 1 0 0 1 0 0 0 1 0 0 1 1 1
+		1 1 1 1 0 0 0 0 0 0 0 1 1 1 1
+		1 1 1 1 1 0 0 0 0 0 1 1 1 1 1
+		1 1 1 1 1 1 0 0 0 1 1 1 1 1 1
+		1 1 1 1 1 1 1 0 1 1 1 1 1 1 1
+		1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+  </collision_layout>
+  
+  <game_objects>
+		<game_object path="Content/Core/Objects/Slime.xml">
+	    <instance x="4" y="9" />
+			<instance x="10" y="9" />
+		</game_object>
+		<game_object path="Content/Core/Objects/DreamBag.xml">
+			<instance x="6" y="2" />
+			<instance x="7" y="2" />
+			<instance x="8" y="2" />
+		</game_object>
+		<game_object path="Content/Core/Objects/Kickle.xml">
+			<instance x="7" y="12" />
+		</game_object>
+		<game_object path="Content/Core/Objects/SpawnPoint.xml">
+			<instance x="3" y="9" />
+			<instance x="11" y="9" />
+    </game_object>
+  </game_objects>
+  
+  <GUI>
+    <!-- TODO RANDOM: ENTITY TYPE ATTRIBUTE SHOULD BE CALLED NAME-->
+  </GUI>
+  
+  <sound>
+    <music_playlist>
+      <song path="Content/Core/Sound/stage_1.ogg"/>
+      <song path="Content/Core/Sound/stage_2.ogg"/>
+    </music_playlist>
+    <sound_effects>
+      <!-- TODO -->
+    </sound_effects>
+  </sound>
+
+ </state>

@@ -1,0 +1,427 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioProject
+	ProjectType="Visual C++"
+	Version="9.00"
+	Name="Kickle"
+	ProjectGUID="{B63B4DE0-A309-4D5E-BE16-A342AA50E93D}"
+	RootNamespace="Kickle"
+	Keyword="Win32Proj"
+	TargetFrameworkVersion="196613"
+	>
+	<Platforms>
+		<Platform
+			Name="Win32"
+		/>
+	</Platforms>
+	<ToolFiles>
+	</ToolFiles>
+	<Configurations>
+		<Configuration
+			Name="Debug|Win32"
+			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
+			IntermediateDirectory="$(ConfigurationName)"
+			ConfigurationType="1"
+			CharacterSet="1"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="0"
+				AdditionalIncludeDirectories="C:\boost_1_42;&quot;$(ProjectDir)\Header Files\&quot;"
+				PreprocessorDefinitions="SFML_DYNAMIC;WIN32;_DEBUG;_CONSOLE"
+				MinimalRebuild="true"
+				BasicRuntimeChecks="3"
+				RuntimeLibrary="3"
+				UsePrecompiledHeader="0"
+				WarningLevel="3"
+				DebugInformationFormat="4"
+				ShowIncludes="false"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				AdditionalDependencies="sfml-system-d.lib sfml-window-d.lib sfml-graphics-d.lib sfml-audio-d.lib libboost_system-vc90-s-1_42.lib lua51.lib"
+				LinkIncremental="2"
+				AdditionalLibraryDirectories="C:\boost_1_42\lib"
+				GenerateDebugInformation="true"
+				SubSystem="1"
+				TargetMachine="1"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
+		</Configuration>
+		<Configuration
+			Name="Release|Win32"
+			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
+			IntermediateDirectory="$(ConfigurationName)"
+			ConfigurationType="1"
+			CharacterSet="1"
+			WholeProgramOptimization="1"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="2"
+				EnableIntrinsicFunctions="true"
+				AdditionalIncludeDirectories="&quot;$(ProjectDir)\Header Files\&quot;"
+				PreprocessorDefinitions="SFML_DYNAMIC;WIN32;NDEBUG;_CONSOLE"
+				RuntimeLibrary="2"
+				EnableFunctionLevelLinking="true"
+				UsePrecompiledHeader="0"
+				WarningLevel="3"
+				DebugInformationFormat="3"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				AdditionalDependencies="sfml-system.lib sfml-window.lib sfml-graphics.lib sfml-audio.lib libboost_system-vc90-s-1_42.lib lua51.lib"
+				LinkIncremental="1"
+				GenerateDebugInformation="true"
+				SubSystem="1"
+				OptimizeReferences="2"
+				EnableCOMDATFolding="2"
+				TargetMachine="1"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
+		</Configuration>
+	</Configurations>
+	<References>
+	</References>
+	<Files>
+		<Filter
+			Name="Header Files"
+			Filter="h;hpp;hxx;hm;inl;inc;xsd"
+			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
+			>
+			<File
+				RelativePath=".\Header Files\AnimData.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Header Files\AnimSprite.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Header Files\App.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Header Files\GameObject.h"
+				>
+			</File>
+			<Filter
+				Name="States"
+				>
+				<File
+					RelativePath=".\Header Files\GameState.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="TinyXML"
+				>
+				<File
+					RelativePath=".\Header Files\tinystr.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Header Files\tinyxml.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="Managers"
+				>
+				<File
+					RelativePath=".\Header Files\CollisionManager.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Header Files\GameObjectManager.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Header Files\KeyManager.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Header Files\ResourceManager.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Header Files\ResourceManager.hpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Header Files\SoundManager.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Header Files\TileManager.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="Lua"
+				>
+				<File
+					RelativePath=".\Header Files\Lunar.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="Other"
+				>
+				<File
+					RelativePath=".\Header Files\Config.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Header Files\Key.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Header Files\Utilities.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="GUI"
+				>
+				<File
+					RelativePath=".\Header Files\Button.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Header Files\Container.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Header Files\Control.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Header Files\InfoPanel.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Header Files\ListBox.h"
+					>
+				</File>
+			</Filter>
+		</Filter>
+		<Filter
+			Name="Resource Files"
+			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav"
+			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
+			>
+		</Filter>
+		<Filter
+			Name="Source Files"
+			Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
+			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
+			>
+			<File
+				RelativePath=".\Source Files\AnimData.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Source Files\AnimSprite.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Source Files\App.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Source Files\GameObject.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Source Files\main.cpp"
+				>
+			</File>
+			<Filter
+				Name="States"
+				>
+				<File
+					RelativePath=".\Source Files\GameState.cpp"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="TinyXML"
+				>
+				<File
+					RelativePath=".\Source Files\tinystr.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Source Files\tinyxml.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Source Files\tinyxmlerror.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Source Files\tinyxmlparser.cpp"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="Managers"
+				>
+				<File
+					RelativePath=".\Source Files\CollisionManager.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Source Files\GameObjectManager.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Source Files\KeyManager.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Source Files\SoundManager.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Source Files\TileManager.cpp"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="Lua"
+				>
+			</Filter>
+			<Filter
+				Name="Other"
+				>
+				<File
+					RelativePath=".\Source Files\Config.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Source Files\Key.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Source Files\Utilities.cpp"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="GUI"
+				>
+				<File
+					RelativePath=".\Source Files\Button.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Source Files\Container.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Source Files\Control.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Source Files\InfoPanel.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Source Files\ListBox.cpp"
+					>
+				</File>
+			</Filter>
+		</Filter>
+	</Files>
+	<Globals>
+	</Globals>
+</VisualStudioProject>
