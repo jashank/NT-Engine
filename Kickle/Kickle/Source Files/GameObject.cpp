@@ -238,20 +238,22 @@ bool GameObject::HasGridCollision() const {
 
 
 unsigned int GameObject::GetTileX() const {
-  return (unsigned int)(this->GetPosition().x -
-                      Config::GetXPad() + 
-                      Config::GetTileSize() / 2) /
-                      Config::GetTileSize();
+  return static_cast<unsigned int>(
+    ( this->GetPosition().x -
+      Config::GetXPad() + 
+      Config::GetTileSize() / 2) /
+      Config::GetTileSize());
 }
 
 
 unsigned int GameObject::GetTileY() const {
-return (unsigned int)( ( this->GetPosition().y +  
-                        GetSubRect().GetHeight()  % 
-                        Config::GetTileSize() ) - 
-                        Config::GetYPad() + 
-                        Config::GetTileSize() / 2) / 
-                        Config::GetTileSize();
+  return static_cast<unsigned int>(
+    (( this->GetPosition().y +  
+       GetSubRect().GetHeight()  % 
+       Config::GetTileSize() ) - 
+       Config::GetYPad() + 
+       Config::GetTileSize() / 2) / 
+       Config::GetTileSize());
 }
 
 
