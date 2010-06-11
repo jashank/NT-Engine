@@ -17,7 +17,7 @@ template< typename resource_t >
 resource_t* ResourceLoader< resource_t >::Load( const std::string &filename ) {
   std::auto_ptr<resource_t> resource( new resource_t );
   if( !resource->LoadFromFile( filename ) ) {
-    // REPORT TO ENGINE LOG
+    LogErr( "Resource " + filename + " not found." );
   }
   
   return resource.release();
