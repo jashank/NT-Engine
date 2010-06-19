@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+
+<config>
+  <screen width="1024" height="768" />
+  <fps value="60" />
+  <map size="15" />
+  <tile size="48" />
+  <buffer x="152" y="24" />
+  <starting_state path="Kickle_Pack/States/test_state.xml" />
+</config>

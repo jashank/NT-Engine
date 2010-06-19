@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<game_object>
+  <animation path="Kickle_Pack/Animations/IceBlockAnim_48x48.xml" />
+
+  <script path="Kickle_Pack/Scripts/IceBlock.lua" />
+
+  <speed data="4.0" />
+
+  <rect x="0" y="0" width="48" height="48" />
+
+  <grid_collision data="true" />
+
+</game_object>

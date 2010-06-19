@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="NT" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Option virtualFolders="Headers/;" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin/Debug/NT" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-Wextra" />
+					<Add option="-Wall" />
+					<Add option="-g" />
+					<Add option="-Wno-parentheses" />
+					<Add directory="../../boost_1_43_0" />
+					<Add directory="../../../../usr/include" />
+					<Add directory="Engine/Header Files" />
+				</Compiler>
+				<Linker>
+					<Add library="../../../../usr/local/lib/liblua.a" />
+					<Add directory="../../../../usr/lib" />
+				</Linker>
+			</Target>
+			<Target title="Release">
+				<Option output="bin/Release/NT" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+			<Add directory="../../lua-5.1.4/src" />
+		</Compiler>
+		<Linker>
+			<Add library="sfml-audio" />
+			<Add library="sfml-graphics" />
+			<Add library="sfml-network" />
+			<Add library="sfml-system" />
+			<Add library="sfml-window" />
+		</Linker>
+		<Unit filename="Engine/Header Files/AnimData.h" />
+		<Unit filename="Engine/Header Files/AnimSprite.h" />
+		<Unit filename="Engine/Header Files/App.h" />
+		<Unit filename="Engine/Header Files/Button.h" />
+		<Unit filename="Engine/Header Files/CollisionManager.h" />
+		<Unit filename="Engine/Header Files/Config.h" />
+		<Unit filename="Engine/Header Files/Configuration.h" />
+		<Unit filename="Engine/Header Files/Container.h" />
+		<Unit filename="Engine/Header Files/Control.h" />
+		<Unit filename="Engine/Header Files/GameObject.h" />
+		<Unit filename="Engine/Header Files/GameObjectManager.h" />
+		<Unit filename="Engine/Header Files/GameState.h" />
+		<Unit filename="Engine/Header Files/InfoPanel.h" />
+		<Unit filename="Engine/Header Files/Key.h" />
+		<Unit filename="Engine/Header Files/KeyManager.h" />
+		<Unit filename="Engine/Header Files/ListBox.h" />
+		<Unit filename="Engine/Header Files/Lunar.h" />
+		<Unit filename="Engine/Header Files/ResourceManager.h" />
+		<Unit filename="Engine/Header Files/ResourceManager.hpp" />
+		<Unit filename="Engine/Header Files/SoundManager.h" />
+		<Unit filename="Engine/Header Files/TileManager.h" />
+		<Unit filename="Engine/Header Files/Utilities.h" />
+		<Unit filename="Engine/Header Files/tinystr.h" />
+		<Unit filename="Engine/Header Files/tinyxml.h" />
+		<Unit filename="Engine/Source Files/AnimData.cpp" />
+		<Unit filename="Engine/Source Files/AnimSprite.cpp" />
+		<Unit filename="Engine/Source Files/App.cpp" />
+		<Unit filename="Engine/Source Files/Button.cpp" />
+		<Unit filename="Engine/Source Files/CollisionManager.cpp" />
+		<Unit filename="Engine/Source Files/Config.cpp" />
+		<Unit filename="Engine/Source Files/Configuration.cpp" />
+		<Unit filename="Engine/Source Files/Container.cpp" />
+		<Unit filename="Engine/Source Files/Control.cpp" />
+		<Unit filename="Engine/Source Files/GameObject.cpp" />
+		<Unit filename="Engine/Source Files/GameObjectManager.cpp" />
+		<Unit filename="Engine/Source Files/GameState.cpp" />
+		<Unit filename="Engine/Source Files/InfoPanel.cpp" />
+		<Unit filename="Engine/Source Files/Key.cpp" />
+		<Unit filename="Engine/Source Files/KeyManager.cpp" />
+		<Unit filename="Engine/Source Files/ListBox.cpp" />
+		<Unit filename="Engine/Source Files/SoundManager.cpp" />
+		<Unit filename="Engine/Source Files/TileManager.cpp" />
+		<Unit filename="Engine/Source Files/Utilities.cpp" />
+		<Unit filename="Engine/Source Files/main.cpp" />
+		<Unit filename="Engine/Source Files/tinystr.cpp" />
+		<Unit filename="Engine/Source Files/tinyxml.cpp" />
+		<Unit filename="Engine/Source Files/tinyxmlerror.cpp" />
+		<Unit filename="Engine/Source Files/tinyxmlparser.cpp" />
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+			<lib_finder disable_auto="1" />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>
