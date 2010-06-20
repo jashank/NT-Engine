@@ -10,11 +10,10 @@ extern "C" {
 
 #include "App.h"
 #include "CollisionManager.h"
-#include "Config.h"
 #include "GameObjectManager.h"
 #include "GameState.h"
+#include "TileManager.h"
 #include "tinyxml.h"
-#include "Utilities.h"
 
 /************************************************
 Constant Members
@@ -111,24 +110,18 @@ GameObject::GameObject(
   }
 
   //Calculate the float positions given tileX and tileY
-  //Taking into account tilemap's offset location, tile size, and
-  //max tiles across/down
-  float x =
-  static_cast<float>(
-    Config::GetXPad() +         //map's offset X location
-    Config::GetTileSize() *     //tile size in pixels
-    ( tileX % Config::GetMapSize() )//number of tiles across tilemap
-  );
-  float y =
-  static_cast<float>(
-    Config::GetYPad() +         //map's offset Y location
-    Config::GetTileSize() *     //tile size in pixels
-    ( tileY % Config::GetMapSize() )//number of tiles down tilemap
-  );
+  //Taking into account tile size, and max tiles across/down
+  int tileDim = m_gameState->GetTileManager()->GetTileDim();
+
+  float x = static_cast<float>( tileDim *
+     ( tileX % m_gameState->GetTileManager()->GetMapWidth()));
+
+  float y = static_cast<float>( tileDim *
+     ( tileY % m_gameState->GetTileManager()->GetMapHeight()));
 
   if( GetAnimData() ) {
     //Take into account the sprites that are taller than a normal tile
-    y -= GetAnimData()->GetFrameHeight( GetAnimation() ) % Config::GetTileSize();
+    y -= GetAnimData()->GetFrameHeight( GetAnimation() ) % tileDim;
   }
   SetPosition( x, y );
 
@@ -238,22 +231,18 @@ bool GameObject::HasGridCollision() const {
 
 
 unsigned int GameObject::GetTileX() const {
+  int tileDim = m_gameState->GetTileManager()->GetTileDim();
   return static_cast<unsigned int>(
-    ( this->GetPosition().x -
-      Config::GetXPad() +
-      Config::GetTileSize() / 2) /
-      Config::GetTileSize());
+    ( GetPosition().x + tileDim / 2 ) / tileDim );
 }
 
 
 unsigned int GameObject::GetTileY() const {
+  int tileDim = m_gameState->GetTileManager()->GetTileDim();
   return static_cast<unsigned int>(
-    (( this->GetPosition().y +
-       GetSubRect().GetHeight()  %
-       Config::GetTileSize() ) -
-       Config::GetYPad() +
-       Config::GetTileSize() / 2) /
-       Config::GetTileSize());
+    (( GetPosition().y +
+       GetSubRect().GetHeight() % tileDim ) +
+       tileDim / 2) / tileDim );
 }
 
 
@@ -350,7 +339,7 @@ int GameObject::LuaSetDir( lua_State *L ) {
 
 
 int GameObject::LuaReverse( lua_State *L ) {
-  m_distance = Config::GetTileSize() - m_distance;
+  m_distance = m_gameState->GetTileManager()->GetTileDim() - m_distance;
 
   switch( m_direction ) {
     case Up: {
@@ -432,7 +421,7 @@ void GameObject::MovementUpdate() {
     default: {}
   }
 
-  if( m_distance >= Config::GetTileSize() ) {
+  if( m_distance >= m_gameState->GetTileManager()->GetTileDim()) {
     m_moving = false;
     CorrectMovement();
     m_distance = 0.0f;
@@ -443,7 +432,7 @@ void GameObject::MovementUpdate() {
 void GameObject::CorrectMovement() {
   static float diff = 0.0f;
   //Calculate the amount of distance to move back
-  diff = m_distance - Config::GetTileSize();
+  diff = m_distance - m_gameState->GetTileManager()->GetTileDim();
 
   //Find the correct direction to move back
   switch( m_direction ) {

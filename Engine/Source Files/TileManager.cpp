@@ -8,7 +8,6 @@
 #include "AnimData.h"
 #include "AnimSprite.h"
 #include "App.h"
-#include "Config.h"
 #include "tinyxml.h"
 
 /******************************
@@ -23,7 +22,11 @@ Constructors and Destructors.
 ******************************/
 TileManager::TileManager( const TiXmlElement *dataRoot )
  : m_tileSprites( NULL ),
-   m_numTiles( 0 ) {
+   m_numTileTypes( 0 ),
+   m_width( 0 ),
+   m_height( 0 ),
+   m_numTiles( 0 ),
+   m_tileDim( 0 ) {
   LoadData( dataRoot );
 }
 
@@ -37,13 +40,17 @@ TileManager::~TileManager() {
 Public Methods
 ***************************************/
 void TileManager::LoadData( const TiXmlElement *dataRoot ) {
-  LoadTileAnims( dataRoot->FirstChildElement( "tile_anims" )->
+  const TiXmlElement *tileSize = dataRoot->FirstChildElement( "size" );
+  if ( !tileSize->Attribute( "dim", &m_tileDim )) {
+    LogErr( "Tile size not specified in state file." );
+  }
+  LoadTileAnims( dataRoot->FirstChildElement( "anims" )->
     Attribute( "path" ));
-  LoadTileLayout( dataRoot->FirstChildElement( "tile_layout" ));
+  LoadTileLayout( dataRoot->FirstChildElement( "layout" ));
 }
 
 void TileManager::Update() {
-  for( unsigned int i = 0; i < m_numTiles; ++i ) {
+  for( unsigned int i = 0; i < m_numTileTypes; ++i ) {
     m_tileSprites[i].Update();
   }
 }
@@ -53,11 +60,11 @@ void TileManager::Render() {
 
 	int tile = 0;
   static float x, y = 0.0f;
-	for ( unsigned int i = 0; i < Config::GetMapSize(); i++ ) {
-		for ( unsigned int j = 0; j < Config::GetMapSize(); j++ ) {
+	for ( unsigned int i = 0; i < m_height; i++ ) {
+		for ( unsigned int j = 0; j < m_width; j++ ) {
 			tile = m_layout[i][j];
-      x = static_cast<float>( j ) * Config::GetTileSize() + Config::GetXPad();
-      y = static_cast<float>( i ) * Config::GetTileSize() + Config::GetYPad();
+      x = static_cast<float>( j ) * m_tileDim;
+      y = static_cast<float>( i ) * m_tileDim;
       m_tileSprites[tile].SetPosition( x, y );
 			app->Draw( m_tileSprites[tile] );
 		}
@@ -68,14 +75,14 @@ void TileManager::Render() {
 void TileManager::SetTile( unsigned int x, unsigned int y, const std::string &tileName ) {
   std::map<std::string, tileInfo>::iterator tileDataItr
    = m_tileDataName.find( tileName );
-  if ( tileDataItr != m_tileDataName.end() && Config::IsTileValid( x, y)) {
+  if ( tileDataItr != m_tileDataName.end() && x < m_width && y < m_height ) {
     m_layout[y][x] = std::tr1::get<2>( tileDataItr->second );
   }
 }
 
 
 const TileManager::tileInfo& TileManager::GetTile( unsigned int x, unsigned int y ) {
-  if ( Config::IsTileValid( x, y )) {
+  if ( x < m_width && y < m_height ) {
     int id = m_layout[y][x];
     TileInfoIter tile = m_tileDataId.find( id );
     if( tile != m_tileDataId.end() ) {
@@ -84,6 +91,21 @@ const TileManager::tileInfo& TileManager::GetTile( unsigned int x, unsigned int 
   }
 
   return NULL_TILE_INFO;
+}
+
+
+int TileManager::GetTileDim() {
+  return m_tileDim;
+}
+
+
+int TileManager::GetMapWidth() {
+  return m_width;
+}
+
+
+int TileManager::GetMapHeight() {
+  return m_height;
 }
 
 /************************************
@@ -95,10 +117,10 @@ void TileManager::LoadTileAnims( const std::string &animPath ) {
   AnimData *tileAnims = app->LoadAnim( animPath );
 
   if ( tileAnims ) {
-    m_numTiles = tileAnims->GetNumAnims();
-    m_tileSprites = new AnimSprite[m_numTiles];
+    m_numTileTypes = tileAnims->GetNumAnims();
+    m_tileSprites = new AnimSprite[m_numTileTypes];
 
-    for ( unsigned int i = 0; i < m_numTiles; ++i ) {
+    for ( unsigned int i = 0; i < m_numTileTypes; ++i ) {
       m_tileSprites[i].SetAnimData( tileAnims );
       m_tileSprites[i].SetAnimation( i );
       m_tileSprites[i].Play();
@@ -132,14 +154,18 @@ void TileManager::LoadTileAnims( const std::string &animPath ) {
 
 
 void TileManager::LoadTileLayout( const TiXmlElement *root ) {
-  unsigned int mapSize = Config::GetMapSize();
+  if ( !root->Attribute( "width", &m_width ) ||
+       !root->Attribute( "height", &m_height )) {
+    LogErr( "Didn't specify width and height for tile layout." );
+  }
+  m_numTiles = m_width * m_height;
 
   std::stringstream tileMapStream( root->GetText(), std::ios_base::in );
 
   int currentTile = 0;
 
-  for( unsigned int i=0; i < mapSize; i++ ) {
-    for ( unsigned int j=0; j < mapSize; j++ ) {
+  for( unsigned int i=0; i < m_width; i++ ) {
+    for ( unsigned int j=0; j < m_height; j++ ) {
       if ( tileMapStream >> currentTile ) {
         m_layout[i][j] = currentTile;
       } else {

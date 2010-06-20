@@ -3,8 +3,9 @@
 <state>
 
   <tiles>
-    <tile_anims path="Kickle_Pack/Animations/TileSheet_48x48.xml" />
-    <tile_layout>
+    <size dim="48" />
+    <anims path="Kickle_Pack/Animations/TileSheet_48x48.xml" />
+    <layout width="15" height="15">
       12 12 12 12 12 12 12 12 12 12 12 12 12 12 12
       12 12 12 12 12 12 12  4 12 12 12 12 12 12 12
       12 12 12 12 12 12  6  7  8 12 12 12 12 12 12
@@ -20,10 +21,10 @@
       12 12 12 12 13 16  6  1  8 18 15 12 12 12 12
       12 12 12 12 12 13 16  7 18 15 12 12 12 12 12
       12 12 12 12 12 12 13 17 15 12 12 12 12 12 12	
-    </tile_layout>
+    </layout>
   </tiles>
   
-  <collision_layout>
+  <collision_layout width="15" height="15">
 	  1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
 		1 1 1 1 1 1 1 0 1 1 1 1 1 1 1
 		1 1 1 1 1 1 0 0 0 1 1 1 1 1 1

@@ -36,6 +36,13 @@ class TileManager {
   // Returns type, name, and id of tile
   const TileManager::tileInfo& GetTile( unsigned int x, unsigned int y );
 
+  // Return dimensions of tile for this map (tiles are square)
+  int GetTileDim();
+
+  // Return number of tiles on map horizontally and vertically
+  int GetMapWidth();
+  int GetMapHeight();
+
  private:
   typedef std::map< int, tileInfo* >::iterator TileInfoIter;
   static const tileInfo NULL_TILE_INFO;
@@ -51,9 +58,12 @@ class TileManager {
 	void LoadTileLayout( const TiXmlElement *root );
 
   AnimSprite *m_tileSprites;
-  unsigned int m_numTiles;
-
+  int m_numTileTypes;
 	int m_layout[15][15];
+  int m_width; // Number of tiles x dir
+  int m_height; // Number of tiles y dir
+  int m_numTiles;
+  int m_tileDim;
   // Name of tile is key. Used for setting tiles.
   std::map<std::string, tileInfo> m_tileDataName;
   // Id of tile is key. Used for getting tiles.

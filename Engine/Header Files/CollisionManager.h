@@ -29,6 +29,8 @@ class CollisionManager {
   CollisionManager& operator=( const CollisionManager &manager );
 
   int m_collisionLayout[15][15];
+  int m_width;
+  int m_height;
 };
 
 #endif
