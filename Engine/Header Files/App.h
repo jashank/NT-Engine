@@ -62,8 +62,8 @@ class App {
   // Returns the change in time since last frame
   float GetDeltaTime() const;
 
-  // Returns the amount of time key has been held down
-  Key GetKeyTime( sf::Key::Code key ) const;
+  // Returns monitored Key matching with 'key'
+  Key GetKey( sf::Key::Code key ) const;
 
   // Returns event in app
   const sf::Event &GetEvent() const;  

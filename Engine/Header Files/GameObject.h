@@ -3,7 +3,10 @@
 
 #include <string>
 
+#include "boost/function/function1.hpp"
+
 #include "AnimSprite.h"
+#include "InputHandler.h"
 #include "Key.h"
 #include "Lunar.h"
 
@@ -18,8 +21,8 @@ class GameObject : public AnimSprite {
  public:
   enum Dir { Up, Down, Left, Right };
 
+  // First constructor for registering to Lunar, second for loading in GameObjects
   GameObject( lua_State *L );
-	GameObject( const std::string &filepath );
   GameObject( const std::string &filepath, unsigned int tileX, unsigned int tileY );
   ~GameObject();
 
@@ -95,7 +98,7 @@ class GameObject : public AnimSprite {
   // returning true if loading was successful
   bool LoadCollisionData( const std::string &filepath );
 
-	// Initializes the lua script 
+	// Initializes the lua script
   void InitLua();
 
 	//Updates the movement of GameObject
@@ -104,21 +107,22 @@ class GameObject : public AnimSprite {
   // Corrects movement of object when it exceeds next grid location
   void CorrectMovement();
 
-  static GameState *m_gameState; // Level that GameObject is on
+  // Calls lua function named 'funcName' that is in this GameObject's script
+  void CallScriptFunc( std::string &funcName );
+
+  // Function pointer registered to CallLuaFunc for use with InputHandler
+  const boost::function1<void, std::string&> m_ptrCallScriptFunc;
 
   bool m_moving; // If true; keep moving in m_direction
   bool m_gridCollision; // Grid-based collision completely restricts access to tile
   bool m_noClip; // When true, allows object to pass through solid objects and tiles
   Dir m_direction; // Current direction game object is moving
   float m_distance; // Distance traveled from last grid location
-  float m_speed; // m_speed at which object moves ( 1.0 is "normal" i.e. Kickle )
+  float m_speed; // m_speed at which object moves
+  InputHandler m_input; // Handles input for this GameObject
   int m_id; // ID of object
   sf::FloatRect m_collisionRect; // Object's collision box
-
-  //Array of Key and string(lua script's function names) pairs
-  KeyEntry* m_keyRegistry; 
-  unsigned int m_numKeyEntries; //Number of KeyEntries in m_keyRegistry
-
+  static GameState *m_gameState; // State that GameObject is in
   std::string m_luaScript; // Filepath to the lua script
   std::string m_type; // What type of game object (slime, kickle, etc.)
 };

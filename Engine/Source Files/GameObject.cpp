@@ -4,6 +4,7 @@
 #include <cctype>
 #include <iostream>
 
+#include "boost/bind/bind.hpp"
 extern "C" {
 #include "lualib.h"
 }
@@ -40,18 +41,17 @@ Lunar<GameObject>::RegType GameObject::methods[] = {
 
 
 /************************************************
-Public Methods
+ * Constructor and Destructor
 ************************************************/
 GameObject::GameObject( lua_State *L )
- : m_moving( false ),
+ : m_ptrCallScriptFunc( boost::bind( &GameObject::CallScriptFunc, this, _1 )),
+   m_moving( false ),
    m_gridCollision( false ),
    m_noClip( false ),
    m_direction( Up ),
    m_distance( 0.0f ),
    m_speed( 0.0f ),
-   m_id( -1 ),
-   m_keyRegistry(0),
-   m_numKeyEntries(0) {
+   m_id( -1 ) {
   m_gameState = App::GetApp()->GetCurrentState();
 
   if( !lua_isstring( L, -1 ) ) {
@@ -69,40 +69,19 @@ GameObject::GameObject( lua_State *L )
 }
 
 
-GameObject::GameObject( const std::string &filepath )
- : m_moving( false ),
-   m_gridCollision( false ),
-   m_noClip( false ),
-   m_distance( 0.0f ),
-   m_speed( 0.0f ),
-   m_id( -1 ),
-   m_keyRegistry(0),
-   m_numKeyEntries(0) {
-  m_gameState = App::GetApp()->GetCurrentState();
-
-  if( !( LoadObjectData( filepath ) &&
-         LoadCollisionData( filepath ) ) ) {
-    LogErr( "GameObject XML file " + filepath + " didn't load correctly." );
-  }
-
-  InitLua();
-}
-
-
 GameObject::GameObject(
   const std::string &filepath,
   unsigned int tileX,
   unsigned int tileY
 )
- : m_moving( false ),
+ : m_ptrCallScriptFunc( boost::bind( &GameObject::CallScriptFunc, this, _1 )),
+   m_moving( false ),
    m_gridCollision( false ),
    m_noClip( false ),
    m_direction( Up ),
    m_distance( 0.0f ),
    m_speed( 0.0f ),
-   m_id( -1 ),
-   m_keyRegistry(0),
-   m_numKeyEntries(0) {
+   m_id( -1 ) {
   m_gameState = App::GetApp()->GetCurrentState();
 
   if( !LoadObjectData( filepath ) ) {
@@ -145,38 +124,7 @@ GameObject::~GameObject() {
 
 void GameObject::HandleEvents() {
   if ( !m_moving ) {
-    static Key keyTime;
-    static App* app = App::GetApp();
-    lua_State *L = m_gameState->GetLuaState();
-
-    for( unsigned int i = 0; i < m_numKeyEntries; ++i ) {
-      if( app->GetInput().IsKeyDown( m_keyRegistry[i].first.key ) ) {
-        keyTime = app->GetKeyTime( m_keyRegistry[i].first.key );
-
-        //Check if key has been held down long enough
-        if( keyTime.elapsedTime >= m_keyRegistry[i].first.elapsedTime ) {
-          if( m_keyRegistry[i].first.startTime == keyTime.startTime ) {
-            continue; // skip because key has already been pressed
-          }
-
-          lua_rawgeti( L, LUA_REGISTRYINDEX, m_id );
-          lua_getfield( L, -1, m_keyRegistry[i].second.c_str() );
-          if( lua_isfunction( L, -1 ) ) {
-            Lunar<GameObject>::push( L, this );
-            lua_call( L, 1, 0 );
-          }
-          lua_settop( L, 0 );
-
-          //If the key isn't supposed to be repeated
-          if( m_keyRegistry[i].first.startTime != -1 ) {
-            //Set the key to equal this key presses current startTime
-            m_keyRegistry[i].first.startTime = keyTime.startTime;
-            //Making sure that this key won't be handled again until
-            //keyTime.startTime is changed(a key is re-pressed)
-          }
-        }
-      }
-    }
+    m_input.ScanEvents( m_ptrCallScriptFunc );
   }
 }
 
@@ -390,6 +338,8 @@ void GameObject::InitLua() {
   luaL_dofile( m_gameState->GetLuaState(), m_luaScript.c_str() );
   if ( lua_istable( m_gameState->GetLuaState(), -1 )) {
     m_id = luaL_ref( m_gameState->GetLuaState(), LUA_REGISTRYINDEX );
+  } else {
+    LogErr( "Lua behavior table not found for GameObject: " + m_type );
   }
 }
 
@@ -467,6 +417,18 @@ void GameObject::CorrectMovement() {
 }
 
 
+void GameObject::CallScriptFunc( std::string &funcName ) {
+  lua_State *L = m_gameState->GetLuaState();
+  lua_rawgeti( L, LUA_REGISTRYINDEX, m_id );
+  lua_getfield( L, -1, funcName.c_str() );
+  if( lua_isfunction( L, -1 ) ) {
+    Lunar<GameObject>::push( L, this );
+    lua_call( L, 1, 0 );
+  }
+  lua_settop( L, 0 );
+}
+
+
 bool GameObject::LoadCollisionData( const std::string &filepath ) {
   TiXmlDocument doc ( filepath.c_str() );
 
@@ -507,30 +469,14 @@ bool GameObject::LoadObjectData( const std::string &filepath ) {
     return false;
   }
 
-  // Determine type by the name of the xml file
-  size_t lastPeriod = filepath.find_last_of( '.' );
-  size_t lastSlash = filepath.find_last_of( '\\' );
-  if( lastSlash == std::string::npos ) {
-    lastSlash = filepath.find_last_of( '/' );
-  }
-
-  if( lastPeriod == std::string::npos ||
-      lastSlash == std::string::npos ||
-      lastPeriod < lastSlash ) {
-    // Improper filepath, unable to determine type
-    return false;
-  }
-
-  // Grab the filename substring between lastSlash and lastPeriod
-  m_type = filepath.substr( lastSlash+1, (lastPeriod-lastSlash)-1 );
-
+  m_type = GetXmlFileName( filepath );
 
   TiXmlHandle handleDoc( &doc );
   TiXmlElement* root = handleDoc.FirstChildElement( "game_object" ).Element();
 
   //Load in path to animation's xml
   TiXmlElement* tempElem = root->FirstChildElement( "animation" );
-  if( tempElem != 0 ) {
+  if( tempElem != NULL ) {
     std::string animPath( tempElem->Attribute( "path" ) );
     LoadAnimData( animPath );
   }
@@ -538,59 +484,18 @@ bool GameObject::LoadObjectData( const std::string &filepath ) {
   //Load in path to GameObject's lua script
   m_luaScript = root->FirstChildElement( "script" )->Attribute( "path" );
 
-  //// Load in type of object
-  //m_type = root->FirstChildElement( "typename" )->Attribute( "data" );
-
   // Load in speed of object
   std::string speed( root->FirstChildElement( "speed" )->Attribute( "data" ) );
   m_speed = (float)atof( speed.c_str() );
 
-  //Load Input Data
-  TiXmlElement* inputListRoot = root->FirstChildElement( "input_list" );
-
-  //if an input_list tag exists :D
-  if( inputListRoot ) {
-    TiXmlElement* input = 0;
-    std::vector< KeyEntry > tempList;
-    sf::Key::Code k;
-
-    for ( input = inputListRoot->FirstChildElement( "input" );
-          input;
-          input = input->NextSiblingElement( "input" ) ) {
-
-      std::string key = input->Attribute( "key" );
-      std::string repeat = input->Attribute( "repeat" );
-      std::string delay = input->Attribute( "delay" );
-      std::string function = input->Attribute( "function" );
-
-      if( !KeyManager::InterpretKey( key, k ) ) {
-        //Invalid key attribute in an input xml tag
-        return false;
-      }
-
-      Key tempKey( k );
-
-      ToLowerCase( repeat );
-      tempKey.startTime = ( repeat == "true" ) ? -1.0f : 0.0f;
-
-      tempKey.elapsedTime = static_cast<float>( atof( delay.c_str() ) );
-      tempList.push_back( std::make_pair( tempKey, function ) );
-
-    }
-    m_numKeyEntries = static_cast<unsigned int>( tempList.size() );
-    m_keyRegistry = new KeyEntry[m_numKeyEntries];
-
-    for( unsigned int i = 0; i < m_numKeyEntries; ++i ) {
-      m_keyRegistry[i] = tempList[i];
-      App::GetApp()->RegisterKey( m_keyRegistry[i].first.key );
-
-      DEBUG_STATEMENT(
-        std::cout << m_type << " Input: " << std::endl;
-        std::cout << m_keyRegistry[i].first.key << " "
-          << m_keyRegistry[i].first.elapsedTime;
-        std::cout << " " << m_keyRegistry[i].second << std::endl;
-      )
+  //Load input data if there is any
+  const TiXmlElement *inputListRoot = root->FirstChildElement( "input_list" );
+  if ( inputListRoot ) {
+    if ( !m_input.LoadInputList( inputListRoot )) {
+      LogErr( "Problem loading input list in GameObject: " + m_type );
+      return false;
     }
   }
+
   return true;
 }

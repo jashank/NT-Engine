@@ -11,9 +11,15 @@
 class KeyManager {
  public:
   KeyManager();
+
+  // Takes key string, interprets it, and sets keyResult as the appropriate
+  // key code
   static bool InterpretKey( std::string &keyString, sf::Key::Code &keyResult );
 
-  Key GetKeyTime( sf::Key::Code key ) const;
+  // Returns monitored Key corresponding to sf::Key::Code:: key.
+  // Returns default constructed Key if none found.
+  Key GetKey( sf::Key::Code key ) const;
+
   void Init( const sf::Input &input );
   void RegisterKey( sf::Key::Code key );
   void Update();

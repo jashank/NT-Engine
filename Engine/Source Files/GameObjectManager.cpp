@@ -53,6 +53,7 @@ void GameObjectManager::LoadData( const TiXmlElement *dataRoot ) {
   } while ( objectType = objectType->NextSiblingElement( "game_object" ));
 }
 
+
 void GameObjectManager::HandleEvents() {
   GameObjItr gameObj = m_gameObjects.begin();
   for ( ; gameObj != m_gameObjects.end(); gameObj++ ) {
@@ -61,6 +62,7 @@ void GameObjectManager::HandleEvents() {
     }
   }
 }
+
 
 void GameObjectManager::Update() {
   GameObjItr gameObj = m_gameObjects.begin();
@@ -90,6 +92,7 @@ void GameObjectManager::Update() {
   }
   m_toBeDestroyed.clear();
 }
+
 
 void GameObjectManager::Render() const {
   std::priority_queue< std::pair<float, GameObject*> > renderOrder;

@@ -98,13 +98,14 @@ float App::GetTime() const {
   return m_time;
 }
 
+
 float App::GetDeltaTime() const {
 	return m_deltaTime;
 }
 
 
-Key App::GetKeyTime( sf::Key::Code key ) const {
-  return m_keyManager.GetKeyTime( key );
+Key App::GetKey( sf::Key::Code key ) const {
+  return m_keyManager.GetKey( key );
 }
 
 

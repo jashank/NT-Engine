@@ -90,7 +90,7 @@ bool KeyManager::InterpretKey( std::string &keyString, sf::Key::Code &keyResult 
 }
 
 
-Key KeyManager::GetKeyTime( sf::Key::Code key ) const {
+Key KeyManager::GetKey( sf::Key::Code key ) const {
   if( m_input ) {
     for( int i = 0; i < static_cast<int>(m_keys.size()); ++i ) {
       if( key == m_keys[i].key ) {
