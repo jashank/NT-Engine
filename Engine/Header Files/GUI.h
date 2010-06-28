@@ -24,14 +24,27 @@ class GUI {
   // Handles input defined by user in XML file
   virtual void HandleEvents();
 
-  // Renders AnimSprite that all GUI share
+  // Updates the GUI
+  virtual void Update();
+
+  // Renders AnimSprite
   virtual void Render();
 
   // Lunar requirements
   static const char className[];
 
+ protected:
+  // Returns GameState held by GUI
+  GameState* GetState() const;
+
+  // Returns lua id held by GUI
+  int GetID() const;
+
+  // Returns sprite held by GUI
+  AnimSprite& GetSprite();
+
  private:
-  // Restrict copy constructor and destructor
+  // Restrict copy constructor and assignment
   GUI( const GUI& );
   GUI& operator=( const GUI& );
 

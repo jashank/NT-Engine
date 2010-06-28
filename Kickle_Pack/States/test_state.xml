@@ -4,7 +4,7 @@
 
   <tiles>
     <size dim="48" />
-    <anims path="Kickle_Pack/Animations/TileSheet_48x48.xml" />
+    <anims path="Kickle_Pack/Animations/TileAnims_48x48.xml" />
     <layout width="15" height="15">
       12 12 12 12 12 12 12 12 12 12 12 12 12 12 12
       12 12 12 12 12 12 12  4 12 12 12 12 12 12 12
@@ -60,10 +60,6 @@
 			<instance x="11" y="9" />
     </game_object>
   </game_objects>
-  
-  <GUI>
-    <!-- TODO RANDOM: ENTITY TYPE ATTRIBUTE SHOULD BE CALLED NAME-->
-  </GUI>
   
   <sound>
     <music_playlist>

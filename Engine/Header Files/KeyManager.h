@@ -23,6 +23,7 @@ class KeyManager {
   void Init( const sf::Input &input );
   void RegisterKey( sf::Key::Code key );
   void Update();
+
  private:
   //Contains the keys that are to be monitored
   std::vector< Key > m_keys;

@@ -9,21 +9,20 @@
 
 
 int main() {
-  DEBUG_STATEMENT( ClearLog(); )
-
+  ClearLog();
   Config::Load();
 
-	std::auto_ptr< App > Game( 
-    App::CreateApp( 
-      "Kickle!", 
-      Config::GetScreenWidth(), 
-      Config::GetScreenHeight(), 
-      Config::GetFPS() 
-    ) 
+	std::auto_ptr< App > Game(
+    App::CreateApp(
+      "Kickle!",
+      Config::GetScreenWidth(),
+      Config::GetScreenHeight(),
+      Config::GetFPS()
+    )
   );
 
 	Game->Run();
-	
+
 
 	return 0;
 }

@@ -37,6 +37,7 @@ App::App(
    m_deltaTime( 0.0f ),
    m_fps( 0.0f ),
    m_window( sf::VideoMode( width, height ), title ),
+   m_nextStateSet( false ),
    m_currentState( NULL ) {
   m_window.UseVerticalSync( true );
   m_window.SetFramerateLimit( framerate );
@@ -142,10 +143,11 @@ void App::RegisterKey( sf::Key::Code key ) {
   m_keyManager.RegisterKey( key );
 }
 
+
 void App::Run() {
   // TEMPORARY
   m_currentState = new GameState();
-  m_currentState->LoadFromFile( "Kickle_Pack/States/test_state.xml" );
+  m_currentState->LoadFromFile( "Kickle_Pack/States/title_state.xml" );
 
 	//Game Loop
 	while ( m_window.IsOpened() ) {
@@ -161,6 +163,13 @@ void App::Run() {
 
 		m_currentState->HandleEvents();
 		m_currentState->Update();
+
+		if ( m_nextStateSet) {
+		  m_nextStateSet = false;
+		  SAFEDELETE( m_currentState );
+		  m_currentState = new GameState();
+		  m_currentState->LoadFromFile( m_nextStatePath );
+		}
 
 		m_window.Clear( m_clearColor );
 		//Display FPS
@@ -178,6 +187,11 @@ void App::Run() {
 	}
 }
 
+
+void App::SetNextState( const std::string &filepath ) {
+  m_nextStateSet = true;
+  m_nextStatePath = filepath;
+}
 
 void App::SetClearColor( const sf::Color& color ) {
   m_clearColor = color;

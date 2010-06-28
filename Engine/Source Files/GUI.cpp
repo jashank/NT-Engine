@@ -8,7 +8,6 @@ extern "C" {
 
 #include "App.h"
 #include "GameState.h"
-#include "Lunar.h"
 #include "Utilities.h"
 
 /********************************
@@ -48,10 +47,31 @@ void GUI::HandleEvents() {
 }
 
 
-void GUI::Render() {
+void GUI::Update() {
   m_sprite.Update();
 }
 
+
+void GUI::Render() {
+  App::GetApp()->Draw( m_sprite );
+}
+
+/******************************
+ * Protected Methods
+ * ***************************/
+GameState* GUI::GetState() const {
+  return m_state;
+}
+
+
+int GUI::GetID() const {
+  return m_id;
+}
+
+
+AnimSprite& GUI::GetSprite() {
+  return m_sprite;
+}
 
 /******************************
  * Private Methods
@@ -66,11 +86,13 @@ bool GUI::LoadData( const std::string &filepath ) {
 
   m_name = GetXmlFileName( filepath );
 
-  TiXmlElement *anim = handleDoc.FirstChildElement( "animation" ).Element();
+  TiXmlElement *anim = root->FirstChildElement( "animation" );
   m_sprite.LoadAnimData( anim->Attribute( "path" ));
 
-  TiXmlElement *script = handleDoc.FirstChildElement( "script" ).Element();
-  m_luaPath = script->Attribute( "path" );
+  TiXmlElement *script = root->FirstChildElement( "script" );
+  if ( script ) {
+    m_luaPath = script->Attribute( "path" );
+  }
 
   const TiXmlElement *inputListRoot = root->FirstChildElement( "input_list" );
   if ( inputListRoot ) {
@@ -98,8 +120,7 @@ void GUI::CallScriptFunc( std::string &funcName ) {
   lua_rawgeti( L, LUA_REGISTRYINDEX, m_id );
   lua_getfield( L, -1, funcName.c_str() );
   if( lua_isfunction( L, -1 ) ) {
-    Lunar<GUI>::push( L, this );
-    lua_call( L, 1, 0 );
+    lua_call( L, 0, 0 );
   }
   lua_settop( L, 0 );
 }

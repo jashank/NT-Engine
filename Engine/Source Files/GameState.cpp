@@ -4,6 +4,7 @@
 #include "CollisionManager.h"
 #include "GameObject.h"
 #include "GameObjectManager.h"
+#include "GUIManager.h"
 #include "SoundManager.h"
 #include "TileManager.h"
 #include "tinyxml.h"
@@ -34,6 +35,7 @@ GameState::GameState()
  : m_tileManager( NULL ),
    m_collisionManager( NULL ),
    m_gameObjectManager( NULL ),
+   m_guiManager( NULL ),
    m_soundManager( NULL ) {
   m_luaState = luaL_newstate();
   luaL_openlibs( m_luaState );
@@ -50,6 +52,7 @@ GameState::~GameState() {
   }
   SAFEDELETE( m_soundManager );
   SAFEDELETE( m_gameObjectManager );
+  SAFEDELETE( m_guiManager );
   SAFEDELETE( m_collisionManager );
   SAFEDELETE( m_tileManager );
 }
@@ -60,12 +63,32 @@ bool GameState::LoadFromFile( const std::string &path ) {
 
   if ( doc.LoadFile() ) {
     TiXmlElement *root = doc.FirstChildElement( "state" );
+    if ( root ) {
+      TiXmlElement *elem = root->FirstChildElement( "tiles" );
+      if ( elem ) {
+        m_tileManager = new TileManager( elem );
+      }
 
-    m_tileManager = new TileManager( root->FirstChildElement( "tiles" ));
-    m_collisionManager = new CollisionManager( root->FirstChildElement( "collision_layout" ));
-    m_gameObjectManager = new GameObjectManager( root->FirstChildElement( "game_objects" ));
-    // LOAD GUI DATA
-    m_soundManager = new SoundManager( root->FirstChildElement( "sound" ));
+      elem = root->FirstChildElement( "collision_layout" );
+      if ( elem ) {
+        m_collisionManager = new CollisionManager( elem );
+      }
+
+      elem = root->FirstChildElement( "game_objects" );
+      if ( elem ) {
+        m_gameObjectManager = new GameObjectManager( elem );
+      }
+
+      elem = root->FirstChildElement( "GUI" );
+      if ( elem ) {
+        m_guiManager = new GUIManager( elem );
+      }
+
+      elem = root->FirstChildElement( "sound" );
+      if ( elem ) {
+        m_soundManager = new SoundManager( elem );
+      }
+    }
     return true;
   }
 
@@ -75,21 +98,24 @@ bool GameState::LoadFromFile( const std::string &path ) {
 
 
 void GameState::HandleEvents() {
-  m_gameObjectManager->HandleEvents();
+  if ( m_gameObjectManager ) m_gameObjectManager->HandleEvents();
+  if ( m_guiManager ) m_guiManager->HandleEvents();
 }
 
 
 void GameState::Update() {
-  m_tileManager->Update();
-  m_gameObjectManager->Update();
-  m_soundManager->Update();
+  if ( m_tileManager ) m_tileManager->Update();
+  if ( m_gameObjectManager ) m_gameObjectManager->Update();
+  if ( m_guiManager ) m_guiManager->Update();
+  if ( m_soundManager ) m_soundManager->Update();
 }
 
 
 void GameState::Render() {
   // The rendering order is important.
-	m_tileManager->Render();
-  m_gameObjectManager->Render();
+  if ( m_tileManager ) m_tileManager->Render();
+  if ( m_gameObjectManager ) m_gameObjectManager->Render();
+  if ( m_guiManager ) m_guiManager->Render();
 }
 
 
@@ -298,7 +324,13 @@ int GameState::LuaSetTile( lua_State *L ) {
 
 
 int GameState::LuaNewState( lua_State *L ) {
-  //TODO
+  if ( !lua_isstring( L, -1 )) {
+    LogErr( "String not passed to NewState" );
+    return luaL_error( L, "String not passed to NewState" );
+  }
+  std::string stateFile = lua_tostring( L, -1 );
+
+  App::GetApp()->SetNextState( stateFile );
   return 0;
 }
 
