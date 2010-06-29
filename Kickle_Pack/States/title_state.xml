@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+
+<state>
+
+  <GUI>
+    <component type="image"  path="Kickle_Pack/GUI/TitleImage.xml">
+      <instance x="0" y="0" />
+    </component>
+    <component type="button" path="Kickle_Pack/GUI/TitlePlayButton.xml">
+      <instance x="235" y="298" />
+    </component>
+  </GUI>
+
+</state>

@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<sheet path="Kickle_Pack/Sheets/titlePlay.png">
+
+  <strip name="play">
+    <looped>false</looped>
+    <num_frames>1</num_frames>
+    <frame_times>100</frame_times>
+
+    <x_pos>0</x_pos>
+    <y_pos>0</y_pos>
+    <width>250</width>
+    <height>125</height>
+  </strip>
+</sheet>
