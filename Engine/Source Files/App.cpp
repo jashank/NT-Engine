@@ -151,17 +151,15 @@ void App::Run() {
 
 	//Game Loop
 	while ( m_window.IsOpened() ) {
+    m_keyManager.Update();
+    m_currentState->HandleEvents();
 
-		if ( m_window.GetEvent( m_event ) ) {
-			//Handle Close Event
+	  while ( m_window.GetEvent( m_event )) {
 			if ( m_event.Type == sf::Event::Closed ) {
 				m_window.Close();
 			}
 		}
 
-    m_keyManager.Update();
-
-		m_currentState->HandleEvents();
 		m_currentState->Update();
 
 		if ( m_nextStateSet) {

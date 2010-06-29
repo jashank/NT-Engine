@@ -30,7 +30,7 @@ void Button::HandleEvents() {
   const std::string MOUSE_PRESSED = "MousePressed";
   const std::string MOUSE_CLICKED = "MouseClicked";
   const std::string MOUSE_RELEASED = "MouseReleased";
-/*
+
   int x = App::GetApp()->GetInput().GetMouseX();
   int y = App::GetApp()->GetInput().GetMouseY();
 
@@ -52,7 +52,7 @@ void Button::HandleEvents() {
     }
   } else {
     m_pressedDown = false;
-  }*/
+  }
 }
 
 /***************************

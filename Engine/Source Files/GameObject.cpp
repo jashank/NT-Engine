@@ -2,7 +2,6 @@
 
 #include <algorithm>
 #include <cctype>
-#include <iostream>
 
 #include "boost/bind/bind.hpp"
 extern "C" {

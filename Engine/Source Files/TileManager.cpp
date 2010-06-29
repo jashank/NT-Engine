@@ -1,6 +1,5 @@
 #include "TileManager.h"
 
-#include <iostream>
 #include <sstream>
 #include <utility>
 #include <tr1/tuple>
@@ -112,7 +111,6 @@ int TileManager::GetMapHeight() {
 Private Methods
 ************************************/
 void TileManager::LoadTileAnims( const std::string &animPath ) {
-  std::cout << animPath << "\n";
   static App *app = App::GetApp();
   AnimData *tileAnims = app->LoadAnim( animPath );
 

@@ -1,5 +1,4 @@
 #include <memory>
-#include <iostream>
 #include "Utilities.h"
 
 #include "tinyxml.h"
@@ -22,7 +21,6 @@ int main() {
   );
 
 	Game->Run();
-
 
 	return 0;
 }
