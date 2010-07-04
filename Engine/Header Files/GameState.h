@@ -9,11 +9,10 @@ extern "C" {
   #include "lualib.h"
 }
 
-class CollisionManager;
+class TileManager;
 class GameObjectManager;
 class GUIManager;
 class SoundManager;
-class TileManager;
 
 /********************************************************************
 GameState
@@ -43,7 +42,7 @@ class GameState {
   TileManager* GetTileManager() const;
 
   // Returns state's collision Manager
-  CollisionManager* GetCollisionManager() const;
+  //CollisionManager* GetCollisionManager() const;
 
   // Returns state's GameObjectManager
   GameObjectManager* GetGameObjectManager() const;
@@ -96,9 +95,8 @@ class GameState {
   GameState& operator=( const GameState &state );
 
   TileManager *m_tileManager;
-  CollisionManager *m_collisionManager;
   GameObjectManager *m_gameObjectManager;
-  GUIManager *m_guiManager;  
+  GUIManager *m_guiManager;
   SoundManager *m_soundManager;
   lua_State *m_luaState;
 };

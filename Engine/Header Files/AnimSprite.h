@@ -35,14 +35,12 @@ class AnimSprite : public sf::Sprite {
   // Sets the current animation's frame
   void SetFrame( unsigned int frame );
 
-  // Sets the current animation
-  void SetAnimation( unsigned int animation );
+  // Sets the current animation. Set reverse to true for animation to
+  // play in reverse
+  void SetAnimation( unsigned int animation, bool reverse = false );
 
   // Sets the data to be used for the animation
   void SetAnimData( const AnimData *animData );
-
-  // Starts the animation from the first frame
-  void Start();
 
   // Stops animation and sets it to first frame
   void Stop();
@@ -62,10 +60,12 @@ class AnimSprite : public sf::Sprite {
   void NextFrame();
 
   const AnimData *m_animData; //Pointer to constant animation data
-  bool m_play; //If true; animate AnimSprite
+  bool m_play; //If true, animate AnimSprite
+  bool m_reverse; // If true, play animation in reverse
   float m_frameTime; //Time left on current frame
   unsigned int m_animation; //Current animation selections
   unsigned int m_frame; //Current frame selection
 };
 
 #endif
+

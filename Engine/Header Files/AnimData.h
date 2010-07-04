@@ -4,12 +4,12 @@
 #include <string>
 
 #include <SFML/Graphics/Image.hpp>
+class TiXmlElement;
 
 class AnimData {
 public:
-  AnimData();
-  AnimData( const AnimData &ad );
-  ~AnimData();
+  AnimData() {}
+  ~AnimData() {}
 
   AnimData& operator=( const AnimData &ad );
 
@@ -36,10 +36,7 @@ public:
   unsigned int GetNumAnims() const;
 
   // Returns number of frames for given animation
-  unsigned int GetNumFrames( unsigned int animation ) const;	
-
-  // Returns true if played forward false if played backward
-  bool GetPlayBack( unsigned int animation ) const;
+  unsigned int GetNumFrames( unsigned int animation ) const;
 
   // Returns the Rect for the given animation and frame
   sf::IntRect GetFrameRect( unsigned int animation,  unsigned int frame ) const;
@@ -48,24 +45,30 @@ public:
   sf::Image& GetImage( unsigned int animation ) const;
 
 private:
+  enum CommonTag { ON, OFF };
+
   struct Animation {
     Animation();
-    Animation( const Animation &a );
-    ~Animation();
+    ~Animation() {}
 
-    Animation& operator=( const Animation &a );
-
-    bool forward;
     bool uniqueFrameTimes; //True if each frame has it's own time
     bool isLooped; //True if animation is looped
-    float *frameTime; //Individual times for each frame
-    unsigned int numFrames; //Total frames in animation
-    sf::IntRect	frameRect; //(x,y)-first frame (w,h)-frame sizes
+    std::vector<float> frameTimes;
+    int numFrames; //Total frames in animation
+    sf::IntRect frameRect; //(x,y)-first frame (w,h)-frame sizes
     sf::Image *image; // Holds pointer to image designated to animation (stored in ResourceManager)
+    std::string name; // Name of animation loaded in
   };
 
-  Animation *m_anims; //Holds information on all animations in animsheet
-  unsigned int m_numAnims; //The number of Animations
+  // Parses strip passed, adding animation to m_anims. If flag is ON, function
+  // assumes that strip has parent <common>. Otherwise it doesn't
+  // (direct child of <sheet>). Must also pass sheet that strip is under.
+  // Returns whether parsing was successful.
+  bool ParseStrip( const TiXmlElement *strip, sf::Image *sheet, CommonTag flag );
+
+  Animation m_common; // Data from last <common> tag loaded in
+  std::vector<Animation> m_anims; // Holds information on all animations
 };
 
 #endif
+

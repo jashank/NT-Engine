@@ -5,6 +5,8 @@
 #include <SFML/Audio/Music.hpp>
 #include <SFML/Audio/SoundBuffer.hpp>
 
+#include <string>
+
 #include "AnimData.h"
 #include "KeyManager.h"
 #include "ResourceManager.h"
@@ -14,7 +16,7 @@
 class GameState;
 class AnimData;
 
-//Template specialization to handle sf::Music's OpenFromFile()
+//Template specialization to handle sf::Music's OpenFromFile() 
 //instead of the typical LoadFromFile()
 template<>
 sf::Music* ResourceLoader<sf::Music>::Load( const std::string& filename );
@@ -32,11 +34,12 @@ App
 ************************************************/
 class App {
  public:
-  static App* CreateApp(
-    const std::string &title,
-    unsigned int width,
-    unsigned int height,
-    unsigned int framerate
+  static App* CreateApp( 
+    const std::string &title, 
+    unsigned int width, 
+    unsigned int height, 
+    unsigned int framerate,
+    std::string filePath
   );
 
 
@@ -66,12 +69,12 @@ class App {
   Key GetKey( sf::Key::Code key ) const;
 
   // Returns event in app
-  const sf::Event &GetEvent() const;
+  const sf::Event &GetEvent() const;  
 
   // Returns input in app.
   const sf::Input &GetInput() const;
 
-  // Returns an Image given a filename, insuring that no
+  // Returns an Image given a filename, insuring that no 
   // duplicate Image is loaded into memory
   sf::Image* LoadImage( const std::string &filename );
 
@@ -83,7 +86,7 @@ class App {
   // duplicate Music is loaded into memory
   sf::Music* LoadMusic( const std::string &filename );
 
-  // Returns an AnimData given a filename, insuring that no
+  // Returns an AnimData given a filename, insuring that no 
   // duplicate AnimData is loaded into memory
   AnimData* LoadAnim( const std::string &filename );
 
@@ -100,11 +103,12 @@ class App {
   void SetClearColor( const sf::Color& color );
 
  private:
-  App(
-    const std::string &title,
-    unsigned int width,
-    unsigned int height,
-    unsigned int framerate
+  App( 
+    const std::string &title, 
+    unsigned int width, 
+    unsigned int height, 
+    unsigned int framerate,
+    std::string filePath 
   );
 
 
@@ -117,9 +121,9 @@ class App {
   float m_time; //Total time since app was first created.
   float	m_deltaTime; //Time in seconds spent on last frame render
   float	m_fps; //Frames per Second
-
+  std::string m_filePath; // Path to current level
   KeyManager m_keyManager; //Keeps track of how long registered keys are held
-
+  
   //Resource Managers
   ResourceManager< sf::Image > m_images;
   ResourceManager< sf::SoundBuffer > m_sounds;
@@ -129,10 +133,11 @@ class App {
   sf::Color m_clearColor; //Color to clear the screen to
   sf::Event	m_event; //holds the most current event
   sf::RenderWindow	m_window; //SFML's window
-
+  
   // TEMPORARY
   bool m_nextStateSet;
   std::string m_nextStatePath;
+
   GameState *m_currentState;
 };
 

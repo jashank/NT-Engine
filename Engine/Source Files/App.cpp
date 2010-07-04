@@ -31,13 +31,15 @@ App::App(
   const std::string &title,
   unsigned int width,
   unsigned int height,
-  unsigned int framerate
+  unsigned int framerate,
+  std::string filePath
 )
  : m_time( 0.0f ),
    m_deltaTime( 0.0f ),
    m_fps( 0.0f ),
-   m_window( sf::VideoMode( width, height ), title ),
+   m_filePath( filePath ),
    m_nextStateSet( false ),
+   m_window( sf::VideoMode( width, height ), title ),
    m_currentState( NULL ) {
   m_window.UseVerticalSync( true );
   m_window.SetFramerateLimit( framerate );
@@ -57,10 +59,11 @@ App* App::CreateApp(
   const std::string& title,
   unsigned int width,
   unsigned int height,
-  unsigned int framerate
+  unsigned int framerate,
+  std::string filePath
 ) {
 	if(  m_instance == 0 ) {
-		m_instance = new App( title, width, height, framerate );
+		m_instance = new App( title, width, height, framerate, filePath );
 	}
 	else {
 		LogErr( "Attempt to call CreateApp when App already exiss." );
@@ -143,31 +146,33 @@ void App::RegisterKey( sf::Key::Code key ) {
   m_keyManager.RegisterKey( key );
 }
 
-
 void App::Run() {
   // TEMPORARY
   m_currentState = new GameState();
-  m_currentState->LoadFromFile( "Kickle_Pack/States/title_state.xml" );
+  m_currentState->LoadFromFile( m_filePath );
 
 	//Game Loop
 	while ( m_window.IsOpened() ) {
     m_keyManager.Update();
     m_currentState->HandleEvents();
-
-	  while ( m_window.GetEvent( m_event )) {
+		while ( m_window.GetEvent( m_event ) ) {
+			//Handle Close Event
 			if ( m_event.Type == sf::Event::Closed ) {
 				m_window.Close();
 			}
 		}
 
-		m_currentState->Update();
+    m_keyManager.Update();
 
-		if ( m_nextStateSet) {
-		  m_nextStateSet = false;
-		  SAFEDELETE( m_currentState );
-		  m_currentState = new GameState();
-		  m_currentState->LoadFromFile( m_nextStatePath );
-		}
+		m_currentState->HandleEvents();
+		m_currentState->Update();
+    
+    if ( m_nextStateSet ) {
+      m_nextStateSet = false;
+      SAFEDELETE( m_currentState );
+      m_currentState = new GameState();
+      m_currentState->LoadFromFile( m_nextStatePath );
+    }
 
 		m_window.Clear( m_clearColor );
 		//Display FPS
@@ -184,7 +189,6 @@ void App::Run() {
 		m_fps = 1.0f/m_deltaTime;
 	}
 }
-
 
 void App::SetNextState( const std::string &filepath ) {
   m_nextStateSet = true;

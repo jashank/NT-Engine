@@ -2,49 +2,31 @@
 <sheet path="Kickle_Pack/Sheets/penguin_48x72.png">
 
   <strip name="up_walking">
-    <looped>true</looped>
-    <num_frames>8</num_frames>
+    <clip x="0" y="0" width="48" height="72" />
+    <flow num_frames="8" looped="true" />
     <frame_times> 0.1 </frame_times>
-
-    <x_pos>0</x_pos>
-    <y_pos>0</y_pos>
-    <width>48</width>
-    <height>72</height>
   </strip>
 
 
   <strip name="down_walking">
-    <looped>true</looped>
-    <num_frames>8</num_frames>
+    <clip x="0" y="72" width="48" height="72" />
+    <flow num_frames="8" looped="true" />
     <frame_times> 0.1 </frame_times>
-
-    <x_pos>0</x_pos>
-    <y_pos>72</y_pos>
-    <width>48</width>
-    <height>72</height>
   </strip>
 
 
   <strip name="left_walking">
-    <looped>true</looped>
-    <num_frames>8</num_frames>
+    <clip x="0" y="144" width="48" height="72" />
+    <flow num_frames="8" looped="true" />
     <frame_times> 0.1 </frame_times>
-
-    <x_pos>0</x_pos>
-    <y_pos>144</y_pos>
-    <width>48</width>
-    <height>72</height>
   </strip>>
 
 
   <strip name="right_walking">
-    <looped>true</looped>
-    <num_frames>8</num_frames>
+    <clip x="0" y="216" width="48" height="72" />
+    <flow num_frames="8" looped="true" />
     <frame_times> 0.1 </frame_times>
-
-    <x_pos>0</x_pos>
-    <y_pos>216</y_pos>
-    <width>48</width>
-    <height>72</height>
   </strip>
+
 </sheet>
+
