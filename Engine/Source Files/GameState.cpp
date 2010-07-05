@@ -1,6 +1,7 @@
 #include "GameState.h"
 
 #include "App.h"
+#include "CollisionManager.h"
 #include "GameObject.h"
 #include "GameObjectManager.h"
 #include "GUIManager.h"
@@ -32,9 +33,10 @@ const luaL_Reg GameState::LuaGameStateFuncts[] = {
 // NEED TO CONSIDER OPTIONAL ATTRIBUTES
 GameState::GameState()
  : m_tileManager( NULL ),
+   m_collisionManager( NULL ),
    m_gameObjectManager( NULL ),
-   m_soundManager( NULL ),
-   m_guiManager( NULL )  {
+   m_guiManager( NULL ),
+   m_soundManager( NULL ) {
   m_luaState = luaL_newstate();
   luaL_openlibs( m_luaState );
   luaL_register( m_luaState, "Game", LuaGameStateFuncts );
@@ -51,8 +53,10 @@ GameState::~GameState() {
   SAFEDELETE( m_soundManager );
   SAFEDELETE( m_gameObjectManager );
   SAFEDELETE( m_guiManager );
+  SAFEDELETE( m_collisionManager );
   SAFEDELETE( m_tileManager );
 }
+
 
 bool GameState::LoadFromFile( const std::string &path ) {
   TiXmlDocument doc( path.c_str() );
@@ -63,6 +67,11 @@ bool GameState::LoadFromFile( const std::string &path ) {
       TiXmlElement *elem = root->FirstChildElement( "tiles" );
       if ( elem ) {
         m_tileManager = new TileManager( elem );
+      }
+
+      elem = root->FirstChildElement( "collision_layout" );
+      if ( elem ) {
+        m_collisionManager = new CollisionManager( elem );
       }
 
       elem = root->FirstChildElement( "game_objects" );
@@ -87,50 +96,26 @@ bool GameState::LoadFromFile( const std::string &path ) {
   return false;
 }
 
-void GameState::HandleEvents() {
-  if ( m_gameObjectManager ) {
-    m_gameObjectManager->HandleEvents();
-  }
-  
-  if ( m_guiManager ) {
-    m_guiManager->HandleEvents();
-  }
 
+void GameState::HandleEvents() {
+  if ( m_gameObjectManager ) m_gameObjectManager->HandleEvents();
+  if ( m_guiManager ) m_guiManager->HandleEvents();
 }
 
 
 void GameState::Update() {
-  if ( m_tileManager ) {
-    m_tileManager->Update();
-  }
-  
-  if ( m_gameObjectManager ) {
-    m_gameObjectManager->Update();
-  }
-
-  if ( m_guiManager ) {
-    m_guiManager->Update();
-  }
-
-  if ( m_soundManager ) {
-    m_soundManager->Update();
-  }
+  if ( m_tileManager ) m_tileManager->Update();
+  if ( m_gameObjectManager ) m_gameObjectManager->Update();
+  if ( m_guiManager ) m_guiManager->Update();
+  if ( m_soundManager ) m_soundManager->Update();
 }
 
 
 void GameState::Render() {
   // The rendering order is important.
-  if ( m_tileManager ) {
-    m_tileManager->Render();
-  }
-  
-  if ( m_gameObjectManager ) {
-    m_gameObjectManager->Render();
-  }
-  
-  if ( m_guiManager ) { 
-    m_guiManager->Render();
-  }
+  if ( m_tileManager ) m_tileManager->Render();
+  if ( m_gameObjectManager ) m_gameObjectManager->Render();
+  if ( m_guiManager ) m_guiManager->Render();
 }
 
 
@@ -139,9 +124,9 @@ TileManager* GameState::GetTileManager() const {
 }
 
 
-//CollisionManager* GameState::GetCollisionManager() const {
-//  return m_collisionManager;
-//}
+CollisionManager* GameState::GetCollisionManager() const {
+  return m_collisionManager;
+}
 
 
 GameObjectManager* GameState::GetGameObjectManager() const {
@@ -188,7 +173,7 @@ int GameState::LuaCreateGameObject( lua_State *L ) {
 
   GameObject *newGameObject = new GameObject( path, tileX, tileY );
   App::GetApp()->GetCurrentState()->
-  m_gameObjectManager->AddGameObject( newGameObject );
+    m_gameObjectManager->AddGameObject( newGameObject );
 
   Lunar<GameObject>::push( L, newGameObject );
   return 1;
@@ -252,11 +237,11 @@ int GameState::LuaGetTileInfo( lua_State *L ) {
   }
   int tileY = lua_tointeger( L, -1 );
 
-  Tile tile = App::GetApp()->GetCurrentState()->
+  TileManager::tileInfo tile = App::GetApp()->GetCurrentState()->
     m_tileManager->GetTile( tileX, tileY );
-  lua_pushstring( L, tile.type.c_str() );
-  lua_pushstring( L, tile.name.c_str() );
-  lua_pushinteger( L,tile.id );
+  lua_pushstring( L, std::tr1::get<0>( tile ).c_str() );
+  lua_pushstring( L, std::tr1::get<1>( tile ).c_str() );
+  lua_pushinteger( L, std::tr1::get<2>( tile ));
 
   return 3;
 }
@@ -276,7 +261,7 @@ int GameState::LuaTileIsCrossable( lua_State *L ) {
   int tileY = lua_tointeger( L, -1 );
 
   lua_pushboolean( L, App::GetApp()->GetCurrentState()->
-    m_tileManager->TileIsCrossable( tileX, tileY ));
+    m_collisionManager->TileIsCrossable( tileX, tileY ));
 
   return 1;
 }
@@ -311,7 +296,6 @@ int GameState::LuaSetTile( lua_State *L ) {
   }
   int tileX = lua_tointeger( L, -4 );
 
-
   if ( !lua_isnumber( L, -3 ) ) {
     LogErr( "Number not passed to y position in SetTile." );
     return luaL_error( L, "Number not passed to y position in SetTile." );
@@ -333,7 +317,7 @@ int GameState::LuaSetTile( lua_State *L ) {
   App::GetApp()->GetCurrentState()->
     m_tileManager->SetTile( tileX, tileY, tileName );
   App::GetApp()->GetCurrentState()->
-    m_tileManager->SetCollision( tileX, tileY, collisionID );
+    m_collisionManager->SetCollision( tileX, tileY, collisionID );
 
   return 0;
 }
@@ -345,7 +329,7 @@ int GameState::LuaNewState( lua_State *L ) {
     return luaL_error( L, "String not passed to NewState" );
   }
   std::string stateFile = lua_tostring( L, -1 );
-  
+
   App::GetApp()->SetNextState( stateFile );
   return 0;
 }

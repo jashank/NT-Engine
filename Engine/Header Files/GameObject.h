@@ -59,11 +59,8 @@ class GameObject : public AnimSprite {
 	// Allows Lua to move the GameObject
   int LuaMove( lua_State *L );
 
-	// Sets animation on sheet corresponding to index top to bottom
+	// Wraps SetAnimation to allow it to be exposed to Lua
   int LuaSetAnimation( lua_State *L );
-
-  // Same as above, but animation is played in reverse
-  int LuaSetAnimationReverse( lua_State *L );
 
 	// Returns whether GameObject is animating
   int LuaIsAnimating( lua_State *L );

@@ -1,9 +1,13 @@
 <?xml version="1.0"?>
 <sheet path="Kickle_Pack/Sheets/title_background.png">
-
   <strip name="background">
-    <clip x="0" y="0" width="720" height="720" />
-    <flow num_frames="1" />
-  </strip>
+    <looped>false</looped>
+    <num_frames>1</num_frames>
+    <frame_times>1</frame_times>
 
+    <x_pos>0</x_pos>
+    <y_pos>0</y_pos>
+    <width>720</width>
+    <height>720</height>
+  </strip>
 </sheet>

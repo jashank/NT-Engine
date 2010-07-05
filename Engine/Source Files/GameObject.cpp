@@ -2,7 +2,6 @@
 
 #include <algorithm>
 #include <cctype>
-#include <iostream>
 
 #include "boost/bind/bind.hpp"
 extern "C" {
@@ -10,6 +9,7 @@ extern "C" {
 }
 
 #include "App.h"
+#include "CollisionManager.h"
 #include "GameObjectManager.h"
 #include "GameState.h"
 #include "TileManager.h"
@@ -27,7 +27,6 @@ const char GameObject::className[] = "GameObject";
 Lunar<GameObject>::RegType GameObject::methods[] = {
   { "Move", &GameObject::LuaMove },
   { "SetAnimation", &GameObject::LuaSetAnimation },
-  { "SetAnimationReverse", &GameObject::LuaSetAnimationReverse },
   { "IsAnimating", &GameObject::LuaIsAnimating },
   { "GetType", &GameObject::LuaGetType },
   { "GetTile", &GameObject::LuaGetTile },
@@ -228,7 +227,7 @@ int GameObject::LuaMove( lua_State *L ) {
       unsigned int x = static_cast<unsigned int>( nextTileX );
       unsigned int y = static_cast<unsigned int>( nextTileY );
       if (( m_noClip ) ||
-        ( m_gameState->GetTileManager()->TileIsCrossable( x, y ) &&
+        ( m_gameState->GetCollisionManager()->TileIsCrossable( x, y ) &&
         !m_gameState->TileHasGridObject( x, y ))) {
         m_moving = true;
       }
@@ -250,14 +249,6 @@ int GameObject::LuaSetAnimation( lua_State *L ) {
   return 0;
 }
 
-int GameObject::LuaSetAnimationReverse( lua_State *L ) {
-  if ( !lua_isnumber( L, -1 )) {
-    return luaL_error( L, "Invalid argument for SetAnimationReverse." );
-  }
-  int animation = lua_tointeger( L, -1 );
-  SetAnimation( animation, true );
-  return 0;
-}
 
 int GameObject::LuaIsAnimating( lua_State *L ) {
   lua_pushboolean( L, IsAnimating() );

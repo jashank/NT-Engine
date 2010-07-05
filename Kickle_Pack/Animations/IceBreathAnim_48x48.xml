@@ -3,30 +3,49 @@
 <sheet path="Kickle_Pack/Sheets/iceBreath_48x48.png" >
 
   <strip name="up">
-    <clip x="0" y="0" width="48" height="48" />
-    <flow num_frames="2" looped="true" />
+    <looped>true</looped>
+    <num_frames>2</num_frames>
     <frame_times> 0.1 </frame_times>
+
+    <x_pos>0</x_pos>
+    <y_pos>0</y_pos>
+    <width>48</width>
+    <height>48</height>
   </strip>
 
 
   <strip name="down">
-    <clip x="0" y="48" width="48" height="48" />
-    <flow num_frames="2" looped="true" />
+    <looped>true</looped>
+    <num_frames>2</num_frames>
     <frame_times> 0.1 </frame_times>
+
+    <x_pos>0</x_pos>
+    <y_pos>48</y_pos>
+    <width>48</width>
+    <height>48</height>
   </strip>
 
 
   <strip name="left">
-    <clip x="0" y="96" width="48" height="48" />
-    <flow num_frames="2" looped="true" />
+    <looped>true</looped>
+    <num_frames>2</num_frames>
     <frame_times> 0.1 </frame_times>
+
+    <x_pos>0</x_pos>
+    <y_pos>96</y_pos>
+    <width>48</width>
+    <height>48</height>
   </strip>>
 
 
   <strip name="right">
-    <clip x="0" y="144" width="48" height="48" />
-    <flow num_frames="2" looped="true" />
+    <looped>true</looped>
+    <num_frames>2</num_frames>
     <frame_times> 0.1 </frame_times>
+
+    <x_pos>0</x_pos>
+    <y_pos>144</y_pos>
+    <width>48</width>
+    <height>48</height>
   </strip>
 </sheet>
-

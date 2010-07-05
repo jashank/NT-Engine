@@ -2,130 +2,279 @@
 
 <sheet path="Kickle_Pack/Sheets/kickle_48x60.png" >
 
-  <common x="0" num_frames="8" width="48" height="60" >
+  <strip name="up_standing">
+    <looped>true</looped>
+    <num_frames>8</num_frames>
+    <frame_times> 0.1 </frame_times>
 
-    <strip name="up_standing">
-      <clip y="0" />
-      <flow looped="true" />
-      <frame_times> 0.1 </frame_times>
-    </strip>
+    <x_pos>0</x_pos>
+    <y_pos>0</y_pos>
+    <width>48</width>
+    <height>60</height>
+  </strip>
 
-    <strip name="down_standing">
-      <clip y="60" />
-      <flow looped="true" />
-      <frame_times> 0.1 </frame_times>
-    </strip>
 
-    <strip name="left_standing">
-      <clip y="120" />
-      <flow looped="true" />
-      <frame_times> 0.1 </frame_times>
-    </strip>>
+  <strip name="down_standing">
+    <looped>true</looped>
+    <num_frames>8</num_frames>
+    <frame_times> 0.1 </frame_times>
 
-    <strip name="right_standing">
-      <clip y="180" />
-      <flow looped="true" />
-      <frame_times> 0.1 </frame_times>
-    </strip>
+    <x_pos>0</x_pos>
+    <y_pos>60</y_pos>
+    <width>48</width>
+    <height>60</height>
+  </strip>
 
-    <strip name="up_walking">
-      <clip y="240" />
-      <flow looped="true" />
-      <frame_times> 0.07 </frame_times>
-    </strip>
 
-    <strip name="down_walking">
-      <clip y="300" />
-      <flow looped="true" />
-      <frame_times> 0.07 </frame_times>
-    </strip>
+  <strip name="left_standing">
+    <looped>true</looped>
+    <num_frames>8</num_frames>
+    <frame_times> 0.1 </frame_times>
 
-    <strip name="left_walking">
-      <clip y="360" />
-      <flow looped="true" />
-      <frame_times> 0.07 </frame_times>
-    </strip>
+    <x_pos>0</x_pos>
+    <y_pos>120</y_pos>
+    <width>48</width>
+    <height>60</height>
+  </strip>>
 
-    <strip name="right_walking">
-      <clip y="420" />
-      <flow looped="true" />
-      <frame_times> 0.07 </frame_times>
-    </strip>
 
-    <strip name="up_kicking">
-      <clip y="480" />
-      <flow looped="false" />
-      <frame_times> 0.05 </frame_times>
-    </strip>
+  <strip name="right_standing">
+    <looped>true</looped>
+    <num_frames>8</num_frames>
+    <frame_times> 0.1 </frame_times>
 
-    <strip name="down_kicking">
-      <clip y="540" />
-      <flow looped="false" />
-      <frame_times> 0.05 </frame_times>
-    </strip>
+    <x_pos>0</x_pos>
+    <y_pos>180</y_pos>
+    <width>48</width>
+    <height>60</height>
+  </strip>
 
-    <strip name="left_kicking">
-      <clip y="600" />
-      <flow looped="false" />
-      <frame_times> 0.05 </frame_times>
-    </strip>
 
-    <strip name="right_kicking">
-      <clip y="660" />
-      <flow looped="false" />
-      <frame_times> 0.05 </frame_times>
-    </strip>
+  <strip name="up_walking">
+    <looped>true</looped>
+    <num_frames>8</num_frames>
+    <frame_times> 0.07 </frame_times>
 
-    <strip name="up_raise_pillar">
-      <clip y="720" />
-      <flow looped="false" />
-      <frame_times> 0.05 </frame_times>
-    </strip>
+    <x_pos>0</x_pos>
+    <y_pos>240</y_pos>
+    <width>48</width>
+    <height>60</height>
+  </strip>
 
-    <strip name="down_raise_pillar">
-      <clip y="780" />
-      <flow looped="false" />
-      <frame_times> 0.05 </frame_times>
-    </strip>
 
-    <strip name="left_raise_pillar">
-      <clip y="840" />
-      <flow looped="false" />
-      <frame_times> 0.05 </frame_times>
-    </strip>
+  <strip name="down_walking">
+    <looped>true</looped>
+    <num_frames>8</num_frames>
+    <frame_times> 0.07 </frame_times>
 
-    <strip name="right_raise_pillar">
-      <clip y="900" />
-      <flow looped="false" />
-      <frame_times> 0.05 </frame_times>
-    </strip>
+    <x_pos>0</x_pos>
+    <y_pos>300</y_pos>
+    <width>48</width>
+    <height>60</height>
+  </strip>
 
-    <strip name="up_dying">
-      <clip y="960" />
-      <flow looped="false" />
-      <frame_times> 0.1 </frame_times>
-    </strip>
 
-    <strip name="down_dying">
-      <clip y="1020" />
-      <flow looped="false" />
-      <frame_times> 0.1 </frame_times>
-    </strip>
+  <strip name="left_walking">
+    <looped>true</looped>
+    <num_frames>8</num_frames>
+    <frame_times> 0.07 </frame_times>
 
-    <strip name="left_dying">
-      <clip y="1080" />
-      <flow looped="false" />
-      <frame_times> 0.1 </frame_times>
-    </strip>
+    <x_pos>0</x_pos>
+    <y_pos>360</y_pos>
+    <width>48</width>
+    <height>60</height>
+  </strip>
 
-    <strip name="right_dying">
-      <clip y="1140" />
-      <flow looped="false" />
-      <frame_times> 0.1 </frame_times>
-    </strip>
 
-  </common>
+  <strip name="right_walking">
+    <looped>true</looped>
+    <num_frames>8</num_frames>
+    <frame_times> 0.07 </frame_times>
+
+    <x_pos>0</x_pos>
+    <y_pos>420</y_pos>
+    <width>48</width>
+    <height>60</height>
+  </strip>
+
+
+  <strip name="up_kicking">
+    <num_frames>8</num_frames>
+    <frame_times> 0.05 </frame_times>
+
+    <x_pos>0</x_pos>
+    <y_pos>480</y_pos>
+    <width>48</width>
+    <height>60</height>
+  </strip>
+
+
+  <strip name="down_kicking">
+    <num_frames>8</num_frames>
+    <frame_times> 0.05 </frame_times>
+
+    <x_pos>0</x_pos>
+    <y_pos>540</y_pos>
+    <width>48</width>
+    <height>60</height>
+  </strip>
+
+
+  <strip name="left_kicking">
+    <num_frames>8</num_frames>
+    <frame_times> 0.05 </frame_times>
+
+    <x_pos>0</x_pos>
+    <y_pos>600</y_pos>
+    <width>48</width>
+    <height>60</height>
+  </strip>
+
+
+  <strip name="right_kicking">
+    <num_frames>8</num_frames>
+    <frame_times> 0.05 </frame_times>
+
+    <x_pos>0</x_pos>
+    <y_pos>660</y_pos>
+    <width>48</width>
+    <height>60</height>
+  </strip>
+
+
+  <strip name="up_raise_pillar">
+    <num_frames>8</num_frames>
+    <frame_times> 0.05 </frame_times>
+
+    <x_pos>0</x_pos>
+    <y_pos>720</y_pos>
+    <width>48</width>
+    <height>60</height>
+  </strip>
+
+
+  <strip name="down_raise_pillar">
+    <num_frames>8</num_frames>
+    <frame_times> 0.05 </frame_times>
+
+    <x_pos>0</x_pos>
+    <y_pos>780</y_pos>
+    <width>48</width>
+    <height>60</height>
+  </strip>
+
+
+  <strip name="left_raise_pillar">
+    <num_frames>8</num_frames>
+    <frame_times> 0.05 </frame_times>
+
+    <x_pos>0</x_pos>
+    <y_pos>840</y_pos>
+    <width>48</width>
+    <height>60</height>
+  </strip>
+
+
+  <strip name="right_raise_pillar">
+    <num_frames>8</num_frames>
+    <frame_times> 0.05 </frame_times>
+
+    <x_pos>0</x_pos>
+    <y_pos>900</y_pos>
+    <width>48</width>
+    <height>60</height>
+  </strip>
+
+
+  <strip name="up_lower_pillar">
+    <playback>backward</playback>
+    <num_frames>8</num_frames>
+    <frame_times> 0.05 </frame_times>
+
+    <x_pos>0</x_pos>
+    <y_pos>720</y_pos>
+    <width>48</width>
+    <height>60</height>
+  </strip>
+
+
+  <strip name="down_lower_pillar">
+    <playback>backward</playback>
+    <num_frames>8</num_frames>
+    <frame_times> 0.05 </frame_times>
+
+    <x_pos>0</x_pos>
+    <y_pos>780</y_pos>
+    <width>48</width>
+    <height>60</height>
+  </strip>
+
+
+  <strip name="left_lower_pillar">
+    <playback>backward</playback>
+    <num_frames>8</num_frames>
+    <frame_times> 0.05 </frame_times>
+
+    <x_pos>0</x_pos>
+    <y_pos>840</y_pos>
+    <width>48</width>
+    <height>60</height>
+  </strip>
+
+
+  <strip name="right_lower_pillar">
+    <playback>backward</playback>
+    <num_frames>8</num_frames>
+    <frame_times> 0.05 </frame_times>
+
+    <x_pos>0</x_pos>
+    <y_pos>900</y_pos>
+    <width>48</width>
+    <height>60</height>
+  </strip>
+
+
+  <strip name="up_dying">
+    <num_frames>8</num_frames>
+    <frame_times> 0.1 </frame_times>
+
+    <x_pos>0</x_pos>
+    <y_pos>960</y_pos>
+    <width>48</width>
+    <height>60</height>
+  </strip>
+
+
+  <strip name="down_dying">
+    <num_frames>8</num_frames>
+    <frame_times> 0.1 </frame_times>
+
+    <x_pos>0</x_pos>
+    <y_pos>1020</y_pos>
+    <width>48</width>
+    <height>60</height>
+  </strip>
+
+
+  <strip name="left_dying">
+    <num_frames>8</num_frames>
+    <frame_times> 0.1 </frame_times>
+
+    <x_pos>0</x_pos>
+    <y_pos>1080</y_pos>
+    <width>48</width>
+    <height>60</height>
+  </strip>
+
+
+  <strip name="right_dying">
+    <num_frames>8</num_frames>
+    <frame_times> 0.1 </frame_times>
+
+    <x_pos>0</x_pos>
+    <y_pos>1140</y_pos>
+    <width>48</width>
+    <height>60</height>
+  </strip>
 
 </sheet>
-
-

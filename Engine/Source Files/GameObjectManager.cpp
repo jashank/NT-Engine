@@ -21,7 +21,7 @@ GameObjectManager::GameObjectManager( const TiXmlElement *dataRoot ) {
 
 GameObjectManager::~GameObjectManager() {
   for ( GameObjItr gameObj = m_gameObjects.begin(); 
-        gameObj != m_gameObjects.end(); gameObj++ ) {
+        gameObj != m_gameObjects.end(); ++gameObj ) {
     if ( *gameObj != NULL ) {
       SAFEDELETE( *gameObj );
     }
