@@ -8,16 +8,15 @@ Co-Authors: pretty much everybody else
 
 #include <map>
 #include <string>
-#include <tr1/tuple>
+#include <vector>
+
+#include "Tile.h"
 
 class AnimSprite;
 class TiXmlElement;
 
 class TileManager {
  public:
-  // Type, name, id of tile
-  typedef std::tr1::tuple<std::string, std::string, int> tileInfo;
-
   TileManager();
   ~TileManager();
 
@@ -34,7 +33,7 @@ class TileManager {
   void SetTile( int x, int y, const std::string &tileName );
 
   // Returns type, name, and id of tile
-  const TileManager::tileInfo& GetTile( int x, int y );
+  const Tile& GetTile( int x, int y );
 
   // Return dimensions of tile for this map (tiles are square)
   int GetTileDim() const;
@@ -43,9 +42,21 @@ class TileManager {
   int GetMapWidth() const;
   int GetMapHeight() const;
 
+  // Collision Stuff
+  // Returns true if the tile at X Y is solid, else false;
+  bool TileIsCrossable( int x, int y ) const;
+
+  // Changes the value of the tile sheet to that value if it is valid.
+  // Else -1.
+  void SetCollision( int x, int y, int collisionId );
+
+  // Returns id of tile at that location.
+  int GetCollision( int x, int y ) const;
+
  private:
-  typedef std::map< int, tileInfo* >::iterator TileInfoIter;
-  static const tileInfo NULL_TILE_INFO;
+  typedef std::map< int, Tile* >::iterator TileInfoIter;
+  typedef std::map< int, Tile* >::const_iterator ConstTileInfoIter;
+  static const Tile NULL_TILE_INFO;
 
   // Restricts copy constructor, and assignment.
   TileManager( const TileManager &manager );
@@ -57,7 +68,7 @@ class TileManager {
 
   // Loads layout of tiles from data in xml element passed
   // Returns whether load was successful.
-	bool LoadTileLayout( const TiXmlElement *root );
+  bool LoadTileLayout( const TiXmlElement *root );
 
   // Retrieves tile info from <strip> tag
   // Returns whether load was successful.
@@ -65,16 +76,20 @@ class TileManager {
 
   AnimSprite *m_tileSprites;
   int m_numTileTypes;
-	int m_layout[15][15];
   int m_width; // Number of tiles x dir
   int m_height; // Number of tiles y dir
   int m_numTiles;
   int m_tileDim;
   // Name of tile is key. Used for setting tiles.
-  std::map<std::string, tileInfo> m_tileDataName;
+  std::map<std::string, Tile> m_tileDataName;
   // Id of tile is key. Used for getting tiles.
   // Holds references to data stored in m_tileDataName.
-  std::map<int, tileInfo*> m_tileDataId;
+  std::map<int, Tile*> m_tileDataId;
+  std::vector<std::vector<int> > m_layout;
+
+  // Collision Stuff
+  static const int NOT_CROSSABLE = 1;
+  static const int CROSSABLE = 0;
 };
 
 #endif

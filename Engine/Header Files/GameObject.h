@@ -29,11 +29,11 @@ class GameObject : public AnimSprite {
   // Handle events generated for GameObject
   void HandleEvents();
 
-	// Updates the GameObject's collision
-	void UpdateCollision();
+  // Updates the GameObject's collision
+  void UpdateCollision();
 
-	// Updates the GameObject's movement
-	void UpdateMovement();
+  // Updates the GameObject's movement
+  void UpdateMovement();
 
   // Updates the GameObject's rendering
   void UpdateRendering();

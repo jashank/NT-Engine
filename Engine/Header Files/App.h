@@ -33,15 +33,14 @@ App
 class App {
  public:
   static App* CreateApp(
-    const std::string &title,
+    std::string title,
     int width,
     int height,
-    int framerate
+    int framerate,
+    std::string filePath
   );
 
-
   ~App();
-
 
   // Destroys the instance of App
   static void DestroyApp();
@@ -104,12 +103,11 @@ class App {
     const std::string &title,
     int width,
     int height,
-    int framerate
+    int framerate,
+	std::string filePath // Temporary
   );
 
-
   App( const App &app );
-
 
   static App *m_instance; //Single instance of App
 
@@ -117,7 +115,6 @@ class App {
   float m_time; //Total time since app was first created.
   float	m_deltaTime; //Time in seconds spent on last frame render
   float	m_fps; //Frames per Second
-
   KeyManager m_keyManager; //Keeps track of how long registered keys are held
 
   //Resource Managers
@@ -134,6 +131,7 @@ class App {
   bool m_nextStateSet;
   std::string m_nextStatePath;
   GameState *m_currentState;
+  std::string m_filePath;
 };
 
 #endif

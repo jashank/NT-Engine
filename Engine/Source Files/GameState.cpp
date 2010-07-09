@@ -1,12 +1,7 @@
 #include "GameState.h"
 
 #include "App.h"
-#include "CollisionManager.h"
 #include "GameObject.h"
-#include "GameObjectManager.h"
-#include "GUIManager.h"
-#include "SoundManager.h"
-#include "TileManager.h"
 #include "tinyxml.h"
 #include "Utilities.h"
 
@@ -61,11 +56,6 @@ bool GameState::LoadFromFile( const std::string &path ) {
           LogErr( "Problem loading tiles in state file " + path );
           return false;
         }
-      }
-
-      elem = root->FirstChildElement( "collision_layout" );
-      if ( elem ) {
-        m_collisionManager.LoadData( elem );
       }
 
       elem = root->FirstChildElement( "game_objects" );
@@ -127,11 +117,6 @@ void GameState::Render() {
 
 const TileManager& GameState::GetTileManager() const {
   return m_tileManager;
-}
-
-
-const CollisionManager& GameState::GetCollisionManager() const {
-  return m_collisionManager;
 }
 
 
@@ -253,12 +238,13 @@ int GameState::LuaGetTileInfo( lua_State *L ) {
   int tileY = lua_tointeger( L, -1 );
 
   if ( tileX >= 0 && tileY >= 0 ) {
-    TileManager::tileInfo tile = App::GetApp()->GetCurrentState()->
+    Tile tile = App::GetApp()->GetCurrentState()->
       m_tileManager.GetTile( tileX, tileY );
-    lua_pushstring( L, std::tr1::get<0>( tile ).c_str() );
-    lua_pushstring( L, std::tr1::get<1>( tile ).c_str() );
-    lua_pushinteger( L, std::tr1::get<2>( tile ));
-    return 3;
+    lua_pushstring( L, tile.type.c_str() );
+    lua_pushstring( L, tile.name.c_str() );
+    lua_pushinteger( L,tile.id );
+    lua_pushinteger( L, tile.cid );
+    return 4;
   } else {
     LogLuaErr( "Negative tile passed to GetTileInfo" );
     return 0;
@@ -281,7 +267,7 @@ int GameState::LuaTileIsCrossable( lua_State *L ) {
 
   if ( tileX >= 0 && tileY >= 0 ) {
     lua_pushboolean( L, App::GetApp()->GetCurrentState()->
-      m_collisionManager.TileIsCrossable( tileX, tileY ));
+      m_tileManager.TileIsCrossable( tileX, tileY ));
     return 1;
   } else {
     LogLuaErr( "Negative tile passed to TileIsCrossable" );
@@ -345,7 +331,7 @@ int GameState::LuaSetTile( lua_State *L ) {
     App::GetApp()->GetCurrentState()->
       m_tileManager.SetTile( tileX, tileY, tileName );
     App::GetApp()->GetCurrentState()->
-      m_collisionManager.SetCollision( tileX, tileY, collisionID );
+      m_tileManager.SetCollision( tileX, tileY, collisionID );
   } else {
     LogLuaErr( "Negative tile passed to SetTile" );
   }

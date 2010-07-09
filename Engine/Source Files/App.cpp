@@ -31,14 +31,16 @@ App::App(
   const std::string &title,
   int width,
   int height,
-  int framerate
+  int framerate,
+  std::string filePath // TEMPORARY
 )
  : m_time( 0.0f ),
    m_deltaTime( 0.0f ),
    m_fps( 0.0f ),
    m_window( sf::VideoMode( width, height ), title ),
    m_nextStateSet( false ),
-   m_currentState( NULL ) {
+   m_currentState( NULL ),
+   m_filePath( filePath ) {
   m_window.UseVerticalSync( true );
   m_window.SetFramerateLimit( framerate );
   m_keyManager.Init( m_window.GetInput() );
@@ -54,13 +56,14 @@ App::~App() {
 Public Member Functions
 ************************************************/
 App* App::CreateApp(
-  const std::string& title,
+  std::string title,
   int width,
   int height,
-  int framerate
+  int framerate,
+  std::string filePath
 ) {
 	if(  m_instance == 0 ) {
-		m_instance = new App( title, width, height, framerate );
+		m_instance = new App( title, width, height, framerate, filePath );
 	}
 	else {
 		LogErr( "Attempt to call CreateApp when App already exiss." );
@@ -147,7 +150,7 @@ void App::RegisterKey( sf::Key::Code key ) {
 void App::Run() {
   // TEMPORARY
   m_currentState = new GameState();
-  m_currentState->LoadFromFile( "Kickle_Pack/States/title_state.xml" );
+  m_currentState->LoadFromFile( m_filePath );
 
 	//Game Loop
 	while ( m_window.IsOpened() ) {

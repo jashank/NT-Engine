@@ -6,7 +6,6 @@ extern "C" {
 }
 
 #include "App.h"
-#include "CollisionManager.h"
 #include "GameObjectManager.h"
 #include "GameState.h"
 #include "TileManager.h"
@@ -225,7 +224,7 @@ int GameObject::LuaMove( lua_State *L ) {
       int x = static_cast<int>( nextTileX );
       int y = static_cast<int>( nextTileY );
       if (( m_noClip ) ||
-        ( m_gameState->GetCollisionManager().TileIsCrossable( x, y ) &&
+        ( m_gameState->GetTileManager().TileIsCrossable( x, y ) &&
         !m_gameState->ObjectBlockingTile( x, y ))) {
         m_moving = true;
       }

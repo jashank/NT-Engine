@@ -3,7 +3,6 @@
 #include <cstdio>
 #include <sstream>
 #include <utility>
-#include <tr1/tuple>
 
 #include "AnimData.h"
 #include "AnimSprite.h"
@@ -13,10 +12,7 @@
 /******************************
 Constant Members
 ******************************/
-const TileManager::tileInfo TileManager::NULL_TILE_INFO =
-std::tr1::make_tuple( "", "", -1 );
-
-
+const Tile TileManager::NULL_TILE_INFO = Tile( "", "", -1, NOT_CROSSABLE );
 /******************************
 Constructors and Destructors.
 ******************************/
@@ -98,15 +94,15 @@ void TileManager::Render() {
 
 
 void TileManager::SetTile( int x, int y, const std::string &tileName ) {
-  std::map<std::string, tileInfo>::iterator tileDataItr
+  std::map<std::string, Tile>::iterator tileDataItr
    = m_tileDataName.find( tileName );
   if ( tileDataItr != m_tileDataName.end() && x < m_width && y < m_height ) {
-    m_layout[y][x] = std::tr1::get<2>( tileDataItr->second );
+    m_layout[y][x] = tileDataItr->second.id;
   }
 }
 
 
-const TileManager::tileInfo& TileManager::GetTile( int x, int y ) {
+const Tile& TileManager::GetTile( int x, int y ) {
   if ( x < m_width && y < m_height ) {
     int id = m_layout[y][x];
     TileInfoIter tile = m_tileDataId.find( id );
@@ -131,6 +127,34 @@ int TileManager::GetMapWidth() const {
 
 int TileManager::GetMapHeight() const {
   return m_height;
+}
+
+
+// Collision Stuff
+bool TileManager::TileIsCrossable( int x, int y )  const {
+  if ( x < m_width && y < m_height  ) {
+    ConstTileInfoIter iter = m_tileDataId.find( m_layout[y][x] );
+    if ( iter != m_tileDataId.end() ) {
+      return ( iter->second->cid == CROSSABLE);
+    }
+  }
+  return false;
+}
+
+void TileManager::SetCollision( int x, int y, int collisionId ) {
+  if ( x < m_width && y < m_height ) {
+    m_tileDataId[m_layout[y][x]]->cid = collisionId;
+  }
+}
+
+int TileManager::GetCollision( int x, int y ) const {
+  if ( x < m_width && y < m_height ) {
+    ConstTileInfoIter iter = m_tileDataId.find( m_layout[y][x] );
+    if ( iter != m_tileDataId.end() ) {
+      return iter->second->cid;
+    }
+  }
+  return NOT_CROSSABLE;
 }
 
 /************************************
@@ -201,12 +225,13 @@ bool TileManager::LoadTileLayout( const TiXmlElement *root ) {
 
   int currentTile = 0;
 
-  for( int i=0; i < m_width; i++ ) {
-    for ( int j=0; j < m_height; j++ ) {
+  for( int i = 0; i < m_width; i++ ) {
+    m_layout.push_back( std::vector<int>() );
+    for ( unsigned int j = 0; j < m_height; j++ ) {
       if ( tileMapStream >> currentTile ) {
-        m_layout[i][j] = currentTile;
+        m_layout[i].push_back( currentTile );
       } else {
-        m_layout[i][j] = -1;
+        m_layout[i].push_back( -1 );
       }
     }
   }
@@ -219,6 +244,7 @@ bool TileManager::GetTileInfo( const TiXmlElement *strip ) {
   std::string tileName;
   std::string tileType;
   int tileId;
+  int tileCid;
 
   const char *name = strip->Attribute( "name" );
   if ( name ) {
@@ -237,12 +263,13 @@ bool TileManager::GetTileInfo( const TiXmlElement *strip ) {
   }
 
   strip->QueryIntAttribute( "id", &tileId );
+  strip->QueryIntAttribute( "cid", &tileCid );
 
-  tileInfo tile( tileType, tileName, tileId );
+  Tile tile( tileType, tileName, tileId, tileCid );
   m_tileDataName.insert(
-    std::pair<std::string, tileInfo>( tileName, tile ));
+    std::pair<std::string, Tile>( tileName, tile ));
   m_tileDataId.insert(
-    std::pair<int, tileInfo*>( tileId, &m_tileDataName[tileName] ));
+    std::pair<int, Tile*>( tileId, &m_tileDataName[tileName] ));
 
   return true;
 }
