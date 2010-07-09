@@ -18,7 +18,9 @@ extern "C" {
  * **********************************/
 Button::Button( const std::string &filepath, int x, int y )
   : GUI( filepath, x, y ), m_pressedDown( false ) {
-  LoadData( filepath );
+  if ( !LoadData( filepath )) {
+    LogErr( "Problem loading Button XML file " + filepath );
+  }
 }
 
 /*************************************
@@ -60,24 +62,34 @@ void Button::HandleEvents() {
  * ************************/
 bool Button::LoadData( const std::string &filepath ) {
   TiXmlDocument doc( filepath.c_str() );
-  doc.LoadFile();
-  TiXmlHandle handleDoc( &doc );
-  TiXmlElement *root = handleDoc.FirstChildElement( "GUI" ).Element();
-
-  TiXmlElement *rect = root->FirstChildElement( "rect" );
-  if ( !rect ) {
-    LogErr( "Pressable rect not defined in Button xml file." );
+  if ( !doc.LoadFile() ) {
+    LogErr( "Couldn't load GUI Button file: " + filepath );
     return false;
   }
-  rect->Attribute( "x", &m_pressable.Left );
-  rect->Attribute( "y", &m_pressable.Top );
-  rect->Attribute( "width", &m_pressable.Right );
-  rect->Attribute( "height", &m_pressable.Bottom );
+  TiXmlHandle handleDoc( &doc );
 
-  m_pressable.Left += GetSprite().GetPosition().x;
-  m_pressable.Top += GetSprite().GetPosition().y;
-  m_pressable.Right += m_pressable.Left;
-  m_pressable.Bottom += m_pressable.Top;
+  TiXmlElement *root = handleDoc.FirstChildElement( "GUI" ).Element();
+  if ( root ) {
+    TiXmlElement *rect = root->FirstChildElement( "rect" );
+    if ( rect ) {
+      rect->Attribute( "x", &m_pressable.Left );
+      rect->Attribute( "y", &m_pressable.Top );
+      rect->Attribute( "width", &m_pressable.Right );
+      rect->Attribute( "height", &m_pressable.Bottom );
+
+      m_pressable.Left += GetSprite().GetPosition().x;
+      m_pressable.Top += GetSprite().GetPosition().y;
+      m_pressable.Right += m_pressable.Left;
+      m_pressable.Bottom += m_pressable.Top;
+
+    } else {
+      LogErr( "Pressable rect not defined in Button xml file." );
+      return false;
+    }
+  } else {
+    LogErr( "<GUI> tag missing in Button xml file." );
+    return false;
+  }
 
   return true;
 }

@@ -3,7 +3,7 @@
 local PlayTable = {}
 
 function PlayTable.MousePressed()
-  Game.NewState( "Kickle_Pack/States/test_state.xml" );
+  Game.NewState( "Kickle_Pack/States/GardenLand_A.xml" );
 end
 
 function PlayTable.MouseReleased() end

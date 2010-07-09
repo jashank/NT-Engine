@@ -28,10 +28,12 @@ template< typename resource_t, typename loader_t >
 ResourceManager< resource_t, loader_t >::ResourceManager()	{
 }
 
+
 template< typename resource_t, typename loader_t >
 ResourceManager< resource_t, loader_t >::~ResourceManager()	{
   this->Clear();
 }
+
 
 template< typename resource_t, typename loader_t >
 void ResourceManager<resource_t, loader_t>::Clear() {
@@ -41,6 +43,7 @@ void ResourceManager<resource_t, loader_t>::Clear() {
     m_loader );
   m_resources.clear();
 }
+
 
 template< typename resource_t, typename loader_t >
 resource_t* ResourceManager< resource_t, loader_t >::Load(

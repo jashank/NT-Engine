@@ -14,13 +14,8 @@
 /********************************
 Constructor and Destructor
 ********************************/
-GameObjectManager::GameObjectManager( const TiXmlElement *dataRoot ) {
-  LoadData( dataRoot );
-}
-
-
 GameObjectManager::~GameObjectManager() {
-  for ( GameObjItr gameObj = m_gameObjects.begin(); 
+  for ( GameObjItr gameObj = m_gameObjects.begin();
         gameObj != m_gameObjects.end(); ++gameObj ) {
     if ( *gameObj != NULL ) {
       SAFEDELETE( *gameObj );
@@ -31,26 +26,39 @@ GameObjectManager::~GameObjectManager() {
 /*******************************
 Public Methods
 *******************************/
-void GameObjectManager::LoadData( const TiXmlElement *dataRoot ) {
-  int positionX;
-  int positionY;
-
-  const TiXmlElement *objectType = dataRoot->FirstChildElement( "game_object" );
-  do {
-    std::string dataPath = objectType->Attribute( "path" );
-    const TiXmlElement *objectInstance = objectType->FirstChildElement( "instance" );
+bool GameObjectManager::LoadData( const TiXmlElement *dataRoot ) {
+  const TiXmlElement *objectType = dataRoot->FirstChildElement( "object" );
+  if ( objectType ) {
     do {
-      objectInstance->Attribute( "x", &positionX );
-      objectInstance->Attribute( "y", &positionY );
-      AddGameObject( 
-        new GameObject( 
-          dataPath, 
-          static_cast<unsigned int>( positionX ), 
-          static_cast<unsigned int>( positionY )
-        )
-      );
-    } while ( objectInstance = objectInstance->NextSiblingElement( "instance" ));
-  } while ( objectType = objectType->NextSiblingElement( "game_object" ));
+      const char *path = objectType->Attribute( "path" );
+      if ( path ) {
+        const TiXmlElement *instance = objectType->FirstChildElement( "inst" );
+        if ( instance ) {
+          do {
+            int x, y = 0;
+            instance->QueryIntAttribute( "x", &x );
+            instance->QueryIntAttribute( "y", &y );
+            if ( x >= 0 && y >= 0 ) {
+              AddGameObject( new GameObject( path, x, y ));
+            } else {
+              LogErr( "Tile location negative for GameObject in state file." );
+              return false;
+            }
+          } while ( instance = instance->NextSiblingElement( "inst" ));
+        } else {
+          LogErr( "No instances specified for GameObject in state file." );
+          return false;
+        }
+      } else {
+        LogErr( "No path specified for GameObject in state file." );
+        return false;
+      }
+    } while ( objectType = objectType->NextSiblingElement( "object" ));
+  } else {
+    LogErr( "No game_object specified in <game_objects>. Thus, not necessary." );
+    return false;
+  }
+  return true;
 }
 
 
@@ -86,7 +94,7 @@ void GameObjectManager::Update() {
     }
   }
 
-  for ( unsigned int i = 0; i < m_toBeDestroyed.size(); i++ ) {
+  for ( int i = 0; i < m_toBeDestroyed.size(); i++ ) {
     m_gameObjects.remove( m_toBeDestroyed[i] );
     SAFEDELETE( m_toBeDestroyed[i] );
   }
@@ -97,10 +105,10 @@ void GameObjectManager::Update() {
 void GameObjectManager::Render() const {
   std::priority_queue< std::pair<float, GameObject*> > renderOrder;
 
-  for ( GameObjItrConst gameObj = m_gameObjects.begin(); 
+  for ( GameObjItrConst gameObj = m_gameObjects.begin();
         gameObj != m_gameObjects.end(); gameObj++ ) {
     if ( *gameObj != NULL ) {
-      renderOrder.push( 
+      renderOrder.push(
         std::make_pair( -( (*gameObj)->GetPosition().y ), *gameObj ) );
     }
   }
@@ -130,7 +138,7 @@ GameObject* GameObjectManager::DetectCollision( const GameObject *
   gameObject ) const {
   const sf::FloatRect &mainObj = gameObject->GetCollisionBox();
 
-  for ( GameObjItrConst gameObj = m_gameObjects.begin(); 
+  for ( GameObjItrConst gameObj = m_gameObjects.begin();
         gameObj != m_gameObjects.end(); gameObj++ ) {
     if ( *gameObj != gameObject && *gameObj != NULL ) {
       const sf::FloatRect &otherObj = ( *gameObj )->GetCollisionBox();
@@ -144,11 +152,8 @@ GameObject* GameObjectManager::DetectCollision( const GameObject *
 }
 
 
-GameObject* GameObjectManager::ObjectOnTile( 
-  unsigned int x, 
-  unsigned int y 
-) const {
-  for ( GameObjItrConst gameObj = m_gameObjects.begin(); 
+GameObject* GameObjectManager::ObjectOnTile( int x, int y ) const {
+  for ( GameObjItrConst gameObj = m_gameObjects.begin();
         gameObj != m_gameObjects.end(); gameObj++ ) {
     if ( *gameObj != NULL ) {
       if (( *gameObj )->GetTileX() == x &&
@@ -162,16 +167,15 @@ GameObject* GameObjectManager::ObjectOnTile(
 }
 
 
-GameObject* GameObjectManager::GetGameObject( const std::string &
-  objectType ) const {
-  for ( GameObjItrConst gameObj = m_gameObjects.begin(); 
+GameObject* GameObjectManager::GetGameObject( const std::string &type ) const {
+  for ( GameObjItrConst gameObj = m_gameObjects.begin();
         gameObj != m_gameObjects.end(); gameObj++ ) {
     if ( *gameObj != NULL ) {
-      if (( *gameObj )->GetType() == objectType ) {
+      if (( *gameObj )->GetType() == type ) {
         return *gameObj;
       }
     }
   }
-  
+
   return NULL;
 }

@@ -1,13 +1,8 @@
 <?xml version="1.0"?>
 <game_object>
   <animation path="Kickle_Pack/Animations/SpawnPointAnim_48x48.xml" />
-
   <script path="Kickle_Pack/Scripts/SpawnPoint.lua" />
-
-  <speed data="0" />
-
+  <speed ppf="0" />
   <rect x="0" y="0" width="48" height="48" />
-
-  <grid_collision data="true" />
-
+  <tile block="true" />
 </game_object>

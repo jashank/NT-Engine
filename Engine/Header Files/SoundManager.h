@@ -11,16 +11,13 @@ namespace sf {
 
 class SoundManager {
  public:
-   // Initializes SoundList by calling LoadData
-   explicit SoundManager( const TiXmlElement *dataRoot );
-   ~SoundManager();
+   SoundManager();
+   ~SoundManager() {}
 
-   // Parses data from <sound> section of state file
-   void LoadData( const TiXmlElement *dataRoot );
+   // Parses data from <sound> section of state file.
+   // Returns whether data load was successful.
+   bool LoadData( const TiXmlElement *dataRoot );
 
-   // Adds music found at file path to the playlist
-   void AddMusic( const std::string &musicPath );
-   
    // Sets m_play to true
    void Play();
 
@@ -41,10 +38,13 @@ class SoundManager {
   SoundManager( const SoundManager &soundList );
   SoundManager& operator=( const SoundManager &soundList );
 
+  // Adds music found at file path to the playlist
+  bool AddMusic( const std::string &musicPath );
+
   // Plays the next song in the playlist
   void PlayNextSong();
 
-  unsigned int m_playlistIndex; // Index of the current music.
+  int m_playlistIndex; // Index of the current music.
   sf::Music *m_currentMusic; // Music currently playing
   bool m_loop;
   std::vector<sf::Music*> m_playlist;

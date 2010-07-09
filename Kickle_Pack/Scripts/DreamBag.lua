@@ -7,14 +7,32 @@ math.randomseed( os.time() )
 
 local DreamBagTable = {}
 
+DreamBagTable.bumped = false
+
+function DreamBagTable.AILogic( DreamBag )
+  if ( DreamBagTable.bumped ) then
+    DreamBag:Move()
+    DreamBagTable.bumped = false
+  end
+end
+
 function DreamBagTable.HandleCollision( DreamBag, Other )
-  if ( Other:GetType() == "Slime" or Other:GetType() == "Penguin" ) then
+  if ( not DreamBagTable.bumped and (
+        Other:GetType() == "Slime" or Other:GetType() == "Penguin" )) then
     local dir = math.random( UP, RIGHT )
 
-    if ( not Game.TileIsCrossable( GetTileInDirection( DreamBag, dir ))) then
+    local tileX, tileY = GetTileInDirection( DreamBag, dir )
+    local otherBag = Game.GetGameObjectOnTile( tileX, tileY )
+
+    if (( otherBag and otherBag:GetType() == "DreamBag" ) or
+         not Game.TileIsCrossable( tileX, tileY )) then
       local newDir = GetNextDir( dir )
+
       while newDir ~= dir do
-        if ( not Game.TileIsCrossable( GetTileInDirection( DreamBag, newDir ))) then
+        local tileX, tileY = GetTileInDirection( DreamBag, newDir ) 
+        local otherBag = Game.GetGameObjectOnTile( tileX, tileY )
+        if (( otherBag and otherBag:GetType() == "DreamBag" ) or
+            not Game.TileIsCrossable( tileX, tileY )) then
           newDir = GetNextDir( newDir )
         else
           dir = newDir
@@ -23,8 +41,7 @@ function DreamBagTable.HandleCollision( DreamBag, Other )
     end
 
     DreamBag:SetDir( dir )
-    DreamBag:Move()
-    DreamBagTable.isMoving = true
+    DreamBagTable.bumped = true
 
   elseif ( Other:GetType() == "Kickle" ) then
     Game.DestroyGameObject( DreamBag )

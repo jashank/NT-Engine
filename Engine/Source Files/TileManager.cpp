@@ -1,5 +1,6 @@
 #include "TileManager.h"
 
+#include <cstdio>
 #include <sstream>
 #include <utility>
 #include <tr1/tuple>
@@ -19,15 +20,13 @@ std::tr1::make_tuple( "", "", -1 );
 /******************************
 Constructors and Destructors.
 ******************************/
-TileManager::TileManager( const TiXmlElement *dataRoot )
+TileManager::TileManager()
  : m_tileSprites( NULL ),
    m_numTileTypes( 0 ),
    m_width( 0 ),
    m_height( 0 ),
    m_numTiles( 0 ),
-   m_tileDim( 0 ) {
-  LoadData( dataRoot );
-}
+   m_tileDim( 0 ) {}
 
 
 TileManager::~TileManager() {
@@ -38,18 +37,45 @@ TileManager::~TileManager() {
 /***************************************
 Public Methods
 ***************************************/
-void TileManager::LoadData( const TiXmlElement *dataRoot ) {
+bool TileManager::LoadData( const TiXmlElement *dataRoot ) {
   const TiXmlElement *tileSize = dataRoot->FirstChildElement( "size" );
-  if ( !tileSize->Attribute( "dim", &m_tileDim )) {
+  if ( !tileSize->Attribute( "px", &m_tileDim )) {
     LogErr( "Tile size not specified in state file." );
+    return false;
   }
-  LoadTileAnims( dataRoot->FirstChildElement( "anims" )->
-    Attribute( "path" ));
-  LoadTileLayout( dataRoot->FirstChildElement( "layout" ));
+
+  const TiXmlElement *anims = dataRoot->FirstChildElement( "animation" );
+  if ( anims ) {
+    const char *path = anims->Attribute( "path" );
+    if ( path ) {
+      if ( !LoadTileAnims( path )) {
+        LogErr( "Problem loading tile information from animation file." );
+        return false;
+      }
+    } else {
+      LogErr( "No path specified in <animation> tag for tiles in state file." );
+    }
+  } else {
+    LogErr( "No <animation> tag for tiles in state file." );
+    return false;
+  }
+
+  const TiXmlElement *layout = dataRoot->FirstChildElement( "layout" );
+  if ( layout ) {
+    if ( !LoadTileLayout( layout )) {
+      LogErr( "Problem loading tile layout in state file." );
+      return false;
+    }
+  } else {
+    LogErr( "No <layout> tag for tiles in state file." );
+    return false;
+  }
+
+  return true;
 }
 
 void TileManager::Update() {
-  for( unsigned int i = 0; i < m_numTileTypes; ++i ) {
+  for( int i = 0; i < m_numTileTypes; ++i ) {
     m_tileSprites[i].Update();
   }
 }
@@ -59,8 +85,8 @@ void TileManager::Render() {
 
 	int tile = 0;
   static float x, y = 0.0f;
-	for ( unsigned int i = 0; i < m_height; i++ ) {
-		for ( unsigned int j = 0; j < m_width; j++ ) {
+	for ( int i = 0; i < m_height; i++ ) {
+		for ( int j = 0; j < m_width; j++ ) {
 			tile = m_layout[i][j];
       x = static_cast<float>( j ) * m_tileDim;
       y = static_cast<float>( i ) * m_tileDim;
@@ -71,7 +97,7 @@ void TileManager::Render() {
 }
 
 
-void TileManager::SetTile( unsigned int x, unsigned int y, const std::string &tileName ) {
+void TileManager::SetTile( int x, int y, const std::string &tileName ) {
   std::map<std::string, tileInfo>::iterator tileDataItr
    = m_tileDataName.find( tileName );
   if ( tileDataItr != m_tileDataName.end() && x < m_width && y < m_height ) {
@@ -80,7 +106,7 @@ void TileManager::SetTile( unsigned int x, unsigned int y, const std::string &ti
 }
 
 
-const TileManager::tileInfo& TileManager::GetTile( unsigned int x, unsigned int y ) {
+const TileManager::tileInfo& TileManager::GetTile( int x, int y ) {
   if ( x < m_width && y < m_height ) {
     int id = m_layout[y][x];
     TileInfoIter tile = m_tileDataId.find( id );
@@ -93,24 +119,26 @@ const TileManager::tileInfo& TileManager::GetTile( unsigned int x, unsigned int 
 }
 
 
-int TileManager::GetTileDim() {
+int TileManager::GetTileDim() const {
   return m_tileDim;
 }
 
 
-int TileManager::GetMapWidth() {
+int TileManager::GetMapWidth() const {
   return m_width;
 }
 
 
-int TileManager::GetMapHeight() {
+int TileManager::GetMapHeight() const {
   return m_height;
 }
 
 /************************************
 Private Methods
 ************************************/
-void TileManager::LoadTileAnims( const std::string &animPath ) {
+bool TileManager::LoadTileAnims( const std::string &animPath ) {
+  // Robust error handling not needed as much in this func b/c
+  // already done when loading animation file
   static App *app = App::GetApp();
   AnimData *tileAnims = app->LoadAnim( animPath );
 
@@ -118,7 +146,7 @@ void TileManager::LoadTileAnims( const std::string &animPath ) {
     m_numTileTypes = tileAnims->GetNumAnims();
     m_tileSprites = new AnimSprite[m_numTileTypes];
 
-    for ( unsigned int i = 0; i < m_numTileTypes; ++i ) {
+    for ( int i = 0; i < m_numTileTypes; ++i ) {
       m_tileSprites[i].SetAnimData( tileAnims );
       m_tileSprites[i].SetAnimation( i );
       m_tileSprites[i].Play();
@@ -129,32 +157,43 @@ void TileManager::LoadTileAnims( const std::string &animPath ) {
     TiXmlHandle handleDoc( &doc );
 
     TiXmlElement *sheet = handleDoc.FirstChildElement( "sheet" ).Element();
-    do {
-      TiXmlElement *strip = sheet->FirstChildElement( "strip" );
-      do {
-        std::string type( strip->Attribute( "type" ));
-        std::string name( strip->Attribute( "name" ));
-        int id ;
-        strip->Attribute( "id", &id );
-
-        tileInfo tile( type, name, id );
-
-        m_tileDataName.insert(
-          std::pair<std::string, tileInfo>( name, tile ));
-        m_tileDataId.insert(
-          std::pair<int, tileInfo*>( id, &m_tileDataName[name] ));
-      } while ( strip = strip->NextSiblingElement( "strip" ));
-    } while ( sheet = sheet->NextSiblingElement( "sheet" ));
+    if ( sheet ) {
+      TiXmlElement *elem = sheet->FirstChildElement();
+      if ( elem ) {
+        do {
+          if ( strcmp( elem->Value(), "common" ) == 0 ) {
+            TiXmlElement *strip = elem->FirstChildElement( "strip" );
+            if ( strip ) {
+              do {
+                if ( !GetTileInfo( strip )) {
+                  LogErr( "Couldn't retrieve tile information from tile"
+                      "animation file: " + animPath );
+                  return false;
+                }
+              } while ( strip = strip->NextSiblingElement( "strip" ));
+            }
+          } else if ( strcmp( elem->Value(), "strip" ) == 0 ) {
+            if ( !GetTileInfo( elem )) {
+              LogErr( "Couldn't retrive tile information from tile"
+                  "animation file: " + animPath );
+              return false;
+            }
+          }
+        } while ( elem = elem->NextSiblingElement() );
+      }
+    }
   } else {
-    LogErr( "Tile animation file not found." );
+    LogErr( "Problem loading tile animation file: " + animPath );
   }
+  return true;
 }
 
 
-void TileManager::LoadTileLayout( const TiXmlElement *root ) {
+bool TileManager::LoadTileLayout( const TiXmlElement *root ) {
   if ( !root->Attribute( "width", &m_width ) ||
        !root->Attribute( "height", &m_height )) {
     LogErr( "Didn't specify width and height for tile layout." );
+    return false;
   }
   m_numTiles = m_width * m_height;
 
@@ -162,8 +201,8 @@ void TileManager::LoadTileLayout( const TiXmlElement *root ) {
 
   int currentTile = 0;
 
-  for( unsigned int i=0; i < m_width; i++ ) {
-    for ( unsigned int j=0; j < m_height; j++ ) {
+  for( int i=0; i < m_width; i++ ) {
+    for ( int j=0; j < m_height; j++ ) {
       if ( tileMapStream >> currentTile ) {
         m_layout[i][j] = currentTile;
       } else {
@@ -171,4 +210,39 @@ void TileManager::LoadTileLayout( const TiXmlElement *root ) {
       }
     }
   }
+
+  return true;
+}
+
+
+bool TileManager::GetTileInfo( const TiXmlElement *strip ) {
+  std::string tileName;
+  std::string tileType;
+  int tileId;
+
+  const char *name = strip->Attribute( "name" );
+  if ( name ) {
+    tileName = name;
+  } else {
+    LogErr( "No name specified for tile." );
+    return false;
+  }
+
+  const char *type = strip->Attribute( "type" );
+  if ( type ) {
+    tileType = type;
+  } else {
+    LogErr( "No type specified for tile." );
+    return false;
+  }
+
+  strip->QueryIntAttribute( "id", &tileId );
+
+  tileInfo tile( tileType, tileName, tileId );
+  m_tileDataName.insert(
+    std::pair<std::string, tileInfo>( tileName, tile ));
+  m_tileDataId.insert(
+    std::pair<int, tileInfo*>( tileId, &m_tileDataName[tileName] ));
+
+  return true;
 }

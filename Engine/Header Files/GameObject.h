@@ -23,7 +23,7 @@ class GameObject : public AnimSprite {
 
   // First constructor for registering to Lunar, second for loading in GameObjects
   GameObject( lua_State *L );
-  GameObject( const std::string &filepath, unsigned int tileX, unsigned int tileY );
+  GameObject( const std::string &filepath, int tileX, int tileY );
   ~GameObject();
 
   // Handle events generated for GameObject
@@ -41,14 +41,15 @@ class GameObject : public AnimSprite {
   // Returns collision box for game object
   const sf::FloatRect& GetCollisionBox() const;
 
-  // Returns whether game object's collision is grid-based
-  bool HasGridCollision() const;
+  // Returns whether game object blocks tile it is on,
+  // preventing other GameObjects from getting on it
+  bool BlockingTile() const;
 
   // Returns x-location of GameObject on game grid
-  unsigned int GetTileX() const;
+  int GetTileX() const;
 
   // Returns y-location of GameObject on game grid
-  unsigned int GetTileY() const;
+  int GetTileY() const;
 
   // Returns type of GameObject
   const std::string& GetType() const;
@@ -59,8 +60,11 @@ class GameObject : public AnimSprite {
 	// Allows Lua to move the GameObject
   int LuaMove( lua_State *L );
 
-	// Wraps SetAnimation to allow it to be exposed to Lua
+	// Sets animation on sheet corresponding to index top to bottom
   int LuaSetAnimation( lua_State *L );
+
+  // Same as above, but animation is played in reverse
+  int LuaSetAnimationReverse( lua_State *L );
 
 	// Returns whether GameObject is animating
   int LuaIsAnimating( lua_State *L );
@@ -114,7 +118,7 @@ class GameObject : public AnimSprite {
   const boost::function1<void, std::string&> m_ptrCallScriptFunc;
 
   bool m_moving; // If true; keep moving in m_direction
-  bool m_gridCollision; // Grid-based collision completely restricts access to tile
+  bool m_blockingTile; // True if object blocks other objects from accessing tile it is on
   bool m_noClip; // When true, allows object to pass through solid objects and tiles
   Dir m_direction; // Current direction game object is moving
   float m_distance; // Distance traveled from last grid location

@@ -20,9 +20,10 @@ const luaL_Reg GameState::LuaGameStateFuncts[] = {
   { "GetGameObjectOnTile", LuaGetGameObjectOnTile },
   { "GetTileInfo", LuaGetTileInfo },
   { "TileIsCrossable", LuaTileIsCrossable },
-  { "TileHasGridObject", LuaTileHasGridObject },
+  { "ObjectBlockingTile", LuaObjectBlockingTile },
   { "SetTile", LuaSetTile },
   { "NewState", LuaNewState },
+  { "LogErr", LuaLogErr },
   { NULL, NULL }
 };
 
@@ -31,12 +32,7 @@ const luaL_Reg GameState::LuaGameStateFuncts[] = {
 *******************************************/
 
 // NEED TO CONSIDER OPTIONAL ATTRIBUTES
-GameState::GameState()
- : m_tileManager( NULL ),
-   m_collisionManager( NULL ),
-   m_gameObjectManager( NULL ),
-   m_guiManager( NULL ),
-   m_soundManager( NULL ) {
+GameState::GameState() {
   m_luaState = luaL_newstate();
   luaL_openlibs( m_luaState );
   luaL_register( m_luaState, "Game", LuaGameStateFuncts );
@@ -50,11 +46,6 @@ GameState::~GameState() {
     lua_close( m_luaState );
     m_luaState = 0;
   }
-  SAFEDELETE( m_soundManager );
-  SAFEDELETE( m_gameObjectManager );
-  SAFEDELETE( m_guiManager );
-  SAFEDELETE( m_collisionManager );
-  SAFEDELETE( m_tileManager );
 }
 
 
@@ -66,78 +57,93 @@ bool GameState::LoadFromFile( const std::string &path ) {
     if ( root ) {
       TiXmlElement *elem = root->FirstChildElement( "tiles" );
       if ( elem ) {
-        m_tileManager = new TileManager( elem );
+        if ( !m_tileManager.LoadData( elem )) {
+          LogErr( "Problem loading tiles in state file " + path );
+          return false;
+        }
       }
 
       elem = root->FirstChildElement( "collision_layout" );
       if ( elem ) {
-        m_collisionManager = new CollisionManager( elem );
+        m_collisionManager.LoadData( elem );
       }
 
       elem = root->FirstChildElement( "game_objects" );
       if ( elem ) {
-        m_gameObjectManager = new GameObjectManager( elem );
+        if ( !m_gameObjectManager.LoadData( elem )) {
+          LogErr( "Problem loading GameObjects in state file " + path );
+          return false;
+        }
       }
 
       elem = root->FirstChildElement( "GUI" );
       if ( elem ) {
-        m_guiManager = new GUIManager( elem );
+        if ( !m_guiManager.LoadData( elem )) {
+          LogErr( "Problem loading GUI in state file " + path );
+          return false;
+        }
       }
 
       elem = root->FirstChildElement( "sound" );
       if ( elem ) {
-        m_soundManager = new SoundManager( elem );
+        if ( !m_soundManager.LoadData( elem )) {
+          LogErr( "Problem loading sound in state file " + path );
+          return false;
+        }
       }
+    } else {
+      LogErr( "<state> tag not specified in state file " + path );
+      return false;
     }
     return true;
   }
 
-  LogErr( "GameState file not found." );
+  LogErr( "GameState file not found: " + path );
   return false;
 }
 
 
 void GameState::HandleEvents() {
-  if ( m_gameObjectManager ) m_gameObjectManager->HandleEvents();
-  if ( m_guiManager ) m_guiManager->HandleEvents();
+  m_gameObjectManager.HandleEvents();
+  m_guiManager.HandleEvents();
 }
 
 
 void GameState::Update() {
-  if ( m_tileManager ) m_tileManager->Update();
-  if ( m_gameObjectManager ) m_gameObjectManager->Update();
-  if ( m_guiManager ) m_guiManager->Update();
-  if ( m_soundManager ) m_soundManager->Update();
+  m_tileManager.Update();
+  m_gameObjectManager.Update();
+  m_guiManager.Update();
+  m_soundManager.Update();
 }
 
 
 void GameState::Render() {
   // The rendering order is important.
-  if ( m_tileManager ) m_tileManager->Render();
-  if ( m_gameObjectManager ) m_gameObjectManager->Render();
-  if ( m_guiManager ) m_guiManager->Render();
+  m_tileManager.Render();
+  m_gameObjectManager.Render();
+  m_guiManager.Render();
 }
 
 
-TileManager* GameState::GetTileManager() const {
+const TileManager& GameState::GetTileManager() const {
   return m_tileManager;
 }
 
 
-CollisionManager* GameState::GetCollisionManager() const {
+const CollisionManager& GameState::GetCollisionManager() const {
   return m_collisionManager;
 }
 
 
-GameObjectManager* GameState::GetGameObjectManager() const {
+const GameObjectManager& GameState::GetGameObjectManager() const {
   return m_gameObjectManager;
 }
 
 
-bool GameState::TileHasGridObject( unsigned int x, unsigned int y ) {
-  GameObject *gameObject = m_gameObjectManager->ObjectOnTile( x, y );
+bool GameState::ObjectBlockingTile( int x, int y ) {
+  GameObject *gameObject = m_gameObjectManager.ObjectOnTile( x, y );
   if ( gameObject ) {
-    return gameObject->HasGridCollision();
+    return gameObject->BlockingTile();
   }
   return false;
 }
@@ -154,29 +160,34 @@ lua_State* GameState::GetLuaState() {
 
 int GameState::LuaCreateGameObject( lua_State *L ) {
   if( !lua_isstring( L, -3 ) ) {
-    LogErr( "String not passed for file path in CreateGameObject." );
+    LogLuaErr( "String not passed for file path in CreateGameObject." );
     return luaL_error( L, "String not passed for file path in CreateGameObject." );
   }
   std::string path = lua_tostring( L, -3 );
 
   if( !lua_isnumber( L, -2 ) ) {
-    LogErr( "Number not passed to x position in CreateGameObject." );
+    LogLuaErr( "Number not passed to x position in CreateGameObject." );
     return luaL_error( L, "Number not passed to x position in CreateGameObject." );
   }
   int tileX = lua_tointeger( L, -2 );
 
   if( !lua_isnumber( L, -1 ) ) {
-    LogErr( "Number not passed to y position in CreateGameObject" );
+    LogLuaErr( "Number not passed to y position in CreateGameObject" );
     return luaL_error( L, "Number not passed to y position in CreateGameObject" );
   }
   int tileY = lua_tointeger( L, -1 );
 
-  GameObject *newGameObject = new GameObject( path, tileX, tileY );
-  App::GetApp()->GetCurrentState()->
-    m_gameObjectManager->AddGameObject( newGameObject );
+  if ( tileX >= 0 && tileY >= 0 ) {
+    GameObject *newGameObject = new GameObject( path, tileX, tileY );
+    App::GetApp()->GetCurrentState()->
+      m_gameObjectManager.AddGameObject( newGameObject );
 
-  Lunar<GameObject>::push( L, newGameObject );
-  return 1;
+    Lunar<GameObject>::push( L, newGameObject );
+    return 1;
+  } else {
+    LogLuaErr( "Negative tile passed to CreateGameObject" );
+    return 0;
+  }
 }
 
 
@@ -185,139 +196,159 @@ int GameState::LuaDestroyGameObject( lua_State *L ) {
   if ( GameObjectToDestroy ) {
     lua_remove(L, 1);
     App::GetApp()->GetCurrentState()->
-      m_gameObjectManager->RemoveGameObject( GameObjectToDestroy );
+      m_gameObjectManager.RemoveGameObject( GameObjectToDestroy );
   }
-
   return 0;
 }
 
 
 int GameState::LuaGetGameObject( lua_State *L ) {
   if ( !lua_isstring( L, -1 ) ) {
-    LogErr( "String not passed for GameObject type in GetGameObject." );
+    LogLuaErr( "String not passed for GameObject type in GetGameObject." );
     return luaL_error( L, "String not passed for GameObject type in GetGameObject." );
   }
   std::string GameObjectType = lua_tostring( L, -1 );
 
   Lunar<GameObject>::push( L, App::GetApp()->GetCurrentState()->
-    m_gameObjectManager->GetGameObject( GameObjectType ));
+    m_gameObjectManager.GetGameObject( GameObjectType ));
   return 1;
 }
 
 
 int GameState::LuaGetGameObjectOnTile( lua_State *L ) {
   if ( !lua_isnumber( L, -2 ) ) {
-    LogErr( "Number not passed to x position in GetGameObjectOnTile." );
+    LogLuaErr( "Number not passed to x position in GetGameObjectOnTile." );
     return luaL_error( L, "Number not passed to x position in GetGameObjectOnTile." );
   }
   int tileX = lua_tointeger( L, -2 );
 
   if ( !lua_isnumber( L, -1 ) ) {
-    LogErr( "Number not passed to y position in GetGameObjectOnTile." );
+    LogLuaErr( "Number not passed to y position in GetGameObjectOnTile." );
     return luaL_error( L, "Number not passed to y position in GetGameObjectOnTile." );
   }
   int tileY = lua_tointeger( L, -1 );
 
-  Lunar<GameObject>::push( L, App::GetApp()->GetCurrentState()->
-    m_gameObjectManager->ObjectOnTile( tileX, tileY ));
-  return 1;
+  if ( tileX >= 0 && tileY >= 0 ) {
+    Lunar<GameObject>::push( L, App::GetApp()->GetCurrentState()->
+      m_gameObjectManager.ObjectOnTile( tileX, tileY ));
+    return 1;
+  } else {
+    LogLuaErr( "Negative tile passed to GetGameObjectOnTile" );
+    return 0;
+  }
 }
 
 
 int GameState::LuaGetTileInfo( lua_State *L ) {
   if ( !lua_isnumber( L, -2 ) ) {
-    LogErr( "Number not passed to x position in GetTile." );
+    LogLuaErr( "Number not passed to x position in GetTile." );
     return luaL_error( L, "Number not passed to x position in GetTile." );
   }
   int tileX = lua_tointeger( L, -2 );
 
   if ( !lua_isnumber( L, -1 ) ) {
-    LogErr( "Number not passed to y position in GetTile." );
+    LogLuaErr( "Number not passed to y position in GetTile." );
     return luaL_error( L, "Number not passed to y position in GetTile." );
   }
   int tileY = lua_tointeger( L, -1 );
 
-  TileManager::tileInfo tile = App::GetApp()->GetCurrentState()->
-    m_tileManager->GetTile( tileX, tileY );
-  lua_pushstring( L, std::tr1::get<0>( tile ).c_str() );
-  lua_pushstring( L, std::tr1::get<1>( tile ).c_str() );
-  lua_pushinteger( L, std::tr1::get<2>( tile ));
-
-  return 3;
+  if ( tileX >= 0 && tileY >= 0 ) {
+    TileManager::tileInfo tile = App::GetApp()->GetCurrentState()->
+      m_tileManager.GetTile( tileX, tileY );
+    lua_pushstring( L, std::tr1::get<0>( tile ).c_str() );
+    lua_pushstring( L, std::tr1::get<1>( tile ).c_str() );
+    lua_pushinteger( L, std::tr1::get<2>( tile ));
+    return 3;
+  } else {
+    LogLuaErr( "Negative tile passed to GetTileInfo" );
+    return 0;
+  }
 }
 
 
 int GameState::LuaTileIsCrossable( lua_State *L ) {
   if ( !lua_isnumber( L, -2 ) ) {
-    LogErr( "Number not passed to x position in TileIsCrossable." );
+    LogLuaErr( "Number not passed to x position in TileIsCrossable." );
     return luaL_error( L, "Number not passed to x position in TileIsCrossable." );
   }
   int tileX = lua_tointeger( L, -2 );
 
   if ( !lua_isnumber( L, -1 ) ) {
-    LogErr( "Number not passed to y position in TileIsCrossable." );
+    LogLuaErr( "Number not passed to y position in TileIsCrossable." );
     return luaL_error( L, "Number not passed to y position in TileIsCrossable." );
   }
   int tileY = lua_tointeger( L, -1 );
 
-  lua_pushboolean( L, App::GetApp()->GetCurrentState()->
-    m_collisionManager->TileIsCrossable( tileX, tileY ));
-
-  return 1;
+  if ( tileX >= 0 && tileY >= 0 ) {
+    lua_pushboolean( L, App::GetApp()->GetCurrentState()->
+      m_collisionManager.TileIsCrossable( tileX, tileY ));
+    return 1;
+  } else {
+    LogLuaErr( "Negative tile passed to TileIsCrossable" );
+    return 0;
+  }
 }
 
 
-int GameState::LuaTileHasGridObject( lua_State *L ) {
+int GameState::LuaObjectBlockingTile( lua_State *L ) {
   if ( !lua_isnumber( L, -2 ) ) {
-    LogErr( "Number not passed to x position in TileHasGridGameObject." );
-    return luaL_error( L, "Number not passed to x position in TileHasGridGameObject." );
+    LogLuaErr( "Number not passed to x position in ObjectBlockingTile" );
+    return luaL_error( L, "Number not passed to x position in ObjectBlockingTile." );
   }
   int tileX = lua_tointeger( L, -2 );
 
   if ( !lua_isnumber( L, -1 ) ) {
-    LogErr( "Number not passed to y position in TileHasGridGameObject." );
-    return luaL_error( L, "Number not passed to y position in TileHasGridGameObject." );
+    LogLuaErr( "Number not passed to y position in ObjectBlockingTile." );
+    return luaL_error( L, "Number not passed to y position in ObjectBlockingTile." );
   }
   int tileY = lua_tointeger( L, -1 );
 
-  GameObject *gameObj = App::GetApp()->GetCurrentState()->
-    m_gameObjectManager->ObjectOnTile( tileX, tileY );
+  if ( tileX >= 0 && tileY >= 0 ) {
+    GameObject *gameObj = App::GetApp()->GetCurrentState()->
+      m_gameObjectManager.ObjectOnTile( tileX, tileY );
 
-  gameObj ? lua_pushboolean( L, gameObj->HasGridCollision() ) : lua_pushboolean( L, false );
-
-  return 1;
+    gameObj ? lua_pushboolean( L, gameObj->BlockingTile() ) : lua_pushboolean( L, false );
+    return 1;
+  } else {
+    LogLuaErr( "Negative tile passed to ObjectBlockingTile" );
+    return 0;
+  }
 }
 
 
 int GameState::LuaSetTile( lua_State *L ) {
   if ( !lua_isnumber( L, -4 ) ) {
-    LogErr( "Number not passed to x position in SetTile." );
+    LogLuaErr( "Number not passed to x position in SetTile." );
     return luaL_error( L, "Number not passed to x position in SetTile." );
   }
   int tileX = lua_tointeger( L, -4 );
 
   if ( !lua_isnumber( L, -3 ) ) {
-    LogErr( "Number not passed to y position in SetTile." );
+    LogLuaErr( "Number not passed to y position in SetTile." );
     return luaL_error( L, "Number not passed to y position in SetTile." );
   }
   int tileY = lua_tointeger( L, -3 );
 
   if ( !lua_isstring( L, -2 ) ) {
-    LogErr( "String not passed to tile name in SetTile." );
+    LogLuaErr( "String not passed to tile name in SetTile." );
     return luaL_error( L, "String not passed to tile name in SetTile." );
   }
   std::string tileName = lua_tostring( L, -2 );
 
   if ( !lua_isnumber( L, -1 ) ) {
-    LogErr( "Number not passed to collision ID in SetTile." );
+    LogLuaErr( "Number not passed to collision ID in SetTile." );
     return luaL_error( L, "Number not passed to collision ID in SetTile." );
   }
   int collisionID = lua_tointeger( L, -1 );
 
-  App::GetApp()->GetCurrentState()->
-    m_tileManager->SetTile( tileX, tileY, tileName );
-  App::GetApp()->GetCurrentState()->
-    m_collisionManager->SetCollision( tileX, tileY, collisionID );
+  if ( tileX >= 0 && tileY >= 0 ) {
+    App::GetApp()->GetCurrentState()->
+      m_tileManager.SetTile( tileX, tileY, tileName );
+    App::GetApp()->GetCurrentState()->
+      m_collisionManager.SetCollision( tileX, tileY, collisionID );
+  } else {
+    LogLuaErr( "Negative tile passed to SetTile" );
+  }
 
   return 0;
 }
@@ -325,12 +356,19 @@ int GameState::LuaSetTile( lua_State *L ) {
 
 int GameState::LuaNewState( lua_State *L ) {
   if ( !lua_isstring( L, -1 )) {
-    LogErr( "String not passed to NewState" );
+    LogLuaErr( "String not passed to NewState" );
     return luaL_error( L, "String not passed to NewState" );
   }
-  std::string stateFile = lua_tostring( L, -1 );
-
-  App::GetApp()->SetNextState( stateFile );
+  App::GetApp()->SetNextState( lua_tostring( L, -1 ));
   return 0;
 }
 
+
+int GameState::LuaLogErr( lua_State *L ) {
+  if ( !lua_isstring( L, -1 )) {
+    LogLuaErr( "String not passed to LuaLogLuaErr" );
+    return luaL_error( L, "String not passed to LuaLogLuaErr" );
+  }
+  LogLuaErr( lua_tostring( L, -1 ));
+  return 0;
+}

@@ -29,9 +29,9 @@ Constructor and Destructor
 ************************************************/
 App::App(
   const std::string &title,
-  unsigned int width,
-  unsigned int height,
-  unsigned int framerate
+  int width,
+  int height,
+  int framerate
 )
  : m_time( 0.0f ),
    m_deltaTime( 0.0f ),
@@ -55,9 +55,9 @@ Public Member Functions
 ************************************************/
 App* App::CreateApp(
   const std::string& title,
-  unsigned int width,
-  unsigned int height,
-  unsigned int framerate
+  int width,
+  int height,
+  int framerate
 ) {
 	if(  m_instance == 0 ) {
 		m_instance = new App( title, width, height, framerate );
@@ -165,6 +165,10 @@ void App::Run() {
 		if ( m_nextStateSet) {
 		  m_nextStateSet = false;
 		  SAFEDELETE( m_currentState );
+      m_images.Clear();
+      m_sounds.Clear();
+      m_music.Clear();
+      m_anims.Clear();
 		  m_currentState = new GameState();
 		  m_currentState->LoadFromFile( m_nextStatePath );
 		}
@@ -190,6 +194,7 @@ void App::SetNextState( const std::string &filepath ) {
   m_nextStateSet = true;
   m_nextStatePath = filepath;
 }
+
 
 void App::SetClearColor( const sf::Color& color ) {
   m_clearColor = color;

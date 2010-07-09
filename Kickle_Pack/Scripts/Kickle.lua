@@ -5,9 +5,8 @@ require ("GameObjectUtilities")
 local STANDING = 0
 local WALKING = 4
 local KICKING = 8
-local RAISE_PILLAR = 12
-local LOWER_PILLAR = 16
-local DYING = 20
+local PILLAR = 12
+local DYING = 16
 
 --Kickle's Behavior Table
 
@@ -34,7 +33,7 @@ function KickleTable.AILogic( Kickle )
   end
 
 	if ( not Game.GetGameObject( "DreamBag" ) ) then
-		Game.NextLevel()
+    Game.NewState( "Kickle_Pack/States/GardenLand_B.xml" )
 	end
 end
 
@@ -124,19 +123,19 @@ function KickleTable.PerformPillar( Kickle )
 		local tileX, tileY = GetTileObjectFaces( Kickle )
 
 		if ( Game.TileIsCrossable( tileX, tileY ) and
-			   not Game.TileHasGridObject( tileX, tileY ) ) then
-			KickleTable.state = RAISE_PILLAR
+			   not Game.ObjectBlockingTile( tileX, tileY ) ) then
+			KickleTable.state = PILLAR
       Kickle:SetAnimation( Kickle:GetDir() + KickleTable.state )
 			local pillar = Game.CreateGameObject(
 				"Kickle_Pack/Objects/Pillar.xml", tileX, tileY )
 
-		elseif ( Game.TileHasGridObject( tileX, tileY ) ) then
+		elseif ( Game.ObjectBlockingTile( tileX, tileY ) ) then
 			local objOnTile = Game.GetGameObjectOnTile( tileX, tileY )
 			if( objOnTile:GetType() == "Pillar" ) then
-				KickleTable.state = LOWER_PILLAR
-        Kickle:SetAnimation( Kickle:GetDir() + KickleTable.state )
+				KickleTable.state = PILLAR
+        Kickle:SetAnimationReverse( Kickle:GetDir() + KickleTable.state )
         objOnTile:GetTable().lower = true
-        objOnTile:SetAnimation( 1 )
+        objOnTile:SetAnimationReverse( 0 )
 			end
 		end
 	end
@@ -157,7 +156,7 @@ function KickleTable.PerformAttack( Kickle )
 
 		elseif (( Game.TileIsCrossable( tileX, tileY ) or
               Game.GetTileInfo( tileX, tileY ) == "water" ) and
-              not Game.TileHasGridObject( tileX, tileY ) ) then
+              not Game.ObjectBlockingTile( tileX, tileY ) ) then
 			local iceBreath = Game.CreateGameObject(
 				"Kickle_Pack/Objects/IceBreath.xml", tileX, tileY );
 			local iceBreathdir = Kickle:GetDir();

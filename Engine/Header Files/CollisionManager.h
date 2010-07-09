@@ -5,20 +5,19 @@ class TiXmlElement;
 
 class CollisionManager {
  public:
-  // Calls LoadData to initialize collision manager
-  explicit CollisionManager( const TiXmlElement *dataRoot );
+  CollisionManager();
 
   // Parses data from <collision_map> section of state file
   void LoadData( const TiXmlElement *dataRoot );
 
   // Returns true if the tile at X Y is solid, else false;
-  bool TileIsCrossable( unsigned int x, unsigned int y ) const;
+  bool TileIsCrossable( int x, int y ) const;
 
   // Changes the value of the tile sheet to that value if it is valid. Else -1.
-  void SetCollision( unsigned int x, unsigned int y, int collisionId );
+  void SetCollision( int x, int y, int collisionId );
 
   // Returns id of tile at that location.
-  int GetCollision( unsigned int x, unsigned int y );
+  int GetCollision( int x, int y );
 
  private:
   static const int NOT_CROSSABLE = 1;

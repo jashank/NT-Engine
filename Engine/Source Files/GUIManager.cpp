@@ -15,13 +15,6 @@ GUIManager::FactoryRef GUIManager::m_factoryRef = CreateFactoryRef();
 /*******************************
  * Constructors and Destructors
  * ****************************/
-GUIManager::GUIManager( const TiXmlElement *dataRoot ) {
-  if ( !LoadData( dataRoot )) {
-    LogErr( "Problem loading GUI in state file." );
-  }
-}
-
-
 GUIManager::~GUIManager() {
   for ( std::list<GUI*>::iterator gui = m_components.begin();
         gui != m_components.end(); ++gui ) {
@@ -34,28 +27,43 @@ GUIManager::~GUIManager() {
  * ****************************/
 bool GUIManager::LoadData( const TiXmlElement *dataRoot ) {
   const TiXmlElement *component = dataRoot->FirstChildElement( "component" );
-
-  while ( component ) {
-    std::string type = component->Attribute( "type" );
-    ToLowerCase( type );
-
-    FactoryRef::iterator gui = m_factoryRef.find( type );
-    if ( gui != m_factoryRef.end() ) {
-      std::string path = component->Attribute( "path" );
-
-      const TiXmlElement *instance = component->FirstChildElement( "instance" );
-      do {
-        int x, y = 0;
-        instance->Attribute( "x", &x );
-        instance->Attribute( "y", &y );
-
-        m_components.push_back(gui->second( path, x, y ));
-      } while ( instance = instance->NextSiblingElement( "instance" ));
-    } else {
-      LogErr( "Non-existent gui type chosen for GUI" );
-      return false;
-    }
-    component = component->NextSiblingElement( "component" );
+  if ( component ) {
+    do {
+      const char *type = component->Attribute( "type" );
+      if ( type ) {
+        FactoryRef::iterator gui = m_factoryRef.find( ToLowerCase( type ));
+        if ( gui != m_factoryRef.end() ) {
+          const char *path = component->Attribute( "path" );
+          if ( path ) {
+            const TiXmlElement *instance =
+              component->FirstChildElement( "instance" );
+            if ( instance ) {
+              do {
+                int x, y = 0;
+                instance->QueryIntAttribute( "x", &x );
+                instance->QueryIntAttribute( "y", &y );
+                m_components.push_back( gui->second( path, x, y ));
+              } while ( instance = instance->NextSiblingElement( "instance" ));
+            } else {
+              LogErr( "No instances specified for GUI type in state file." );
+              return false;
+            }
+          } else {
+            LogErr( "No path specified for GUI in state file." );
+            return false;
+          }
+        } else {
+          LogErr( "Non-existent gui type chosen for GUI in state file." );
+          return false;
+        }
+      } else {
+        LogErr( "No type specified for GUI component in state file." );
+        return false;
+      }
+    } while ( component = component->NextSiblingElement( "component" ));
+  } else {
+    LogErr( "No component specified in <GUI>. Thus, <GUI> not needed." );
+    return false;
   }
   return true;
 }

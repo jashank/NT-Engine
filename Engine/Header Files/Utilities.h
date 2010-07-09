@@ -14,11 +14,11 @@
 #endif
 
 // Converts string to lower case
-void ToLowerCase(std::string &str);
+std::string ToLowerCase( std::string str );
 
 // Returns name of passed xml file path.
 // Returns empty string if path is invalid.
-std::string& GetXmlFileName( const std::string &filepath );
+std::string GetXmlFileName( std::string filepath );
 
 //Clears the logs it is the first thing that is called in the
 // main function.
@@ -33,4 +33,5 @@ void LogMsg( const std::string &msg );
 // and in debug mode the error also displayed in the console
 void LogErr( const std::ostringstream &msg );
 void LogErr( const std::string &msg );
+void LogLuaErr( const std::string &msg );
 #endif

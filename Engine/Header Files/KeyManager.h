@@ -14,7 +14,7 @@ class KeyManager {
 
   // Takes key string, interprets it, and sets keyResult as the appropriate
   // key code
-  static bool InterpretKey( std::string &keyString, sf::Key::Code &keyResult );
+  static bool InterpretKey( std::string keyString, sf::Key::Code &keyResult );
 
   // Returns monitored Key corresponding to sf::Key::Code:: key.
   // Returns default constructed Key if none found.

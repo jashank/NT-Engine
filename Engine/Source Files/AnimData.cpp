@@ -1,7 +1,5 @@
 #include "AnimData.h"
 
-#include <algorithm>
-#include <cctype>
 #include <sstream>
 
 #include "App.h"
@@ -11,215 +9,113 @@
 /************************************************
 Public Methods
 ************************************************/
-AnimData::AnimData()
- : m_anims( 0 ),
-   m_numAnims( 0 ) {
-
-}
-
-AnimData::AnimData( const AnimData& ad )
- : m_anims( 0 ),
-   m_numAnims( ad.m_numAnims ) {
-  m_anims = new Animation[m_numAnims];
-  for( unsigned int i = 0; i < m_numAnims; ++i ) {
-    m_anims[i] = ad.m_anims[i];
-  }
-}
-
-AnimData::~AnimData() {
-	SAFEDELETEA( m_anims );
-}
-
-AnimData& AnimData::operator=( const AnimData& ad ) {
-  if( this != &ad ) {
-    m_numAnims = ad.m_numAnims;
-    m_anims = new Animation[m_numAnims];
-    for( unsigned int i = 0; i < m_numAnims; ++i ) {
-      m_anims[i] = ad.m_anims[i];
-    }
-  }
-
-  return *this;
-}
-
 bool AnimData::LoadFromFile( const std::string &filename ) {
   TiXmlDocument doc ( filename.c_str() );
 
   if ( doc.LoadFile() ) {
     static App *app = App::GetApp();
-    std::stringstream ss; //used for converting strings to other data types
-    TiXmlHandle handleDoc( &doc ); //handle to the xml doc
-    std::vector<Animation> tempArray;
+    TiXmlHandle handleDoc( &doc );
 
     TiXmlElement *sheet = handleDoc.FirstChildElement( "sheet" ).Element();
     do {
       sf::Image *loadedSheet = app->LoadImage( sheet->Attribute( "path" ));
       if ( loadedSheet ) {
-        TiXmlElement *strip = sheet->FirstChildElement( "strip" );
-        do {
-          Animation temp;
+        TiXmlElement *elem = sheet->FirstChildElement();
+        if ( elem ) {
+          do {
+            if ( strcmp( elem->Value(), "common" ) == 0 ) {
+              elem->QueryIntAttribute( "x", &m_common.frameRect.Left );
+              elem->QueryIntAttribute( "y", &m_common.frameRect.Top );
+              elem->QueryIntAttribute( "width", &m_common.frameRect.Right );
+              elem->QueryIntAttribute( "height", &m_common.frameRect.Bottom );
+              elem->QueryIntAttribute( "num_frames", &m_common.numFrames );
+              const char *looped = elem->Attribute( "looped" );
+              if ( looped ) {
+                m_common.isLooped = ( strcmp( looped, "true" ) == 0 );
+              }
 
-          temp.image = loadedSheet;
-
-          //Load "playback"
-          TiXmlElement *tempElem = strip->FirstChildElement( "playback" );
-          if( tempElem ) {
-            std::string playback = tempElem->GetText();
-            temp.forward = (playback == "forward");
-          }
-
-          //Load "looped"
-          tempElem = strip->FirstChildElement( "looped" );
-          if( tempElem ) {
-            std::string loop = tempElem->GetText();
-            temp.isLooped = (loop == "true");
-          }
-
-          //Load "num_frames"
-          ss.clear();
-          ss << strip->FirstChildElement( "num_frames" )->GetText();
-          ss >> temp.numFrames;
-
-          //Load "frame_times"
-          ss.clear();
-          ss << strip->FirstChildElement( "frame_times" )->GetText();
-
-          //Converts frame_times to floats
-          std::vector<float> tempTimes;
-          float t = 0.0f;
-          for( ;!ss.eof(); ) {
-            ss >> t;
-            tempTimes.push_back( t );
-          }
-
-          //Determine if there is a time for every frame or a single constant time
-          //then move the time(s) from the temporary vector to the array
-          unsigned int numTimes = static_cast<unsigned int>(tempTimes.size());
-          if( numTimes != 1 ) {
-            if( numTimes != temp.numFrames ) {
-              // Incorrect number of time entries for the frame_times tag
-              // There needs to be either 1 time or numFrames number of times
-              return false;
+              TiXmlElement *strip = elem->FirstChildElement( "strip" );
+              if ( strip ) {
+                do {
+                  if ( !ParseStrip( strip, loadedSheet, ON )) {
+                    return false;
+                  }
+                } while ( strip = strip->NextSiblingElement( "strip" ));
+              }
+            } else if ( strcmp( elem->Value(), "strip") == 0 ) {
+              if ( !ParseStrip( elem, loadedSheet, OFF )) {
+                return false;
+              }
             }
-            temp.uniqueFrameTimes = true;
-            temp.frameTime = new float[temp.numFrames];
-            for( unsigned int i = 0; i < temp.numFrames; ++i ) {
-              temp.frameTime[i] = tempTimes[i];
-            }
-          }
-          else {
-            temp.uniqueFrameTimes = false;
-            temp.frameTime = new float;
-            temp.frameTime[0] = tempTimes[0];
-          }
-
-
-          //Load "x_pos"
-          ss.clear();
-          ss << strip->FirstChildElement( "x_pos" )->GetText();
-          ss >> temp.frameRect.Left;
-
-          //Load "y_pos"
-          ss.clear();
-          ss << strip->FirstChildElement( "y_pos" )->GetText();
-          ss >> temp.frameRect.Top;
-
-          //Load "width"
-          ss.clear();
-          ss << strip->FirstChildElement( "width" )->GetText();
-          ss >> temp.frameRect.Right;
-          temp.frameRect.Right += temp.frameRect.Left;
-
-          //Load "height"
-          ss.clear();
-          ss << strip->FirstChildElement( "height" )->GetText();
-          ss >> temp.frameRect.Bottom;
-          temp.frameRect.Bottom += temp.frameRect.Top;
-
-          tempArray.push_back(temp);
-
-        } while ( strip = strip->NextSiblingElement( "strip" ));
+          } while ( elem = elem->NextSiblingElement() );
+        }
       } else {
-        LogErr( "Sheet in animation file not found." );
+        LogErr( "Sheet in animation file: " + filename + " not found." );
         return false;
       }
     } while ( sheet = sheet->NextSiblingElement( "sheet" ));
-
-
-    m_numAnims = static_cast<unsigned int>(tempArray.size());
-    //Allocate the correct number of animation strips
-    m_anims = new Animation[m_numAnims];
-
-    for( unsigned int i = 0; i < m_numAnims; ++i ) {
-      m_anims[i] = tempArray[i];
-    }
-
-    return true;
+  } else {
+    LogErr( "File not found: " + filename );
+    return false;
   }
-
-  LogErr( "Animation file not found." );
-  return false;
+  return true;
 }
 
 
-bool AnimData::IsLooped( unsigned int animation ) const {
-	return m_anims[animation%m_numAnims].isLooped;
+bool AnimData::IsLooped( int animation ) const {
+	return m_anims[animation%m_anims.size()].isLooped;
 }
 
 
-float AnimData::GetFrameTime( unsigned int animation, unsigned int frame ) const {
-  static Animation* a = 0;
-  a = &m_anims[animation%m_numAnims];
+float AnimData::GetFrameTime( int animation, int frame ) const {
+  static const Animation* a = 0;
+  a = &m_anims[animation%m_anims.size()];
 
 	if( a->uniqueFrameTimes ) {
-		return a->frameTime[frame%(a->numFrames)];
+		return a->frameTimes[frame%(a->numFrames)];
 	}
-	return a->frameTime[0];
+	return a->frameTimes[0];
 }
 
 
-int AnimData::GetAnimX( unsigned int animation ) const {
-	return m_anims[animation%m_numAnims].frameRect.Left;
+int AnimData::GetAnimX( int animation ) const {
+	return m_anims[animation%m_anims.size()].frameRect.Left;
 }
 
 
-int AnimData::GetAnimY( unsigned int animation ) const {
-	return m_anims[animation%m_numAnims].frameRect.Top;
+int AnimData::GetAnimY( int animation ) const {
+	return m_anims[animation%m_anims.size()].frameRect.Top;
 }
 
 
-int AnimData::GetFrameWidth( unsigned int animation ) const {
-	return m_anims[animation%m_numAnims].frameRect.GetWidth();
+int AnimData::GetFrameWidth( int animation ) const {
+	return m_anims[animation%m_anims.size()].frameRect.GetWidth();
 }
 
 
-int AnimData::GetFrameHeight( unsigned int animation ) const {
-	return m_anims[animation%m_numAnims].frameRect.GetHeight();
+int AnimData::GetFrameHeight( int animation ) const {
+	return m_anims[animation%m_anims.size()].frameRect.GetHeight();
 }
 
 
-unsigned int AnimData::GetNumAnims() const {
-	return m_numAnims;
+int AnimData::GetNumAnims() const {
+	return m_anims.size();
 }
 
 
-unsigned int AnimData::GetNumFrames( unsigned int animation ) const {
-	return m_anims[animation%m_numAnims].numFrames;
-}
-
-
-bool AnimData::GetPlayBack( unsigned int animation ) const {
-  return m_anims[animation%m_numAnims].forward;
+int AnimData::GetNumFrames( int animation ) const {
+	return m_anims[animation%m_anims.size()].numFrames;
 }
 
 
 sf::IntRect AnimData::GetFrameRect(
-  unsigned int animation,
-  unsigned int frame ) const {
+  int animation,
+  int frame
+) const {
 	static sf::IntRect rect;
-  static Animation* a = 0;
+  static const Animation* a = 0;
 
-  a = &m_anims[animation%m_numAnims];
+  a = &m_anims[animation%m_anims.size()];
 	rect.Top = a->frameRect.Top;
 	rect.Left = a->frameRect.Left + (frame%a->numFrames) *
     a->frameRect.GetWidth();
@@ -230,64 +126,81 @@ sf::IntRect AnimData::GetFrameRect(
 }
 
 
-sf::Image& AnimData::GetImage( unsigned int animation ) const {
-  return *(m_anims[animation%m_numAnims].image);
+sf::Image& AnimData::GetImage( int animation ) const {
+  return *(m_anims[animation%m_anims.size()].image);
 }
 
 /************************************************
 Private Methods
 ************************************************/
 AnimData::Animation::Animation()
-: forward( true ),
-  uniqueFrameTimes( false ),
+ :uniqueFrameTimes( false ),
   isLooped( false ),
-  frameTime( 0 ),
-  numFrames( 0 ) {
-}
+  numFrames( 0 ) {}
 
-AnimData::Animation::Animation( const AnimData::Animation& a )
-: forward( a.forward ),
-  uniqueFrameTimes( a.uniqueFrameTimes ),
-  isLooped( a.isLooped ),
-  frameTime( 0 ),
-  numFrames( a.numFrames ),
-  frameRect( a.frameRect ),
-  image( a.image ) {
-    if( uniqueFrameTimes ) {
-      frameTime = new float[numFrames];
-      for( unsigned int i = 0; i < numFrames; ++i ) {
-        frameTime[i] = a.frameTime[i];
-      }
-    }
-    else {
-      frameTime = new float( a.frameTime[0] );
-    }
-}
+bool AnimData::ParseStrip(
+  const TiXmlElement *strip,
+  sf::Image *sheet,
+  CommonTag flag
+) {
+  Animation anim;
+  if ( flag == ON ) {
+    anim = m_common;
+  }
+  anim.image = sheet;
 
-AnimData::Animation::~Animation() {
-	SAFEDELETEA( frameTime );
-}
+  const char *name = strip->Attribute( "name" );
+  if ( name ) {
+    anim.name = name;
+  }
 
-AnimData::Animation& AnimData::Animation::operator=( const AnimData::Animation& a ) {
-  if( this != &a ){
-    forward = a.forward;
-    uniqueFrameTimes = a.uniqueFrameTimes;
-    isLooped = a.isLooped;
-    numFrames = a.numFrames;
-    frameRect = a.frameRect;
-    image = a.image;
+  const TiXmlElement *clip = strip->FirstChildElement( "clip" );
+  if ( clip ) {
+    clip->QueryIntAttribute( "x", &anim.frameRect.Left );
+    clip->QueryIntAttribute( "y", &anim.frameRect.Top );
+    clip->QueryIntAttribute( "width", &anim.frameRect.Right );
+    clip->QueryIntAttribute( "height", &anim.frameRect.Bottom );
+  }
+  anim.frameRect.Right += anim.frameRect.Left;
+  anim.frameRect.Bottom += anim.frameRect.Top;
 
-    SAFEDELETEA(frameTime);
-    if( uniqueFrameTimes ) {
-      frameTime = new float[numFrames];
-      for( unsigned int i = 0; i < numFrames; ++i ) {
-        frameTime[i] = a.frameTime[i];
-      }
-    }
-    else {
-      frameTime = new float( a.frameTime[0] );
+  const TiXmlElement *flow = strip->FirstChildElement( "flow" );
+  if ( flow ) {
+    flow->QueryIntAttribute( "num_frames", &anim.numFrames );
+    const char *looped = flow->Attribute( "looped" );
+    if ( looped ) {
+      anim.isLooped = ( ToLowerCase( looped ) == "true" );
     }
   }
 
-  return *this;
+  if ( anim.numFrames > 1 ) {
+    const TiXmlElement *frameTimes = strip->FirstChildElement( "frame_times" );
+    if ( frameTimes ) {
+      std::stringstream ss;
+      ss << frameTimes->GetText();
+      float time = 0.0f;
+      while ( !ss.eof() ) {
+        ss >> time;
+        anim.frameTimes.push_back( time );
+      }
+      if ( anim.frameTimes.size() > 1 ) {
+        if ( anim.frameTimes.size() == anim.numFrames ) {
+          anim.uniqueFrameTimes = true;
+        } else {
+          LogErr( "When specifying multiple frame times, didn't specify time "
+                  "for each frame. Req: 1 for all or 1 for each." );
+          return false;
+        }
+      }
+    } else {
+      LogErr( "No frame time(s) specified in strip that has multiple frames." );
+      return false;
+    }
+  } else {
+    anim.frameTimes.push_back( 0.0f );
+  }
+
+  m_anims.push_back( anim );
+  return true;
 }
+

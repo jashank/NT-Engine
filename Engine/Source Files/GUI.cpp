@@ -79,6 +79,7 @@ AnimSprite& GUI::GetSprite() {
 bool GUI::LoadData( const std::string &filepath ) {
   TiXmlDocument doc( filepath.c_str() );
   if ( !doc.LoadFile() ) {
+    LogErr( "Couldn't load GUI file " + filepath );
     return false;
   }
   TiXmlHandle handleDoc( &doc );
@@ -87,20 +88,26 @@ bool GUI::LoadData( const std::string &filepath ) {
   m_name = GetXmlFileName( filepath );
 
   TiXmlElement *anim = root->FirstChildElement( "animation" );
-  m_sprite.LoadAnimData( anim->Attribute( "path" ));
+  if ( anim ) {
+    m_sprite.LoadAnimData( anim->Attribute( "path" ));
 
-  TiXmlElement *script = root->FirstChildElement( "script" );
-  if ( script ) {
-    m_luaPath = script->Attribute( "path" );
-  }
-
-  const TiXmlElement *inputListRoot = root->FirstChildElement( "input_list" );
-  if ( inputListRoot ) {
-    if ( !m_input.LoadInputList( inputListRoot )) {
-      LogErr( "Problem loading input list in GUI" );
-      return false;
+    TiXmlElement *script = root->FirstChildElement( "script" );
+    if ( script ) {
+      m_luaPath = script->Attribute( "path" );
     }
+
+    const TiXmlElement *inputListRoot = root->FirstChildElement( "input_list" );
+    if ( inputListRoot ) {
+      if ( !m_input.LoadInputList( inputListRoot )) {
+        LogErr( "Problem loading input list in GUI" );
+        return false;
+      }
+    }
+  } else {
+    LogErr( "<animation> element not specified in GUI file." );
+    return false;
   }
+  
   return true;
 }
 
@@ -109,9 +116,7 @@ void GUI::InitLua() {
   luaL_dofile( m_state->GetLuaState(), m_luaPath.c_str() );
   if ( lua_istable( m_state->GetLuaState(), -1 )) {
     m_id = luaL_ref( m_state->GetLuaState(), LUA_REGISTRYINDEX );
-  } else {
-    LogErr( "Lua event table not found for GUI: " + m_name );
-  }
+  } 
 }
 
 

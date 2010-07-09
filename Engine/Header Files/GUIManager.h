@@ -14,8 +14,7 @@ class TiXmlElement;
  * ************************************************/
 class GUIManager {
  public:
-  // Calls LoadData to initialize GUIManager
-  explicit GUIManager( const TiXmlElement *dataRoot );
+  GUIManager(){}
   ~GUIManager();
 
   // Parses data from <GUI> section of state file.

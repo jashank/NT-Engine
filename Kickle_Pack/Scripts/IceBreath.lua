@@ -25,7 +25,8 @@ function IceBreathTable.AILogic( IceBreath )
 end
 
 function IceBreathTable.HandleCollision( IceBreath, Other )
-	if ( Other:GetType() == "Slime" ) then
+  other = Other:GetType()
+	if ( other == "Slime" ) then
     IceBlock = Game.CreateGameObject(
       "Kickle_Pack/Objects/IceBlock.xml",
       Other:GetTile()

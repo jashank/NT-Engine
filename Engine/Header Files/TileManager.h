@@ -18,12 +18,12 @@ class TileManager {
   // Type, name, id of tile
   typedef std::tr1::tuple<std::string, std::string, int> tileInfo;
 
-  // Calls LoadData to initialize tile manager
-  explicit TileManager( const TiXmlElement *dataRoot );
+  TileManager();
   ~TileManager();
 
   // Parses data from <tile_map> section of state file
-  void LoadData( const TiXmlElement *dataRoot );
+  // Returns whether load was successful.
+  bool LoadData( const TiXmlElement *dataRoot );
 
   // Updates TileManager
   void Update();
@@ -31,17 +31,17 @@ class TileManager {
 	void Render();
 
   // Changes the value of the tile sheet to value passed if it is valid, else -1
-  void SetTile( unsigned int x, unsigned int y, const std::string &tileName );
+  void SetTile( int x, int y, const std::string &tileName );
 
   // Returns type, name, and id of tile
-  const TileManager::tileInfo& GetTile( unsigned int x, unsigned int y );
+  const TileManager::tileInfo& GetTile( int x, int y );
 
   // Return dimensions of tile for this map (tiles are square)
-  int GetTileDim();
+  int GetTileDim() const;
 
   // Return number of tiles on map horizontally and vertically
-  int GetMapWidth();
-  int GetMapHeight();
+  int GetMapWidth() const;
+  int GetMapHeight() const;
 
  private:
   typedef std::map< int, tileInfo* >::iterator TileInfoIter;
@@ -52,10 +52,16 @@ class TileManager {
   TileManager& operator=( const TileManager &manager );
 
   // Sets up tile animations from animation file passed
-  void LoadTileAnims( const std::string &animPath );
+  // Returns whether load was successful.
+  bool LoadTileAnims( const std::string &animPath );
 
   // Loads layout of tiles from data in xml element passed
-	void LoadTileLayout( const TiXmlElement *root );
+  // Returns whether load was successful.
+	bool LoadTileLayout( const TiXmlElement *root );
+
+  // Retrieves tile info from <strip> tag
+  // Returns whether load was successful.
+  bool GetTileInfo( const TiXmlElement *strip );
 
   AnimSprite *m_tileSprites;
   int m_numTileTypes;

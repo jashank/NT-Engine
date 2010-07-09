@@ -9,19 +9,19 @@ class Config {
   // Loads Config data from Config file.
   static void Load();
 
-  static void SetScreenWidth( unsigned int screenWidth );
-  static unsigned int GetScreenWidth();
+  static void SetScreenWidth( int screenWidth );
+  static int GetScreenWidth();
 
-  static void SetScreenHeight( unsigned int screenHeight );
-  static unsigned int GetScreenHeight();
+  static void SetScreenHeight( int screenHeight );
+  static int GetScreenHeight();
 
-  static void SetFPS( unsigned int FPS );
-  static unsigned int GetFPS();
+  static void SetFPS( int FPS );
+  static int GetFPS();
 
 private:
-  static unsigned int m_screenWidth;
-  static unsigned int m_screenHeight;
-  static unsigned int m_FPS;
+  static int m_screenWidth;
+  static int m_screenHeight;
+  static int m_FPS;
 };
 
 #endif

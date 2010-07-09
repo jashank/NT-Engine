@@ -49,14 +49,14 @@ const std::string KeyManager::m_extraKeys[] = {
 Constructor
 *************************/
 KeyManager::KeyManager()
- : m_input( 0 ) {
+ : m_input( NULL ) {
 }
 
 /*************************
 Public Methods
 *************************/
-bool KeyManager::InterpretKey( std::string &keyString, sf::Key::Code &keyResult ) {
-  ToLowerCase( keyString );
+bool KeyManager::InterpretKey( std::string keyString, sf::Key::Code &keyResult ) {
+  keyString = ToLowerCase( keyString );
 
   //A = 'a', B = 'b', C = 'c', D = 'd', E = 'e', F = 'f', G = 'g',
   //H = 'h', I = 'i', J = 'j', K = 'k', L = 'l', M = 'm', N = 'n',
@@ -70,16 +70,16 @@ bool KeyManager::InterpretKey( std::string &keyString, sf::Key::Code &keyResult 
     return true;
   }
 
-  static const unsigned int ESCAPE_KEY =
-    static_cast<unsigned int>( sf::Key::Escape );
+  static const int ESCAPE_KEY =
+    static_cast<int>( sf::Key::Escape );
 
   //Calculate the amount of extra keys in the sf::key enum
   // Count - Escape(note escape is the first "extra" key in enum)
-  static unsigned int count =
-    static_cast<unsigned int>( sf::Key::Count ) - ESCAPE_KEY;
+  static int count =
+    static_cast<int>( sf::Key::Count ) - ESCAPE_KEY;
 
   //Loops through the extraKeys array comparing to keyString
-  for( unsigned int i = 0; i < count; ++i ) {
+  for( int i = 0; i < count; ++i ) {
     if( keyString == m_extraKeys[i] ) {
       keyResult = static_cast<sf::Key::Code>( i + ESCAPE_KEY );
       return true;

@@ -1,8 +1,5 @@
 #include "GameObject.h"
 
-#include <algorithm>
-#include <cctype>
-
 #include "boost/bind/bind.hpp"
 extern "C" {
 #include "lualib.h"
@@ -27,6 +24,7 @@ const char GameObject::className[] = "GameObject";
 Lunar<GameObject>::RegType GameObject::methods[] = {
   { "Move", &GameObject::LuaMove },
   { "SetAnimation", &GameObject::LuaSetAnimation },
+  { "SetAnimationReverse", &GameObject::LuaSetAnimationReverse },
   { "IsAnimating", &GameObject::LuaIsAnimating },
   { "GetType", &GameObject::LuaGetType },
   { "GetTile", &GameObject::LuaGetTile },
@@ -45,7 +43,7 @@ Lunar<GameObject>::RegType GameObject::methods[] = {
 GameObject::GameObject( lua_State *L )
  : m_ptrCallScriptFunc( boost::bind( &GameObject::CallScriptFunc, this, _1 )),
    m_moving( false ),
-   m_gridCollision( false ),
+   m_blockingTile( false ),
    m_noClip( false ),
    m_direction( Up ),
    m_distance( 0.0f ),
@@ -70,12 +68,12 @@ GameObject::GameObject( lua_State *L )
 
 GameObject::GameObject(
   const std::string &filepath,
-  unsigned int tileX,
-  unsigned int tileY
+  int tileX,
+  int tileY
 )
  : m_ptrCallScriptFunc( boost::bind( &GameObject::CallScriptFunc, this, _1 )),
    m_moving( false ),
-   m_gridCollision( false ),
+   m_blockingTile( false ),
    m_noClip( false ),
    m_direction( Up ),
    m_distance( 0.0f ),
@@ -89,13 +87,13 @@ GameObject::GameObject(
 
   //Calculate the float positions given tileX and tileY
   //Taking into account tile size, and max tiles across/down
-  int tileDim = m_gameState->GetTileManager()->GetTileDim();
+  int tileDim = m_gameState->GetTileManager().GetTileDim();
 
   float x = static_cast<float>( tileDim *
-     ( tileX % m_gameState->GetTileManager()->GetMapWidth()));
+     ( tileX % m_gameState->GetTileManager().GetMapWidth()));
 
   float y = static_cast<float>( tileDim *
-     ( tileY % m_gameState->GetTileManager()->GetMapHeight()));
+     ( tileY % m_gameState->GetTileManager().GetMapHeight()));
 
   if( GetAnimData() ) {
     //Take into account the sprites that are taller than a normal tile
@@ -103,7 +101,7 @@ GameObject::GameObject(
   }
   SetPosition( x, y );
 
-  if ( !m_gridCollision ) {
+  if ( !m_blockingTile ) {
     if( !LoadCollisionData( filepath ) ) {
       LogErr( "GameObject XML file " + filepath + " didn't load correctly." );
     }
@@ -130,7 +128,7 @@ void GameObject::HandleEvents() {
 
 void GameObject::UpdateCollision() {
   GameObject *collisionObj =
-    m_gameState->GetGameObjectManager()->DetectCollision( this );
+    m_gameState->GetGameObjectManager().DetectCollision( this );
 
   if( collisionObj != NULL ) {
     lua_State *L = m_gameState->GetLuaState();
@@ -172,21 +170,21 @@ const sf::FloatRect &GameObject::GetCollisionBox() const {
 }
 
 
-bool GameObject::HasGridCollision() const {
-  return m_gridCollision;
+bool GameObject::BlockingTile() const {
+  return m_blockingTile;
 }
 
 
-unsigned int GameObject::GetTileX() const {
-  int tileDim = m_gameState->GetTileManager()->GetTileDim();
-  return static_cast<unsigned int>(
+int GameObject::GetTileX() const {
+  int tileDim = m_gameState->GetTileManager().GetTileDim();
+  return static_cast<int>(
     ( GetPosition().x + tileDim / 2 ) / tileDim );
 }
 
 
-unsigned int GameObject::GetTileY() const {
-  int tileDim = m_gameState->GetTileManager()->GetTileDim();
-  return static_cast<unsigned int>(
+int GameObject::GetTileY() const {
+  int tileDim = m_gameState->GetTileManager().GetTileDim();
+  return static_cast<int>(
     (( GetPosition().y +
        GetSubRect().GetHeight() % tileDim ) +
        tileDim / 2) / tileDim );
@@ -224,11 +222,11 @@ int GameObject::LuaMove( lua_State *L ) {
     }
 
     if ( nextTileX >= 0 && nextTileY >= 0 ) {
-      unsigned int x = static_cast<unsigned int>( nextTileX );
-      unsigned int y = static_cast<unsigned int>( nextTileY );
+      int x = static_cast<int>( nextTileX );
+      int y = static_cast<int>( nextTileY );
       if (( m_noClip ) ||
-        ( m_gameState->GetCollisionManager()->TileIsCrossable( x, y ) &&
-        !m_gameState->TileHasGridObject( x, y ))) {
+        ( m_gameState->GetCollisionManager().TileIsCrossable( x, y ) &&
+        !m_gameState->ObjectBlockingTile( x, y ))) {
         m_moving = true;
       }
     }
@@ -237,15 +235,22 @@ int GameObject::LuaMove( lua_State *L ) {
 }
 
 
-
 int GameObject::LuaSetAnimation( lua_State *L ) {
-  if( !lua_isnumber( L, -1 ) ) {
+  if( !lua_isnumber( L, -1 )) {
     return luaL_error( L, "Invalid argument for SetAnimation." );
   }
-
-  unsigned int animation = lua_tointeger( L, -1 );
-
+  int animation = lua_tointeger( L, -1 );
   SetAnimation( animation );
+  return 0;
+}
+
+
+int GameObject::LuaSetAnimationReverse( lua_State *L ) {
+  if ( !lua_isnumber( L, -1 )) {
+    return luaL_error( L, "Invalid argument for SetAnimationReverse." );
+  }
+  int animation = lua_tointeger( L, -1 );
+  SetAnimation( animation, true );
   return 0;
 }
 
@@ -286,7 +291,7 @@ int GameObject::LuaSetDir( lua_State *L ) {
 
 
 int GameObject::LuaReverse( lua_State *L ) {
-  m_distance = m_gameState->GetTileManager()->GetTileDim() - m_distance;
+  m_distance = m_gameState->GetTileManager().GetTileDim() - m_distance;
 
   switch( m_direction ) {
     case Up: {
@@ -337,8 +342,6 @@ void GameObject::InitLua() {
   luaL_dofile( m_gameState->GetLuaState(), m_luaScript.c_str() );
   if ( lua_istable( m_gameState->GetLuaState(), -1 )) {
     m_id = luaL_ref( m_gameState->GetLuaState(), LUA_REGISTRYINDEX );
-  } else {
-    LogErr( "Lua behavior table not found for GameObject: " + m_type );
   }
 }
 
@@ -370,7 +373,7 @@ void GameObject::MovementUpdate() {
     default: {}
   }
 
-  if( m_distance >= m_gameState->GetTileManager()->GetTileDim()) {
+  if( m_distance >= m_gameState->GetTileManager().GetTileDim()) {
     m_moving = false;
     CorrectMovement();
     m_distance = 0.0f;
@@ -381,7 +384,7 @@ void GameObject::MovementUpdate() {
 void GameObject::CorrectMovement() {
   static float diff = 0.0f;
   //Calculate the amount of distance to move back
-  diff = m_distance - m_gameState->GetTileManager()->GetTileDim();
+  diff = m_distance - m_gameState->GetTileManager().GetTileDim();
 
   //Find the correct direction to move back
   switch( m_direction ) {
@@ -436,26 +439,41 @@ bool GameObject::LoadCollisionData( const std::string &filepath ) {
   }
 
   TiXmlHandle handleDoc( &doc );
-  TiXmlElement* root = handleDoc.FirstChildElement( "game_object" ).Element();
-  TiXmlElement* rect = root->FirstChildElement( "rect" );
+  TiXmlElement *root = handleDoc.FirstChildElement( "game_object" ).Element();
 
-  m_collisionRect.Left = GetPosition().x;
-  std::string rectXOffset( rect->Attribute( "x" ) );
-  m_collisionRect.Left += atoi( rectXOffset.c_str() );
+  TiXmlElement *rect = root->FirstChildElement( "rect" );
+  if ( rect ) {
+    rect->QueryFloatAttribute( "x", &m_collisionRect.Left );
+    m_collisionRect.Left += GetPosition().x;
 
-  std::string width( rect->Attribute( "width" ) );
-  m_collisionRect.Right = m_collisionRect.Left + atoi( width.c_str() );
+    rect->QueryFloatAttribute( "y", &m_collisionRect.Top );
+    m_collisionRect.Top += GetPosition().y;
 
-  m_collisionRect.Top = GetPosition().y;
-  std::string rectYOffset( rect->Attribute( "y" ) );
-  m_collisionRect.Top += atoi( rectYOffset.c_str() );
+    rect->QueryFloatAttribute( "width", &m_collisionRect.Right );
+    m_collisionRect.Right += m_collisionRect.Left;
 
-  std::string height( rect->Attribute( "height" ) );
-  m_collisionRect.Bottom = m_collisionRect.Top + atoi( height.c_str() );
+    rect->QueryFloatAttribute( "height", &m_collisionRect.Bottom );
+    m_collisionRect.Bottom += m_collisionRect.Top;
 
-  std::string gridCollision( root->FirstChildElement( "grid_collision" )->
-                                Attribute( "data" ) );
-  m_gridCollision = ( gridCollision == "true" );
+  } else {
+    LogErr( "No rect specified for GameObject: " + filepath );
+    return false;
+  }
+
+  TiXmlElement *tile = root->FirstChildElement( "tile" );
+  if ( tile ) {
+    const char *blockingTile = tile->Attribute( "block" );
+    if ( blockingTile ) {
+      m_blockingTile = ( ToLowerCase( blockingTile ) == "true" );
+    } else {
+      LogErr( "No 'block' attribute specified for tile element in GameObject: " +
+              filepath );
+      return false;
+    }
+  } else {
+    LogErr( "No 'tile' element specified for GameObject: " + filepath );
+    return false;
+  }
 
   return true;
 }
@@ -465,27 +483,47 @@ bool GameObject::LoadObjectData( const std::string &filepath ) {
   TiXmlDocument doc ( filepath.c_str() );
 
   if ( !doc.LoadFile() ) {
+    LogErr( "Unable to load GameObject file: " + filepath );
     return false;
   }
 
   m_type = GetXmlFileName( filepath );
 
   TiXmlHandle handleDoc( &doc );
-  TiXmlElement* root = handleDoc.FirstChildElement( "game_object" ).Element();
+  TiXmlElement *root = handleDoc.FirstChildElement( "game_object" ).Element();
 
-  //Load in path to animation's xml
-  TiXmlElement* tempElem = root->FirstChildElement( "animation" );
-  if( tempElem != NULL ) {
-    std::string animPath( tempElem->Attribute( "path" ) );
-    LoadAnimData( animPath );
+  TiXmlElement *animation = root->FirstChildElement( "animation" );
+  if( animation ) {
+    const char *animPath = animation->Attribute( "path" );
+    if ( animPath ) {
+      LoadAnimData( animPath );
+    } else {
+      LogErr( "No animation path specified in GameObject: " + filepath );
+      return false;
+    }
+  } else {
+    LogErr( "No animation element in GameObject: " + filepath );
+    return false;
   }
 
-  //Load in path to GameObject's lua script
-  m_luaScript = root->FirstChildElement( "script" )->Attribute( "path" );
+  TiXmlElement *script = root->FirstChildElement( "script" );
+  if ( script ) {
+    const char *scriptPath = script->Attribute( "path" );
+    if ( scriptPath ) {
+      m_luaScript = scriptPath;
+    } else {
+      LogErr( "No script path specified in GameObject: " + filepath );
+      return false;
+    }
+  }
 
-  // Load in speed of object
-  std::string speed( root->FirstChildElement( "speed" )->Attribute( "data" ) );
-  m_speed = (float)atof( speed.c_str() );
+  TiXmlElement *speed = root->FirstChildElement( "speed" );
+  if ( speed ) {
+    speed->QueryFloatAttribute( "ppf", &m_speed );
+  } else {
+    LogErr( "No speed element specified in GameObject: " + filepath );
+    return false;
+  }
 
   //Load input data if there is any
   const TiXmlElement *inputListRoot = root->FirstChildElement( "input_list" );

@@ -10,28 +10,47 @@
  * Public Methods
  * ********************************/
 bool InputHandler::LoadInputList( const TiXmlElement *inputRoot ) {
-  for ( const TiXmlElement *input = inputRoot->FirstChildElement( "input" );
-        input; input = input->NextSiblingElement( "input" ) ) {
+  const TiXmlElement *input = inputRoot->FirstChildElement( "input" );
+  if ( input ) {
+    do {
+      const char *keyString = input->Attribute( "key" );
+      if ( keyString ) {
+        sf::Key::Code k;
+        std::string keyName = keyString;
+        if ( KeyManager::InterpretKey( keyName, k )) {
+          App::GetApp()->RegisterKey( k );
+          Key key( k );
 
-    std::string keyString = input->Attribute( "key" );
-    sf::Key::Code k;
-    if( !KeyManager::InterpretKey( keyString, k ) ) {
-      //Invalid key attribute in an input xml tag
-      return false;
-    }
-    App::GetApp()->RegisterKey( k );
-    Key key( k );
+          const char *repeat = input->Attribute( "repeat" );
+          if ( repeat ) {
+            key.startTime = ( ToLowerCase( repeat ) == "true" ) ? -1.0f : 0.0f;
+          } else {
+            LogErr( "Repeat attribute not given in <input>." );
+            return false;
+          }
 
-    std::string repeat = input->Attribute( "repeat" );
-    ToLowerCase( repeat );
-    key.startTime = ( repeat == "true" ) ? -1.0f : 0.0f;
+          input->QueryFloatAttribute( "delay", &key.elapsedTime );
 
-    std::string delay = input->Attribute( "delay" );
-    input->QueryFloatAttribute( "delay", &key.elapsedTime );
+          const char *func = input->Attribute( "function" );
+          if ( func ) {
+            m_keyRegistry.push_back( std::make_pair( key, func ));
+          } else {
+            LogErr( "No function named for input to act upon in <input>" );
+            return false;
+          }
 
-    std::string function = input->Attribute( "function" );
-
-    m_keyRegistry.push_back( std::make_pair( key, function ));
+        } else {
+          LogErr( "Key specified in <input> not valid " + keyName );
+          return false;
+        }
+      } else {
+        LogErr( "Key not specified for input element." );
+        return false;
+      }
+    } while ( input = input->NextSiblingElement( "input" ));
+  } else {
+    LogErr( "No <input> element specified in input list. Thus, not needed." );
+    return false;
   }
   return true;
 }
@@ -40,7 +59,7 @@ bool InputHandler::LoadInputList( const TiXmlElement *inputRoot ) {
 void InputHandler::ScanEvents( const boost::function1<void, std::string&> &func ) {
   static App* app = App::GetApp();
 
-  for( unsigned int i = 0; i < m_keyRegistry.size(); ++i ) {
+  for( int i = 0; i < m_keyRegistry.size(); ++i ) {
     if( app->GetInput().IsKeyDown( m_keyRegistry[i].first.key )) {
       Key key = app->GetKey( m_keyRegistry[i].first.key );
 

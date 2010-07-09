@@ -3,8 +3,8 @@
 <state>
 
   <tiles>
-    <size dim="48" />
-    <anims path="Kickle_Pack/Animations/TileAnims_48x48.xml" />
+    <size px="48" />
+    <animation path="Kickle_Pack/Animations/TileAnims_48x48.xml" />
     <layout width="15" height="15">
       12 12 12 12 12 12 12 12 12 12 12 12 12 12 12
       12 12 12 12 12 12 12  4 12 12 12 12 12 12 12
@@ -15,7 +15,7 @@
       12 16 17 17 17 17 17 17 17 17 17 17 17 18 12
       12  6  1  1  1  1  1  1  1  1  1  1  1  8 12
       12 16  6  1  1  1  1  1  1  1  1  1  8 18 12
-      12 13 16  6  1  2  1  1  1  2  1  8 18 15 12
+      12 13 16  6  1  1  1  1  1  1  1  8 18 15 12
       12 12 13 16  6  1  1  1  1  1  8 18 15 12 12
       12 12 12 13 16  6  1  1  1  8 18 15 12 12 12
       12 12 12 12 13 16  6  1  8 18 15 12 12 12 12
@@ -34,7 +34,7 @@
 		1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
 		1 0 0 0 0 0 0 0 0 0 0 0 0 0 1
 		1 1 0 0 0 0 0 0 0 0 0 0 0 1 1
-		1 1 1 0 0 1 0 0 0 1 0 0 1 1 1
+		1 1 1 0 0 0 0 0 0 0 0 0 1 1 1
 		1 1 1 1 0 0 0 0 0 0 0 1 1 1 1
 		1 1 1 1 1 0 0 0 0 0 1 1 1 1 1
 		1 1 1 1 1 1 0 0 0 1 1 1 1 1 1
@@ -43,29 +43,33 @@
   </collision_layout>
   
   <game_objects>
-		<game_object path="Kickle_Pack/Objects/Slime.xml">
-	    <instance x="4" y="9" />
-			<instance x="10" y="9" />
-		</game_object>
-		<game_object path="Kickle_Pack/Objects/DreamBag.xml">
-			<instance x="6" y="2" />
-			<instance x="7" y="2" />
-			<instance x="8" y="2" />
-		</game_object>
-		<game_object path="Kickle_Pack/Objects/Kickle.xml">
-			<instance x="7" y="12" />
-		</game_object>
-		<game_object path="Kickle_Pack/Objects/SpawnPoint.xml">
-			<instance x="3" y="9" />
-			<instance x="11" y="9" />
-    </game_object>
+		<object path="Kickle_Pack/Objects/Slime.xml">
+	    <inst x="4" y="9" />
+			<inst x="10" y="9" />
+		</object>
+		<object path="Kickle_Pack/Objects/DreamBag.xml">
+			<inst x="6" y="2" />
+			<inst x="7" y="2" />
+			<inst x="8" y="2" />
+		</object>
+		<object path="Kickle_Pack/Objects/Kickle.xml">
+			<inst x="7" y="12" />
+		</object>
+		<object path="Kickle_Pack/Objects/SpawnPoint.xml">
+			<inst x="3" y="9" />
+			<inst x="11" y="9" />
+    </object>
+    <object path="Kickle_Pack/Objects/Rock.xml">
+      <inst x="5" y="9" />
+      <inst x="9" y="9" />
+    </object>
   </game_objects>
   
   <sound>
-    <music_playlist>
+    <music>
       <song path="Kickle_Pack/Sound/stage_1.ogg"/>
       <song path="Kickle_Pack/Sound/stage_2.ogg"/>
-    </music_playlist>
+    </music>
     <sound_effects>
       <!-- TODO -->
     </sound_effects>

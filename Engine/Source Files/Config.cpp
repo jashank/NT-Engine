@@ -19,38 +19,38 @@ void Config::Load() {
 }
 
 
-void Config::SetScreenWidth( unsigned int screenWidth ) {
+void Config::SetScreenWidth( int screenWidth ) {
   m_screenWidth = screenWidth;
 }
 
 
-unsigned int Config::GetScreenWidth() {
+int Config::GetScreenWidth() {
   return m_screenWidth;
 }
 
 
-void Config::SetScreenHeight( unsigned int screenHeight ) {
+void Config::SetScreenHeight( int screenHeight ) {
   m_screenHeight = screenHeight;
 }
 
 
-unsigned int Config::GetScreenHeight() {
+int Config::GetScreenHeight() {
   return m_screenHeight;
 }
 
 
-void Config::SetFPS( unsigned int FPS ) {
+void Config::SetFPS( int FPS ) {
   m_FPS = FPS;
 }
 
 
-unsigned int Config::GetFPS() {
+int Config::GetFPS() {
   return m_FPS;
 }
 
 /**********************************
 Static Members
 ***********************************/
-unsigned int Config::m_screenWidth = 0;
-unsigned int Config::m_screenHeight = 0;
-unsigned int Config::m_FPS = 0;
+int Config::m_screenWidth = 0;
+int Config::m_screenHeight = 0;
+int Config::m_FPS = 0;

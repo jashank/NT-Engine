@@ -1,15 +1,10 @@
 <?xml version="1.0"?>
 <game_object>
   <animation path="Kickle_Pack/Animations/KickleAnim_48x60.xml" />
-
   <script path="Kickle_Pack/Scripts/Kickle.lua" />
-
-  <speed data="1.5" />
-
+  <speed ppf="1.5" />
   <rect x="10" y="15" width="17" height="24" />
-
-  <grid_collision data="false" />
-
+  <tile block="false" />
   <input_list>
     <input key="UP" repeat="true" delay="0" function="FaceUp"/>
     <input key="DOWN" repeat="true" delay="0" function="FaceDown"/>

@@ -34,9 +34,9 @@ class App {
  public:
   static App* CreateApp(
     const std::string &title,
-    unsigned int width,
-    unsigned int height,
-    unsigned int framerate
+    int width,
+    int height,
+    int framerate
   );
 
 
@@ -102,9 +102,9 @@ class App {
  private:
   App(
     const std::string &title,
-    unsigned int width,
-    unsigned int height,
-    unsigned int framerate
+    int width,
+    int height,
+    int framerate
   );
 
 

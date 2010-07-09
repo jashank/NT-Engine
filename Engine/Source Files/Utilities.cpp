@@ -9,18 +9,17 @@
 #include <sstream>
 
 
-void ToLowerCase( std::string &str ) {
-  for (unsigned int i=0; i<str.length(); i++) {
-    if (str[i] >= 0x41 && str[i] <= 0x5A) {
+std::string ToLowerCase( std::string str ) {
+  for ( int i = 0; i < str.length(); ++i ) {
+    if ( str[i] >= 0x41 && str[i] <= 0x5A ) {
       str[i] = str[i] + 0x20;
     }
   }
+  return str;
 }
 
 
-std::string& GetXmlFileName( const std::string &filepath ) {
-  static std::string filename = filepath;
-
+std::string GetXmlFileName( std::string filepath ) {
   size_t lastPeriod = filepath.find_last_of( '.' );
   size_t lastSlash = filepath.find_last_of( '\\' );
   if( lastSlash == std::string::npos ) {
@@ -31,13 +30,13 @@ std::string& GetXmlFileName( const std::string &filepath ) {
       lastSlash == std::string::npos ||
       lastPeriod < lastSlash ) {
     // Improper filepath, unable to determine type
-    filename = "";
+    return "";
   } else {
     // Grab the filename substring between lastSlash and lastPeriod
-    filename = filepath.substr( lastSlash+1, (lastPeriod-lastSlash)-1 );
+    filepath = filepath.substr( lastSlash+1, (lastPeriod-lastSlash)-1 );
   }
 
-  return filename;
+  return filepath;
 }
 
 
@@ -70,4 +69,11 @@ void LogErr( const std::ostringstream &msg ) {
 
 void LogErr( const std::string &msg ) {
   LogErr( std::ostringstream( msg ));
+}
+
+
+void LogLuaErr( const std::string &msg ) {
+  std::ofstream file( "Engine.log", std::ios::out|std::ios::app );
+  file << "[LUA] - " << msg << "\n";
+  file.close();
 }

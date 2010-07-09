@@ -18,7 +18,8 @@ end
 
 
 function PillarTable.HandleCollision( Pillar, Other )
-	if ( Other:GetType() == "Slime" ) then
+  local other = Other:GetType()
+	if ( other == "Slime" or other == "DreamBag" ) then
 		Game.DestroyGameObject( Pillar )
 	end
 end

@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<game_object>
+  <animation path="Kickle_Pack/Animations/PopsicleAnim_48x48.xml" />
+  <script path="Kickle_Pack/Scripts/Popsicle.lua" />
+  <speed ppf="0.0" />
+  <rect x="0" y="0" width="48" height="48" />
+  <tile block="false" />
+</game_object>

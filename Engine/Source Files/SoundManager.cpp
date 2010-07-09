@@ -9,45 +9,39 @@
 /********************************
 Constructor and Destructor
 ********************************/
-SoundManager::SoundManager( const TiXmlElement *dataRoot )
- : m_playlistIndex( 0 ), 
+SoundManager::SoundManager()
+ : m_playlistIndex( 0 ),
    m_currentMusic( NULL ),
-   m_loop( false ) {
-  SetLoop( true );
-  Pause();
-  LoadData( dataRoot );
-}
-
-
-SoundManager::~SoundManager() {
-  if ( m_currentMusic ) {
-    m_currentMusic->Stop();
-  }
-}
+   m_loop( false ) {}
 
 /***********************************
 Public Methods
 ***********************************/
-void SoundManager::LoadData( const TiXmlElement *dataRoot ) {
-  const TiXmlElement *playlist = 
-    dataRoot->FirstChildElement( "music_playlist" );
-
-  const TiXmlElement *song = playlist->FirstChildElement( "song" );
-  do {
-    AddMusic( song->Attribute( "path" ));
-  } while ( song = song->NextSiblingElement( "song" ));
-
-  // SOUND EFFECTS
-}
-
-
-void SoundManager::AddMusic( const std::string &musicPath ) {
-  sf::Music *music = App::GetApp()->LoadMusic( musicPath );
-  if ( music ) {
-    m_playlist.push_back( music );
-  } else {
-    LogErr( "Music file not found in SoundList::AddMusic." );
+bool SoundManager::LoadData( const TiXmlElement *dataRoot ) {
+  // Music is optional
+  const TiXmlElement *playlist =
+    dataRoot->FirstChildElement( "music" );
+  if ( playlist ) {
+    const TiXmlElement *song = playlist->FirstChildElement( "song" );
+    if ( song ) {
+      do {
+        const char *path = song->Attribute( "path" );
+        if ( path ) {
+          if ( !AddMusic( path )) {
+            return false;
+          }
+        } else {
+          LogErr( "No path specified for song." );
+          return false;
+        }
+      } while ( song = song->NextSiblingElement( "song" ));
+    } else {
+      LogErr( "<music> tag not necessary when no songs specified." );
+      return false;
+    }
   }
+  // SOUND EFFECTS
+  return true;
 }
 
 
@@ -71,7 +65,7 @@ void SoundManager::SetLoop( bool loop ) {
 
 
 bool SoundManager::IsPlaying() const {
-  return m_currentMusic && 
+  return m_currentMusic &&
     ( m_currentMusic->GetStatus() == sf::Sound::Playing );
 }
 
@@ -85,6 +79,18 @@ void SoundManager::Update() {
 /******************************
 Private Methods
 ******************************/
+bool SoundManager::AddMusic( const std::string &musicPath ) {
+  sf::Music *music = App::GetApp()->LoadMusic( musicPath );
+  if ( music ) {
+    m_playlist.push_back( music );
+  } else {
+    LogErr( "Unable to load music file " + musicPath );
+    return false;
+  }
+  return true;
+}
+
+
 void SoundManager::PlayNextSong() {
   if ( m_playlistIndex < m_playlist.size() || m_loop ) {
     m_playlistIndex = m_playlistIndex % m_playlist.size();

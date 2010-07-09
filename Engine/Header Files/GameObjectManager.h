@@ -12,33 +12,32 @@ class GameObjectManager {
  public:
   static const int NULL_GAME_OBJECT = -1;
 
-  // Calls LoadData to initialize GameObjectManager
-  explicit GameObjectManager( const TiXmlElement *dataRoot );
+  GameObjectManager(){}
   ~GameObjectManager();
 
   // Parses data from <game_objects> section of state file
-  void LoadData( const TiXmlElement *dataRoot );
-  
+  bool LoadData( const TiXmlElement *dataRoot );
+
   //Handle the events of the GameObjects
   void HandleEvents();
   // Update and render the GameObjects in the manager.
-  void Update(); 
+  void Update();
   void Render() const;
 
   // Functions to add and remove 'gameObject' passed.
   void AddGameObject( GameObject *gameObject );
   void RemoveGameObject( GameObject *gameObject );
-  
+
   // Collision detection for non-solid GameObjects using rectangular
   // collision detection. Returns GameObject that 'gameObject' collided with,
   // or NULL otherwise.
   GameObject* DetectCollision( const GameObject *gameObject ) const;
 
-  // If an object is on the specified tile location, that object is returned. 
+  // If an object is on the specified tile location, that object is returned.
   // Returns NULL otherwise.
-  GameObject* ObjectOnTile( unsigned int x, unsigned int y ) const;
+  GameObject* ObjectOnTile( int x, int y ) const;
 
-  // Returns a GameObject in the GameObjectManager with the given 'objectType' 
+  // Returns a GameObject in the GameObjectManager with the given 'objectType'
   // as its type. Returns NULL if an object isn't found.
   GameObject* GetGameObject( const std::string &objectType ) const;
 
