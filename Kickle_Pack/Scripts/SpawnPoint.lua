@@ -1,5 +1,5 @@
 --SpawnPoint Behavior Table
 
-local SpawnPointTable = {}
+local SpawnPoint = {}
 
-return SpawnPointTable
+return SpawnPoint

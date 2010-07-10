@@ -3,6 +3,5 @@
   <animation path="Kickle_Pack/Animations/SlimeAnim_48x48.xml" />
   <script path="Kickle_Pack/Scripts/Slime.lua" />
   <speed ppf="0.7" />
-  <rect x="7" y="10" width="34" height="35" />
-  <tile block="false" />
+  <rect x="8" y="14" width="32" height="28" />
 </game_object>

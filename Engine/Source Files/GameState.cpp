@@ -18,6 +18,7 @@ const luaL_Reg GameState::LuaGameStateFuncts[] = {
   { "ObjectBlockingTile", LuaObjectBlockingTile },
   { "SetTile", LuaSetTile },
   { "NewState", LuaNewState },
+  { "ResetState", LuaResetState },
   { "LogErr", LuaLogErr },
   { NULL, NULL }
 };
@@ -85,6 +86,7 @@ bool GameState::LoadFromFile( const std::string &path ) {
       LogErr( "<state> tag not specified in state file " + path );
       return false;
     }
+    m_path = path;
     return true;
   }
 
@@ -346,6 +348,12 @@ int GameState::LuaNewState( lua_State *L ) {
     return luaL_error( L, "String not passed to NewState" );
   }
   App::GetApp()->SetNextState( lua_tostring( L, -1 ));
+  return 0;
+}
+
+
+int GameState::LuaResetState( lua_State *L ) {
+  App::GetApp()->SetNextState( App::GetApp()->GetCurrentState()->m_path );
   return 0;
 }
 

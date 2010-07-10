@@ -1,4 +1,4 @@
 --Rock Behavior Table
 
-local RockTable = {}
-return RockTable
+local Rock = {}
+return Rock

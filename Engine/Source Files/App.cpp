@@ -165,7 +165,7 @@ void App::Run() {
 
 		m_currentState->Update();
 
-		if ( m_nextStateSet) {
+		if ( m_nextStateSet ) {
 		  m_nextStateSet = false;
 		  SAFEDELETE( m_currentState );
       m_images.Clear();

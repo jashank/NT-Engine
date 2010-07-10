@@ -1,11 +1,11 @@
 --Popsicle Behavior Table
 
-local PopsicleTable = {}
+local Popsicle = {}
 
-function PopsicleTable.HandleCollision( Popsicle, Other )
-  if ( Other:GetType() == "Kickle" ) then
-    Game.DestroyGameObject( Popsicle )
+function Popsicle.HandleCollision( self, other )
+  if ( other:GetType() == "Kickle" ) then
+    Game.DestroyGameObject( self )
   end
 end
 
-return PopsicleTable
+return Popsicle

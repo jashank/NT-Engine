@@ -32,7 +32,7 @@ class InputHandler {
   // Scans for key events that have occured, compares them to registry
   // and calls function passed with matching lua function name as argument.
   // Function passed should be a lua call to an object's script.
-  void ScanEvents( const boost::function1<void, std::string&> &func );
+  void ScanInput( const boost::function1<void, std::string&> &func );
 
  private:
   // Each key is paired with a lua function name

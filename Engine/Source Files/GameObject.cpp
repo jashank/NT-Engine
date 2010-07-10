@@ -120,7 +120,7 @@ GameObject::~GameObject() {
 
 void GameObject::HandleEvents() {
   if ( !m_moving ) {
-    m_input.ScanEvents( m_ptrCallScriptFunc );
+    m_input.ScanInput( m_ptrCallScriptFunc );
   }
 }
 
@@ -459,10 +459,6 @@ bool GameObject::LoadCollisionData( const std::string &filepath ) {
 
     rect->QueryFloatAttribute( "height", &m_collisionRect.Bottom );
     m_collisionRect.Bottom += m_collisionRect.Top;
-
-  } else {
-    LogErr( "No rect specified for GameObject: " + filepath );
-    return false;
   }
 
   TiXmlElement *tile = root->FirstChildElement( "tile" );
@@ -475,9 +471,6 @@ bool GameObject::LoadCollisionData( const std::string &filepath ) {
               filepath );
       return false;
     }
-  } else {
-    LogErr( "No 'tile' element specified for GameObject: " + filepath );
-    return false;
   }
 
   return true;
@@ -506,9 +499,6 @@ bool GameObject::LoadObjectData( const std::string &filepath ) {
       LogErr( "No animation path specified in GameObject: " + filepath );
       return false;
     }
-  } else {
-    LogErr( "No animation element in GameObject: " + filepath );
-    return false;
   }
 
   TiXmlElement *script = root->FirstChildElement( "script" );
@@ -525,9 +515,6 @@ bool GameObject::LoadObjectData( const std::string &filepath ) {
   TiXmlElement *speed = root->FirstChildElement( "speed" );
   if ( speed ) {
     speed->QueryFloatAttribute( "ppf", &m_speed );
-  } else {
-    LogErr( "No speed element specified in GameObject: " + filepath );
-    return false;
   }
 
   //Load input data if there is any

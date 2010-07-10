@@ -1,35 +1,35 @@
 --Penguin Behavior Table
 
-local PenguinTable = {}
+local Penguin = {}
 
-PenguinTable.lastTileX = -1;
-PenguinTable.lastTileY = -1;
+Penguin.lastTileX = -1;
+Penguin.lastTileY = -1;
 
-function PenguinTable.AILogic( Penguin )
+function Penguin.AILogic( self )
 
 	local Kickle = Game.GetGameObject( "Kickle" )
 
 	if ( Kickle ) then
-		local PenguinX, PenguinY = Penguin:GetTile()
+		local selfX, selfY = self:GetTile()
     local KickleX, KickleY = Kickle:GetTile()
 
-		local distanceX = math.abs( PenguinX - KickleX )
-		local distanceY = math.abs( PenguinY - KickleY )
+		local distanceX = math.abs( selfX - KickleX )
+		local distanceY = math.abs( selfY - KickleY )
 
 		local dir = UP;
 
 		if ( distanceX > distanceY ) then
-			if ( PenguinX < KickleX ) then
+			if ( selfX < KickleX ) then
 				dir = RIGHT
-			elseif ( PenguinX > KickleX ) then
+			elseif ( selfX > KickleX ) then
 				dir = LEFT
 			else
 				dir = math.random( LEFT, RIGHT )
 			end
 		else
-			if ( PenguinY < KickleY ) then
+			if ( selfY < KickleY ) then
 				dir = DOWN
-			elseif ( PenguinY > KickleY ) then
+			elseif ( selfY > KickleY ) then
 				dir = UP
 			else
 				dir = math.random( UP, DOWN )
@@ -37,18 +37,18 @@ function PenguinTable.AILogic( Penguin )
 		end
 
 		-- Penguin has been on same tile for 2 updates
-		if ( PenguinTable.lastTileX == PenguinX and
-				 PenguinTable.lastTileY == PenguinY ) then
+		if ( Penguin.lastTileX == selfX and
+				 Penguin.lastTileY == selfY ) then
 			dir = math.random( UP, RIGHT )
 		end
 
-		PenguinTable.lastTileX = PenguinX
-		PenguinTable.lastTileY = PenguinY
+		Penguin.lastTileX = selfX
+		Penguin.lastTileY = selfY
 
-		Penguin:SetDir( dir )
-		Penguin:Move()
-		Penguin:SetAnimation( dir )
+		self:SetDir( dir )
+		self:Move()
+		self:SetAnimation( dir )
 	end
 end
 
-return PenguinTable
+return Penguin

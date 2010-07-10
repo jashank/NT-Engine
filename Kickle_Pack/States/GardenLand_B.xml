@@ -25,6 +25,9 @@
   </tiles>
   
   <game_objects>
+    <object path="Kickle_Pack/Objects/StageManager.xml">
+      <inst x="0" y="0" />
+    </object>
 		<object path="Kickle_Pack/Objects/Slime.xml">
 	    <inst x="4" y="9" />
 			<inst x="10" y="9" />

@@ -43,7 +43,7 @@ GUI::~GUI() {}
  * Public Methods
  * ****************************/
 void GUI::HandleEvents() {
-  m_input.ScanEvents( m_ptrCallScriptFunc );
+  m_input.ScanInput( m_ptrCallScriptFunc );
 }
 
 
@@ -107,7 +107,7 @@ bool GUI::LoadData( const std::string &filepath ) {
     LogErr( "<animation> element not specified in GUI file." );
     return false;
   }
-  
+
   return true;
 }
 
@@ -116,7 +116,7 @@ void GUI::InitLua() {
   luaL_dofile( m_state->GetLuaState(), m_luaPath.c_str() );
   if ( lua_istable( m_state->GetLuaState(), -1 )) {
     m_id = luaL_ref( m_state->GetLuaState(), LUA_REGISTRYINDEX );
-  } 
+  }
 }
 
 

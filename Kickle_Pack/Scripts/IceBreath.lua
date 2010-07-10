@@ -3,39 +3,39 @@ require ("GameObjectUtilities")
 
 -- IceBreath Behavior Table
 
-local IceBreathTable = {}
+local IceBreath = {}
 
-IceBreathTable.lastTileX = -1
-IceBreathTable.lastTileY = -1
+IceBreath.lastTileX = -1
+IceBreath.lastTileY = -1
 
-function IceBreathTable.AILogic( IceBreath )
-	local tileX, tileY = IceBreath:GetTile()
+function IceBreath.AILogic( self )
+	local tileX, tileY = self:GetTile()
 
-	if ( tileX == IceBreathTable.lastTileX and
-			 tileY == IceBreathTable.lastTileY ) then
-		Game.DestroyGameObject( IceBreath )
+	if ( tileX == IceBreath.lastTileX and
+			 tileY == IceBreath.lastTileY ) then
+		Game.DestroyGameObject( self )
 
 	else
-    local tileType = Game.GetTileInfo( GetTileObjectFaces( IceBreath ) )
-    IceBreath:SetNoClip( tileType == "water" )
-		IceBreathTable.lastTileX = tileX
-		IceBreathTable.lastTileY = tileY
-		IceBreath:Move()
+    local tileType = Game.GetTileInfo( GetTileObjectFaces( self ) )
+    self:SetNoClip( tileType == "water" )
+		IceBreath.lastTileX = tileX
+		IceBreath.lastTileY = tileY
+		self:Move()
 	end
 end
 
-function IceBreathTable.HandleCollision( IceBreath, Other )
-  other = Other:GetType()
-	if ( other == "Slime" ) then
+function IceBreath.HandleCollision( self, other )
+  otherType = other:GetType()
+	if ( otherType == "Slime" ) then
     IceBlock = Game.CreateGameObject(
       "Kickle_Pack/Objects/IceBlock.xml",
-      Other:GetTile()
+      other:GetTile()
     );
-    IceBlock:GetTable().slimeSpawnX = Other:GetTable().spawnPointX
-    IceBlock:GetTable().slimeSpawnY = Other:GetTable().spawnPointY
-    Game.DestroyGameObject( Other )
-    Game.DestroyGameObject( IceBreath )
+    IceBlock:GetTable().slimeSpawnX = other:GetTable().spawnPointX
+    IceBlock:GetTable().slimeSpawnY = other:GetTable().spawnPointY
+    Game.DestroyGameObject( other )
+    Game.DestroyGameObject( self )
 	end
 end
 
-return IceBreathTable
+return IceBreath

@@ -1,12 +1,12 @@
 --Title Play Button Behavior Table
 
-local PlayTable = {}
+local TitlePlay = {}
 
-function PlayTable.MousePressed()
+function TitlePlay.MousePressed()
   Game.NewState( "Kickle_Pack/States/GardenLand_A.xml" );
 end
 
-function PlayTable.MouseReleased() end
-function PlayTable.MouseClicked() end
+function TitlePlay.MouseReleased() end
+function TitlePlay.MouseClicked() end
 
-return PlayTable
+return TitlePlay

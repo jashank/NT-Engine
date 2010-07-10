@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<game_object>
+  <script path="Kickle_Pack/Scripts/StageManager.lua" />
+  <input_list>
+    <input key="back" repeat="false" delay="0" function="Reset" />
+  </input_list>
+</game_object>
+

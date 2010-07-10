@@ -86,6 +86,9 @@ class GameState {
   // Reports error if file is invalid.
   static int LuaNewState( lua_State *L );
 
+  // Resets the current state.
+  static int LuaResetState( lua_State *L );
+
   // Allows user to log errors from Lua
   static int LuaLogErr( lua_State *L );
 
@@ -100,6 +103,7 @@ class GameState {
   GUIManager m_guiManager;
   lua_State *m_luaState;
   SoundManager m_soundManager;
+  std::string m_path; // Path used to load state
   TileManager m_tileManager;
 };
 

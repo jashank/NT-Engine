@@ -56,7 +56,7 @@ bool InputHandler::LoadInputList( const TiXmlElement *inputRoot ) {
 }
 
 
-void InputHandler::ScanEvents( const boost::function1<void, std::string&> &func ) {
+void InputHandler::ScanInput( const boost::function1<void, std::string&> &func ) {
   static App* app = App::GetApp();
 
   for( int i = 0; i < m_keyRegistry.size(); ++i ) {

@@ -1,27 +1,27 @@
 -- Pillar Behavior Table
 
-local PillarTable = {}
+local Pillar = {}
 
-PillarTable.raise = false
-PillarTable.lower = false
+Pillar.raise = false
+Pillar.lower = false
 
 
-function PillarTable.AILogic( Pillar )
-  if ( not PillarTable.raise and not PillarTable.lower ) then
-    PillarTable.raise = true
-    Pillar:SetAnimation( 0 )
+function Pillar.AILogic( self )
+  if ( not Pillar.raise and not Pillar.lower ) then
+    Pillar.raise = true
+    self:SetAnimation( 0 )
 
-  elseif ( PillarTable.lower and not Pillar:IsAnimating() ) then
-    Game.DestroyGameObject( Pillar )
+  elseif ( Pillar.lower and not self:IsAnimating() ) then
+    Game.DestroyGameObject( self )
   end
 end
 
 
-function PillarTable.HandleCollision( Pillar, Other )
-  local other = Other:GetType()
-	if ( other == "Slime" or other == "DreamBag" ) then
-		Game.DestroyGameObject( Pillar )
+function Pillar.HandleCollision( self, other )
+  local otherType = other:GetType()
+	if ( otherType == "Slime" or otherType == "DreamBag" ) then
+		Game.DestroyGameObject( self )
 	end
 end
 
-return PillarTable
+return Pillar
