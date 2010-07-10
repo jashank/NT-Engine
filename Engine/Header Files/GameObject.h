@@ -69,6 +69,9 @@ class GameObject : public AnimSprite {
 	// Returns whether GameObject is animating
   int LuaIsAnimating( lua_State *L );
 
+  // Returns whether GameObject is moving
+  int LuaMoving( lua_State *L );
+
 	// Allows Lua to access type of GameObject
   int LuaGetType( lua_State *L );
 

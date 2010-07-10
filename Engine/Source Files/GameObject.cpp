@@ -25,6 +25,7 @@ Lunar<GameObject>::RegType GameObject::methods[] = {
   { "SetAnimation", &GameObject::LuaSetAnimation },
   { "SetAnimationReverse", &GameObject::LuaSetAnimationReverse },
   { "IsAnimating", &GameObject::LuaIsAnimating },
+  { "IsMoving", &GameObject::LuaMoving },
   { "GetType", &GameObject::LuaGetType },
   { "GetTile", &GameObject::LuaGetTile },
   { "GetDir", &GameObject::LuaGetDir },
@@ -34,7 +35,6 @@ Lunar<GameObject>::RegType GameObject::methods[] = {
   { "SetNoClip", &GameObject::LuaSetNoClip },
   { NULL, NULL }
 };
-
 
 /************************************************
  * Constructor and Destructor
@@ -129,7 +129,7 @@ void GameObject::UpdateCollision() {
   GameObject *collisionObj =
     m_gameState->GetGameObjectManager().DetectCollision( this );
 
-  if( collisionObj != NULL ) {
+  if( collisionObj ) {
     lua_State *L = m_gameState->GetLuaState();
     lua_rawgeti( L, LUA_REGISTRYINDEX, m_id );
     lua_getfield( L, -1, "HandleCollision" );
@@ -197,8 +197,8 @@ const std::string& GameObject::GetType() const {
 
 int GameObject::LuaMove( lua_State *L ) {
   if( !m_moving ) {
-    int nextTileX = static_cast<int>( GetTileX() );
-    int nextTileY = static_cast<int>( GetTileY() );
+    int nextTileX = GetTileX();
+    int nextTileY = GetTileY();
 
     switch ( m_direction ) {
       case Up: {
@@ -221,8 +221,8 @@ int GameObject::LuaMove( lua_State *L ) {
     }
 
     if ( nextTileX >= 0 && nextTileY >= 0 ) {
-      int x = static_cast<int>( nextTileX );
-      int y = static_cast<int>( nextTileY );
+      int x = nextTileX;
+      int y = nextTileY;
       if (( m_noClip ) ||
         ( m_gameState->GetTileManager().TileIsCrossable( x, y ) &&
         !m_gameState->ObjectBlockingTile( x, y ))) {
@@ -256,6 +256,12 @@ int GameObject::LuaSetAnimationReverse( lua_State *L ) {
 
 int GameObject::LuaIsAnimating( lua_State *L ) {
   lua_pushboolean( L, IsAnimating() );
+  return 1;
+}
+
+
+int GameObject::LuaMoving( lua_State *L ) {
+  lua_pushboolean( L, m_moving );
   return 1;
 }
 
@@ -404,7 +410,7 @@ void GameObject::CorrectMovement() {
     }
     case Right: {
       Move( -diff, 0.0f );
-      m_collisionRect.Offset( - diff, 0.0f );
+      m_collisionRect.Offset( -diff, 0.0f );
       break;
     }
     default: {}

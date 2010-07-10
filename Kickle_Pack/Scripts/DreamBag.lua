@@ -7,20 +7,11 @@ math.randomseed( os.time() )
 
 local DreamBagTable = {}
 
-DreamBagTable.bumped = false
-
-function DreamBagTable.AILogic( DreamBag )
-  if ( DreamBagTable.bumped ) then
-    DreamBag:Move()
-    DreamBagTable.bumped = false
-  end
-end
-
 function DreamBagTable.HandleCollision( DreamBag, Other )
-  if ( not DreamBagTable.bumped and (
+  if ( not DreamBag:IsMoving() and (
         Other:GetType() == "Slime" or Other:GetType() == "Penguin" )) then
     local dir = math.random( UP, RIGHT )
-
+    local canMove = false
     local tileX, tileY = GetTileInDirection( DreamBag, dir )
     local otherBag = Game.GetGameObjectOnTile( tileX, tileY )
 
@@ -36,12 +27,17 @@ function DreamBagTable.HandleCollision( DreamBag, Other )
           newDir = GetNextDir( newDir )
         else
           dir = newDir
+          canMove = true
         end
       end
+    else
+      canMove = true
     end
 
-    DreamBag:SetDir( dir )
-    DreamBagTable.bumped = true
+    if canMove then
+      DreamBag:SetDir( dir )
+      DreamBag:Move()
+    end
 
   elseif ( Other:GetType() == "Kickle" ) then
     Game.DestroyGameObject( DreamBag )
