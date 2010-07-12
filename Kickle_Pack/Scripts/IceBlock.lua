@@ -6,12 +6,28 @@ require ("GameObjectUtilities")
 local IceBlock = {}
 
 IceBlock.moving = false
-IceBlock.slimeSpawnX = -1;
-IceBlock.slimeSpawnY = -1;
+IceBlock.created = false
+IceBlock.slimeSpawnX = -1
+IceBlock.slimeSpawnY = -1
 
 function IceBlock.AILogic( self )
+  if ( IceBlock.created == false ) then
+    self:ResetTimer()
+    IceBlock.created = true
+  else 
+    local timeFrozen = self:GetElapsedTime()
+    if ( timeFrozen >= 45 ) then
+      Game.DestroyGameObject( self )
+      Game.CreateGameObject(
+        "Kickle_Pack/Objects/Slime.xml",
+        IceBlock.slimeSpawnX,
+        IceBlock.slimeSpawnY
+      ) 
+    end
+  end
+
 	if ( IceBlock.moving ) then
-		self:Move()
+		IceBlock.moving = self:Move()
 
 		local facingX, facingY = GetTileObjectFaces( self )
     local tileType = Game.GetTileInfo( facingX, facingY )
@@ -39,10 +55,12 @@ end
 
 
 function IceBlock.HandleCollision( self, other )
-	if ( other:GetType() == "IceBreath" ) then
+  otherType = other:GetType()
+	if ( otherType == "IceBreath" ) then
 		Game.DestroyGameObject( other )
+    self:ResetTimer() -- Refreezes IceBlock
 
-  elseif ( other:GetType() == "Slime" ) then
+  elseif ( otherType == "Slime" ) then
     local slimeSpawnX = other:GetTable().spawnPointX;
     local slimeSpawnY = other:GetTable().spawnPointY;
 
@@ -56,6 +74,8 @@ function IceBlock.HandleCollision( self, other )
         slimeSpawnY
       )
     end
+  elseif ( otherType == "Penguin" ) then
+    Game.DestroyGameObject( other )
 	end
 end
 

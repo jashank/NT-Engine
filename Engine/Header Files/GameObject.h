@@ -33,7 +33,7 @@ class GameObject : public AnimSprite {
   void UpdateCollision();
 
   // Updates the GameObject's movement
-  void UpdateMovement();
+  void UpdateAI();
 
   // Updates the GameObject's rendering
   void UpdateRendering();
@@ -57,7 +57,9 @@ class GameObject : public AnimSprite {
   /************************************************
   Lua Functions
   ************************************************/
-	// Allows Lua to move the GameObject
+	// Allows user to tell GameObject to move from Lua.
+	// Returns true if GameObject can move, false if it can't
+	// or is already in motion.
   int LuaMove( lua_State *L );
 
 	// Sets animation on sheet corresponding to index top to bottom
@@ -90,6 +92,13 @@ class GameObject : public AnimSprite {
 
   // Sets the GameObject's `noClip` to true or false
   int LuaSetNoClip( lua_State *L );
+
+  // Sets the starting time to the current system time
+  int LuaResetTimer( lua_State *L );
+
+  // Returns the elapsed time since timer was last reset in seconds
+  // Has floating point precision
+  int LuaGetElapsedTime( lua_State *L );
 
   //Necessities for Lunar
   static const char className[];
@@ -128,6 +137,7 @@ class GameObject : public AnimSprite {
   float m_speed; // m_speed at which object moves
   InputHandler m_input; // Handles input for this GameObject
   int m_id; // ID of object
+  sf::Clock m_timer; // Timer that GameObject can use from its script
   sf::FloatRect m_collisionRect; // Object's collision box
   static GameState *m_gameState; // State that GameObject is in
   std::string m_luaScript; // Filepath to the lua script

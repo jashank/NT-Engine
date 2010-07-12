@@ -5,23 +5,17 @@ require ("GameObjectUtilities")
 
 local IceBreath = {}
 
-IceBreath.lastTileX = -1
-IceBreath.lastTileY = -1
+function IceBreath.AILogic( self )	
+  local facingTileX, facingTileY = GetTileObjectFaces( self )
+  local tileType = Game.GetTileInfo( facingTileX, facingTileY )
+  local otherObj = Game.GetGameObjectOnTile( facingTileX, facingTileY )
 
-function IceBreath.AILogic( self )
-	local tileX, tileY = self:GetTile()
+  self:SetNoClip( tileType == "water" or
+    ( otherObj and otherObj:GetType() == "IceBlock" ))
 
-	if ( tileX == IceBreath.lastTileX and
-			 tileY == IceBreath.lastTileY ) then
-		Game.DestroyGameObject( self )
-
-	else
-    local tileType = Game.GetTileInfo( GetTileObjectFaces( self ) )
-    self:SetNoClip( tileType == "water" )
-		IceBreath.lastTileX = tileX
-		IceBreath.lastTileY = tileY
-		self:Move()
-	end
+  if not self:Move() then
+    Game.DestroyGameObject( self )
+  end
 end
 
 function IceBreath.HandleCollision( self, other )

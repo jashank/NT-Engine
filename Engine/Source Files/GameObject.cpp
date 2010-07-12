@@ -33,6 +33,8 @@ Lunar<GameObject>::RegType GameObject::methods[] = {
   { "Reverse", &GameObject::LuaReverse },
   { "GetTable", &GameObject::LuaGetTable },
   { "SetNoClip", &GameObject::LuaSetNoClip },
+  { "ResetTimer", &GameObject::LuaResetTimer },
+  { "GetElapsedTime", &GameObject::LuaGetElapsedTime },
   { NULL, NULL }
 };
 
@@ -143,7 +145,7 @@ void GameObject::UpdateCollision() {
 }
 
 
-void GameObject::UpdateMovement() {
+void GameObject::UpdateAI() {
   if( m_moving ) {
     MovementUpdate();
   } else {
@@ -229,14 +231,18 @@ int GameObject::LuaMove( lua_State *L ) {
         m_moving = true;
       }
     }
+    lua_pushboolean( L, m_moving );
+    return 1;
   }
-  return 0;
+  lua_pushboolean( L, true );
+  return 1;
 }
 
 
 int GameObject::LuaSetAnimation( lua_State *L ) {
   if( !lua_isnumber( L, -1 )) {
-    return luaL_error( L, "Invalid argument for SetAnimation." );
+    LogLuaErr( "Didn't pass number to SetAnimation in GameObject: " + m_type );
+    return luaL_error( L, "Didn't pass number to SetAnimation" );
   }
   int animation = lua_tointeger( L, -1 );
   SetAnimation( animation );
@@ -246,7 +252,10 @@ int GameObject::LuaSetAnimation( lua_State *L ) {
 
 int GameObject::LuaSetAnimationReverse( lua_State *L ) {
   if ( !lua_isnumber( L, -1 )) {
-    return luaL_error( L, "Invalid argument for SetAnimationReverse." );
+    LogLuaErr(
+      "Didn't pass number to SetAnimationReverse in GameObject: " + m_type
+    );
+    return luaL_error( L, "Didn't pass number to SetAnimationReverse" );
   }
   int animation = lua_tointeger( L, -1 );
   SetAnimation( animation, true );
@@ -287,9 +296,9 @@ int GameObject::LuaGetDir( lua_State *L ) {
 
 int GameObject::LuaSetDir( lua_State *L ) {
   if( !lua_isnumber( L, -1 ) ) {
-    return luaL_error( L, "Invalid argument for SetDir." );
+    LogLuaErr( "Didn't pass number to SetDir in GameObject: " + m_type );
+    return luaL_error( L, "Didn't pass number to SetDir" );
   }
-
   m_direction = static_cast<Dir>( lua_tointeger( L, -1 ) );
   return 0;
 }
@@ -316,7 +325,8 @@ int GameObject::LuaReverse( lua_State *L ) {
       break;
     }
     default: {
-      return luaL_error( L, "Object has no direction." );
+      LogLuaErr( "In Reverse, no direction for GameObject: " + m_type );
+      return luaL_error( L, "In Reverse, no direction for GameObject" );
     }
   }
 
@@ -332,14 +342,21 @@ int GameObject::LuaGetTable( lua_State *L ) {
 
 
 int GameObject::LuaSetNoClip( lua_State *L ) {
-  if ( !lua_isboolean( L, -1 )) {
-    return luaL_error( L, "Did not pass boolean to SetNoClip" );
-  }
-  m_noClip = lua_toboolean( L, -1 ) != 0;
+  m_noClip = lua_toboolean( L, -1 );
   return 0;
 }
 
 
+int GameObject::LuaResetTimer( lua_State *L ) {
+  m_timer.Reset();
+  return 0;
+}
+
+
+int GameObject::LuaGetElapsedTime( lua_State *L ) {
+  lua_pushnumber( L, m_timer.GetElapsedTime() );
+  return 1;
+}
 /************************************************
 Private Methods
 ************************************************/

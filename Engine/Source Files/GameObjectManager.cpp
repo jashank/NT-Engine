@@ -83,7 +83,7 @@ void GameObjectManager::Update() {
   gameObj = m_gameObjects.begin();
   for ( ; gameObj != m_gameObjects.end(); gameObj++ ) {
     if ( *gameObj != NULL ) {
-      ( *gameObj )->UpdateMovement();
+      ( *gameObj )->UpdateAI();
     }
   }
 
