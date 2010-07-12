@@ -6,7 +6,7 @@ Pillar.raise = false
 Pillar.lower = false
 
 
-function Pillar.AILogic( self )
+function Pillar.AI( self )
   if ( not Pillar.raise and not Pillar.lower ) then
     Pillar.raise = true
     self:SetAnimation( 0 )

@@ -1,5 +1,5 @@
 package.path = package.path .. ";Kickle_Pack/Scripts/?.lua"
-require ("GameObjectUtilities")
+Util = require ("GameObjectUtilities")
 
 math.randomseed( os.time() )
 
@@ -10,21 +10,21 @@ local DreamBag = {}
 function DreamBag.HandleCollision( self, other )
   if ( not self:IsMoving() and (
         other:GetType() == "Slime" or other:GetType() == "Penguin" )) then
-    local dir = math.random( UP, RIGHT )
+    local dir = math.random( Util.UP, Util.RIGHT )
     local canMove = false
-    local tileX, tileY = GetTileInDirection( self, dir )
+    local tileX, tileY = Util.GetTileInDirection( self, dir )
     local otherBag = Game.GetGameObjectOnTile( tileX, tileY )
 
     if (( otherBag and otherBag:GetType() == "DreamBag" ) or
          not Game.TileIsCrossable( tileX, tileY )) then
-      local newDir = GetNextDir( dir )
+      local newDir = Util.GetNextDir( dir )
 
       while newDir ~= dir do
-        local tileX, tileY = GetTileInDirection( self, newDir ) 
+        local tileX, tileY = Util.GetTileInDirection( self, newDir ) 
         local otherBag = Game.GetGameObjectOnTile( tileX, tileY )
         if (( otherBag and otherBag:GetType() == "DreamBag" ) or
             not Game.TileIsCrossable( tileX, tileY )) then
-          newDir = GetNextDir( newDir )
+          newDir = Util.GetNextDir( newDir )
         else
           dir = newDir
           canMove = true

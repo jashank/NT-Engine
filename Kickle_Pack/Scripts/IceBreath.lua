@@ -1,12 +1,12 @@
 package.path = package.path .. ";Kickle_Pack/Scripts/?.lua"
-require ("GameObjectUtilities")
+Util = require ("GameObjectUtilities")
 
 -- IceBreath Behavior Table
 
 local IceBreath = {}
 
-function IceBreath.AILogic( self )	
-  local facingTileX, facingTileY = GetTileObjectFaces( self )
+function IceBreath.AI( self )	
+  local facingTileX, facingTileY = Util.GetTileObjectFaces( self )
   local tileType = Game.GetTileInfo( facingTileX, facingTileY )
   local otherObj = Game.GetGameObjectOnTile( facingTileX, facingTileY )
 

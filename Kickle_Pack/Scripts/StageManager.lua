@@ -1,7 +1,7 @@
 --StageManager Behavior Table
 local StageManager = {}
 
-function StageManager.AILogic( self )
+function StageManager.AI( self )
   if( not Game.GetGameObject( "DreamBag" )) then
     Game.NewState( "Kickle_Pack/States/GardenLand_B.xml" )
   end

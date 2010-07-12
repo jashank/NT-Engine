@@ -1,6 +1,5 @@
 package.path = package.path .. ";Kickle_Pack/Scripts/?.lua"
-require ("GameObjectUtilities")
-
+Util = require ("GameObjectUtilities")
 math.randomseed( os.time() )
 
 --Slime Behavior Table
@@ -11,13 +10,13 @@ Slime.spawnPointX = -1
 Slime.spawnPointY = -1
 Slime.hasMoved = false
 
-function Slime.AILogic( self )
+function Slime.AI( self )
   if ( not Slime.hasMoved ) then
     Slime.spawnPointX, Slime.spawnPointY = self:GetTile()
     Slime.hasMoved = true
   end
 
-  GenericEnemyAI( self )
+  Util.GenericEnemyAI( self )
 end
 
 

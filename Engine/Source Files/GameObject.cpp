@@ -102,10 +102,8 @@ GameObject::GameObject(
   }
   SetPosition( x, y );
 
-  if ( !m_blockingTile ) {
-    if( !LoadCollisionData( filepath ) ) {
-      LogErr( "GameObject XML file " + filepath + " didn't load correctly." );
-    }
+  if( !LoadCollisionData( filepath ) ) {
+    LogErr( "GameObject XML file " + filepath + " didn't load correctly." );
   }
 
   InitLua();
@@ -151,7 +149,7 @@ void GameObject::UpdateAI() {
   } else {
     lua_State *L = m_gameState->GetLuaState();
     lua_rawgeti( L, LUA_REGISTRYINDEX, m_id );
-    lua_getfield( L, -1, "AILogic" );
+    lua_getfield( L, -1, "AI" );
     if ( lua_isfunction( L, -1 )) {
       Lunar<GameObject>::push( L, this );
       lua_call( L, 1, 0 );

@@ -1,7 +1,7 @@
-package.path = package.path .. ";self_Pack/Scripts/?.lua"
-require ("GameObjectUtilities")
+package.path = package.path .. ";Kickle_Pack/Scripts/?.lua"
+Util = require ("GameObjectUtilities")
 
--- These values are determined by the layout of self's animation xml file
+-- Correspond to Kickle's sprite sheet (each row makes val increment by 1)
 local STANDING = 0
 local WALKING = 4
 local KICKING = 8
@@ -23,7 +23,7 @@ function Kickle.HandleCollision( self, other )
 end
 
 
-function Kickle.AILogic( self )
+function Kickle.AI( self )
   if ( Kickle.state == WALKING ) then
     Kickle.state = STANDING
     self:SetAnimation( self:GetDir() + Kickle.state )
@@ -37,72 +37,72 @@ end
 
 function Kickle.FaceUp( self )
 	if ( Kickle.state == STANDING ) then
-		self:SetDir( UP )
-    self:SetAnimation( UP + Kickle.state )
+		self:SetDir( Util.UP )
+    self:SetAnimation( Util.UP + Kickle.state )
 	end
 end
 
 
 function Kickle.FaceDown( self )
 	if ( Kickle.state == STANDING ) then
-		self:SetDir( DOWN )
-    self:SetAnimation( DOWN + Kickle.state )
+		self:SetDir( Util.DOWN )
+    self:SetAnimation( Util.DOWN + Kickle.state )
 	end
 end
 
 
 function Kickle.FaceLeft( self )
 	if ( Kickle.state == STANDING ) then
-		self:SetDir( LEFT )
-    self:SetAnimation( LEFT + Kickle.state )
+		self:SetDir( Util.LEFT )
+    self:SetAnimation( Util.LEFT + Kickle.state )
 	end
 end
 
 
 function Kickle.FaceRight( self )
 	if ( Kickle.state == STANDING ) then
-		self:SetDir( RIGHT )
-    self:SetAnimation( RIGHT + Kickle.state )
+		self:SetDir( Util.RIGHT )
+    self:SetAnimation( Util.RIGHT + Kickle.state )
 	end
 end
 
 
 function Kickle.WalkUp( self )
 	if ( Kickle.state == STANDING ) then
-		self:SetDir( UP )
+		self:SetDir( Util.UP )
 		Kickle.state = WALKING
 		self:Move()
-		self:SetAnimation( UP + Kickle.state )
+		self:SetAnimation( Util.UP + Kickle.state )
 	end
 end
 
 
 function Kickle.WalkDown( self )
 	if ( Kickle.state == STANDING ) then
-		self:SetDir( DOWN )
+		self:SetDir( Util.DOWN )
 		Kickle.state = WALKING
 		self:Move()
-		self:SetAnimation( DOWN + Kickle.state )
+		self:SetAnimation( Util.DOWN + Kickle.state )
 	end
 end
 
 
 function Kickle.WalkLeft( self )
 	if ( Kickle.state == STANDING ) then
-		self:SetDir( LEFT )
+		self:SetDir( Util.LEFT )
 		Kickle.state = WALKING
 		self:Move()
-		self:SetAnimation( LEFT + Kickle.state )
+		self:SetAnimation( Util.LEFT + Kickle.state )
 	end
 end
 
 
 function Kickle.WalkRight( self )
 	if ( Kickle.state == STANDING ) then
-		self:SetDir( RIGHT )
+		self:SetDir( Util.RIGHT )
 		Kickle.state = WALKING
 		self:Move()
-		self:SetAnimation( RIGHT + Kickle.state )
+		self:SetAnimation( Util.RIGHT + Kickle.state )
 	end
 end
 
@@ -117,7 +117,7 @@ end
 
 function Kickle.PerformPillar( self )
 	if( Kickle.state == STANDING ) then
-		local tileX, tileY = GetTileObjectFaces( self )
+		local tileX, tileY = Util.GetTileObjectFaces( self )
 
 		if ( Game.TileIsCrossable( tileX, tileY ) and
 			   not Game.ObjectBlockingTile( tileX, tileY ) ) then
@@ -141,7 +141,7 @@ end
 
 function Kickle.PerformAttack( self )
 	if ( Kickle.state == STANDING ) then
-		local tileX, tileY = GetTileObjectFaces( self )
+		local tileX, tileY = Util.GetTileObjectFaces( self )
 		local objOnTile = Game.GetGameObjectOnTile( tileX, tileY )
 
 		if ( objOnTile and objOnTile:GetType() == "IceBlock" ) then

@@ -58,8 +58,8 @@ class GameObject : public AnimSprite {
   Lua Functions
   ************************************************/
 	// Allows user to tell GameObject to move from Lua.
-	// Returns true if GameObject can move, false if it can't
-	// or is already in motion.
+	// Returns true if GameObject can move in the direction it is facing,
+	// or is in motion. False if it can't move in the direction it is facing.
   int LuaMove( lua_State *L );
 
 	// Sets animation on sheet corresponding to index top to bottom

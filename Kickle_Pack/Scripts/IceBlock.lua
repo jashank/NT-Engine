@@ -1,5 +1,5 @@
 package.path = package.path .. ";Kickle_Pack/Scripts/?.lua"
-require ("GameObjectUtilities")
+Util = require ("GameObjectUtilities")
 
 --IceBlock Behavior Table
 
@@ -10,7 +10,7 @@ IceBlock.created = false
 IceBlock.slimeSpawnX = -1
 IceBlock.slimeSpawnY = -1
 
-function IceBlock.AILogic( self )
+function IceBlock.AI( self )
   if ( IceBlock.created == false ) then
     self:ResetTimer()
     IceBlock.created = true
@@ -29,7 +29,7 @@ function IceBlock.AILogic( self )
 	if ( IceBlock.moving ) then
 		IceBlock.moving = self:Move()
 
-		local facingX, facingY = GetTileObjectFaces( self )
+		local facingX, facingY = Util.GetTileObjectFaces( self )
     local tileType = Game.GetTileInfo( facingX, facingY )
 		if ( tileType == "water" ) then
       local tileType, tileName =

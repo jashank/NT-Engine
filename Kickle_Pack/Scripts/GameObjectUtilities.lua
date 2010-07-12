@@ -1,19 +1,21 @@
 --GameObject Utilities
 math.randomseed( os.time() )
 
+local Util = {}
+
 -- Direction constants for GameObjects
-UP = 0
-DOWN = 1
-LEFT = 2
-RIGHT = 3
+Util.UP = 0
+Util.DOWN = 1
+Util.LEFT = 2
+Util.RIGHT = 3
 
 -- Returns tile in direction passed relative to tile location passed
-local function GetTileInDir( dir, tileX, tileY )
-	if ( dir == UP ) then
+function Util.GetTileInDir( dir, tileX, tileY )
+	if ( dir == Util.UP ) then
 		tileY = tileY - 1
-	elseif ( dir == DOWN ) then
+	elseif ( dir == Util.DOWN ) then
 		tileY = tileY + 1
-	elseif ( dir == LEFT ) then
+	elseif ( dir == Util.LEFT ) then
 		tileX = tileX - 1
 	else
 		tileX = tileX + 1
@@ -24,35 +26,35 @@ end
 
 
 -- Returns tile GameObject is facing
-function GetTileObjectFaces( GameObject )
-	return GetTileInDir( GameObject:GetDir(), GameObject:GetTile())
+function Util.GetTileObjectFaces( GameObject )
+	return Util.GetTileInDir( GameObject:GetDir(), GameObject:GetTile())
 end
 
 
 -- Returns tile in in direction relative to GameObject passed
-function GetTileInDirection( GameObject, dir )
-	return GetTileInDir( dir, GameObject:GetTile() )
+function Util.GetTileInDirection( GameObject, dir )
+	return Util.GetTileInDir( dir, GameObject:GetTile() )
 end
 
 
 -- Returns next logical direction via order of Up, Down, Left, Right
-function GetNextDir( dir )
-  if ( dir == UP ) then
-    return DOWN
-  elseif ( dir == DOWN ) then
-    return LEFT
-  elseif ( dir == LEFT ) then
-    return RIGHT
+function Util.GetNextDir( dir )
+  if ( dir == Util.UP ) then
+    return Util.DOWN
+  elseif ( dir == Util.DOWN ) then
+    return Util.LEFT
+  elseif ( dir == Util.LEFT ) then
+    return Util.RIGHT
   else
-    return UP
+    return Util.UP
   end
 end
 
 
 -- Pass a table of dirs that you don't want included in the selection.
 -- Returns a random dir out of dirs not in 'dirsNotToUse'
-function GetRandomDir( dirsNotToUse )
-  local dirs = { UP, DOWN, LEFT, RIGHT }
+function Util.GetRandomDir( dirsNotToUse )
+  local dirs = { Util.UP, Util.DOWN, Util.LEFT, Util.RIGHT }
 
   for i, badDir in ipairs( dirsNotToUse ) do
     for j, dir in ipairs( dirs ) do
@@ -70,7 +72,7 @@ end
 -- Generic enemy AI for a GameObject to use. Tries its hardest to get
 -- to Kickle, if all else fails tries to find any direction it can 
 -- possibly move.
-function GenericEnemyAI( enemy )
+function Util.GenericEnemyAI( enemy )
 	local Kickle = Game.GetGameObject( "Kickle" )
 
 	if ( Kickle ) then
@@ -80,23 +82,23 @@ function GenericEnemyAI( enemy )
 		local distanceX = math.abs( enemyX - KickleX )
 		local distanceY = math.abs( enemyY - KickleY )
 
-		local dir = UP;
+		local dir = Util.UP;
 
 		if ( distanceX > distanceY ) then
 			if ( enemyX < KickleX ) then
-				dir = RIGHT
+				dir = Util.RIGHT
 			elseif ( enemyX > KickleX ) then
-				dir = LEFT
+				dir = Util.LEFT
 			else
-				dir = math.random( LEFT, RIGHT )
+				dir = math.random( Util.LEFT, Util.RIGHT )
 			end
 		else
 			if ( enemyY < KickleY ) then
-				dir = DOWN
+				dir = Util.DOWN
 			elseif ( enemyY > KickleY ) then
-				dir = UP
+				dir = Util.UP
 			else
-				dir = math.random( UP, DOWN )
+				dir = math.random( Util.UP, Util.DOWN )
 			end
 		end
 
@@ -105,7 +107,7 @@ function GenericEnemyAI( enemy )
     local dirsTried = {}
     while #dirsTried  < 4 and not enemy:Move() do
       dirsTried[#dirsTried+1] = dir
-      dir = GetRandomDir( dirsTried )
+      dir = Util.GetRandomDir( dirsTried )
       enemy:SetDir( dir )
     end
 
@@ -113,3 +115,4 @@ function GenericEnemyAI( enemy )
 	end
 end
 
+return Util
