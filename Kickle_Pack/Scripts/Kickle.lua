@@ -16,10 +16,14 @@ Kickle.state = STANDING --Current state kickle is in
 Kickle.godMode = false
 
 function Kickle.HandleCollision( self, other )
-	if ( other:GetType() == "Slime" ) then
+  otherType = other:GetType()
+	if ( otherType == "Slime" or otherType == "Penguin" ) then
 		Kickle.state = DYING
 		self:SetAnimation( self:GetDir() + Kickle.state )
-	end
+  
+  elseif ( otherType == "DreamBag" and Kickle.state ~= DYING ) then
+    Game.DestroyGameObject( other )
+  end
 end
 
 
@@ -142,14 +146,36 @@ end
 function Kickle.PerformAttack( self )
 	if ( Kickle.state == STANDING ) then
 		local tileX, tileY = Util.GetTileObjectFaces( self )
+    local kickleDir = self:GetDir()
 		local objOnTile = Game.GetGameObjectOnTile( tileX, tileY )
 
 		if ( objOnTile and objOnTile:GetType() == "IceBlock" ) then
 			Kickle.state = KICKING
-			local kickleDir = self:GetDir()
 			self:SetAnimation( kickleDir + Kickle.state );
-			objOnTile:GetTable().moving = true
-			objOnTile:SetDir( kickleDir );
+
+      local blockFacingX, blockFacingY =
+        Util.GetTileInDirection( objOnTile, kickleDir )
+      local tileType = Game.GetTileInfo( blockFacingX, blockFacingY )
+      if (( Game.TileIsCrossable( blockFacingX, blockFacingY ) or
+            tileType == "water" ) and
+            not Game.ObjectBlockingTile( blockFacingX, blockFacingY )) then
+			  objOnTile:GetTable().moving = true
+			  objOnTile:SetDir( kickleDir );
+      else 
+        Game.DestroyGameObject( objOnTile )
+        Game.CreateGameObject( 
+          "Kickle_Pack/Objects/Slime.xml",
+          objOnTile:GetTable().slimeSpawnX,
+          objOnTile:GetTable().slimeSpawnY
+        )
+      end
+    
+    elseif ( objOnTile and objOnTile:GetType() == "Penguin" ) then
+      if ( objOnTile:GetTable().frozen == true ) then
+        Kickle.state = KICKING
+        self:SetAnimation( kickleDir + Kickle.state )
+        Game.DestroyGameObject( objOnTile )
+      end
 
 		elseif (( Game.TileIsCrossable( tileX, tileY ) or
               Game.GetTileInfo( tileX, tileY ) == "water" ) and

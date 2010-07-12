@@ -28,11 +28,6 @@ class GameObjectManager {
   void AddGameObject( GameObject *gameObject );
   void RemoveGameObject( GameObject *gameObject );
 
-  // Collision detection for non-solid GameObjects using rectangular
-  // collision detection. Returns GameObject that 'gameObject' collided with,
-  // or NULL otherwise.
-  GameObject* DetectCollision( const GameObject *gameObject ) const;
-
   // If an object is on the specified tile location, that object is returned.
   // Returns NULL otherwise.
   GameObject* ObjectOnTile( int x, int y ) const;
@@ -48,6 +43,11 @@ class GameObjectManager {
   // Restricts copy constructor, and assignment.
   GameObjectManager( const GameObjectManager &manager );
   GameObjectManager& operator=( const GameObjectManager &manager );
+
+  // Collision detection for non-solid GameObjects using rectangular
+  // collision detection. Returns GameObject that 'gameObject' collided with,
+  // or NULL otherwise.
+  GameObject* DetectCollision( const GameObject *gameObject );
 
   // List of game objects that manager is holding
   std::list<GameObject*> m_gameObjects;

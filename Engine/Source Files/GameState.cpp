@@ -122,11 +122,6 @@ const TileManager& GameState::GetTileManager() const {
 }
 
 
-const GameObjectManager& GameState::GetGameObjectManager() const {
-  return m_gameObjectManager;
-}
-
-
 bool GameState::ObjectBlockingTile( int x, int y ) {
   GameObject *gameObject = m_gameObjectManager.ObjectOnTile( x, y );
   if ( gameObject ) {

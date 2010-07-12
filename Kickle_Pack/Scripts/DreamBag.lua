@@ -38,9 +38,6 @@ function DreamBag.HandleCollision( self, other )
       self:SetDir( dir )
       self:Move()
     end
-
-  elseif ( other:GetType() == "Kickle" ) then
-    Game.DestroyGameObject( self )
   end
 end
 

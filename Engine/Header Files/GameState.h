@@ -41,9 +41,6 @@ class GameState {
   // Returns state's tile Manager
   const TileManager& GetTileManager() const;
 
-  // Returns state's GameObjectManager
-  const GameObjectManager& GetGameObjectManager() const;
-
   // Returns whether object on tile specified (if any) blocks it.
   // Returns true if it does, false if not or no object on tile.
   bool ObjectBlockingTile( int x, int y );

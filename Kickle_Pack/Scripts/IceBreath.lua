@@ -11,7 +11,8 @@ function IceBreath.AI( self )
   local otherObj = Game.GetGameObjectOnTile( facingTileX, facingTileY )
 
   self:SetNoClip( tileType == "water" or
-    ( otherObj and otherObj:GetType() == "IceBlock" ))
+    ( otherObj and ( otherObj:GetType() == "IceBlock" or
+      otherObj:GetType() == "Penguin" )))
 
   if not self:Move() then
     Game.DestroyGameObject( self )

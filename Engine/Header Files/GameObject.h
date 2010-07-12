@@ -30,7 +30,7 @@ class GameObject : public AnimSprite {
   void HandleEvents();
 
   // Updates the GameObject's collision
-  void UpdateCollision();
+  void UpdateCollision( GameObject *collisionObj );
 
   // Updates the GameObject's movement
   void UpdateAI();
@@ -79,6 +79,10 @@ class GameObject : public AnimSprite {
 
   // Wrap GetTileX and GetTileY to allow it to be exposed to Lua
   int LuaGetTile( lua_State *L );
+
+  // Takes boolean. True means GameObject should block tile it is on,
+  // false means it shouldn't.
+  int LuaBlockTile( lua_State *L );
 
   // Allows user to get and set the GameObject's direction from Lua
   int LuaGetDir( lua_State *L );

@@ -6,7 +6,6 @@ extern "C" {
 }
 
 #include "App.h"
-#include "GameObjectManager.h"
 #include "GameState.h"
 #include "TileManager.h"
 #include "tinyxml.h"
@@ -28,6 +27,7 @@ Lunar<GameObject>::RegType GameObject::methods[] = {
   { "IsMoving", &GameObject::LuaMoving },
   { "GetType", &GameObject::LuaGetType },
   { "GetTile", &GameObject::LuaGetTile },
+  { "BlockTile", &GameObject::LuaBlockTile },
   { "GetDir", &GameObject::LuaGetDir },
   { "SetDir", &GameObject::LuaSetDir },
   { "Reverse", &GameObject::LuaReverse },
@@ -125,10 +125,7 @@ void GameObject::HandleEvents() {
 }
 
 
-void GameObject::UpdateCollision() {
-  GameObject *collisionObj =
-    m_gameState->GetGameObjectManager().DetectCollision( this );
-
+void GameObject::UpdateCollision( GameObject *collisionObj ) {
   if( collisionObj ) {
     lua_State *L = m_gameState->GetLuaState();
     lua_rawgeti( L, LUA_REGISTRYINDEX, m_id );
@@ -283,6 +280,12 @@ int GameObject::LuaGetTile( lua_State *L ) {
   lua_pushinteger( L, GetTileX() );
   lua_pushinteger( L, GetTileY() );
   return 2;
+}
+
+
+int GameObject::LuaBlockTile( lua_State *L ) {
+  m_blockingTile = lua_toboolean( L, -1 );
+  return 0;
 }
 
 

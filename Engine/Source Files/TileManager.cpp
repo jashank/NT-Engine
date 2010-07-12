@@ -70,11 +70,13 @@ bool TileManager::LoadData( const TiXmlElement *dataRoot ) {
   return true;
 }
 
+
 void TileManager::Update() {
   for( int i = 0; i < m_numTileTypes; ++i ) {
     m_tileSprites[i].Update();
   }
 }
+
 
 void TileManager::Render() {
   static App* app = App::GetApp();
@@ -141,11 +143,13 @@ bool TileManager::TileIsCrossable( int x, int y )  const {
   return false;
 }
 
+
 void TileManager::SetCollision( int x, int y, int collisionId ) {
   if ( x < m_width && y < m_height ) {
     m_tileDataId[m_layout[y][x]]->cid = collisionId;
   }
 }
+
 
 int TileManager::GetCollision( int x, int y ) const {
   if ( x < m_width && y < m_height ) {

@@ -42,7 +42,7 @@ function IceBlock.AI( self )
         IceBlock.slimeSpawnY
       )
 
-    elseif ( tileType == "" ) then
+    elseif ( tileType == "" ) then -- edge of map 
       Game.DestroyGameObject( self )
       Game.CreateGameObject(
         "Kickle_Pack/Objects/Slime.xml",
