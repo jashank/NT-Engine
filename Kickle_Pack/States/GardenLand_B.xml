@@ -79,4 +79,8 @@
     </sound_effects>
   </sound>
 
+  <portals>
+    <port name="nextStage" path="Kickle_Pack/States/GardenLand_B.xml" />
+  </portals>
+
  </state>

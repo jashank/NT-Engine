@@ -2,6 +2,7 @@
 #define GAMESTATE_H
 
 #include <string>
+#include <map>
 
 extern "C" {
   #include "lua.h"
@@ -86,6 +87,10 @@ class GameState {
   // Resets the current state.
   static int LuaResetState( lua_State *L );
 
+  // User passes name of portal specified in state file, and next state is
+  // set to the path specified with it
+  static int LuaPortal( lua_State *L );
+
   // Allows user to log errors from Lua
   static int LuaLogErr( lua_State *L );
 
@@ -100,7 +105,8 @@ class GameState {
   GUIManager m_guiManager;
   lua_State *m_luaState;
   SoundManager m_soundManager;
-  std::string m_path; // Path used to load state
+  std::map<std::string, std::string> m_portals; // Mappings name/path
+  std::string m_path; // Path to current state
   TileManager m_tileManager;
 };
 

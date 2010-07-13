@@ -1,5 +1,7 @@
 #include "GameState.h"
 
+#include <utility>
+
 #include "App.h"
 #include "GameObject.h"
 #include "tinyxml.h"
@@ -19,6 +21,7 @@ const luaL_Reg GameState::LuaGameStateFuncts[] = {
   { "SetTile", LuaSetTile },
   { "NewState", LuaNewState },
   { "ResetState", LuaResetState },
+  { "Portal", LuaPortal },
   { "LogErr", LuaLogErr },
   { NULL, NULL }
 };
@@ -82,6 +85,23 @@ bool GameState::LoadFromFile( const std::string &path ) {
           return false;
         }
       }
+
+      elem = root->FirstChildElement( "portals" );
+      if ( elem ) {
+        const TiXmlElement *port = elem->FirstChildElement( "port" );
+        if ( port ) {
+          do {
+            const char *name = port->Attribute( "name" );
+            const char *portPath = port->Attribute( "path" );
+            if ( name && portPath ) {
+              m_portals.insert( std::make_pair( name, portPath ));
+            } else {
+              LogErr( "Name or path not specified for port in GameState: " + path );
+            }
+          } while ( port = port->NextSiblingElement( "port" ));
+        }
+      }
+
     } else {
       LogErr( "<state> tag not specified in state file " + path );
       return false;
@@ -349,6 +369,22 @@ int GameState::LuaNewState( lua_State *L ) {
 
 int GameState::LuaResetState( lua_State *L ) {
   App::GetApp()->SetNextState( App::GetApp()->GetCurrentState()->m_path );
+  return 0;
+}
+
+
+int GameState::LuaPortal( lua_State *L ) {
+  static GameState *currentState = App::GetApp()->GetCurrentState();
+
+  if ( !lua_isstring( L, -1 )) {
+    LogLuaErr( "String not passed to Portal" );
+    return luaL_error( L, "String not passed to Portal" );
+  }
+  std::map<std::string, std::string>::const_iterator port =
+    currentState->m_portals.find( lua_tostring( L, -1 ));
+  if ( port != currentState->m_portals.end() ) {
+    App::GetApp()->SetNextState( port->second );
+  }
   return 0;
 }
 

@@ -3,7 +3,7 @@ local StageManager = {}
 
 function StageManager.AI( self )
   if( not Game.GetGameObject( "DreamBag" )) then
-    Game.NewState( "Kickle_Pack/States/GardenLand_B.xml" )
+    Game.Portal( "nextStage" )
   end
 end
 
