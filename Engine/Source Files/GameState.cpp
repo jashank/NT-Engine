@@ -374,7 +374,7 @@ int GameState::LuaResetState( lua_State *L ) {
 
 
 int GameState::LuaPortal( lua_State *L ) {
-  static GameState *currentState = App::GetApp()->GetCurrentState();
+  GameState *currentState = App::GetApp()->GetCurrentState();
 
   if ( !lua_isstring( L, -1 )) {
     LogLuaErr( "String not passed to Portal" );

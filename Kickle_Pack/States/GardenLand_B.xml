@@ -80,7 +80,7 @@
   </sound>
 
   <portals>
-    <port name="nextStage" path="Kickle_Pack/States/GardenLand_B.xml" />
+    <port name="nextStage" path="Kickle_Pack/States/GardenLand_C.xml" />
   </portals>
 
  </state>
