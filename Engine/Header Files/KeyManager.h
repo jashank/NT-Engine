@@ -25,6 +25,10 @@ class KeyManager {
   void Update();
 
  private:
+  // Restricts copy constructor and assignment.
+  KeyManager( const KeyManager &manager );
+  KeyManager& operator=( const KeyManager &manager );
+
   //Contains the keys that are to be monitored
   std::vector< Key > m_keys;
 

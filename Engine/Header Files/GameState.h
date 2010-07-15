@@ -5,15 +5,15 @@
 #include <map>
 
 extern "C" {
-  #include "lua.h"
   #include "lauxlib.h"
-  #include "lualib.h"
 }
 
 #include "GameObjectManager.h"
 #include "GUIManager.h"
 #include "SoundManager.h"
 #include "TileManager.h"
+
+class lua_State;
 
 /********************************************************************
 GameState
@@ -24,8 +24,8 @@ GameState
 class GameState {
  public:
   // Constructs GameState. Doesn't load in any data.
-  GameState();
-  ~GameState();
+  GameState() {}
+  ~GameState() {}
 
   // Loads GameState from file located at path passed.
   bool LoadFromFile( const std::string &path );
@@ -40,45 +40,16 @@ class GameState {
   void Render();
 
   // Returns state's tile Manager
-  const TileManager& GetTileManager() const;
+  TileManager& GetTileManager();
 
-  // Returns whether object on tile specified (if any) blocks it.
-  // Returns true if it does, false if not or no object on tile.
-  bool ObjectBlockingTile( int x, int y );
+  // Returns state's GameObjectManager
+  GameObjectManager& GetGameObjectManager();
 
-  //-------------------------------------------------------
-  // Lua Functions
-  //-------------------------------------------------------
-
-  // Returns state's lua state (pointer because lua functions take pointer)
-  lua_State* GetLuaState();
-
-  // Creates an GameObject given its XML file. Reports error if file is invalid.
-  static int LuaCreateGameObject( lua_State *L );
-
-  // Destroys GameObject passed. Does nothing if GameObject doesn't exist.
-  static int LuaDestroyGameObject( lua_State *L );
-
-  // Returns a GameObject given the GameObject's "type". NULL if there is none.
-  static int LuaGetGameObject( lua_State *L );
-
-  // Returns GameObject located on tile. NULL if none exists.
-  static int LuaGetGameObjectOnTile( lua_State *L );
-
-  // Returns type, name, and id of tile (in that order).
-  // ("", "", -1) if no tile is invalid.
-  static int LuaGetTileInfo( lua_State *L );
-
-  // Returns whether tile specified is crossable. False if tile is invalid.
-  static int LuaTileIsCrossable( lua_State *L );
-
-  // Returns whether tile specified has an object on it
-  // that is blocking access to it.
-  static int LuaObjectBlockingTile( lua_State *L );
-
-  // Sets tile specified to tile associated with name passed.
-  // Also must pass collisionID, 0 for crossable, 1 for not crossable.
-  static int LuaSetTile( lua_State *L );
+  /*************************************
+   * Lua Functions
+   *************************************/
+  // Registers lua functions to state passed
+  static void RegisterLuaFuncs( lua_State *L );
 
   // Changes state to unmodified version of state defined by XML file passed.
   // Reports error if file is invalid.
@@ -95,7 +66,7 @@ class GameState {
   static int LuaLogErr( lua_State *L );
 
  private:
-  static const luaL_Reg LuaGameStateFuncts[]; // Functions to register to Lua
+  static const luaL_Reg LuaFuncs[]; // Functions to register to Lua
 
   // Restricts copy constructor, and assignment.
   GameState( const GameState &state );
@@ -103,7 +74,6 @@ class GameState {
 
   GameObjectManager m_gameObjectManager;
   GUIManager m_guiManager;
-  lua_State *m_luaState;
   SoundManager m_soundManager;
   std::map<std::string, std::string> m_portals; // Mappings name/path
   std::string m_path; // Path to current state

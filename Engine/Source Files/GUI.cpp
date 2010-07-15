@@ -113,15 +113,15 @@ bool GUI::LoadData( const std::string &filepath ) {
 
 
 void GUI::InitLua() {
-  luaL_dofile( m_state->GetLuaState(), m_luaPath.c_str() );
-  if ( lua_istable( m_state->GetLuaState(), -1 )) {
-    m_id = luaL_ref( m_state->GetLuaState(), LUA_REGISTRYINDEX );
+  luaL_dofile( App::GetApp()->LuaState(), m_luaPath.c_str() );
+  if ( lua_istable( App::GetApp()->LuaState(), -1 )) {
+    m_id = luaL_ref( App::GetApp()->LuaState(), LUA_REGISTRYINDEX );
   }
 }
 
 
 void GUI::CallScriptFunc( std::string &funcName ) {
-  lua_State *L = m_state->GetLuaState();
+  lua_State *L = App::GetApp()->LuaState();
   lua_rawgeti( L, LUA_REGISTRYINDEX, m_id );
   lua_getfield( L, -1, funcName.c_str() );
   if( lua_isfunction( L, -1 ) ) {

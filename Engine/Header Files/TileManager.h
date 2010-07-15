@@ -10,6 +10,11 @@ Co-Authors: pretty much everybody else
 #include <string>
 #include <vector>
 
+extern "C" {
+  #include "lua.h"
+  #include "lauxlib.h"
+}
+
 #include "Tile.h"
 
 class AnimSprite;
@@ -29,11 +34,22 @@ class TileManager {
   // Renders TileManager
 	void Render();
 
-  // Changes the value of the tile sheet to value passed if it is valid, else -1
-  void SetTile( int x, int y, const std::string &tileName );
+  /*******************************
+   * Lua Functions
+   * ****************************/
+  // Registers lua functions to state passed
+  static void RegisterLuaFuncs( lua_State *L );
 
-  // Returns type, name, and id of tile
-  const Tile& GetTile( int x, int y );
+  // Returns type, name, and id of tile (in that order).
+  // ("", "", -1) if no tile is invalid.
+  static int LuaGetTileInfo( lua_State *L );
+
+  // Returns whether tile specified is crossable. False if tile is invalid.
+  static int LuaTileIsCrossable( lua_State *L );
+
+  // Sets tile specified to tile associated with name passed.
+  // Also must pass collisionID, 0 for crossable, 1 for not crossable.
+  static int LuaSetTile( lua_State *L );
 
   // Return dimensions of tile for this map (tiles are square)
   int GetTileDim() const;
@@ -42,21 +58,15 @@ class TileManager {
   int GetMapWidth() const;
   int GetMapHeight() const;
 
-  // Collision Stuff
   // Returns true if the tile at X Y is solid, else false;
   bool TileIsCrossable( int x, int y ) const;
-
-  // Changes the value of the tile sheet to that value if it is valid.
-  // Else -1.
-  void SetCollision( int x, int y, int collisionId );
-
-  // Returns id of tile at that location.
-  int GetCollision( int x, int y ) const;
 
  private:
   typedef std::map< int, Tile* >::iterator TileInfoIter;
   typedef std::map< int, Tile* >::const_iterator ConstTileInfoIter;
+
   static const Tile NULL_TILE_INFO;
+  static const luaL_Reg LuaFuncs[];
 
   // Restricts copy constructor, and assignment.
   TileManager( const TileManager &manager );
@@ -73,6 +83,19 @@ class TileManager {
   // Retrieves tile info from <strip> tag
   // Returns whether load was successful.
   bool GetTileInfo( const TiXmlElement *strip );
+
+  // Changes the value of the tile sheet to value passed if it is valid, else -1
+  void SetTile( int x, int y, const std::string &tileName );
+
+  // Returns type, name, and id of tile
+  const Tile& GetTile( int x, int y );
+
+  // Changes the value of the tile sheet to that value if it is valid.
+  // Else -1.
+  void SetCollision( int x, int y, int collisionId );
+
+  // Returns instance of TileManager in application
+  static TileManager& Inst();
 
   AnimSprite *m_tileSprites;
   int m_numTileTypes;

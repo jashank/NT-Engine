@@ -3,6 +3,6 @@
   <animation path="Kickle_Pack/Animations/IceBreathAnim_48x48.xml" />
   <script path="Kickle_Pack/Scripts/IceBreath.lua" />
   <speed ppf="3" />
-  <rect x="0" y="0" width="48" height="48" />
+  <rect x="12" y="11" width="24" height="24" />
   <tile block="false" />
 </game_object>

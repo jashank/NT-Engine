@@ -11,8 +11,6 @@ public:
   AnimData() {}
   ~AnimData() {}
 
-  AnimData& operator=( const AnimData &ad );
-
   // Loads AnimData from an xml file
   bool LoadFromFile( const std::string &filename );
 
@@ -59,6 +57,10 @@ private:
     sf::Image *image; // Holds pointer to image designated to animation (stored in ResourceManager)
     std::string name; // Name of animation loaded in
   };
+
+  // Restricts copy constructor, and assignment.
+  AnimData( const AnimData &data );
+  AnimData& operator=( const AnimData &data );
 
   // Parses strip passed, adding animation to m_anims. If flag is ON, function
   // assumes that strip has parent <common>. Otherwise it doesn't

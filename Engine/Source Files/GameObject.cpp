@@ -111,9 +111,9 @@ GameObject::GameObject(
 
 
 GameObject::~GameObject() {
-  lua_State *L = m_gameState->GetLuaState();
+  lua_State *L = App::GetApp()->LuaState();
   if ( L ) {
-    luaL_unref( m_gameState->GetLuaState(), LUA_REGISTRYINDEX, m_id );
+    luaL_unref( L, LUA_REGISTRYINDEX, m_id );
   }
 }
 
@@ -127,7 +127,7 @@ void GameObject::HandleEvents() {
 
 void GameObject::UpdateCollision( GameObject *collisionObj ) {
   if( collisionObj ) {
-    lua_State *L = m_gameState->GetLuaState();
+    lua_State *L = App::GetApp()->LuaState();
     lua_rawgeti( L, LUA_REGISTRYINDEX, m_id );
     lua_getfield( L, -1, "HandleCollision" );
     if ( lua_isfunction( L, -1 ) ) {
@@ -144,7 +144,7 @@ void GameObject::UpdateAI() {
   if( m_moving ) {
     MovementUpdate();
   } else {
-    lua_State *L = m_gameState->GetLuaState();
+    lua_State *L = App::GetApp()->LuaState();
     lua_rawgeti( L, LUA_REGISTRYINDEX, m_id );
     lua_getfield( L, -1, "AI" );
     if ( lua_isfunction( L, -1 )) {
@@ -222,7 +222,7 @@ int GameObject::LuaMove( lua_State *L ) {
       int y = nextTileY;
       if (( m_noClip ) ||
         ( m_gameState->GetTileManager().TileIsCrossable( x, y ) &&
-        !m_gameState->ObjectBlockingTile( x, y ))) {
+        !m_gameState->GetGameObjectManager().ObjectBlockingTile( x, y ))) {
         m_moving = true;
       }
     }
@@ -358,13 +358,15 @@ int GameObject::LuaGetElapsedTime( lua_State *L ) {
   lua_pushnumber( L, m_timer.GetElapsedTime() );
   return 1;
 }
+
 /************************************************
 Private Methods
 ************************************************/
 void GameObject::InitLua() {
-  luaL_dofile( m_gameState->GetLuaState(), m_luaScript.c_str() );
-  if ( lua_istable( m_gameState->GetLuaState(), -1 )) {
-    m_id = luaL_ref( m_gameState->GetLuaState(), LUA_REGISTRYINDEX );
+  lua_State *L = App::GetApp()->LuaState();
+  luaL_dofile( L, m_luaScript.c_str() );
+  if ( lua_istable( L, -1 )) {
+    m_id = luaL_ref( L, LUA_REGISTRYINDEX );
   }
 }
 
@@ -443,7 +445,7 @@ void GameObject::CorrectMovement() {
 
 
 void GameObject::CallScriptFunc( std::string &funcName ) {
-  lua_State *L = m_gameState->GetLuaState();
+  lua_State *L = App::GetApp()->LuaState();
   lua_rawgeti( L, LUA_REGISTRYINDEX, m_id );
   lua_getfield( L, -1, funcName.c_str() );
   if( lua_isfunction( L, -1 ) ) {

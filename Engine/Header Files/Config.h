@@ -19,6 +19,7 @@ class Config {
   static int GetFPS();
 
 private:
+
   static int m_screenWidth;
   static int m_screenHeight;
   static int m_FPS;

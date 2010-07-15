@@ -38,6 +38,10 @@ class InputHandler {
   // Each key is paired with a lua function name
   typedef std::pair<Key, std::string> KeyEntry;
 
+  // Restrict copy constructor and assignment
+  InputHandler( const InputHandler &handler );
+  InputHandler& operator=( const InputHandler &handler );
+
   std::vector<KeyEntry> m_keyRegistry; // All keys registered for this handler
 };
 

@@ -4,15 +4,28 @@
 #include <sstream>
 #include <utility>
 
+extern "C" {
+  #include "lualib.h"
+}
+
 #include "AnimData.h"
 #include "AnimSprite.h"
 #include "App.h"
+#include "GameState.h"
 #include "tinyxml.h"
 
 /******************************
 Constant Members
 ******************************/
 const Tile TileManager::NULL_TILE_INFO = Tile( "", "", -1, NOT_CROSSABLE );
+
+const luaL_reg TileManager::LuaFuncs[] = {
+  { "GetTileInfo", LuaGetTileInfo },
+  { "TileIsCrossable", LuaTileIsCrossable },
+  { "SetTile", LuaSetTile },
+  { NULL, NULL }
+};
+
 /******************************
 Constructors and Destructors.
 ******************************/
@@ -95,28 +108,6 @@ void TileManager::Render() {
 }
 
 
-void TileManager::SetTile( int x, int y, const std::string &tileName ) {
-  std::map<std::string, Tile>::iterator tileDataItr
-   = m_tileDataName.find( tileName );
-  if ( tileDataItr != m_tileDataName.end() && x < m_width && y < m_height ) {
-    m_layout[y][x] = tileDataItr->second.id;
-  }
-}
-
-
-const Tile& TileManager::GetTile( int x, int y ) {
-  if ( x < m_width && y < m_height ) {
-    int id = m_layout[y][x];
-    TileInfoIter tile = m_tileDataId.find( id );
-    if( tile != m_tileDataId.end() ) {
-      return *m_tileDataId[id];
-    }
-  }
-
-  return NULL_TILE_INFO;
-}
-
-
 int TileManager::GetTileDim() const {
   return m_tileDim;
 }
@@ -132,7 +123,6 @@ int TileManager::GetMapHeight() const {
 }
 
 
-// Collision Stuff
 bool TileManager::TileIsCrossable( int x, int y )  const {
   if ( x < m_width && y < m_height  ) {
     ConstTileInfoIter iter = m_tileDataId.find( m_layout[y][x] );
@@ -143,22 +133,100 @@ bool TileManager::TileIsCrossable( int x, int y )  const {
   return false;
 }
 
+/********************************
+ * Lua Functions
+ * *****************************/
+void TileManager::RegisterLuaFuncs( lua_State *L ) {
+  luaL_register( L, "Game", LuaFuncs );
+}
 
-void TileManager::SetCollision( int x, int y, int collisionId ) {
-  if ( x < m_width && y < m_height ) {
-    m_tileDataId[m_layout[y][x]]->cid = collisionId;
+
+int TileManager::LuaGetTileInfo( lua_State *L ) {
+  if ( !lua_isnumber( L, -2 ) ) {
+    LogLuaErr( "Number not passed to x position in GetTile." );
+    return luaL_error( L, "Number not passed to x position in GetTile." );
+  }
+  int tileX = lua_tointeger( L, -2 );
+
+  if ( !lua_isnumber( L, -1 ) ) {
+    LogLuaErr( "Number not passed to y position in GetTile." );
+    return luaL_error( L, "Number not passed to y position in GetTile." );
+  }
+  int tileY = lua_tointeger( L, -1 );
+
+  if ( tileX >= 0 && tileX < Inst().m_width &&
+       tileY >= 0 && tileY < Inst().m_height ) {
+    Tile tile = Inst().GetTile( tileX, tileY );
+    lua_pushstring( L, tile.type.c_str() );
+    lua_pushstring( L, tile.name.c_str() );
+    lua_pushinteger( L,tile.id );
+    lua_pushinteger( L, tile.cid );
+    return 4;
+  } else {
+    LogLuaErr( "Tile coordinate not on map passed to GetTileInfo" );
+    return 0;
   }
 }
 
 
-int TileManager::GetCollision( int x, int y ) const {
-  if ( x < m_width && y < m_height ) {
-    ConstTileInfoIter iter = m_tileDataId.find( m_layout[y][x] );
-    if ( iter != m_tileDataId.end() ) {
-      return iter->second->cid;
-    }
+int TileManager::LuaTileIsCrossable( lua_State *L ) {
+  if ( !lua_isnumber( L, -2 ) ) {
+    LogLuaErr( "Number not passed to x position in TileIsCrossable." );
+    return luaL_error( L, "Number not passed to x position in TileIsCrossable." );
   }
-  return NOT_CROSSABLE;
+  int tileX = lua_tointeger( L, -2 );
+
+  if ( !lua_isnumber( L, -1 ) ) {
+    LogLuaErr( "Number not passed to y position in TileIsCrossable." );
+    return luaL_error( L, "Number not passed to y position in TileIsCrossable." );
+  }
+  int tileY = lua_tointeger( L, -1 );
+
+  if ( tileX >= 0 && tileX < Inst().m_width &&
+       tileY >= 0 && tileY < Inst().m_height ) {
+    lua_pushboolean( L, Inst().TileIsCrossable( tileX, tileY ));
+    return 1;
+  } else {
+    LogLuaErr( "Tile location not on map passed to TileIsCrossable" );
+    return 0;
+  }
+}
+
+
+int TileManager::LuaSetTile( lua_State *L ) {
+  if ( !lua_isnumber( L, -4 ) ) {
+    LogLuaErr( "Number not passed to x position in SetTile." );
+    return luaL_error( L, "Number not passed to x position in SetTile." );
+  }
+  int tileX = lua_tointeger( L, -4 );
+
+  if ( !lua_isnumber( L, -3 ) ) {
+    LogLuaErr( "Number not passed to y position in SetTile." );
+    return luaL_error( L, "Number not passed to y position in SetTile." );
+  }
+  int tileY = lua_tointeger( L, -3 );
+
+  if ( !lua_isstring( L, -2 ) ) {
+    LogLuaErr( "String not passed to tile name in SetTile." );
+    return luaL_error( L, "String not passed to tile name in SetTile." );
+  }
+  std::string tileName = lua_tostring( L, -2 );
+
+  if ( !lua_isnumber( L, -1 ) ) {
+    LogLuaErr( "Number not passed to collision ID in SetTile." );
+    return luaL_error( L, "Number not passed to collision ID in SetTile." );
+  }
+  int collisionID = lua_tointeger( L, -1 );
+
+  if ( tileX >= 0 && tileX < Inst().m_width &&
+       tileY >= 0 && tileY < Inst().m_height ) {
+    Inst().SetTile( tileX, tileY, tileName );
+    Inst().SetCollision( tileX, tileY, collisionID );
+  } else {
+    LogLuaErr( "Tile location not on map passed to SetTile" );
+  }
+
+  return 0;
 }
 
 /************************************
@@ -276,4 +344,34 @@ bool TileManager::GetTileInfo( const TiXmlElement *strip ) {
     std::pair<int, Tile*>( tileId, &m_tileDataName[tileName] ));
 
   return true;
+}
+
+
+void TileManager::SetTile( int x, int y, const std::string &tileName ) {
+  std::map<std::string, Tile>::iterator tileDataItr
+   = m_tileDataName.find( tileName );
+  if ( tileDataItr != m_tileDataName.end() && x < m_width && y < m_height ) {
+    m_layout[y][x] = tileDataItr->second.id;
+  }
+}
+
+
+const Tile& TileManager::GetTile( int x, int y ) {
+  int id = m_layout[y][x];
+  TileInfoIter tile = m_tileDataId.find( id );
+  if( tile != m_tileDataId.end() ) {
+    return *m_tileDataId[id];
+  }
+
+  return NULL_TILE_INFO;
+}
+
+
+void TileManager::SetCollision( int x, int y, int collisionId ) {
+  m_tileDataId[m_layout[y][x]]->cid = collisionId;
+}
+
+
+TileManager& TileManager::Inst() {
+  return App::GetApp()->GetCurrentState()->GetTileManager();
 }

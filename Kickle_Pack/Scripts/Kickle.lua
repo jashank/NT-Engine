@@ -170,21 +170,20 @@ function Kickle.PerformAttack( self )
         )
       end
     
-    elseif ( objOnTile and objOnTile:GetType() == "Penguin" ) then
-      if ( objOnTile:GetTable().frozen == true ) then
-        Kickle.state = KICKING
-        self:SetAnimation( kickleDir + Kickle.state )
-        Game.DestroyGameObject( objOnTile )
-      end
+    elseif ( objOnTile and objOnTile:GetType() == "Penguin" and 
+             objOnTile:GetTable().frozen == true ) then
+      Kickle.state = KICKING
+      self:SetAnimation( kickleDir + Kickle.state )
+      Game.DestroyGameObject( objOnTile )
 
 		elseif (( Game.TileIsCrossable( tileX, tileY ) or
               Game.GetTileInfo( tileX, tileY ) == "water" ) and
               not Game.ObjectBlockingTile( tileX, tileY ) ) then
 			local iceBreath = Game.CreateGameObject(
-				"Kickle_Pack/Objects/IceBreath.xml", tileX, tileY );
-			local iceBreathdir = self:GetDir();
-			iceBreath:SetDir( iceBreathdir );
-			iceBreath:SetAnimation( iceBreathdir );
+				"Kickle_Pack/Objects/IceBreath.xml", tileX, tileY )
+			local iceBreathdir = self:GetDir()
+			iceBreath:SetDir( iceBreathdir )
+			iceBreath:SetAnimation( iceBreathdir )
 		end
 	end
 end

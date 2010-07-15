@@ -23,9 +23,9 @@ function IceBreath.HandleCollision( self, other )
   otherType = other:GetType()
 	if ( otherType == "Slime" ) then
     IceBlock = Game.CreateGameObject(
-      "Kickle_Pack/Objects/IceBlock.xml",
-      other:GetTile()
-    );
+                 "Kickle_Pack/Objects/IceBlock.xml",
+                 other:GetTile()
+                 );
     IceBlock:GetTable().slimeSpawnX = other:GetTable().spawnPointX
     IceBlock:GetTable().slimeSpawnY = other:GetTable().spawnPointY
     Game.DestroyGameObject( other )

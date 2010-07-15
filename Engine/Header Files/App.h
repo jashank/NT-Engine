@@ -5,6 +5,11 @@
 #include <SFML/Audio/Music.hpp>
 #include <SFML/Audio/SoundBuffer.hpp>
 
+// TEMPORARY
+extern "C" {
+  #include "lua.h"
+}
+
 #include "AnimData.h"
 #include "KeyManager.h"
 #include "ResourceManager.h"
@@ -95,6 +100,9 @@ class App {
   //TEMPORARY - Sets the next state
   void SetNextState( const std::string &filepath );
 
+  // TEMPORARY - Returns lua state held by App
+  lua_State* LuaState() const;
+
   // Sets the screen's clear color
   void SetClearColor( const sf::Color& color );
 
@@ -107,7 +115,9 @@ class App {
 	std::string filePath // Temporary
   );
 
+  // Restricts copy constructor and assignment.
   App( const App &app );
+  App& operator=( const App &app );
 
   static App *m_instance; //Single instance of App
 
@@ -132,6 +142,7 @@ class App {
   std::string m_nextStatePath;
   GameState *m_currentState;
   std::string m_filePath;
+  lua_State *m_luaState;
 };
 
 #endif

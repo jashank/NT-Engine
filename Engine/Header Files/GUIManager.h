@@ -34,6 +34,10 @@ class GUIManager {
   typedef GUI* (*CreateGUIFunc)( const std::string &filepath, int x, int y );
   typedef std::map<std::string, CreateGUIFunc> FactoryRef;
 
+  // Restricts copy constructor and assignment.
+  GUIManager( const GUIManager &manager );
+  GUIManager& operator=( const GUIManager &manager );
+
   // Creates GUI component passed to template and returns pointer to it
   template<class T>
   static GUI* CreateGUI( const std::string &filepath, int x, int y );

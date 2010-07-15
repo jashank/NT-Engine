@@ -53,6 +53,10 @@ class AnimSprite : public sf::Sprite {
   bool IsAnimating();
 
  private:
+  // Restricts copy constructor and assignment.
+  AnimSprite( const AnimSprite &sprite );
+  AnimSprite& operator=( const AnimSprite &sprite );
+
   // Updates the animation
   void AnimUpdate();
 

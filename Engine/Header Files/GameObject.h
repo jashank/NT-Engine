@@ -110,6 +110,11 @@ class GameObject : public AnimSprite {
 
  private:
   typedef std::pair< Key, std::string > KeyEntry;
+
+  // Restricts copy constructor and assignment.
+  GameObject( const GameObject &object );
+  GameObject& operator=( const GameObject &object );
+
 	// Loads a GameObject given a path to an xml file,
   // returning true if loading was successful
   bool LoadObjectData( const std::string &filepath );

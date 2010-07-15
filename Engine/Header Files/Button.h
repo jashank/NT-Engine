@@ -28,6 +28,10 @@ class Button : public GUI {
   virtual void HandleEvents();
 
  private:
+  // Restricts copy constructor and assignment.
+  Button( const Button &button );
+  Button& operator=( const Button &button );
+
   // Loads in button specific data from xml file. Returns
   // whether load was successful.
   bool LoadData( const std::string &filepath );

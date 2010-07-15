@@ -2,8 +2,13 @@
 
 #include <SFML/Window/Input.hpp>
 
-#include "GameObject.h"
+extern "C" {
+  #include "lualib.h"
+}
+
 #include "GameState.h"
+#include "GameObjectManager.h"
+#include "TileManager.h"
 #include "Utilities.h"
 
 //Template specialization to handle sf::Music's OpenFromFile()
@@ -44,11 +49,21 @@ App::App(
   m_window.UseVerticalSync( true );
   m_window.SetFramerateLimit( framerate );
   m_keyManager.Init( m_window.GetInput() );
+
+  m_luaState = luaL_newstate();
+  luaL_openlibs( m_luaState );
+  GameState::RegisterLuaFuncs( m_luaState );
+  GameObjectManager::RegisterLuaFuncs( m_luaState );
+  TileManager::RegisterLuaFuncs( m_luaState );
 }
 
 
 App::~App() {
   DEBUG_STATEMENT( std::cout << "Closing App..." << std::endl; )
+  if ( m_luaState ) {
+    lua_close( m_luaState );
+    m_luaState = NULL;
+  }
 }
 
 
@@ -165,13 +180,16 @@ void App::Run() {
 
 		m_currentState->Update();
 
+    // TEMPORARY
 		if ( m_nextStateSet ) {
 		  m_nextStateSet = false;
 		  SAFEDELETE( m_currentState );
+
       m_images.Clear();
       m_sounds.Clear();
       m_music.Clear();
       m_anims.Clear();
+
 		  m_currentState = new GameState();
 		  m_currentState->LoadFromFile( m_nextStatePath );
 		}
@@ -196,6 +214,11 @@ void App::Run() {
 void App::SetNextState( const std::string &filepath ) {
   m_nextStateSet = true;
   m_nextStatePath = filepath;
+}
+
+
+lua_State* App::LuaState() const {
+  return m_luaState;
 }
 
 
