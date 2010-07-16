@@ -12,12 +12,12 @@ class KeyManager {
  public:
   KeyManager();
 
-  // Takes key string, interprets it, and sets keyResult as the appropriate
-  // key code
+  /// Takes key string, interprets it, and sets keyResult as the appropriate
+  /// key code
   static bool InterpretKey( std::string keyString, sf::Key::Code &keyResult );
 
-  // Returns monitored Key corresponding to sf::Key::Code:: key.
-  // Returns default constructed Key if none found.
+  /// Returns monitored Key corresponding to sf::Key::Code:: key.
+  /// Returns default constructed Key if none found.
   Key GetKey( sf::Key::Code key ) const;
 
   void Init( const sf::Input &input );
@@ -25,11 +25,11 @@ class KeyManager {
   void Update();
 
  private:
-  // Restricts copy constructor and assignment.
+  /// Restricts copy constructor and assignment.
   KeyManager( const KeyManager &manager );
   KeyManager& operator=( const KeyManager &manager );
 
-  //Contains the keys that are to be monitored
+  /// Contains the keys that are to be monitored
   std::vector< Key > m_keys;
 
   const sf::Input *m_input; //Used to access keystates

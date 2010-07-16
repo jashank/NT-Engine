@@ -16,12 +16,12 @@ public:
     luaL_newmetatable(L, T::className);
     int metatable = lua_gettop(L);
 
-    // store method table in globals so that
-    // scripts can add functions written in Lua.
+    /// store method table in globals so that
+    /// scripts can add functions written in Lua.
     lua_pushvalue(L, methods);
     set(L, LUA_GLOBALSINDEX, T::className);
 
-    // hide metatable from Lua getmetatable()
+    /// hide metatable from Lua getmetatable()
     lua_pushvalue(L, methods);
     set(L, metatable, "__metatable");
 

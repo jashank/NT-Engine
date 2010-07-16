@@ -3,18 +3,18 @@
 
 #include "GUI.h"
 
-/*******************************
- * Image
+/*! \class Image
  * A GUI, just an image
- * ****************************/
+ */
 class Image : public GUI {
  public:
-  // Constructor and destructor
+  /// Constructor
   Image( const std::string &filepath, int x, int y );
+  /// Destructor
   ~Image() {}
 
  private:
-  // Restrict copy constructor and destructor
+  /// Restrict copy constructor and destructor
   Image( const Image& );
   Image& operator=( const Image& );
 };

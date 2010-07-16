@@ -5,7 +5,7 @@
 
 class Rect {
  public:
-  // Constructors and Destructors
+  /// Constructors and Destructors
   Rect() : topLeft( 0.0f,0.0f ), bottomRight( 0.0f,0.0f ) {}
   Rect( float left, float top, float right, float bottom ) 
         : topLeft( left, top ), bottomRight( right, bottom ) {}

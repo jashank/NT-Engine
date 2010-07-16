@@ -8,7 +8,7 @@
 #include "GUI.h"
 
 /*****************************************************************
- * Button
+ * \class Button
  * A GUI, can be clicked on, and defines onClick function in Lua
  *
  * 'MousePressed' means that cursor was in pressable area when
@@ -20,24 +20,24 @@
  * **************************************************************/
 class Button : public GUI {
  public:
-  // Constructor and Destructor
+  /// Constructor and Destructor
   Button( const std::string &filepath, int x, int y );
   ~Button() {}
 
-  // Handles mouse clicks for button
+  /// Handles mouse clicks for button
   virtual void HandleEvents();
 
  private:
-  // Restricts copy constructor and assignment.
+  /// Restricts copy constructor and assignment.
   Button( const Button &button );
   Button& operator=( const Button &button );
 
-  // Loads in button specific data from xml file. Returns
-  // whether load was successful.
+  /// Loads in button specific data from xml file. Returns
+  /// whether load was successful.
   bool LoadData( const std::string &filepath );
 
-  // Pass either "MousePressed", "MouseReleased", or "MouseClicked"
-  // to call appropriate MouseInput function from Lua.
+  /// Pass either "MousePressed", "MouseReleased", or "MouseClicked"
+  /// to call appropriate MouseInput function from Lua.
   void LuaCallMouseInput( const std::string &inputType );
 
   bool m_pressedDown; // Whether the button is pressed down

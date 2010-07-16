@@ -4,7 +4,7 @@
 template< typename T >
 class Vector {
  public:
-  // Constructors and Destructors
+  /// Constructors and Destructors
   Vector() : x( 0 ), y( 0 ), z( 0 ) {}
   Vector( T xPos, T yPos ) : x( xPos ), y( yPos ), z( 0 ) {}
   Vector( T xPos, T yPos, T zPos ) : x( xPos ), y( yPos ), z( zPos ){}
@@ -44,8 +44,8 @@ class Vector {
   /***********************************************
   Implementation
   ************************************************/
-  // Overload Operators
-  // Asignment Overloading
+  /// Overload Operators
+  /// Asignment Overloading
   Vector<T>& operator=( const Vector<T>& other ) {
     x = other.x;
     y = other.y;
@@ -81,7 +81,7 @@ class Vector {
     return *this;
   }
 
-  // Mathematical Overloading
+  /// Mathematical Overloading
   Vector<T> operator+( const Vector<T> &other ) const {
     return Vector<T>(x+other.x, y+other.y, z+other.z);
   }

@@ -19,22 +19,21 @@ extern "C" {
 class GameState;
 class AnimData;
 
-//Template specialization to handle sf::Music's OpenFromFile()
-//instead of the typical LoadFromFile()
+///Template specialization to handle sf::Music's OpenFromFile()
+///instead of the typical LoadFromFile()
 template<>
 sf::Music* ResourceLoader<sf::Music>::Load( const std::string& filename );
 
 
-/************************************************
-App
--Initializes SFML
--Initializes ResoureManagers
--Initializes StateManager
--Calculates DeltaTime
--Calculates FPS
--Polls for events
--Loads Resources
-************************************************/
+/*! \class App
+ * -Initializes SFML\n
+ * -Initializes ResoureManagers\n
+ * -Initializes StateManager\n
+ * -Calculates DeltaTime\n
+ * -Calculates FPS\n
+ * -Polls for events\n
+ * -Loads Resources\n
+*/
 class App {
  public:
   static App* CreateApp(
@@ -47,63 +46,63 @@ class App {
 
   ~App();
 
-  // Destroys the instance of App
+  /// Destroys the instance of App
   static void DestroyApp();
 
-  // Draws any Drawable object to the screen
+  /// Draws any Drawable object to the screen
   void Draw( const sf::Drawable &object );
 
-  // Returns an instance of App, insuring that only one instance
-  // of App exists at a time
+  /// Returns an instance of App, insuring that only one instance
+  /// of App exists at a time
   static App* GetApp();
 
-  // Returns GameState app is currently running
+  /// Returns GameState app is currently running
   GameState* GetCurrentState() const;
 
-  // Returns the time since App was created.
+  /// Returns the time since App was created.
   float GetTime() const;
 
-  // Returns the change in time since last frame
+  /// Returns the change in time since last frame
   float GetDeltaTime() const;
 
-  // Returns monitored Key matching with 'key'
+  /// Returns monitored Key matching with 'key'
   Key GetKey( sf::Key::Code key ) const;
 
-  // Returns event in app
+  /// Returns event in app
   const sf::Event &GetEvent() const;
 
-  // Returns input in app.
+  /// Returns input in app.
   const sf::Input &GetInput() const;
 
-  // Returns an Image given a filename, insuring that no
-  // duplicate Image is loaded into memory
+  /// Returns an Image given a filename, insuring that no
+  /// duplicate Image is loaded into memory
   sf::Image* LoadImage( const std::string &filename );
 
-  // Returns a Sound given a filename, insuring that no
-  // duplicate Sound is loaded into memory
+  /// Returns a Sound given a filename, insuring that no
+  /// duplicate Sound is loaded into memory
   sf::SoundBuffer* LoadSound( const std::string &filename );
 
-  // Returns a Music given a filename, insuring that no
-  // duplicate Music is loaded into memory
+  /// Returns a Music given a filename, insuring that no
+  /// duplicate Music is loaded into memory
   sf::Music* LoadMusic( const std::string &filename );
 
-  // Returns an AnimData given a filename, insuring that no
-  // duplicate AnimData is loaded into memory
+  /// Returns an AnimData given a filename, insuring that no
+  /// duplicate AnimData is loaded into memory
   AnimData* LoadAnim( const std::string &filename );
 
-  // Contains the main game loop
+  /// Contains the main game loop
   void Run();
 
-  // Registers a key for m_keyManager to monitor
+  /// Registers a key for m_keyManager to monitor
   void RegisterKey( sf::Key::Code key );
 
-  //TEMPORARY - Sets the next state
+  ///TEMPORARY - Sets the next state
   void SetNextState( const std::string &filepath );
 
-  // TEMPORARY - Returns lua state held by App
+  /// TEMPORARY - Returns lua state held by App
   lua_State* LuaState() const;
 
-  // Sets the screen's clear color
+  /// Sets the screen's clear color
   void SetClearColor( const sf::Color& color );
 
  private:
@@ -115,7 +114,7 @@ class App {
 	std::string filePath // Temporary
   );
 
-  // Restricts copy constructor and assignment.
+  /// Restricts copy constructor and assignment.
   App( const App &app );
   App& operator=( const App &app );
 

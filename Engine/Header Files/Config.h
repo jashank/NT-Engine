@@ -6,7 +6,7 @@ class Config {
   Config();
   ~Config();
 
-  // Loads Config data from Config file.
+  /// Loads Config data from Config file.
   static void Load();
 
   static void SetScreenWidth( int screenWidth );

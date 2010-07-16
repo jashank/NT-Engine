@@ -11,56 +11,56 @@ class AnimSprite : public sf::Sprite {
  public:
   AnimSprite();
 
-  // Returns the data used for the animation
+  /// Returns the data used for the animation
   const AnimData *GetAnimData() const;
 
-  // Returns the current animation frame
+  /// Returns the current animation frame
   int GetFrame() const;
 
-  // Returns the current animation
+  /// Returns the current animation
   int GetAnimation() const;
 
-  // Loads animation data from xml file passed and calls SetAnimData.
+  /// Loads animation data from xml file passed and calls SetAnimData.
   void LoadAnimData( const std::string &filepath );
 
-  // Freezes animation on current frame
+  /// Freezes animation on current frame
   void Pause();
 
-  // Resumes animation from current frame
+  /// Resumes animation from current frame
   void Play();
 
-  // Stops animation then resumes from first frame
+  /// Stops animation then resumes from first frame
   void Restart();
 
-  // Sets the current animation's frame
+  /// Sets the current animation's frame
   void SetFrame( int frame );
 
-  // Sets the current animation. Set reverse to true for animation to
-  // play in reverse
+  /// Sets the current animation. Set reverse to true for animation to
+  /// play in reverse
   void SetAnimation( int animation, bool reverse = false );
 
-  // Sets the data to be used for the animation
+  /// Sets the data to be used for the animation
   void SetAnimData( const AnimData *animData );
 
-  // Stops animation and sets it to first frame
+  /// Stops animation and sets it to first frame
   void Stop();
 
-  // Updates the AnimSprite
+  /// Updates the AnimSprite
   void Update();
 
  protected:
-  // Returns whether sprite is still animating
+  /// Returns whether sprite is still animating
   bool IsAnimating();
 
  private:
-  // Restricts copy constructor and assignment.
+  /// Restricts copy constructor and assignment.
   AnimSprite( const AnimSprite &sprite );
   AnimSprite& operator=( const AnimSprite &sprite );
 
-  // Updates the animation
+  /// Updates the animation
   void AnimUpdate();
 
-  // Selects the next frame
+  /// Selects the next frame
   void NextFrame();
 
   const AnimData *m_animData; //Pointer to constant animation data

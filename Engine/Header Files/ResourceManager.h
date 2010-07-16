@@ -12,7 +12,7 @@
 #include<iostream>
 #endif
 
-/*
+/**
 String Compare functor used for std::map
 */
 struct strCmp {
@@ -35,24 +35,20 @@ public:
   ResourceManager();
   ~ResourceManager();
 
-  /************************************************
-  Clear
-  -Erases all contents of the ResourceManager
-  ************************************************/
+  /// -Erases all contents of the ResourceManager
   void Clear();
 
-  /************************************************
-  Load
-  -When give a filename it returns a resource, NULL if failed to load
+  /**
+  -When give a filename it returns a resource, NULL if failed to load\n
   -Insures that no duplicate resources are loaded
   into memory
-  ************************************************/
+  */
   resource_t* Load( const std::string& filename );
 
 private:
   typedef std::map< const std::string, resource_t*, strCmp > map_t;
   
-  //Restrict copying and assignment
+  /// Restrict copying and assignment
   ResourceManager( const ResourceManager& );
   ResourceManager& operator=( const ResourceManager& );
 
