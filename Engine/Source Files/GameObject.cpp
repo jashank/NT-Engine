@@ -21,6 +21,7 @@ Public Members
 const char GameObject::className[] = "GameObject";
 Lunar<GameObject>::RegType GameObject::methods[] = {
   { "Move", &GameObject::LuaMove },
+  { "GetAnimation", &GameObject::LuaGetAnimation },
   { "SetAnimation", &GameObject::LuaSetAnimation },
   { "SetAnimationReverse", &GameObject::LuaSetAnimationReverse },
   { "IsAnimating", &GameObject::LuaIsAnimating },
@@ -35,6 +36,10 @@ Lunar<GameObject>::RegType GameObject::methods[] = {
   { "SetNoClip", &GameObject::LuaSetNoClip },
   { "ResetTimer", &GameObject::LuaResetTimer },
   { "GetElapsedTime", &GameObject::LuaGetElapsedTime },
+  { "GetSpeed", &GameObject::LuaGetSpeed },
+  { "SetSpeed", &GameObject::LuaSetSpeed },
+  { "SlowDown", &GameObject::LuaSlowDown },
+  { "SpeedUp", &GameObject::LuaSpeedUp },
   { NULL, NULL }
 };
 
@@ -70,7 +75,8 @@ GameObject::GameObject( lua_State *L )
 GameObject::GameObject(
   const std::string &filepath,
   int tileX,
-  int tileY
+  int tileY,
+  int strip
 )
  : m_ptrCallScriptFunc( boost::bind( &GameObject::CallScriptFunc, this, _1 )),
    m_moving( false ),
@@ -101,6 +107,7 @@ GameObject::GameObject(
     y -= GetAnimData()->GetFrameHeight( GetAnimation() ) % tileDim;
   }
   SetPosition( x, y );
+  SetAnimation( strip );
 
   if( !LoadCollisionData( filepath ) ) {
     LogErr( "GameObject XML file " + filepath + " didn't load correctly." );
@@ -111,7 +118,7 @@ GameObject::GameObject(
 
 
 GameObject::~GameObject() {
-  lua_State *L = App::GetApp()->LuaState();
+  lua_State *L = App::GetApp()->GetLuaState();
   if ( L ) {
     luaL_unref( L, LUA_REGISTRYINDEX, m_id );
   }
@@ -127,7 +134,7 @@ void GameObject::HandleEvents() {
 
 void GameObject::UpdateCollision( GameObject *collisionObj ) {
   if( collisionObj ) {
-    lua_State *L = App::GetApp()->LuaState();
+    lua_State *L = App::GetApp()->GetLuaState();
     lua_rawgeti( L, LUA_REGISTRYINDEX, m_id );
     lua_getfield( L, -1, "HandleCollision" );
     if ( lua_isfunction( L, -1 ) ) {
@@ -144,7 +151,7 @@ void GameObject::UpdateAI() {
   if( m_moving ) {
     MovementUpdate();
   } else {
-    lua_State *L = App::GetApp()->LuaState();
+    lua_State *L = App::GetApp()->GetLuaState();
     lua_rawgeti( L, LUA_REGISTRYINDEX, m_id );
     lua_getfield( L, -1, "AI" );
     if ( lua_isfunction( L, -1 )) {
@@ -230,6 +237,12 @@ int GameObject::LuaMove( lua_State *L ) {
     return 1;
   }
   lua_pushboolean( L, true );
+  return 1;
+}
+
+
+int GameObject::LuaGetAnimation( lua_State *L ) {
+  lua_pushinteger( L, GetAnimation());
   return 1;
 }
 
@@ -359,11 +372,51 @@ int GameObject::LuaGetElapsedTime( lua_State *L ) {
   return 1;
 }
 
+
+int GameObject::LuaGetSpeed( lua_State *L ) {
+  lua_pushnumber( L, m_speed );
+  return 1;
+}
+
+
+int GameObject::LuaSetSpeed( lua_State *L ) {
+  if ( !lua_isnumber( L, -1 )) {
+    LogLuaErr( "Number not passed to SetSpeed for GameObject: " + m_type );
+    return luaL_error( L, "Number not passed to SetSpeed for GameObject" );
+  }
+  m_speed = lua_tonumber( L, -1 );
+  return 0;
+}
+
+
+int GameObject::LuaSlowDown( lua_State *L ) {
+  if ( !lua_isnumber( L, -1 )) {
+    LogLuaErr( "Number not passed to SlowDown for GameObject: " + m_type );
+    return luaL_error( L, "Number not passed to SlowDown for GameObject" );
+  }
+  m_speed -= lua_tonumber( L, -1 );
+
+  if ( m_speed < 0.f ) {
+    m_speed = 0.f;
+  }
+  return 0;
+}
+
+
+int GameObject::LuaSpeedUp( lua_State *L ) {
+  if ( !lua_isnumber( L, -1 )) {
+    LogLuaErr( "Number not passed to SpeedUp for GameObject: " + m_type );
+    return luaL_error( L, "Number not passed to SpeedUp for GameObject" );
+  }
+  m_speed += lua_tonumber( L, -1 );
+  return 0;
+}
+
 /************************************************
 Private Methods
 ************************************************/
 void GameObject::InitLua() {
-  lua_State *L = App::GetApp()->LuaState();
+  lua_State *L = App::GetApp()->GetLuaState();
   luaL_dofile( L, m_luaScript.c_str() );
   if ( lua_istable( L, -1 )) {
     m_id = luaL_ref( L, LUA_REGISTRYINDEX );
@@ -445,7 +498,7 @@ void GameObject::CorrectMovement() {
 
 
 void GameObject::CallScriptFunc( std::string &funcName ) {
-  lua_State *L = App::GetApp()->LuaState();
+  lua_State *L = App::GetApp()->GetLuaState();
   lua_rawgeti( L, LUA_REGISTRYINDEX, m_id );
   lua_getfield( L, -1, funcName.c_str() );
   if( lua_isfunction( L, -1 ) ) {

@@ -8,12 +8,13 @@ local Slime = {}
 
 Slime.spawnPointX = -1
 Slime.spawnPointY = -1
-Slime.hasMoved = false
 
 function Slime.AI( self )
-  if ( not Slime.hasMoved ) then
-    Slime.spawnPointX, Slime.spawnPointY = self:GetTile()
-    Slime.hasMoved = true
+  if Slime.spawnPointX == -1 and Slime.spawnPointY == -1 then
+    spawnPoint = Game.GetNearestGameObject( "SpawnPoint", self:GetTile() )
+    if spawnPoint then
+      Slime.spawnPointX, Slime.spawnPointY = spawnPoint:GetTile()
+    end
   end
 
   Util.GenericEnemyAI( self )
@@ -21,9 +22,10 @@ end
 
 
 function Slime.HandleCollision( self, other )
-	if ( other:GetType() == "Slime" ) then
+  otherType = other:GetType()
+	if otherType == "Slime" or otherType == "Penguin" then
 		self:Reverse()
-		self:SetAnimation( self:GetDir() )
+    self:SetAnimation( self:GetDir())
 	end
 end
 

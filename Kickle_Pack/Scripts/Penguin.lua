@@ -20,14 +20,17 @@ end
 
 function Penguin.HandleCollision( self, other )
   local otherType = other:GetType()
-  if ( otherType == "IceBreath" ) then
+  if otherType == "IceBreath" then
     Penguin.frozen = true
     self:BlockTile( true )
     -- Set animation to frozen
     self:ResetTimer()
     Game.DestroyGameObject( other )
+  
+  elseif otherType == "Slime" then
+    self:Reverse()
+    self:SetAnimation( self:GetDir())
   end
 end
-
 
 return Penguin

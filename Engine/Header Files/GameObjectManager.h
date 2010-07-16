@@ -50,6 +50,10 @@ class GameObjectManager {
   /// Returns all GameObjects of type specified. Empty table if there are none.
   static int LuaGetGameObjects( lua_State *L );
 
+  /// Returns closest GameObject of type passed given tile coordinates. If no
+  /// type passed, just returns the closest GameObject
+  static int LuaGetNearestGameObject( lua_State *L );
+
   /// Returns GameObject located on tile. NULL if none exists.
   static int LuaGetGameObjectOnTile( lua_State *L );
 

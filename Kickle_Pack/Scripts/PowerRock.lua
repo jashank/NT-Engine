@@ -1,9 +1,9 @@
 --Power Rock behavior table
 local PowerRock = {}
+PowerRock.kicked = false
 
-function PowerRock.HandleCollision( self, other )
-  otherType = other:GetType()
-  if ( otherType == "Kickle" ) then
+function PowerRock.AI( self )
+  if PowerRock.kicked then
     for k,v in ipairs( Game.GetGameObjects( "Slime" )) do
       IceBlock = Game.CreateGameObject(
                    "Kickle_Pack/Objects/IceBlock.xml",

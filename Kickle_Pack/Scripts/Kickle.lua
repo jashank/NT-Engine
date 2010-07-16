@@ -17,7 +17,9 @@ Kickle.godMode = false
 
 function Kickle.HandleCollision( self, other )
   otherType = other:GetType()
-	if ( otherType == "Slime" or otherType == "Penguin" ) then
+  -- Things that kill Kickle
+	if ( otherType == "Slime" or otherType == "Penguin" or 
+       otherType == "IceBlock" ) then
 		Kickle.state = DYING
 		self:SetAnimation( self:GetDir() + Kickle.state )
   
@@ -149,36 +151,44 @@ function Kickle.PerformAttack( self )
     local kickleDir = self:GetDir()
 		local objOnTile = Game.GetGameObjectOnTile( tileX, tileY )
 
-		if ( objOnTile and objOnTile:GetType() == "IceBlock" ) then
-			Kickle.state = KICKING
-			self:SetAnimation( kickleDir + Kickle.state );
+    if objOnTile then
+      objType = objOnTile:GetType()
 
-      local blockFacingX, blockFacingY =
-        Util.GetTileInDirection( objOnTile, kickleDir )
-      local tileType = Game.GetTileInfo( blockFacingX, blockFacingY )
-      if (( Game.TileIsCrossable( blockFacingX, blockFacingY ) or
-            tileType == "water" ) and
-            not Game.ObjectBlockingTile( blockFacingX, blockFacingY )) then
-			  objOnTile:GetTable().moving = true
-			  objOnTile:SetDir( kickleDir );
-      else 
-        Game.DestroyGameObject( objOnTile )
-        Game.CreateGameObject( 
-          "Kickle_Pack/Objects/Slime.xml",
-          objOnTile:GetTable().slimeSpawnX,
-          objOnTile:GetTable().slimeSpawnY
-        )
-      end
+      if objType == "IceBlock" then
+        Kickle.state = KICKING
+        self:SetAnimation( kickleDir + Kickle.state );
+
+        local blockFacingX, blockFacingY =
+          Util.GetTileInDirection( objOnTile, kickleDir )
+        local tileType = Game.GetTileInfo( blockFacingX, blockFacingY )
+        if (( Game.TileIsCrossable( blockFacingX, blockFacingY ) or
+              tileType == "water" ) and
+              not Game.ObjectBlockingTile( blockFacingX, blockFacingY )) then
+          objOnTile:GetTable().moving = true
+          objOnTile:SetDir( kickleDir );
+        else 
+          objOnTile:GetTable().destroyed = true
+        end
+        return
     
-    elseif ( objOnTile and objOnTile:GetType() == "Penguin" and 
-             objOnTile:GetTable().frozen == true ) then
-      Kickle.state = KICKING
-      self:SetAnimation( kickleDir + Kickle.state )
-      Game.DestroyGameObject( objOnTile )
+      elseif objType == "Penguin" and 
+             objOnTile:GetTable().frozen == true then
+        Kickle.state = KICKING
+        self:SetAnimation( kickleDir + Kickle.state )
+        Game.DestroyGameObject( objOnTile )
+        return
 
-		elseif (( Game.TileIsCrossable( tileX, tileY ) or
-              Game.GetTileInfo( tileX, tileY ) == "water" ) and
-              not Game.ObjectBlockingTile( tileX, tileY ) ) then
+      elseif objType == "PowerRock" then
+        Kickle.state = KICKING
+        self:SetAnimation( kickleDir + Kickle.state )
+        objOnTile:GetTable().kicked = true
+        return
+      end
+    end
+
+		if (( Game.TileIsCrossable( tileX, tileY ) or
+          Game.GetTileInfo( tileX, tileY ) == "water" ) and
+          not Game.ObjectBlockingTile( tileX, tileY ) ) then
 			local iceBreath = Game.CreateGameObject(
 				"Kickle_Pack/Objects/IceBreath.xml", tileX, tileY )
 			local iceBreathdir = self:GetDir()

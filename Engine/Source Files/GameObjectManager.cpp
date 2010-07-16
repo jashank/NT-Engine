@@ -1,7 +1,8 @@
 #include "GameObjectManager.h"
 
-#include <algorithm>
 #include <queue>
+
+#include <cstdlib>
 
 #include <SFML/Graphics.hpp>
 
@@ -20,6 +21,7 @@ const luaL_Reg GameObjectManager::LuaFuncs[] = {
   { "DestroyGameObject", LuaDestroyGameObject },
   { "GetGameObject", LuaGetGameObject },
   { "GetGameObjects", LuaGetGameObjects },
+  { "GetNearestGameObject", LuaGetNearestGameObject },
   { "GetGameObjectOnTile", LuaGetGameObjectOnTile },
   { "ObjectBlockingTile", LuaObjectBlockingTile },
   { NULL, NULL }
@@ -49,13 +51,14 @@ bool GameObjectManager::LoadData( const TiXmlElement *dataRoot ) {
         const TiXmlElement *instance = objectType->FirstChildElement( "inst" );
         if ( instance ) {
           do {
-            int x, y = 0;
+            int x, y, strip = 0;
             instance->QueryIntAttribute( "x", &x );
             instance->QueryIntAttribute( "y", &y );
-            if ( x >= 0 && y >= 0 ) {
-              AddGameObject( new GameObject( path, x, y ));
+            instance->QueryIntAttribute( "strip", &strip );
+            if ( x >= 0 && y >= 0 && strip >= 0 ) {
+              AddGameObject( new GameObject( path, x, y, strip ));
             } else {
-              LogErr( "Tile location negative for GameObject in state file." );
+              LogErr( "Tile location or strip negative for GameObject in state file." );
               return false;
             }
           } while ( instance = instance->NextSiblingElement( "inst" ));
@@ -164,26 +167,22 @@ void GameObjectManager::RegisterLuaFuncs( lua_State *L ) {
 
 
 int GameObjectManager::LuaCreateGameObject( lua_State *L ) {
-  if( !lua_isstring( L, -3 ) ) {
+  if( !lua_isstring( L, -3 )) {
     LogLuaErr( "String not passed for file path in CreateGameObject." );
     return luaL_error( L, "String not passed for file path in CreateGameObject." );
   }
   std::string path = lua_tostring( L, -3 );
 
-  if( !lua_isnumber( L, -2 ) ) {
-    LogLuaErr( "Number not passed to x position in CreateGameObject." );
-    return luaL_error( L, "Number not passed to x position in CreateGameObject." );
+  if( !lua_isnumber( L, -2 ) || !lua_isnumber( L, -1 )) {
+    LogLuaErr( "Number not passed to tile location in CreateGameObject." );
+    return luaL_error( L,
+      "Number not passed to tile location  in CreateGameObject." );
   }
   int tileX = lua_tointeger( L, -2 );
-
-  if( !lua_isnumber( L, -1 ) ) {
-    LogLuaErr( "Number not passed to y position in CreateGameObject" );
-    return luaL_error( L, "Number not passed to y position in CreateGameObject" );
-  }
   int tileY = lua_tointeger( L, -1 );
 
   if ( tileX >= 0 && tileY >= 0 ) {
-    GameObject *newGameObject = new GameObject( path, tileX, tileY );
+    GameObject *newGameObject = new GameObject( path, tileX, tileY, 0 );
     Inst().AddGameObject( newGameObject );
     Lunar<GameObject>::push( L, newGameObject );
     return 1;
@@ -238,6 +237,47 @@ int GameObjectManager::LuaGetGameObjects( lua_State *L ) {
   }
   return 1;
 }
+
+
+int GameObjectManager::LuaGetNearestGameObject( lua_State *L ) {
+  if ( !lua_isstring( L, -3 )) {
+    LogLuaErr( "String not passed for object type to GetNearestGameObject." );
+    return luaL_error( L,
+      "String not passed for object type to GetNearestGameObject." );
+  }
+  std::string type = lua_tostring( L, -3 );
+
+  if ( !lua_isnumber( L, -2 ) || !lua_isnumber( L, -1 )) {
+    LogLuaErr( "Number not passed for tile location to GetNearestGameObject" );
+    return luaL_error( L,
+      "Number not passed for tile location to GetNearestGameObject" );
+  }
+  int x = lua_tointeger( L, -2 );
+  int y = lua_tointeger( L, -1 );
+
+  int distanceX = 100; // Turn into width of 3d vector when implemented
+  int distanceY = 100; // Turn into height of 3d vector when implemented
+  GameObject *nearestObj = NULL;
+
+  std::list<GameObject*>::const_iterator obj = Inst().m_gameObjects.begin();
+  while ( obj != Inst().m_gameObjects.end()) {
+    if ( *obj ) {
+      if (( type != "" && ( *obj )->GetType() == type ) || ( type == "" )) {
+        int distanceX2 = abs(( *obj )->GetTileX() - x );
+        int distanceY2 = abs(( *obj )->GetTileY() - y );
+        if (( distanceX2 + distanceY2 ) < ( distanceX + distanceY )) {
+          distanceX = distanceX2;
+          distanceY = distanceY2;
+          nearestObj = *obj;
+        }
+      }
+    }
+    ++obj;
+  }
+  Lunar<GameObject>::push( L, nearestObj );
+  return 1;
+}
+
 
 int GameObjectManager::LuaGetGameObjectOnTile( lua_State *L ) {
   if ( !lua_isnumber( L, -2 ) ) {

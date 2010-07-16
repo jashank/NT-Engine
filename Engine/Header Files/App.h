@@ -100,7 +100,7 @@ class App {
   void SetNextState( const std::string &filepath );
 
   /// TEMPORARY - Returns lua state held by App
-  lua_State* LuaState() const;
+  lua_State* GetLuaState() const;
 
   /// Sets the screen's clear color
   void SetClearColor( const sf::Color& color );

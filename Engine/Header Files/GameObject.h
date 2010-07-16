@@ -22,7 +22,7 @@ class GameObject : public AnimSprite {
 
   /// First constructor for registering to Lunar, second for loading in GameObjects
   GameObject( lua_State *L );
-  GameObject( const std::string &filepath, int tileX, int tileY );
+  GameObject( const std::string &filepath, int tileX, int tileY, int strip );
   ~GameObject();
 
   /// Handle events generated for GameObject
@@ -60,6 +60,9 @@ class GameObject : public AnimSprite {
 	/// Returns true if GameObject can move in the direction it is facing,
 	/// or is in motion. False if it can't move in the direction it is facing.
   int LuaMove( lua_State *L );
+
+  /// Returns current animation ID
+  int LuaGetAnimation( lua_State *L );
 
 	/// Sets animation on sheet corresponding to index top to bottom
   int LuaSetAnimation( lua_State *L );
@@ -103,7 +106,21 @@ class GameObject : public AnimSprite {
   /// Has floating point precision
   int LuaGetElapsedTime( lua_State *L );
 
-  ///Necessities for Lunar
+  /// Returns speed of GameObject
+  int LuaGetSpeed( lua_State *L );
+
+  /// Sets speed to speed passed (float)
+  int LuaSetSpeed( lua_State *L );
+
+  /// Reduces speed by float given. Speed can't go below zero.
+  int LuaSlowDown( lua_State *L );
+
+  /// Increases speed by float given. Speed set to zero if greater than numeric
+  /// limit.
+  int LuaSpeedUp( lua_State *L );
+
+
+  /// Necessities for Lunar
   static const char className[];
   static Lunar<GameObject>::RegType methods[];
 

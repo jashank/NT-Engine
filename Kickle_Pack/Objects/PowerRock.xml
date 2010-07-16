@@ -3,5 +3,5 @@
   <animation path="Kickle_Pack/Animations/PowerRockAnim_48x48.xml" />
   <script path="Kickle_Pack/Scripts/PowerRock.lua" />
   <rect x="0" y="0" width="48" height="48" />
-  <tile block="false" />
+  <tile block="true" />
 </game_object>

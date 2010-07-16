@@ -61,6 +61,9 @@ class GameState {
   /// set to the path specified with it
   static int LuaPortal( lua_State *L );
 
+  /// Returns name of state
+  static int LuaGetName( lua_State *L );
+
   /// Allows user to log errors from Lua
   static int LuaLogErr( lua_State *L );
 
@@ -76,6 +79,7 @@ class GameState {
   SoundManager m_soundManager;
   std::map<std::string, std::string> m_portals; // Mappings name/path
   std::string m_path; // Path to current state
+  std::string m_name; // Name of current state (just name of file)
   TileManager m_tileManager;
 };
 

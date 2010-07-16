@@ -96,7 +96,7 @@ bool Button::LoadData( const std::string &filepath ) {
 
 
 void Button::LuaCallMouseInput( const std::string &inputType  ) {
-  lua_State *L = App::GetApp()->LuaState();
+  lua_State *L = App::GetApp()->GetLuaState();
   lua_rawgeti( L, LUA_REGISTRYINDEX, GetID() );
   lua_getfield( L, -1, inputType.c_str() );
   if ( lua_isfunction( L, -1 )) {

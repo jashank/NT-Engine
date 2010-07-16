@@ -17,6 +17,7 @@ const luaL_Reg GameState::LuaFuncs[] = {
   { "NewState", LuaNewState },
   { "ResetState", LuaResetState },
   { "Portal", LuaPortal },
+  { "GetName", LuaGetName },
   { "LogErr", LuaLogErr },
   { NULL, NULL }
 };
@@ -84,6 +85,7 @@ bool GameState::LoadFromFile( const std::string &path ) {
       return false;
     }
     m_path = path;
+    m_name = GetXmlFileName( path );
     return true;
   }
 
@@ -161,6 +163,12 @@ int GameState::LuaPortal( lua_State *L ) {
     App::GetApp()->SetNextState( port->second );
   }
   return 0;
+}
+
+
+int GameState::LuaGetName( lua_State *L ) {
+  lua_pushstring( L, App::GetApp()->GetCurrentState()->m_name.c_str() );
+  return 1;
 }
 
 

@@ -117,8 +117,7 @@ sf::IntRect AnimData::GetFrameRect(
 
   a = &m_anims[animation%m_anims.size()];
 	rect.Top = a->frameRect.Top;
-	rect.Left = a->frameRect.Left + (frame%a->numFrames) *
-    a->frameRect.GetWidth();
+	rect.Left = a->frameRect.Left + (frame%a->numFrames) * a->frameRect.GetWidth();
 	rect.Bottom = a->frameRect.Bottom;
 	rect.Right = rect.Left + a->frameRect.GetWidth();
 
@@ -136,7 +135,7 @@ Private Methods
 AnimData::Animation::Animation()
  :uniqueFrameTimes( false ),
   isLooped( false ),
-  numFrames( 0 ) {}
+  numFrames( 1 ) {}
 
 bool AnimData::ParseStrip(
   const TiXmlElement *strip,

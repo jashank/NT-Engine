@@ -217,7 +217,7 @@ void App::SetNextState( const std::string &filepath ) {
 }
 
 
-lua_State* App::LuaState() const {
+lua_State* App::GetLuaState() const {
   return m_luaState;
 }
 
