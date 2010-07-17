@@ -40,20 +40,20 @@ bool AnimData::LoadFromFile( const std::string &filename ) {
                   if ( !ParseStrip( strip, loadedSheet, ON )) {
                     return false;
                   }
-                } while ( strip = strip->NextSiblingElement( "strip" ));
+                } while ( (strip = strip->NextSiblingElement( "strip" )));
               }
             } else if ( strcmp( elem->Value(), "strip") == 0 ) {
               if ( !ParseStrip( elem, loadedSheet, OFF )) {
                 return false;
               }
             }
-          } while ( elem = elem->NextSiblingElement() );
+          } while ( (elem = elem->NextSiblingElement()) );
         }
       } else {
         LogErr( "Sheet in animation file: " + filename + " not found." );
         return false;
       }
-    } while ( sheet = sheet->NextSiblingElement( "sheet" ));
+    } while ( (sheet = sheet->NextSiblingElement( "sheet" )) );
   } else {
     LogErr( "File not found: " + filename );
     return false;

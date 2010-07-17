@@ -266,7 +266,7 @@ bool TileManager::LoadTileAnims( const std::string &animPath ) {
                       "animation file: " + animPath );
                   return false;
                 }
-              } while ( strip = strip->NextSiblingElement( "strip" ));
+              } while ( (strip = strip->NextSiblingElement( "strip" )) );
             }
           } else if ( strcmp( elem->Value(), "strip" ) == 0 ) {
             if ( !GetTileInfo( elem )) {
@@ -275,7 +275,7 @@ bool TileManager::LoadTileAnims( const std::string &animPath ) {
               return false;
             }
           }
-        } while ( elem = elem->NextSiblingElement() );
+        } while ( (elem = elem->NextSiblingElement()) );
       }
     }
   } else {

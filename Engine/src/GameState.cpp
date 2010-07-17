@@ -76,7 +76,7 @@ bool GameState::LoadFromFile( const std::string &path ) {
             } else {
               LogErr( "Name or path not specified for port in GameState: " + path );
             }
-          } while ( port = port->NextSiblingElement( "port" ));
+          } while ( (port = port->NextSiblingElement( "port" )) );
         }
       }
 

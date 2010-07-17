@@ -34,7 +34,7 @@ bool SoundManager::LoadData( const TiXmlElement *dataRoot ) {
           LogErr( "No path specified for song." );
           return false;
         }
-      } while ( song = song->NextSiblingElement( "song" ));
+      } while ( (song = song->NextSiblingElement( "song" )) );
     } else {
       LogErr( "<music> tag not necessary when no songs specified." );
       return false;

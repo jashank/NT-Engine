@@ -61,7 +61,7 @@ bool GameObjectManager::LoadData( const TiXmlElement *dataRoot ) {
               LogErr( "Tile location or strip negative for GameObject in state file." );
               return false;
             }
-          } while ( instance = instance->NextSiblingElement( "inst" ));
+          } while ( (instance = instance->NextSiblingElement( "inst" )) );
         } else {
           LogErr( "No instances specified for GameObject in state file." );
           return false;
@@ -70,7 +70,7 @@ bool GameObjectManager::LoadData( const TiXmlElement *dataRoot ) {
         LogErr( "No path specified for GameObject in state file." );
         return false;
       }
-    } while ( objectType = objectType->NextSiblingElement( "object" ));
+    } while ( (objectType = objectType->NextSiblingElement( "object" )) );
   } else {
     LogErr( "No game_object specified in <game_objects>. Thus, not necessary." );
     return false;

@@ -47,7 +47,7 @@ bool InputHandler::LoadInputList( const TiXmlElement *inputRoot ) {
         LogErr( "Key not specified for input element." );
         return false;
       }
-    } while ( input = input->NextSiblingElement( "input" ));
+    } while ( (input = input->NextSiblingElement( "input" )) );
   } else {
     LogErr( "No <input> element specified in input list. Thus, not needed." );
     return false;

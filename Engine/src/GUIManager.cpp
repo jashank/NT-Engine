@@ -43,7 +43,7 @@ bool GUIManager::LoadData( const TiXmlElement *dataRoot ) {
                 instance->QueryIntAttribute( "x", &x );
                 instance->QueryIntAttribute( "y", &y );
                 m_components.push_back( gui->second( path, x, y ));
-              } while ( instance = instance->NextSiblingElement( "instance" ));
+              } while ( (instance = instance->NextSiblingElement( "instance" )));
             } else {
               LogErr( "No instances specified for GUI type in state file." );
               return false;
@@ -60,7 +60,7 @@ bool GUIManager::LoadData( const TiXmlElement *dataRoot ) {
         LogErr( "No type specified for GUI component in state file." );
         return false;
       }
-    } while ( component = component->NextSiblingElement( "component" ));
+    } while ( (component = component->NextSiblingElement( "component" )) );
   } else {
     LogErr( "No component specified in <GUI>. Thus, <GUI> not needed." );
     return false;
