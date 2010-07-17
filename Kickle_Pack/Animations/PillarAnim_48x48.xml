@@ -4,7 +4,7 @@
   <strip name="pillar_raise">
     <clip x="0" y="0" width="48" height="48" />
     <flow num_frames="4" looped="false" />
-    <frame_times> 0.05 </frame_times>
+    <frame_times> 0.02 </frame_times>
   </strip>
 
 </sheet>
