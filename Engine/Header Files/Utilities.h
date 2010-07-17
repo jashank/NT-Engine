@@ -26,12 +26,10 @@ void ClearLog();
 
 /// Writes a message to Engine.log
 /// and in debug mode the msg is also displayed in the console
-void LogMsg( const std::ostringstream &msg );
 void LogMsg( const std::string &msg );
 
 /// Writes an error message to Engine.log
 /// and in debug mode the error also displayed in the console
-void LogErr( const std::ostringstream &msg );
 void LogErr( const std::string &msg );
 void LogLuaErr( const std::string &msg );
 #endif

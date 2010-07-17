@@ -45,19 +45,12 @@ void ClearLog() {
   std::ofstream file( "Engine.log", std::ios::out|std::ios::trunc );
 }
 
-
-void LogMsg( const std::ostringstream &msg ) {
-  DEBUG_STATEMENT( std::cout << msg.str(); )
+void LogMsg( const std::string &msg ) {
+  DEBUG_STATEMENT( std::cout << msg; );
   std::ofstream file( "Engine.log", std::ios::out|std::ios::app );
-  file << msg.str() << "\n";
+  file << msg << "\n";
   file.close();
 }
-
-
-void LogMsg( const std::string &msg ) {
-  LogMsg( std::ostringstream( msg ));
-}
-
 
 void LogErr( const std::ostringstream &msg ) {
   DEBUG_STATEMENT( std::cout << "[ERR] - " << msg.str(); )
@@ -66,11 +59,12 @@ void LogErr( const std::ostringstream &msg ) {
   file.close();
 }
 
-
 void LogErr( const std::string &msg ) {
-  LogErr( std::ostringstream( msg ));
+  DEBUG_STATEMENT( std::cout << "[ERR] - " << msg; )
+  std::ofstream file( "Engine.log", std::ios::out|std::ios::app );
+  file << "[ERR] - " << msg << "\n";
+  file.close();
 }
-
 
 void LogLuaErr( const std::string &msg ) {
   std::ofstream file( "Engine.log", std::ios::out|std::ios::app );
