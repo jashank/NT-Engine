@@ -1,9 +1,9 @@
---GameObject Utilities
+--Object Utilities
 math.randomseed( os.time() )
 
 local Util = {}
 
--- Direction constants for GameObjects
+-- Direction constants for Objects
 Util.UP = 0
 Util.DOWN = 1
 Util.LEFT = 2
@@ -25,15 +25,15 @@ function Util.GetTileInDir( dir, tileX, tileY )
 end
 
 
--- Returns tile GameObject is facing
-function Util.GetTileObjectFaces( GameObject )
-	return Util.GetTileInDir( GameObject:GetDir(), GameObject:GetTile())
+-- Returns tile Object is facing
+function Util.GetTileObjectFaces( Object )
+	return Util.GetTileInDir( Object:GetDir(), Object:GetTile())
 end
 
 
--- Returns tile in in direction relative to GameObject passed
-function Util.GetTileInDirection( GameObject, dir )
-	return Util.GetTileInDir( dir, GameObject:GetTile() )
+-- Returns tile in in direction relative to Object passed
+function Util.GetTileInDirection( Object, dir )
+	return Util.GetTileInDir( dir, Object:GetTile() )
 end
 
 
@@ -68,11 +68,11 @@ function Util.GetRandomDir( dirsNotToUse )
 end
 
 
--- Generic enemy AI for a GameObject to use. Tries its hardest to get
+-- Generic enemy AI for a Object to use. Tries its hardest to get
 -- to Kickle, if all else fails tries to find any direction it can 
 -- possibly move.
 function Util.GenericEnemyAI( enemy )
-	local Kickle = Game.GetGameObject( "Kickle" )
+	local Kickle = State.GetObject( "Kickle" )
 
 	if ( Kickle ) then
 		local enemyX, enemyY = enemy:GetTile()

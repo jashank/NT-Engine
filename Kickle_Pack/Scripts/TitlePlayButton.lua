@@ -3,7 +3,7 @@
 local TitlePlay = {}
 
 function TitlePlay.MousePressed()
-  Game.NewState( "Kickle_Pack/States/GardenLand_A.xml" );
+  State.LoadPath( "Kickle_Pack/States/GardenLand_A.xml" );
 end
 
 function TitlePlay.MouseReleased() end

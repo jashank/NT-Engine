@@ -1,5 +1,5 @@
 package.path = package.path .. ";Kickle_Pack/Scripts/?.lua"
-Util = require ("GameObjectUtilities")
+Util = require ("ObjectUtilities")
 
 --IceBlock Behavior Table
 
@@ -27,22 +27,22 @@ function IceBlock.AI( self )
 		IceBlock.moving = self:Move()
 
 		local facingX, facingY = Util.GetTileObjectFaces( self )
-    local tileType = Game.GetTileInfo( facingX, facingY )
+    local tileType = State.GetTileInfo( facingX, facingY )
 
 		if tileType == "water" or tileType == "" then
       IceBlock.destroyed = true
       if tileType == "water" then
         local tileType, tileName =
-          Game.GetTileInfo( self:GetTile() )
-        Game.SetTile( facingX, facingY, tileName, 0 )
+          State.GetTileInfo( self:GetTile() )
+        State.SetTile( facingX, facingY, tileName, 0 )
       end
     end
 	end
 
   if IceBlock.destroyed then
-    Game.DestroyGameObject( self )
+    State.DestroyObject( self )
     if IceBlock.slimeSpawnX == -1 and IceBlock.slimeSpawnY == -1 then
-      local stateName = Game.GetName()
+      local stateName = State.GetName()
       if stateName == "GardenLand_E" then
         if IceBlock.startingY == 6 then
           IceBlock.slimeSpawnX = 6
@@ -53,7 +53,7 @@ function IceBlock.AI( self )
         end
       end
     end
-    Game.CreateGameObject(
+    State.CreateObject(
       "Kickle_Pack/Objects/Slime.xml",
       IceBlock.slimeSpawnX,
       IceBlock.slimeSpawnY
@@ -66,20 +66,20 @@ end
 function IceBlock.HandleCollision( self, other )
   otherType = other:GetType()
 	if otherType == "IceBreath" then
-		Game.DestroyGameObject( other )
+		State.DestroyObject( other )
     self:ResetTimer() -- Refreezes IceBlock
 
   elseif otherType == "Slime" then
     local slimeSpawnX = other:GetTable().spawnPointX;
     local slimeSpawnY = other:GetTable().spawnPointY;
-    Game.CreateGameObject( 
+    State.CreateObject( 
       "Kickle_Pack/Objects/Slime.xml",
       slimeSpawnX,
       slimeSpawnY
     )
 
   elseif otherType == "Penguin" then
-    Game.DestroyGameObject( other )
+    State.DestroyObject( other )
 	end
 end
 

@@ -1,5 +1,5 @@
 package.path = package.path .. ";Kickle_Pack/Scripts/?.lua"
-Util = require ("GameObjectUtilities")
+Util = require ("ObjectUtilities")
 
 -- Correspond to Kickle's sprite sheet (each row makes val increment by 1)
 local STANDING = 0
@@ -24,7 +24,7 @@ function Kickle.HandleCollision( self, other )
 		self:SetAnimation( self:GetDir() + Kickle.state )
   
   elseif ( otherType == "DreamBag" and Kickle.state ~= DYING ) then
-    Game.DestroyGameObject( other )
+    State.DestroyObject( other )
   end
 end
 
@@ -125,15 +125,15 @@ function Kickle.PerformPillar( self )
 	if( Kickle.state == STANDING ) then
 		local tileX, tileY = Util.GetTileObjectFaces( self )
 
-		if ( Game.TileIsCrossable( tileX, tileY ) and
-			   not Game.ObjectBlockingTile( tileX, tileY ) ) then
+		if ( State.TileIsCrossable( tileX, tileY ) and
+			   not State.ObjectBlockingTile( tileX, tileY ) ) then
 			Kickle.state = PILLAR
       self:SetAnimation( self:GetDir() + Kickle.state )
-			local pillar = Game.CreateGameObject(
+			local pillar = State.CreateObject(
 				"Kickle_Pack/Objects/Pillar.xml", tileX, tileY )
 
-		elseif ( Game.ObjectBlockingTile( tileX, tileY ) ) then
-			local objOnTile = Game.GetGameObjectOnTile( tileX, tileY )
+		elseif ( State.ObjectBlockingTile( tileX, tileY ) ) then
+			local objOnTile = State.GetObjectOnTile( tileX, tileY )
 			if( objOnTile:GetType() == "Pillar" ) then
 				Kickle.state = PILLAR
         self:SetAnimationReverse( self:GetDir() + Kickle.state )
@@ -149,7 +149,7 @@ function Kickle.PerformAttack( self )
 	if ( Kickle.state == STANDING ) then
 		local tileX, tileY = Util.GetTileObjectFaces( self )
     local kickleDir = self:GetDir()
-		local objOnTile = Game.GetGameObjectOnTile( tileX, tileY )
+		local objOnTile = State.GetObjectOnTile( tileX, tileY )
 
     if objOnTile then
       objType = objOnTile:GetType()
@@ -160,10 +160,10 @@ function Kickle.PerformAttack( self )
 
         local blockFacingX, blockFacingY =
           Util.GetTileInDirection( objOnTile, kickleDir )
-        local tileType = Game.GetTileInfo( blockFacingX, blockFacingY )
-        if (( Game.TileIsCrossable( blockFacingX, blockFacingY ) or
+        local tileType = State.GetTileInfo( blockFacingX, blockFacingY )
+        if (( State.TileIsCrossable( blockFacingX, blockFacingY ) or
               tileType == "water" ) and
-              not Game.ObjectBlockingTile( blockFacingX, blockFacingY )) then
+              not State.ObjectBlockingTile( blockFacingX, blockFacingY )) then
           objOnTile:GetTable().moving = true
           objOnTile:SetDir( kickleDir );
         else 
@@ -175,7 +175,7 @@ function Kickle.PerformAttack( self )
              objOnTile:GetTable().frozen == true then
         Kickle.state = KICKING
         self:SetAnimation( kickleDir + Kickle.state )
-        Game.DestroyGameObject( objOnTile )
+        State.DestroyObject( objOnTile )
         return
 
       elseif objType == "PowerRock" then
@@ -186,10 +186,10 @@ function Kickle.PerformAttack( self )
       end
     end
 
-		if (( Game.TileIsCrossable( tileX, tileY ) or
-          Game.GetTileInfo( tileX, tileY ) == "water" ) and
-          not Game.ObjectBlockingTile( tileX, tileY ) ) then
-			local iceBreath = Game.CreateGameObject(
+		if (( State.TileIsCrossable( tileX, tileY ) or
+          State.GetTileInfo( tileX, tileY ) == "water" ) and
+          not State.ObjectBlockingTile( tileX, tileY ) ) then
+			local iceBreath = State.CreateObject(
 				"Kickle_Pack/Objects/IceBreath.xml", tileX, tileY )
 			local iceBreathdir = self:GetDir()
 			iceBreath:SetDir( iceBreathdir )

@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<game_object>
+<object>
   <animation path="Kickle_Pack/Animations/KickleAnim_48x60.xml" />
   <script path="Kickle_Pack/Scripts/Kickle.lua" />
   <speed ppf="2.5" />
@@ -21,4 +21,4 @@
     <input key="g" repeat="false" delay="0" function="GodMode" />
     <input key="SPACE" repeat="false" delay="0" function="Suicide" />
   </input_list>
-</game_object>
+</object>

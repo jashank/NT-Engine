@@ -2,13 +2,13 @@
 local StageManager = {}
 
 function StageManager.AI( self )
-  if( not Game.GetGameObject( "DreamBag" )) then
-    Game.Portal( "nextStage" )
+  if( not State.GetObject( "DreamBag" )) then
+    State.Portal( "nextStage" )
   end
 end
 
 function StageManager.Reset( self )
-  Game.ResetState()
+  State.Reset()
 end
 
 return StageManager

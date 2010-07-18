@@ -1,4 +1,4 @@
-#include "GameState.h"
+#include "State.h"
 
 #include <utility>
 
@@ -13,9 +13,9 @@ extern "C" {
 /*******************************************
  Data Members
 *******************************************/
-const luaL_Reg GameState::LuaFuncs[] = {
-  { "NewState", LuaNewState },
-  { "ResetState", LuaResetState },
+const luaL_Reg State::LuaFuncs[] = {
+  { "LoadPath", LuaLoadPath },
+  { "Reset", LuaReset },
   { "Portal", LuaPortal },
   { "GetName", LuaGetName },
   { "LogErr", LuaLogErr },
@@ -26,7 +26,7 @@ const luaL_Reg GameState::LuaFuncs[] = {
 /*******************************************
  Public Member Functions
 *******************************************/
-bool GameState::LoadFromFile( const std::string &path ) {
+bool State::LoadFromFile( const std::string &path ) {
   TiXmlDocument doc( path.c_str() );
 
   if ( doc.LoadFile() ) {
@@ -40,10 +40,10 @@ bool GameState::LoadFromFile( const std::string &path ) {
         }
       }
 
-      elem = root->FirstChildElement( "game_objects" );
+      elem = root->FirstChildElement( "objects" );
       if ( elem ) {
-        if ( !m_gameObjectManager.LoadData( elem )) {
-          LogErr( "Problem loading GameObjects in state file " + path );
+        if ( !m_objectManager.LoadData( elem )) {
+          LogErr( "Problem loading Objects in state file " + path );
           return false;
         }
       }
@@ -74,7 +74,7 @@ bool GameState::LoadFromFile( const std::string &path ) {
             if ( name && portPath ) {
               m_portals.insert( std::make_pair( name, portPath ));
             } else {
-              LogErr( "Name or path not specified for port in GameState: " + path );
+              LogErr( "Name or path not specified for port in State: " + path );
             }
           } while ( (port = port->NextSiblingElement( "port" )) );
         }
@@ -89,69 +89,69 @@ bool GameState::LoadFromFile( const std::string &path ) {
     return true;
   }
 
-  LogErr( "GameState file not found: " + path );
+  LogErr( "State file not found: " + path );
   return false;
 }
 
 
-void GameState::HandleEvents() {
-  m_gameObjectManager.HandleEvents();
+void State::HandleEvents() {
+  m_objectManager.HandleEvents();
   m_guiManager.HandleEvents();
 }
 
 
-void GameState::Update() {
+void State::Update() {
   m_tileManager.Update();
-  m_gameObjectManager.Update();
+  m_objectManager.Update();
   m_guiManager.Update();
   m_soundManager.Update();
 }
 
 
-void GameState::Render() {
+void State::Render() {
   // The rendering order is important.
   m_tileManager.Render();
-  m_gameObjectManager.Render();
+  m_objectManager.Render();
   m_guiManager.Render();
 }
 
 
-TileManager& GameState::GetTileManager() {
+TileManager& State::GetTileManager() {
   return m_tileManager;
 }
 
 
-GameObjectManager& GameState::GetGameObjectManager() {
-  return m_gameObjectManager;
+ObjectManager& State::GetObjectManager() {
+  return m_objectManager;
 }
 
 
 /*************************************
  * Lua Functions
  * ***********************************/
-void GameState::RegisterLuaFuncs( lua_State *L  ) {
-  luaL_register( L, "Game", LuaFuncs );
+void State::RegisterLuaFuncs( lua_State *L  ) {
+  luaL_register( L, "State", LuaFuncs );
 }
 
 
-int GameState::LuaNewState( lua_State *L ) {
+int State::LuaLoadPath( lua_State *L ) {
   if ( !lua_isstring( L, -1 )) {
-    LogLuaErr( "String not passed to NewState" );
-    return luaL_error( L, "String not passed to NewState" );
+    LogLuaErr( "String not passed to LoadPath" );
+    return luaL_error( L, "String not passed to LoadPath" );
   }
   App::GetApp()->SetNextState( lua_tostring( L, -1 ));
   return 0;
 }
 
 
-int GameState::LuaResetState( lua_State *L ) {
+int State::LuaReset( lua_State *L ) {
   App::GetApp()->SetNextState( App::GetApp()->GetCurrentState()->m_path );
   return 0;
 }
 
 
-int GameState::LuaPortal( lua_State *L ) {
-  GameState *currentState = App::GetApp()->GetCurrentState();
+int State::LuaPortal( lua_State *L ) {
+  State *currentState = App::GetApp()->GetCurrentState();
 
   if ( !lua_isstring( L, -1 )) {
     LogLuaErr( "String not passed to Portal" );
@@ -166,13 +166,13 @@ int GameState::LuaPortal( lua_State *L ) {
 }
 
 
-int GameState::LuaGetName( lua_State *L ) {
+int State::LuaGetName( lua_State *L ) {
   lua_pushstring( L, App::GetApp()->GetCurrentState()->m_name.c_str() );
   return 1;
 }
 
 
-int GameState::LuaLogErr( lua_State *L ) {
+int State::LuaLogErr( lua_State *L ) {
   if ( !lua_isstring( L, -1 )) {
     LogLuaErr( "String not passed to LuaLogLuaErr" );
     return luaL_error( L, "String not passed to LuaLogLuaErr" );

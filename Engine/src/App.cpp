@@ -6,8 +6,8 @@ extern "C" {
   #include "lualib.h"
 }
 
-#include "GameState.h"
-#include "GameObjectManager.h"
+#include "State.h"
+#include "ObjectManager.h"
 #include "TileManager.h"
 #include "Utilities.h"
 
@@ -52,8 +52,8 @@ App::App(
 
   m_luaState = luaL_newstate();
   luaL_openlibs( m_luaState );
-  GameState::RegisterLuaFuncs( m_luaState );
-  GameObjectManager::RegisterLuaFuncs( m_luaState );
+  State::RegisterLuaFuncs( m_luaState );
+  ObjectManager::RegisterLuaFuncs( m_luaState );
   TileManager::RegisterLuaFuncs( m_luaState );
 }
 
@@ -108,7 +108,7 @@ App* App::GetApp() {
 }
 
 
-GameState* App::GetCurrentState() const {
+State* App::GetCurrentState() const {
   return m_currentState;
 }
 
@@ -164,7 +164,7 @@ void App::RegisterKey( sf::Key::Code key ) {
 
 void App::Run() {
   // TEMPORARY
-  m_currentState = new GameState();
+  m_currentState = new State();
   m_currentState->LoadFromFile( m_filePath );
 
 	//Game Loop
@@ -190,7 +190,7 @@ void App::Run() {
       m_music.Clear();
       m_anims.Clear();
 
-		  m_currentState = new GameState();
+		  m_currentState = new State();
 		  m_currentState->LoadFromFile( m_nextStatePath );
 		}
 

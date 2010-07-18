@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
-<game_object>
+<object>
   <animation path="Kickle_Pack/Animations/RockAnim_48x48.xml" />
   <script path="Kickle_Pack/Scripts/Rock.lua" />
   <speed ppf="0" />
   <!-- Only purpose to block tile, rect collision doesn't matter -->
   <rect x="0" y="0" width="0" height="0" />
   <tile block="true" />
-</game_object>
+</object>

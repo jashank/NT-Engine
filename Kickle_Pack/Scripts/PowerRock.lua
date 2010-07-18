@@ -4,16 +4,16 @@ PowerRock.kicked = false
 
 function PowerRock.AI( self )
   if PowerRock.kicked then
-    for k,v in ipairs( Game.GetGameObjects( "Slime" )) do
-      IceBlock = Game.CreateGameObject(
+    for k,v in ipairs( State.GetObjects( "Slime" )) do
+      IceBlock = State.CreateObject(
                    "Kickle_Pack/Objects/IceBlock.xml",
                    v:GetTile()
                    );
       IceBlock:GetTable().slimeSpawnX = v:GetTable().spawnPointX
       IceBlock:GetTable().slimeSpawnY = v:GetTable().spawnPointY
-      Game.DestroyGameObject( v )
+      State.DestroyObject( v )
     end
-    Game.DestroyGameObject( self )
+    State.DestroyObject( self )
   end
 end
 

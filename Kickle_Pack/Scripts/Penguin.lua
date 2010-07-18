@@ -1,6 +1,6 @@
 --Penguin Behavior Table
 package.path = package.path .. ";Kickle_Pack/Scripts/?.lua"
-Util = require ("GameObjectUtilities")
+Util = require ("ObjectUtilities")
 
 local Penguin = {}
 
@@ -25,7 +25,7 @@ function Penguin.HandleCollision( self, other )
     self:BlockTile( true )
     -- Set animation to frozen
     self:ResetTimer()
-    Game.DestroyGameObject( other )
+    State.DestroyObject( other )
   
   elseif otherType == "Slime" then
     self:Reverse()

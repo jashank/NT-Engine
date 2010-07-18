@@ -1,5 +1,5 @@
 package.path = package.path .. ";Kickle_Pack/Scripts/?.lua"
-Util = require ("GameObjectUtilities")
+Util = require ("ObjectUtilities")
 math.randomseed( os.time() )
 
 --Slime Behavior Table
@@ -11,7 +11,7 @@ Slime.spawnPointY = -1
 
 function Slime.AI( self )
   if Slime.spawnPointX == -1 and Slime.spawnPointY == -1 then
-    spawnPoint = Game.GetNearestGameObject( "SpawnPoint", self:GetTile() )
+    spawnPoint = State.GetNearestObject( "SpawnPoint", self:GetTile() )
     if spawnPoint then
       Slime.spawnPointX, Slime.spawnPointY = spawnPoint:GetTile()
     end

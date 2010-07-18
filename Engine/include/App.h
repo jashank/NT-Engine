@@ -16,7 +16,7 @@ extern "C" {
 
 #undef LoadImage // Undefines LoadImage macro from WinUser
 
-class GameState;
+class State;
 class AnimData;
 
 ///Template specialization to handle sf::Music's OpenFromFile()
@@ -56,8 +56,8 @@ class App {
   /// of App exists at a time
   static App* GetApp();
 
-  /// Returns GameState app is currently running
-  GameState* GetCurrentState() const;
+  /// Returns State app is currently running
+  State* GetCurrentState() const;
 
   /// Returns the time since App was created.
   float GetTime() const;
@@ -139,7 +139,7 @@ class App {
   // TEMPORARY
   bool m_nextStateSet;
   std::string m_nextStatePath;
-  GameState *m_currentState;
+  State *m_currentState;
   std::string m_filePath;
   lua_State *m_luaState;
 };

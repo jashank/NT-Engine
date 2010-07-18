@@ -8,7 +8,7 @@
 #include "AnimSprite.h"
 #include "InputHandler.h"
 
-class GameState;
+class State;
 
 /*! \class GUI
  * Abstract base class for gui components
@@ -33,8 +33,8 @@ class GUI {
   static const char className[];
 
  protected:
-  /// Returns GameState held by GUI
-  GameState* GetState() const;
+  /// Returns State held by GUI
+  State* GetState() const;
 
   /// Returns lua id held by GUI
   int GetID() const;
@@ -60,7 +60,7 @@ class GUI {
   const boost::function1<void, std::string&> m_ptrCallScriptFunc;
 
   AnimSprite m_sprite; // Sprite representing GUI
-  static GameState *m_state; // State GUI is currently in
+  static State *m_state; // State GUI is currently in
   InputHandler m_input; // Handles key events for this GUI
   int m_id; // ID for lua
   std::string m_luaPath; // Path to lua script

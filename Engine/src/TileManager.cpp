@@ -11,7 +11,7 @@ extern "C" {
 #include "AnimData.h"
 #include "AnimSprite.h"
 #include "App.h"
-#include "GameState.h"
+#include "State.h"
 #include "tinyxml.h"
 
 /******************************
@@ -137,7 +137,7 @@ bool TileManager::TileIsCrossable( int x, int y )  const {
  * Lua Functions
  * *****************************/
 void TileManager::RegisterLuaFuncs( lua_State *L ) {
-  luaL_register( L, "Game", LuaFuncs );
+  luaL_register( L, "State", LuaFuncs );
 }
 
 

@@ -11,27 +11,27 @@ namespace sf {
 
 class SoundManager {
  public:
-   SoundManager();
-   ~SoundManager() {}
+  SoundManager();
+  ~SoundManager() {}
 
-   /// Parses data from <sound> section of state file.
-   /// Returns whether data load was successful.
-   bool LoadData( const TiXmlElement *dataRoot );
+  /// Parses data from <sound> section of state file.
+  /// Returns whether data load was successful.
+  bool LoadData( const TiXmlElement *dataRoot );
 
-   /// Sets m_play to true
-   void Play();
+  /// Sets m_play to true
+  void Play();
 
-   /// Sets m_play to false
-   void Pause();
+  /// Sets m_play to false
+  void Pause();
 
-   /// Sets m_loop to loop
-   void SetLoop( bool loop );
+  /// Sets m_loop to loop
+  void SetLoop( bool loop );
 
-   /// Returns m_play
-   bool IsPlaying() const;
+  /// Returns m_play
+  bool IsPlaying() const;
 
-   /// Checks if the song is finished and if it should play the next song.
-   void Update();
+  /// Checks if the song is finished and if it should play the next song.
+  void Update();
 
  private:
   /// Restricts copy constructor, and assignment.

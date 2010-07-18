@@ -1,5 +1,5 @@
 package.path = package.path .. ";Kickle_Pack/Scripts/?.lua"
-Util = require ("GameObjectUtilities")
+Util = require ("ObjectUtilities")
 
 -- IceBreath Behavior Table
 
@@ -7,29 +7,29 @@ local IceBreath = {}
 
 function IceBreath.AI( self )	
   local facingTileX, facingTileY = Util.GetTileObjectFaces( self )
-  local tileType = Game.GetTileInfo( facingTileX, facingTileY )
-  local otherObj = Game.GetGameObjectOnTile( facingTileX, facingTileY )
+  local tileType = State.GetTileInfo( facingTileX, facingTileY )
+  local otherObj = State.GetObjectOnTile( facingTileX, facingTileY )
 
   self:SetNoClip( tileType == "water" or
     ( otherObj and ( otherObj:GetType() == "IceBlock" or
       otherObj:GetType() == "Penguin" )))
 
   if not self:Move() then
-    Game.DestroyGameObject( self )
+    State.DestroyObject( self )
   end
 end
 
 function IceBreath.HandleCollision( self, other )
   otherType = other:GetType()
 	if ( otherType == "Slime" ) then
-    IceBlock = Game.CreateGameObject(
+    IceBlock = State.CreateObject(
                  "Kickle_Pack/Objects/IceBlock.xml",
                  other:GetTile()
                  );
     IceBlock:GetTable().slimeSpawnX = other:GetTable().spawnPointX
     IceBlock:GetTable().slimeSpawnY = other:GetTable().spawnPointY
-    Game.DestroyGameObject( other )
-    Game.DestroyGameObject( self )
+    State.DestroyObject( other )
+    State.DestroyObject( self )
 	end
 end
 

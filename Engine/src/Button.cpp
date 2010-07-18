@@ -10,7 +10,7 @@ extern "C" {
 #include "tinyxml.h"
 
 #include "App.h"
-#include "GameState.h"
+#include "State.h"
 #include "Utilities.h"
 
 /*************************************

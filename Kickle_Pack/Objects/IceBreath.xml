@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
-<game_object>
+<object>
   <animation path="Kickle_Pack/Animations/IceBreathAnim_48x48.xml" />
   <script path="Kickle_Pack/Scripts/IceBreath.lua" />
   <speed ppf="6.5" />
   <rect x="12" y="11" width="24" height="24" />
   <tile block="false" />
-</game_object>
+</object>

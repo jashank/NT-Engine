@@ -4,7 +4,7 @@ local Popsicle = {}
 
 function Popsicle.HandleCollision( self, other )
   if ( other:GetType() == "Kickle" ) then
-    Game.DestroyGameObject( self )
+    State.DestroyObject( self )
   end
 end
 

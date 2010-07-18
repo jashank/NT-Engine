@@ -25,7 +25,7 @@
     </layout>
   </tiles>
 
-  <game_objects>
+  <objects>
     <object path="Kickle_Pack/Objects/StageManager.xml">
       <inst x="0" y="0" />
     </object>
@@ -48,7 +48,7 @@
     <object path="Kickle_Pack/Objects/OneUp.xml">
       <inst x="7" y="11" />
     </object>
-  </game_objects>
+  </objects>
 
   <sound>
     <music>

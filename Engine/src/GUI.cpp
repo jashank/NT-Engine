@@ -7,7 +7,7 @@ extern "C" {
 #include "tinyxml.h"
 
 #include "App.h"
-#include "GameState.h"
+#include "State.h"
 #include "Utilities.h"
 
 /********************************
@@ -18,7 +18,7 @@ const char GUI::className[] = "GUI";
 /********************************
  * Static Members
  * *****************************/
-GameState* GUI::m_state = NULL;
+State* GUI::m_state = NULL;
 
 /********************************
  * Constructor and Destructor
@@ -59,7 +59,7 @@ void GUI::Render() {
 /******************************
  * Protected Methods
  * ***************************/
-GameState* GUI::GetState() const {
+State* GUI::GetState() const {
   return m_state;
 }
 

@@ -12,7 +12,7 @@ function Pillar.AI( self )
     self:SetAnimation( 0 )
 
   elseif ( Pillar.lower and not self:IsAnimating() ) then
-    Game.DestroyGameObject( self )
+    State.DestroyObject( self )
   end
 end
 
@@ -20,7 +20,7 @@ end
 function Pillar.HandleCollision( self, other )
   local otherType = other:GetType()
 	if ( otherType == "Slime" or otherType == "DreamBag" ) then
-		Game.DestroyGameObject( self )
+		State.DestroyObject( self )
 	end
 end
 
