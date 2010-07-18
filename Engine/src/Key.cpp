@@ -11,3 +11,4 @@ Key::Key( sf::Key::Code k )
    elapsedTime( 0.0f ),
    startTime( 0.0f ) {
 }
+
