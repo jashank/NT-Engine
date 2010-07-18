@@ -1,5 +1,6 @@
 #ifndef MANAGEDKEY_H
 #define MANAGEDKEY_H
+
 #include <SFML/Graphics.hpp>
 
 struct Key {
