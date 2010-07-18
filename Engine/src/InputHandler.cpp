@@ -59,7 +59,7 @@ bool InputHandler::LoadInputList( const TiXmlElement *inputRoot ) {
 void InputHandler::ScanInput( const boost::function1<void, std::string&> &func ) {
   static App* app = App::GetApp();
 
-  for( int i = 0; i < m_keyRegistry.size(); ++i ) {
+  for( unsigned int i = 0; i < m_keyRegistry.size(); ++i ) {
     if( app->GetInput().IsKeyDown( m_keyRegistry[i].first.key )) {
       Key key = app->GetKey( m_keyRegistry[i].first.key );
 

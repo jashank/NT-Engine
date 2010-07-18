@@ -95,7 +95,7 @@ void GameObjectManager::Update() {
   // elements to the end of the list. Don't need to worry about
   // iterating past end because it is guaranteed that no objects
   // will be removed in UpdateCollision().
-  for ( int i = 0; i < m_gameObjects.size(); ++i ) {
+  for ( unsigned int i = 0; i < m_gameObjects.size(); ++i ) {
     if ( *gameObj != NULL ) {
       ( *gameObj )->UpdateCollision( DetectCollision( *gameObj ));
     }
@@ -116,7 +116,7 @@ void GameObjectManager::Update() {
     }
   }
 
-  for ( int i = 0; i < m_toBeDestroyed.size(); i++ ) {
+  for ( unsigned int i = 0; i < m_toBeDestroyed.size(); i++ ) {
     m_gameObjects.remove( m_toBeDestroyed[i] );
     SAFEDELETE( m_toBeDestroyed[i] );
   }

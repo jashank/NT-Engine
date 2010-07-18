@@ -44,7 +44,7 @@ class SoundManager {
   /// Plays the next song in the playlist
   void PlayNextSong();
 
-  int m_playlistIndex; // Index of the current music.
+  unsigned int m_playlistIndex; // Index of the current music.
   sf::Music *m_currentMusic; // Music currently playing
   bool m_loop;
   std::vector<sf::Music*> m_playlist;

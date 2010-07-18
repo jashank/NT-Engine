@@ -299,7 +299,7 @@ bool TileManager::LoadTileLayout( const TiXmlElement *root ) {
 
   for( int i = 0; i < m_width; i++ ) {
     m_layout.push_back( std::vector<int>() );
-    for ( unsigned int j = 0; j < m_height; j++ ) {
+    for ( int j = 0; j < m_height; j++ ) {
       if ( tileMapStream >> currentTile ) {
         m_layout[i].push_back( currentTile );
       } else {

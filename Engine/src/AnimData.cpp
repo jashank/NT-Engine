@@ -183,7 +183,7 @@ bool AnimData::ParseStrip(
         anim.frameTimes.push_back( time );
       }
       if ( anim.frameTimes.size() > 1 ) {
-        if ( anim.frameTimes.size() == anim.numFrames ) {
+        if ( static_cast<int>(anim.frameTimes.size()) == anim.numFrames ) {
           anim.uniqueFrameTimes = true;
         } else {
           LogErr( "When specifying multiple frame times, didn't specify time "
