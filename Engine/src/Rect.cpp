@@ -5,7 +5,7 @@ float Rect::GetWidth() const {
 }
 
 float Rect::GetHeight() const {
-  (bottomRight.y - topLeft.y);
+  return (bottomRight.y - topLeft.y);
 }
 Vector<float> Rect::GetSize() const {
   return Vector<float>( GetWidth(), GetHeight() );
