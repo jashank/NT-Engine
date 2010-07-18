@@ -63,7 +63,6 @@ function Util.GetRandomDir( dirsNotToUse )
       end
     end
   end
-      
   local i = math.random( #dirs )
   return dirs[i]
 end
@@ -104,14 +103,16 @@ function Util.GenericEnemyAI( enemy )
 
 		enemy:SetDir( dir )
 
-    local dirsTried = {}
-    while #dirsTried  < 4 and not enemy:Move() do
-      dirsTried[#dirsTried+1] = dir
+    local dirsTried = { dir }
+    while #dirsTried < 4 and not enemy:Move() do
       dir = Util.GetRandomDir( dirsTried )
       enemy:SetDir( dir )
+      dirsTried[#dirsTried+1] = dir
     end
 
-		enemy:SetAnimation( dir )
+    if #dirsTried < 4 then
+	    enemy:SetAnimation( dir )
+    end
 	end
 end
 
