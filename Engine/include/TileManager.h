@@ -30,6 +30,19 @@ class TileManager {
   /// Renders TileManager
 	void Render();
 
+  /// Return dimensions of tile for this map (tiles are square)
+  int GetTileDim() const;
+
+  /// Return number of tiles on map horizontally and vertically
+  int GetMapWidth() const;
+  int GetMapHeight() const;
+
+  /// Returns true if the tile at X Y is solid, else false;
+  bool TileIsCrossable( int x, int y ) const;
+
+  /// Returns true if tile coordinate passed is on map 
+  bool TileOnMap( int x, int y ) const;
+
   /*******************************
    * Lua Functions
    * ****************************/
@@ -46,16 +59,6 @@ class TileManager {
   /// Sets tile specified to tile associated with name passed.
   /// Also must pass collisionID, 0 for crossable, 1 for not crossable.
   static int LuaSetTile( lua_State *L );
-
-  /// Return dimensions of tile for this map (tiles are square)
-  int GetTileDim() const;
-
-  /// Return number of tiles on map horizontally and vertically
-  int GetMapWidth() const;
-  int GetMapHeight() const;
-
-  /// Returns true if the tile at X Y is solid, else false;
-  bool TileIsCrossable( int x, int y ) const;
 
  private:
   typedef std::map< int, Tile* >::iterator TileInfoIter;

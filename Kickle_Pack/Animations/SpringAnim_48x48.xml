@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 
 <sheet path="Kickle_Pack/Sheets/spring_48x48.png" >
-  <common x="0" num_frames="8" width="48" height="48">
+  <common x="0" num_frames="8" width="39" height="39">
 
     <strip name="top">
       <clip y="0" />
@@ -16,7 +16,7 @@
 
 
     <strip name="left">
-      <clip y="96" />
+      <clip y="78" />
       <frame_times> 0.1 0.1 0.1 0.5 0.1 0.1 0.1 0.1 </frame_times>
     </strip>
 

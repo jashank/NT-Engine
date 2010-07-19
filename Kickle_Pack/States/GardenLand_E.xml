@@ -48,6 +48,9 @@
     <object path="Kickle_Pack/Objects/OneUp.xml">
       <inst x="7" y="11" />
     </object>
+    <object path="Kickle_Pack/Objects/Spring.xml">
+      <inst x="0" y="6" strip="2" />
+    </object>
   </objects>
 
   <sound>

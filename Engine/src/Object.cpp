@@ -206,12 +206,12 @@ int Object::LuaMove( lua_State *L ) {
       default: {}
     }
 
-    if ( nextTileX >= 0 && nextTileY >= 0 ) {
-      int x = nextTileX;
-      int y = nextTileY;
+    if ( m_state->GetTileManager().TileOnMap( nextTileX, nextTileY )) {
       if (( m_noClip ) ||
-        ( m_state->GetTileManager().TileIsCrossable( x, y ) &&
-        !m_state->GetObjectManager().ObjectBlockingTile( x, y ))) {
+          ( m_state->GetTileManager().TileIsCrossable( 
+              nextTileX, nextTileY  ) &&
+            !m_state->GetObjectManager().ObjectBlockingTile( 
+              nextTileX, nextTileY ))) {
         m_moving = true;
       }
     }

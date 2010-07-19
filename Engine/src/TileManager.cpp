@@ -124,13 +124,16 @@ int TileManager::GetMapHeight() const {
 
 
 bool TileManager::TileIsCrossable( int x, int y )  const {
-  if ( x < m_width && y < m_height  ) {
-    ConstTileInfoIter iter = m_tileDataId.find( m_layout[y][x] );
-    if ( iter != m_tileDataId.end() ) {
-      return ( iter->second->cid == CROSSABLE);
-    }
+  ConstTileInfoIter iter = m_tileDataId.find( m_layout[y][x] );
+  if ( iter != m_tileDataId.end() ) {
+    return ( iter->second->cid == CROSSABLE);
   }
   return false;
+}
+
+
+bool TileManager::TileOnMap( int x, int y ) const {
+  return ( x >= 0 && x < m_width && y >= 0 && y < m_height );
 }
 
 /********************************
@@ -154,8 +157,7 @@ int TileManager::LuaGetTileInfo( lua_State *L ) {
   }
   int tileY = lua_tointeger( L, -1 );
 
-  if ( tileX >= 0 && tileX < Inst().m_width &&
-       tileY >= 0 && tileY < Inst().m_height ) {
+  if ( Inst().TileOnMap( tileX, tileY )) {
     Tile tile = Inst().GetTile( tileX, tileY );
     lua_pushstring( L, tile.type.c_str() );
     lua_pushstring( L, tile.name.c_str() );
@@ -181,9 +183,8 @@ int TileManager::LuaTileIsCrossable( lua_State *L ) {
     return luaL_error( L, "Number not passed to y position in TileIsCrossable." );
   }
   int tileY = lua_tointeger( L, -1 );
-
-  if ( tileX >= 0 && tileX < Inst().m_width &&
-       tileY >= 0 && tileY < Inst().m_height ) {
+ 
+  if ( Inst().TileOnMap( tileX, tileY )) {
     lua_pushboolean( L, Inst().TileIsCrossable( tileX, tileY ));
     return 1;
   } else {
@@ -218,8 +219,7 @@ int TileManager::LuaSetTile( lua_State *L ) {
   }
   int collisionID = lua_tointeger( L, -1 );
 
-  if ( tileX >= 0 && tileX < Inst().m_width &&
-       tileY >= 0 && tileY < Inst().m_height ) {
+  if ( Inst().TileOnMap( tileX, tileY )) {
     Inst().SetTile( tileX, tileY, tileName );
     Inst().SetCollision( tileX, tileY, collisionID );
   } else {
@@ -350,7 +350,7 @@ bool TileManager::GetTileInfo( const TiXmlElement *strip ) {
 void TileManager::SetTile( int x, int y, const std::string &tileName ) {
   std::map<std::string, Tile>::iterator tileDataItr
    = m_tileDataName.find( tileName );
-  if ( tileDataItr != m_tileDataName.end() && x < m_width && y < m_height ) {
+  if ( tileDataItr != m_tileDataName.end() ) {
     m_layout[y][x] = tileDataItr->second.id;
   }
 }
@@ -362,7 +362,7 @@ const Tile& TileManager::GetTile( int x, int y ) {
   if( tile != m_tileDataId.end() ) {
     return *m_tileDataId[id];
   }
-
+  
   return NULL_TILE_INFO;
 }
 
