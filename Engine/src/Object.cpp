@@ -10,15 +10,11 @@ extern "C" {
 #include "TileManager.h"
 #include "tinyxml.h"
 
-/************************************************
-Constant Members
-************************************************/
-State* Object::m_state = NULL;
-
-/************************************************
-Public Members
-************************************************/
+/**********************************
+ * Public
+ *********************************/
 const char Object::className[] = "Object";
+
 Lunar<Object>::RegType Object::methods[] = {
   { "Move", &Object::LuaMove },
   { "GetAnimation", &Object::LuaGetAnimation },
@@ -43,9 +39,7 @@ Lunar<Object>::RegType Object::methods[] = {
   { NULL, NULL }
 };
 
-/************************************************
- * Constructor and Destructor
-************************************************/
+
 Object::Object( lua_State *L )
  : m_ptrCallScriptFunc( boost::bind( &Object::CallScriptFunc, this, _1 )),
    m_moving( false ),
@@ -71,6 +65,18 @@ Object::Object( lua_State *L )
   InitLua();
 }
 
+
+Object::~Object() {
+  lua_State *L = App::GetApp()->GetLuaState();
+  if ( L ) {
+    luaL_unref( L, LUA_REGISTRYINDEX, m_id );
+  }
+}
+
+/***********************************************
+ * Private
+ **********************************************/
+State* Object::m_state = NULL;
 
 Object::Object(
   const std::string &filepath,
@@ -117,14 +123,6 @@ Object::Object(
 }
 
 
-Object::~Object() {
-  lua_State *L = App::GetApp()->GetLuaState();
-  if ( L ) {
-    luaL_unref( L, LUA_REGISTRYINDEX, m_id );
-  }
-}
-
-
 void Object::HandleEvents() {
   if ( !m_moving ) {
     m_input.ScanInput( m_ptrCallScriptFunc );
@@ -133,17 +131,16 @@ void Object::HandleEvents() {
 
 
 void Object::UpdateCollision( Object *collisionObj ) {
-  if( collisionObj ) {
-    lua_State *L = App::GetApp()->GetLuaState();
-    lua_rawgeti( L, LUA_REGISTRYINDEX, m_id );
-    lua_getfield( L, -1, "HandleCollision" );
-    if ( lua_isfunction( L, -1 ) ) {
-      Lunar<Object>::push( L, this );
-      Lunar<Object>::push( L, collisionObj );
-      lua_call( L, 2, 0 );
-    }
-    lua_settop( L, 0 );
+  // collisionObj not NULL guaranteed by ObjectManager
+  lua_State *L = App::GetApp()->GetLuaState();
+  lua_rawgeti( L, LUA_REGISTRYINDEX, m_id );
+  lua_getfield( L, -1, "HandleCollision" );
+  if ( lua_isfunction( L, -1 ) ) {
+    Lunar<Object>::push( L, this );
+    Lunar<Object>::push( L, collisionObj );
+    lua_call( L, 2, 0 );
   }
+  lua_settop( L, 0 );
 }
 
 
@@ -168,16 +165,6 @@ void Object::UpdateRendering() {
 }
 
 
-const sf::FloatRect &Object::GetCollisionBox() const {
-  return m_collisionRect;
-}
-
-
-bool Object::BlockingTile() const {
-  return m_blockingTile;
-}
-
-
 int Object::GetTileX() const {
   int tileDim = m_state->GetTileManager().GetTileDim();
   return static_cast<int>(
@@ -191,11 +178,6 @@ int Object::GetTileY() const {
     (( GetPosition().y +
        GetSubRect().GetHeight() % tileDim ) +
        tileDim / 2) / tileDim );
-}
-
-
-const std::string& Object::GetType() const {
-  return m_type;
 }
 
 
@@ -412,9 +394,7 @@ int Object::LuaSpeedUp( lua_State *L ) {
   return 0;
 }
 
-/************************************************
-Private Methods
-************************************************/
+
 void Object::InitLua() {
   lua_State *L = App::GetApp()->GetLuaState();
   luaL_dofile( L, m_luaScript.c_str() );

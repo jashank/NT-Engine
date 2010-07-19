@@ -56,7 +56,7 @@ bool ObjectManager::LoadData( const TiXmlElement *dataRoot ) {
             instance->QueryIntAttribute( "y", &y );
             instance->QueryIntAttribute( "strip", &strip );
             if ( x >= 0 && y >= 0 && strip >= 0 ) {
-              AddObject( new Object( path, x, y, strip ));
+              AddObject( ObjectAttorney::Create( path, x, y, strip ));
             } else {
               LogErr( "Tile location or strip negative for Object in state file." );
               return false;
@@ -82,8 +82,8 @@ bool ObjectManager::LoadData( const TiXmlElement *dataRoot ) {
 void ObjectManager::HandleEvents() {
   ObjItr obj = m_objects.begin();
   for ( ; obj != m_objects.end(); obj++ ) {
-    if ( *obj != NULL ) {
-      ( *obj )->HandleEvents();
+    if ( *obj ) {
+      ObjectAttorney::HandleEvents( *obj );
     }
   }
 }
@@ -96,23 +96,26 @@ void ObjectManager::Update() {
   // iterating past end because it is guaranteed that no objects
   // will be removed in UpdateCollision().
   for ( unsigned int i = 0; i < m_objects.size(); ++i ) {
-    if ( *obj != NULL ) {
-      ( *obj )->UpdateCollision( DetectCollision( *obj ));
+    if ( *obj ) {
+      Object *otherObj = DetectCollision( *obj );
+      if ( otherObj ) {
+        ObjectAttorney::UpdateCollision( *obj, otherObj );
+      }
     }
     ++obj;
   }
 
   obj = m_objects.begin();
   for ( ; obj != m_objects.end(); obj++ ) {
-    if ( *obj != NULL ) {
-      ( *obj )->UpdateAI();
+    if ( *obj ) {
+      ObjectAttorney::UpdateAI( *obj );
     }
   }
 
   obj = m_objects.begin();
   for ( ; obj != m_objects.end(); obj++ ) {
-    if ( *obj != NULL ) {
-      ( *obj )->UpdateRendering();
+    if ( *obj ) {
+      ObjectAttorney::UpdateRendering( *obj );
     }
   }
 
@@ -129,7 +132,7 @@ void ObjectManager::Render() const {
 
   for ( ObjItrConst obj = m_objects.begin();
         obj != m_objects.end(); obj++ ) {
-    if ( *obj != NULL ) {
+    if ( *obj ) {
       renderOrder.push(
         std::make_pair( -( (*obj)->GetPosition().y ), *obj ) );
     }
@@ -146,9 +149,9 @@ bool ObjectManager::ObjectBlockingTile( int x, int y ) const {
   for ( ObjItrConst obj = m_objects.begin();
         obj != m_objects.end(); obj++ ) {
     if ( *obj ) {
-      if (( *obj )->GetTileX() == x &&
-          ( *obj )->GetTileY() == y &&
-          ( *obj )->BlockingTile()) {
+      if ( ObjectAttorney::GetTileX( *obj ) == x && 
+           ObjectAttorney::GetTileY( *obj ) == y &&
+           ObjectAttorney::BlockingTile( *obj )) {
         return true;
       }
     }
@@ -182,7 +185,7 @@ int ObjectManager::LuaCreateObject( lua_State *L ) {
   int tileY = lua_tointeger( L, -1 );
 
   if ( tileX >= 0 && tileY >= 0 ) {
-    Object *newObject = new Object( path, tileX, tileY, 0 );
+    Object *newObject = ObjectAttorney::Create( path, tileX, tileY, 0 );
     Inst().AddObject( newObject );
     Lunar<Object>::push( L, newObject );
     return 1;
@@ -194,10 +197,10 @@ int ObjectManager::LuaCreateObject( lua_State *L ) {
 
 
 int ObjectManager::LuaDestroyObject( lua_State *L ) {
-  Object *ObjectToDestroy = Lunar<Object>::check(L, 1);
-  if ( ObjectToDestroy ) {
+  Object *objToDestroy = Lunar<Object>::check(L, 1);
+  if ( objToDestroy ) {
     lua_remove( L, 1 );
-    Inst().RemoveObject( ObjectToDestroy );
+    Inst().RemoveObject( objToDestroy );
   }
   return 0;
 }
@@ -208,9 +211,9 @@ int ObjectManager::LuaGetObject( lua_State *L ) {
     LogLuaErr( "String not passed for Object type in GetObject." );
     return luaL_error( L, "String not passed for Object type in GetObject." );
   }
-  std::string ObjectType = lua_tostring( L, -1 );
+  std::string type = lua_tostring( L, -1 );
 
-  Lunar<Object>::push( L, Inst().GetObject( ObjectType ));
+  Lunar<Object>::push( L, Inst().GetObject( type ));
   return 1;
 }
 
@@ -228,7 +231,7 @@ int ObjectManager::LuaGetObjects( lua_State *L ) {
 
   std::list<Object*>::const_iterator obj = Inst().m_objects.begin();
   while ( obj != Inst().m_objects.end()) {
-    if ( *obj && ( *obj )->GetType() == type ) {
+    if ( *obj && ObjectAttorney::GetType( *obj ) == type ) {
       Lunar<Object>::push( L, *obj );
       lua_rawseti( L, newTable, index );
       ++index;
@@ -262,9 +265,10 @@ int ObjectManager::LuaGetNearestObject( lua_State *L ) {
   std::list<Object*>::const_iterator obj = Inst().m_objects.begin();
   while ( obj != Inst().m_objects.end()) {
     if ( *obj ) {
-      if (( type != "" && ( *obj )->GetType() == type ) || ( type == "" )) {
-        int distanceX2 = abs(( *obj )->GetTileX() - x );
-        int distanceY2 = abs(( *obj )->GetTileY() - y );
+      if (( type != "" && ObjectAttorney::GetType( *obj ) == type ) ||
+          ( type == "" )) {
+        int distanceX2 = abs( ObjectAttorney::GetTileX( *obj ) - x );
+        int distanceY2 = abs( ObjectAttorney::GetTileY( *obj ) - y );
         if (( distanceX2 + distanceY2 ) < ( distanceX + distanceY )) {
           distanceX = distanceX2;
           distanceY = distanceY2;
@@ -344,8 +348,8 @@ void ObjectManager::RemoveObject( Object *object ) {
 Object* ObjectManager::GetObject( const std::string &type ) const {
   for ( ObjItrConst obj = m_objects.begin();
         obj != m_objects.end(); obj++ ) {
-    if ( *obj != NULL ) {
-      if (( *obj )->GetType() == type ) {
+    if ( *obj ) {
+      if ( ObjectAttorney::GetType( *obj ) == type ) {
         return *obj;
       }
     }
@@ -358,9 +362,9 @@ Object* ObjectManager::GetObject( const std::string &type ) const {
 Object* ObjectManager::ObjectOnTile( int x, int y ) const {
   for ( ObjItrConst obj = m_objects.begin();
         obj != m_objects.end(); obj++ ) {
-    if ( *obj != NULL ) {
-      if (( *obj )->GetTileX() == x &&
-          ( *obj )->GetTileY() == y ) {
+    if ( *obj ) {
+      if ( ObjectAttorney::GetTileX( *obj ) == x &&
+           ObjectAttorney::GetTileY( *obj ) == y ) {
         return *obj;
       }
     }
@@ -372,16 +376,14 @@ Object* ObjectManager::ObjectOnTile( int x, int y ) const {
 
 Object* ObjectManager::DetectCollision( const Object *
   object ) {
-  const sf::FloatRect &mainObj = object->GetCollisionBox();
-
-  for ( ObjItr obj = m_objects.begin();
-        obj != m_objects.end(); obj++ ) {
-    if ( *obj && *obj != object ) {
-      const sf::FloatRect &otherObj = ( *obj )->GetCollisionBox();
-      if( mainObj.Intersects( otherObj ) ) {
+  for ( ObjItr otherObj = m_objects.begin();
+        otherObj != m_objects.end(); otherObj++ ) {
+    if ( *otherObj && *otherObj != object ) {
+      if ( ObjectAttorney::GetRect( object ).Intersects(
+           ObjectAttorney::GetRect( *otherObj ))) {
         // So next collision check will return a different object colliding
         // with 'object' if there is one
-        m_objects.splice( m_objects.end(), m_objects, obj );
+        m_objects.splice( m_objects.end(), m_objects, otherObj );
         return m_objects.back();
       }
     }
