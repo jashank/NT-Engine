@@ -313,10 +313,9 @@ bool TileManager::LoadTileLayout( const TiXmlElement *root ) {
 
 
 bool TileManager::GetTileInfo( const TiXmlElement *strip ) {
-  std::string tileName;
-  std::string tileType;
-  int tileId;
-  int tileCid;
+  std::string tileName, tileType;
+  int tileId = 0;
+  int tileCid = 0;
 
   const char *name = strip->Attribute( "name" );
   if ( name ) {

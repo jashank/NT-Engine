@@ -162,6 +162,8 @@ class Object : public AnimSprite {
   float m_speed; // m_speed at which object moves
   InputHandler m_input; // Handles input for this Object
   int m_id; // ID of object
+  int m_tileX; // X tile coordinate of object
+  int m_tileY; // Y tile coordinate of object
   sf::Clock m_timer; // Timer that Object can use from its script
   sf::FloatRect m_collisionRect; // Object's collision box
   std::string m_luaScript; // Filepath to the lua script

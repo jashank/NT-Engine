@@ -48,7 +48,9 @@ Object::Object( lua_State *L )
    m_direction( Up ),
    m_distance( 0.0f ),
    m_speed( 0.0f ),
-   m_id( -1 ) {
+   m_id( -1 ),
+   m_tileX( 0 ),
+   m_tileY( 0 ) {
   m_state = App::GetApp()->GetCurrentState();
 
   if( !lua_isstring( L, -1 ) ) {
@@ -91,7 +93,9 @@ Object::Object(
    m_direction( Up ),
    m_distance( 0.0f ),
    m_speed( 0.0f ),
-   m_id( -1 ) {
+   m_id( -1 ),
+   m_tileX( tileX ),
+   m_tileY( tileY ) {
   m_state = App::GetApp()->GetCurrentState();
 
   if( !LoadObjectData( filepath ) ) {
@@ -102,16 +106,17 @@ Object::Object(
   //Taking into account tile size, and max tiles across/down
   int tileDim = m_state->GetTileManager().GetTileDim();
 
-  float x = static_cast<float>( tileDim *
-     ( tileX % m_state->GetTileManager().GetMapWidth()));
-
-  float y = static_cast<float>( tileDim *
-     ( tileY % m_state->GetTileManager().GetMapHeight()));
+  float x = static_cast<float>( tileDim * tileX );
+  float y = static_cast<float>( tileDim * tileY ); 
 
   if( GetAnimData() ) {
-    //Take into account the sprites that are taller than a normal tile
-    y -= GetAnimData()->GetFrameHeight( GetAnimation() ) % tileDim;
+    int height = GetAnimData()->GetFrameHeight( GetAnimation() );
+    if ( height > tileDim ) {
+      //Take into account the sprites that are taller than a normal tile
+      y -= GetAnimData()->GetFrameHeight( GetAnimation() ) % tileDim;
+    }
   }
+
   SetPosition( x, y );
   SetAnimation( strip );
 
@@ -166,25 +171,19 @@ void Object::UpdateRendering() {
 
 
 int Object::GetTileX() const {
-  int tileDim = m_state->GetTileManager().GetTileDim();
-  return static_cast<int>(
-    ( GetPosition().x + tileDim / 2 ) / tileDim );
+  return m_tileX;
 }
 
 
 int Object::GetTileY() const {
-  int tileDim = m_state->GetTileManager().GetTileDim();
-  return static_cast<int>(
-    (( GetPosition().y +
-       GetSubRect().GetHeight() % tileDim ) +
-       tileDim / 2) / tileDim );
+  return m_tileY;
 }
 
 
 int Object::LuaMove( lua_State *L ) {
   if( !m_moving ) {
-    int nextTileX = GetTileX();
-    int nextTileY = GetTileY();
+    int nextTileX = m_tileX;
+    int nextTileY = m_tileY;
 
     switch ( m_direction ) {
       case Up: {
@@ -272,8 +271,8 @@ int Object::LuaGetType( lua_State *L ) {
 
 
 int Object::LuaGetTile( lua_State *L ) {
-  lua_pushinteger( L, GetTileX() );
-  lua_pushinteger( L, GetTileY() );
+  lua_pushinteger( L, m_tileX );
+  lua_pushinteger( L, m_tileY );
   return 2;
 }
 
@@ -405,27 +404,43 @@ void Object::InitLua() {
 
 
 void Object::MovementUpdate() {
+  int halfTile = m_state->GetTileManager().GetTileDim() / 2;
+  float prevDistance = m_distance;
   m_distance += m_speed;
+  
+  bool nextTile = ( prevDistance < halfTile && m_distance >= halfTile );
 
   switch( m_direction ) {
     case Up: {
       Move( 0.0f, -m_speed );
       m_collisionRect.Offset( 0.0f, -m_speed );
+      if ( nextTile ) {
+        --m_tileY;
+      }
       break;
     }
     case Down: {
       Move( 0.0f, m_speed );
       m_collisionRect.Offset( 0.0f, m_speed );
+      if ( nextTile ) {
+        ++m_tileY;
+      }
       break;
     }
     case Left: {
       Move( -m_speed, 0.0f );
       m_collisionRect.Offset( -m_speed, 0.0f );
+      if ( nextTile ) {
+        --m_tileX; 
+      }
       break;
     }
     case Right: {
       Move( m_speed, 0.0f );
       m_collisionRect.Offset( m_speed, 0.0f );
+      if ( nextTile ) {
+        ++m_tileX;
+      }
       break;
     }
     default: {}
@@ -528,7 +543,6 @@ bool Object::LoadCollisionData( const std::string &filepath ) {
 
   return true;
 }
-
 
 bool Object::LoadObjectData( const std::string &filepath ) {
   TiXmlDocument doc ( filepath.c_str() );

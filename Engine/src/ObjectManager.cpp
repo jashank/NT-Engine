@@ -51,7 +51,9 @@ bool ObjectManager::LoadData( const TiXmlElement *dataRoot ) {
         const TiXmlElement *instance = objectType->FirstChildElement( "inst" );
         if ( instance ) {
           do {
-            int x, y, strip = 0;
+            int x = 0;
+            int y = 0;
+            int strip = 0;
             instance->QueryIntAttribute( "x", &x );
             instance->QueryIntAttribute( "y", &y );
             instance->QueryIntAttribute( "strip", &strip );
