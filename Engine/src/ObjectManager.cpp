@@ -335,7 +335,6 @@ int ObjectManager::LuaObjectBlockingTile( lua_State *L ) {
 *********************************************/
 void ObjectManager::AddObject( Object *object ) {
   m_objects.push_back( object );
-  object->Play();
 }
 
 

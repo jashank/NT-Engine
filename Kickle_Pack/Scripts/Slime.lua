@@ -25,7 +25,7 @@ function Slime.HandleCollision( self, other )
   otherType = other:GetType()
 	if otherType == "Slime" or otherType == "Penguin" then
 		self:Reverse()
-    self:SetAnimation( self:GetDir())
+    self:PlayAnimation( self:GetDir())
 	end
 end
 

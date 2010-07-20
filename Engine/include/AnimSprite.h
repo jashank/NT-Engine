@@ -12,7 +12,7 @@ class AnimSprite : public sf::Sprite {
   AnimSprite();
 
   /// Returns the data used for the animation
-  const AnimData *GetAnimData() const;
+  const AnimData* GetAnimData() const;
 
   /// Returns the current animation frame
   int GetFrame() const;
@@ -29,20 +29,21 @@ class AnimSprite : public sf::Sprite {
   /// Resumes animation from current frame
   void Play();
 
-  /// Stops animation then resumes from first frame
+  /// Stops animation and resets time
   void Restart();
 
   /// Sets the current animation's frame
   void SetFrame( int frame );
 
   /// Sets the current animation. Set reverse to true for animation to
-  /// play in reverse
+  /// start on the last clip. Does not play the animation.
   void SetAnimation( int animation, bool reverse = false );
 
   /// Sets the data to be used for the animation
   void SetAnimData( const AnimData *animData );
 
-  /// Stops animation and sets it to first frame
+  /// Stops animation, setting the frame to the first clip if the animation
+  /// is playing forwards, and the last if the animation is playing backwards 
   void Stop();
 
   /// Updates the AnimSprite

@@ -9,7 +9,7 @@ Pillar.lower = false
 function Pillar.AI( self )
   if ( not Pillar.raise and not Pillar.lower ) then
     Pillar.raise = true
-    self:SetAnimation( 0 )
+    self:PlayAnimation( 0 )
 
   elseif ( Pillar.lower and not self:IsAnimating() ) then
     State.DestroyObject( self )

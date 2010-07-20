@@ -29,7 +29,7 @@ function Penguin.HandleCollision( self, other )
   
   elseif otherType == "Slime" then
     self:Reverse()
-    self:SetAnimation( self:GetDir())
+    self:PlayAnimation( self:GetDir())
   end
 end
 

@@ -20,6 +20,9 @@ Lunar<Object>::RegType Object::methods[] = {
   { "GetAnimation", &Object::LuaGetAnimation },
   { "SetAnimation", &Object::LuaSetAnimation },
   { "SetAnimationReverse", &Object::LuaSetAnimationReverse },
+  { "PlayAnimation", &Object::LuaPlayAnimation },
+  { "PlayAnimationReverse", &Object::LuaPlayAnimationReverse },
+  { "GetFrame", &Object::LuaGetFrame },
   { "IsAnimating", &Object::LuaIsAnimating },
   { "IsMoving", &Object::LuaMoving },
   { "GetType", &Object::LuaGetType },
@@ -249,6 +252,38 @@ int Object::LuaSetAnimationReverse( lua_State *L ) {
   int animation = lua_tointeger( L, -1 );
   SetAnimation( animation, true );
   return 0;
+}
+
+
+int Object::LuaPlayAnimation( lua_State *L ) {
+  if ( !lua_isnumber( L, -1 )) {
+    LogLuaErr( "Didn't pass number to PlayAnimation in Object: " + m_type );
+    return luaL_error( L, "Didn't pass number to PlayAnimation" );
+  }
+  int animation = lua_tointeger( L, -1 );
+  SetAnimation( animation );
+  Play();
+  return 0;
+}
+
+
+int Object::LuaPlayAnimationReverse( lua_State *L ) { 
+  if ( !lua_isnumber( L, -1 )) {
+    LogLuaErr( 
+      "Didn't pass number to PlayAnimationReverse in Object: " + m_type 
+    );
+    return luaL_error( L, "Didn't pass number to PlayAnimationReverse" );
+  }
+  int animation = lua_tointeger( L, -1 );
+  SetAnimation( animation, true );
+  Play();
+  return 0;
+}
+
+
+int Object::LuaGetFrame( lua_State *L ) {
+  lua_pushinteger( L, GetFrame());
+  return 1;
 }
 
 

@@ -68,11 +68,20 @@ class Object : public AnimSprite {
   /// Returns current animation ID
   int LuaGetAnimation( lua_State *L );
 
-	/// Sets animation on sheet corresponding to index top to bottom
+	/// Sets clip to animation on sheet corresponding to index top to bottom
   int LuaSetAnimation( lua_State *L );
 
-  /// Same as above, but animation is played in reverse
+  /// Same as above, but clip is set to last in strip 
   int LuaSetAnimationReverse( lua_State *L );
+
+  /// Plays animation on sheet corresponding to index top to bottom
+  int LuaPlayAnimation( lua_State *L );
+
+  /// Same as above, but animation starts at end and goes backwards
+  int LuaPlayAnimationReverse( lua_State *L );
+
+  /// Returns frame that object is on in its animation
+  int LuaGetFrame( lua_State *L );
 
 	/// Returns whether Object is animating
   int LuaIsAnimating( lua_State *L );

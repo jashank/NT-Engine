@@ -111,7 +111,7 @@ function Util.GenericEnemyAI( enemy )
     end
 
     if #dirsTried < 4 then
-	    enemy:SetAnimation( dir )
+	    enemy:PlayAnimation( dir )
     end
 	end
 end

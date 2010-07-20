@@ -44,7 +44,6 @@ void AnimSprite::LoadAnimData( const std::string &filepath ) {
 void AnimSprite::Play() {
   if( m_animData ) {
   	m_play = true;
-  	SetSubRect( m_animData->GetFrameRect( m_animation, m_frame ) );
   }
 }
 
@@ -58,7 +57,6 @@ void AnimSprite::Restart() {
 	if( m_animData ) {
 	  Stop();
 	  m_frameTime = m_animData->GetFrameTime( m_animation, m_frame );
-	  Play();
   }
 }
 
@@ -74,11 +72,13 @@ void AnimSprite::SetAnimation( int animation, bool reverse ) {
       m_reverse = false;
     }
     m_reverse = reverse;
-    if ( m_animation != animation || m_reverse ) {
-      m_animation = animation;
-      SetImage( m_animData->GetImage( m_animation ));
+    bool newAnimation = ( m_animation != animation );
+    m_animation = animation;
+    SetImage( m_animData->GetImage( m_animation ));
+    if ( !m_animData->IsLooped( m_animation ) && !newAnimation ) {
       Restart();
     }
+    SetSubRect( m_animData->GetFrameRect( m_animation, m_frame ) );
   }
 }
 

@@ -20,9 +20,11 @@ function Kickle.HandleCollision( self, other )
   -- Things that kill Kickle
 	if ( otherType == "Slime" or otherType == "Penguin" or 
        otherType == "IceBlock" ) then
-		Kickle.state = DYING
-		self:SetAnimation( self:GetDir() + Kickle.state )
-  
+    if Kickle.state ~= DYING then
+      Kickle.state = DYING
+      self:PlayAnimation( self:GetDir() + Kickle.state )
+    end
+
   elseif ( otherType == "DreamBag" and Kickle.state ~= DYING ) then
     State.DestroyObject( other )
   end
@@ -32,11 +34,11 @@ end
 function Kickle.AI( self )
   if ( Kickle.state == WALKING ) then
     Kickle.state = STANDING
-    self:SetAnimation( self:GetDir() + Kickle.state )
+    self:PlayAnimation( self:GetDir() + Kickle.state )
 
   elseif ( Kickle.state ~= DYING and not self:IsAnimating() ) then
     Kickle.state = STANDING
-    self:SetAnimation( self:GetDir() + Kickle.state )
+    self:PlayAnimation( self:GetDir() + Kickle.state )
   end
 end
 
@@ -44,7 +46,7 @@ end
 function Kickle.FaceUp( self )
 	if ( Kickle.state == STANDING ) then
 		self:SetDir( Util.UP )
-    self:SetAnimation( Util.UP + Kickle.state )
+    self:PlayAnimation( Util.UP + Kickle.state )
 	end
 end
 
@@ -52,7 +54,7 @@ end
 function Kickle.FaceDown( self )
 	if ( Kickle.state == STANDING ) then
 		self:SetDir( Util.DOWN )
-    self:SetAnimation( Util.DOWN + Kickle.state )
+    self:PlayAnimation( Util.DOWN + Kickle.state )
 	end
 end
 
@@ -60,7 +62,7 @@ end
 function Kickle.FaceLeft( self )
 	if ( Kickle.state == STANDING ) then
 		self:SetDir( Util.LEFT )
-    self:SetAnimation( Util.LEFT + Kickle.state )
+    self:PlayAnimation( Util.LEFT + Kickle.state )
 	end
 end
 
@@ -68,7 +70,7 @@ end
 function Kickle.FaceRight( self )
 	if ( Kickle.state == STANDING ) then
 		self:SetDir( Util.RIGHT )
-    self:SetAnimation( Util.RIGHT + Kickle.state )
+    self:PlayAnimation( Util.RIGHT + Kickle.state )
 	end
 end
 
@@ -78,7 +80,7 @@ function Kickle.WalkUp( self )
 		self:SetDir( Util.UP )
 		Kickle.state = WALKING
 		self:Move()
-		self:SetAnimation( Util.UP + Kickle.state )
+		self:PlayAnimation( Util.UP + Kickle.state )
 	end
 end
 
@@ -88,7 +90,7 @@ function Kickle.WalkDown( self )
 		self:SetDir( Util.DOWN )
 		Kickle.state = WALKING
 		self:Move()
-		self:SetAnimation( Util.DOWN + Kickle.state )
+		self:PlayAnimation( Util.DOWN + Kickle.state )
 	end
 end
 
@@ -98,7 +100,7 @@ function Kickle.WalkLeft( self )
 		self:SetDir( Util.LEFT )
 		Kickle.state = WALKING
 		self:Move()
-		self:SetAnimation( Util.LEFT + Kickle.state )
+		self:PlayAnimation( Util.LEFT + Kickle.state )
 	end
 end
 
@@ -108,7 +110,7 @@ function Kickle.WalkRight( self )
 		self:SetDir( Util.RIGHT )
 		Kickle.state = WALKING
 		self:Move()
-		self:SetAnimation( Util.RIGHT + Kickle.state )
+		self:PlayAnimation( Util.RIGHT + Kickle.state )
 	end
 end
 
@@ -116,7 +118,7 @@ end
 function Kickle.Suicide( self )
   if ( Kickle.state ~= DYING ) then
     Kickle.state = DYING
-    self:SetAnimation( self:GetDir() + Kickle.state )
+    self:PlayAnimation( self:GetDir() + Kickle.state )
   end
 end
 
@@ -128,7 +130,7 @@ function Kickle.PerformPillar( self )
 		if ( State.TileIsCrossable( tileX, tileY ) and
 			   not State.ObjectBlockingTile( tileX, tileY ) ) then
 			Kickle.state = PILLAR
-      self:SetAnimation( self:GetDir() + Kickle.state )
+      self:PlayAnimation( self:GetDir() + Kickle.state )
 			local pillar = State.CreateObject(
 				"Kickle_Pack/Objects/Pillar.xml", tileX, tileY )
 
@@ -136,9 +138,9 @@ function Kickle.PerformPillar( self )
 			local objOnTile = State.GetObjectOnTile( tileX, tileY )
 			if( objOnTile:GetType() == "Pillar" ) then
 				Kickle.state = PILLAR
-        self:SetAnimationReverse( self:GetDir() + Kickle.state )
+        self:PlayAnimationReverse( self:GetDir() + Kickle.state )
         objOnTile:GetTable().lower = true
-        objOnTile:SetAnimationReverse( 0 )
+        objOnTile:PlayAnimationReverse( 0 )
 			end
 		end
 	end
@@ -156,7 +158,7 @@ function Kickle.PerformAttack( self )
 
       if objType == "IceBlock" then
         Kickle.state = KICKING
-        self:SetAnimation( kickleDir + Kickle.state );
+        self:PlayAnimation( kickleDir + Kickle.state );
 
         local blockFacingX, blockFacingY =
           Util.GetTileInDirection( objOnTile, kickleDir )
@@ -174,13 +176,13 @@ function Kickle.PerformAttack( self )
       elseif objType == "Penguin" and 
              objOnTile:GetTable().frozen == true then
         Kickle.state = KICKING
-        self:SetAnimation( kickleDir + Kickle.state )
+        self:PlayAnimation( kickleDir + Kickle.state )
         State.DestroyObject( objOnTile )
         return
 
       elseif objType == "PowerRock" then
         Kickle.state = KICKING
-        self:SetAnimation( kickleDir + Kickle.state )
+        self:PlayAnimation( kickleDir + Kickle.state )
         objOnTile:GetTable().kicked = true
         return
       end
@@ -193,7 +195,7 @@ function Kickle.PerformAttack( self )
 				"Kickle_Pack/Objects/IceBreath.xml", tileX, tileY )
 			local iceBreathdir = self:GetDir()
 			iceBreath:SetDir( iceBreathdir )
-			iceBreath:SetAnimation( iceBreathdir )
+			iceBreath:PlayAnimation( iceBreathdir )
 		end
 	end
 end

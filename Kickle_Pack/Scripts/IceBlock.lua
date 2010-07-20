@@ -24,8 +24,6 @@ function IceBlock.AI( self )
   end
 
 	if IceBlock.moving then
-		IceBlock.moving = self:Move()
-
 		local facingX, facingY = Util.GetTileObjectFaces( self )
     local tileType = State.GetTileInfo( facingX, facingY )
 
@@ -36,8 +34,14 @@ function IceBlock.AI( self )
           State.GetTileInfo( self:GetTile() )
         State.SetTile( facingX, facingY, tileName, 0 )
       end
+    else
+      obj = State.GetObjectOnTile( facingX, facingY )
+      if obj then
+        self:SetNoClip( obj:GetType() == "Spring" )
+      end
     end
-	end
+    IceBlock.moving = self:Move()
+  end
 
   if IceBlock.destroyed then
     State.DestroyObject( self )
@@ -80,7 +84,15 @@ function IceBlock.HandleCollision( self, other )
 
   elseif otherType == "Penguin" then
     State.DestroyObject( other )
-	end
+  
+  elseif otherType == "Spring" then
+    if other:GetFrame() <= 4 then
+      self:SlowDown( 1 )
+    elseif self:GetSpeed() == 0 and other:GetFrame() >= 5 then
+      self:Reverse()
+      self:SetSpeed( 4 )
+    end
+  end
 end
 
 return IceBlock
