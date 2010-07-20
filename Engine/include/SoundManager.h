@@ -8,10 +8,18 @@ class TiXmlElement;
 namespace sf {
   class Music;
 }
-
+/**
+ * Class SoundManager. Creates a vector of the music which is loaded in
+ * from XML and is then managed through Play(), Pause() and SetLoop().
+ * The SoundManager is also updated which simply checks if the next song
+ * should be played and therefore continues to iterate through the play
+ * list.
+ */
 class SoundManager {
  public:
+  /// Constructor
   SoundManager();
+  /// Destructor - Empty.
   ~SoundManager() {}
 
   /// Parses data from <sound> section of state file.
@@ -51,3 +59,4 @@ class SoundManager {
 };
 
 #endif // SOUNDMANAGER_H
+

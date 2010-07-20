@@ -2,14 +2,23 @@
 #define VECTOR_H
 
 template< typename T >
+/**
+ * Vector Class. The vector is a generic all purpose type to be used 
+ * throught the engine. This is still a work in progress and will play
+ * a much larger role in the engine in later builds.
+ */
 class Vector {
  public:
-  /// Constructors and Destructors
+  /// Empty Constructor
   Vector() : x( 0 ), y( 0 ), z( 0 ) {}
+  /// 2-Dimensional Constructor
   Vector( T xPos, T yPos ) : x( xPos ), y( yPos ), z( 0 ) {}
+  /// 3-Dimensional Constructor
   Vector( T xPos, T yPos, T zPos ) : x( xPos ), y( yPos ), z( zPos ){}
+  /// Vector Constructor - TODO Remove.
   Vector( const Vector<T> &other) 
           : x( other.x ), y( other.y ), z( other.z ) {}
+  /// Empty Destructor
   ~Vector() {}
 
   // Overload Operators
@@ -44,8 +53,7 @@ class Vector {
   /***********************************************
   Implementation
   ************************************************/
-  /// Overload Operators
-  /// Asignment Overloading
+  /// Simply sets x,y,z to that of others x,y,z data members.
   Vector<T>& operator=( const Vector<T>& other ) {
     x = other.x;
     y = other.y;
@@ -53,6 +61,7 @@ class Vector {
     return *this;
   }
 
+  /// += others data members x,y,z to self's x,y,z
   Vector<T>& operator+=( const Vector<T>& other ) {
     x += other.x;
     y += other.y;
@@ -60,6 +69,7 @@ class Vector {
     return *this;
   }
 
+  /// -= others data members x,y,z to self's x,y,z
   Vector<T>& operator-=( const Vector<T>& other ) {
     x -= other.x;
     y -= other.y;
@@ -67,6 +77,7 @@ class Vector {
     return *this;
   }
 
+  /// *= others data members x,y,z to self's x,y,z
   Vector<T>& operator*=( const Vector<T>& other ) {
     x *= other.x;
     y *= other.y;
@@ -74,6 +85,7 @@ class Vector {
     return *this;
   }
 
+  /// /= others data memebers x,y,z,to self's x,y,z
   Vector<T>& operator/=( const Vector* other ) {
     x /= other.x;
     y /= other.y;
@@ -126,3 +138,4 @@ class Vector {
 };
 
 #endif // VECTOR_H
+
