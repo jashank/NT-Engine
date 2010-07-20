@@ -15,11 +15,12 @@ extern "C" {
 
 class lua_State;
 
-/*! \class State
- *- Generic class for all states in the game. Data defined in XML file.
- *  Provides functions to Lua, allowing it access information on, and
- *  manipulate the state.
-*/
+/** 
+ * Class State Generic class for all states in the game. Data defined 
+ * in XML file. Provides functions to Lua, allowing it access information 
+ * on, and manipulate the state.
+ */
+
 class State {
  public:
   /// Constructs State. Doesn't load in any data.

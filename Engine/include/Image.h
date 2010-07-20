@@ -3,9 +3,10 @@
 
 #include "GUI.h"
 
-/*! \class Image
- * A GUI, just an image
+/**
+ * Class Image. A GUI, just an image.
  */
+
 class Image : public GUI {
  public:
   /// Constructor
