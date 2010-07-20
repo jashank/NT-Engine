@@ -2,13 +2,20 @@
 #define RECT_H
 
 #include "Vector.h"
+/**
+ * Class Rect. A generic class that will be more heavily used in future
+ * versions of the engine and may form part of a core:: namespace. It
+ * will be used in the camera class. TODO make a template. 
+ */
 
 class Rect {
  public:
-  /// Constructors and Destructors
+  /// Empty Constructor NOT IMPLEMENTED
   Rect() : topLeft( 0.0f,0.0f ), bottomRight( 0.0f,0.0f ) {}
+  /// Four Variable  Constructor NOT IMPLEMENTED
   Rect( float left, float top, float right, float bottom ) 
         : topLeft( left, top ), bottomRight( right, bottom ) {}
+  /// Two Variable Vector Constructor NOT IMPLEMENTED
   Rect( Vector<float> upperLeft, Vector<float> lowerRight)
         : topLeft( upperLeft ), bottomRight( lowerRight ) {}
   ~Rect() {}
