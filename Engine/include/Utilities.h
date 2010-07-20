@@ -33,3 +33,4 @@ void LogMsg( const std::string &msg );
 void LogErr( const std::string &msg );
 void LogLuaErr( const std::string &msg );
 #endif
+

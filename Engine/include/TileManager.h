@@ -16,6 +16,14 @@ extern "C" {
 class AnimSprite;
 class TiXmlElement;
 
+/**
+ * Class TileManager. This class manages the tiles that are drawn on the
+ * screen and provides an interface through lua to modify the tiles
+ * and retrive information on them. It also updates and renders each
+ * frame and is completely determined by XML. It is a component of
+ * State and is the foundation of Objects which are tied to tiles it is
+ * core component of the engine.
+ */
 class TileManager {
  public:
   TileManager();
