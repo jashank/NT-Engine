@@ -8,6 +8,9 @@
  * will be used in the camera class. TODO make a template. 
  */
 
+namespace nt {
+namespace core {
+
 class Rect {
  public:
   /// Empty Constructor NOT IMPLEMENTED
@@ -16,7 +19,8 @@ class Rect {
   Rect( float left, float top, float right, float bottom ) 
         : topLeft( left, top ), bottomRight( right, bottom ) {}
   /// Two Variable Vector Constructor NOT IMPLEMENTED
-  Rect( Vector<float> upperLeft, Vector<float> lowerRight)
+  Rect( nt::core::Vector<float> upperLeft, 
+        nt::core::Vector<float> lowerRight)
         : topLeft( upperLeft ), bottomRight( lowerRight ) {}
   ~Rect() {}
   
@@ -29,17 +33,17 @@ class Rect {
   float GetHeight() const;
 
   /// Returns a vector containing width and height of the Rect
-  Vector<float> GetSize() const;
+  nt::core::Vector<float> GetSize() const;
 
   /// Returns the widths times the height. Just a helpful method
   float GetArea() const;
 
   /// Returns a vector with the X and Y (potentially Z) coords of the
   /// center of the rectangle.
-  Vector<float> GetCenter() const;
+  nt::core::Vector<float> GetCenter() const;
 
   /// Returns true if the vector position is within the rectangle.
-  bool Contains( const Vector<float> pos ) const;
+  bool Contains( const nt::core::Vector<float> pos ) const;
   
   /// Returns true if the rectangles intersect.
   bool Intersects( const Rect &other ) const;
@@ -48,13 +52,13 @@ class Rect {
   /// Returns a vector(topLeft.x+width/2, topLeft.y+height/2)
   /// This is particularly useful for focusing on game objects
   /// for RPG like / top down games
-  void SetCenter( Vector<float> centerPosition );
+  void SetCenter( nt::core::Vector<float> centerPosition );
 
   /// Sets the topLeft position
-  void SetPosition( Vector<float> position );
+  void SetPosition( nt::core::Vector<float> position );
 
   /// Sets the bottomRight position
-  void SetScale( Vector<float> scale );
+  void SetScale( nt::core::Vector<float> scale );
 
   // Overload Operators
   /*
@@ -76,10 +80,13 @@ class Rect {
   */
 
   // Public Members
-  Vector<float> topLeft;
-  Vector<float> bottomRight;
+  nt::core::Vector<float> topLeft;
+  nt::core::Vector<float> bottomRight;
 
 };
+
+} // namespace core
+} // namespace nt
 
 #endif // RECT_H
 

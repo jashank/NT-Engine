@@ -1,12 +1,17 @@
 #ifndef VECTOR_H
 #define VECTOR_H
 
+namespace nt {
+namespace core {
+
 template< typename T >
 /**
  * Vector Class. The vector is a generic all purpose type to be used 
  * throught the engine. This is still a work in progress and will play
- * a much larger role in the engine in later builds.
+ * a much larger role in the engine in later builds. Part of namespace
+ * core.
  */
+
 class Vector {
  public:
   /// Empty Constructor
@@ -136,6 +141,9 @@ class Vector {
   }
   */
 };
+
+} // namespace core.
+} // namespace nt.
 
 #endif // VECTOR_H
 
