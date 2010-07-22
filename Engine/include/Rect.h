@@ -25,7 +25,31 @@ class Rect {
   ~Rect() {}
   
   // Useful Methods
-  // Getters
+
+  /// Returns topLeft.x
+  float GetX() const;
+
+  /// Sets topLeft.x to x if x <= bottomRight.x
+  void SetX( float x );
+
+  /// Returns topLeft.y
+  float GetY() const;
+  
+  /// Sets topLeft.y to y if y <= bottomRight.x
+  void SetY( float y );
+
+  /// Returns bottomRight.x
+  float GetX2() const;
+
+  /// Sets bottomRight.x if x2 >= topLeft.x
+  void SetX2( float x2 );
+
+  /// Gets bottomRight.y
+  float GetY2() const;
+
+  /// Sets bottomRight.y to y2 if >= topLeft.y
+  void SetY2( float y2 );
+
   /// Returns bottomRight.x-topLeft.x
   float GetWidth() const;
 
@@ -79,7 +103,7 @@ class Rect {
   bool operator>=( const Rect &other ) const;  
   */
 
-  // Public Members
+ private:
   nt::core::Vector<float> topLeft;
   nt::core::Vector<float> bottomRight;
 

@@ -3,6 +3,46 @@
 namespace nt {
 namespace core {
 
+float Rect::GetX() const {
+  return topLeft.x;
+}
+
+void Rect::SetX( float x ) {
+  if ( x <= bottomRight.x ) {
+    topLeft.x = x;
+  }
+}
+
+float Rect::GetY() const {
+  return topLeft.y;
+}
+  
+void Rect::SetY( float y ) {
+  if ( y <= bottomRight.y) {
+    topLeft.y = y;
+  }
+}
+
+float Rect::GetX2() const {
+  return bottomRight.x;
+}
+
+void Rect::SetX2( float x2 ) {
+  if ( x2 >= topLeft.x ) {
+    bottomRight.x = x2;  
+  }
+}
+
+float Rect::GetY2() const {
+  return bottomRight.y;
+}
+
+void Rect::SetY2( float y2 ) {
+  if ( y2 >= topLeft.y ) {
+    bottomRight.y = y2;
+  }
+}
+
 float Rect::GetWidth() const {
   return (bottomRight.x - topLeft.x);
 }
