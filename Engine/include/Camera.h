@@ -9,11 +9,24 @@ namespace scene {
 class Camera {
  public:
   /// Constructor Empty.
-  Camera() {};
+  Camera();
+
   /// Destructor Empty.
-  ~Camera() {};
+  ~Camera();
+  
+  /// Returns m_tileCulling
+  bool GetTileCulling();
+  /// Sets m_tileCulling to tileCulling
+  void SetTileCulling( bool tileCulling );
+  /// Gets m_objectCulling
+  bool GetObjectCulling();
+  /// Sets m_objectCulling to objectCulling
+  void SetObjectCulling( bool objectCulling );
+
+  nt::core::Rect frame;
  private:
-  /// TODO Implement.
+  bool  m_tileCulling;
+  bool m_objectCulling;
 };
 
 } // namespace nt
