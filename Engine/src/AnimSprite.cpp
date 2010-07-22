@@ -72,13 +72,9 @@ void AnimSprite::SetAnimation( int animation, bool reverse ) {
       m_reverse = false;
     }
     m_reverse = reverse;
-    bool newAnimation = ( m_animation != animation );
     m_animation = animation;
     SetImage( m_animData->GetImage( m_animation ));
-    if ( !m_animData->IsLooped( m_animation ) && !newAnimation ) {
-      Restart();
-    }
-    SetSubRect( m_animData->GetFrameRect( m_animation, m_frame ) );
+    Restart();
   }
 }
 
@@ -98,6 +94,7 @@ void AnimSprite::Stop() {
   else {
     SetFrame( m_animData->GetNumFrames( m_animation )-1 );
   }
+  SetSubRect( m_animData->GetFrameRect( m_animation, m_frame ) );
 }
 
 
