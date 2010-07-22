@@ -20,6 +20,9 @@ std::string ToLowerCase( std::string str );
 /// Returns empty string if path is invalid.
 std::string GetXmlFileName( std::string filepath );
 
+/// Rounds values up. For example 15 or 15.5 goes to 16
+int RoundUp( float toRoundUp );
+
 /// Clears the logs it is the first thing that is called in the
 /// main function.
 void ClearLog();

@@ -39,6 +39,9 @@ std::string GetXmlFileName( std::string filepath ) {
   return filepath;
 }
 
+int RoundUp( float toRoundUp) {
+  return int(toRoundUp+1.0f);
+}
 
 void ClearLog() {
   //ios::trunc erases previous content contained by file opened.
