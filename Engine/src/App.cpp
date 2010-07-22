@@ -137,6 +137,10 @@ const sf::Input& App::GetInput() const {
   return m_window.GetInput();
 }
 
+const nt::scene::Camera& App::GetCamera() const {
+  return m_camera;
+}
+
 
 sf::Image* App::LoadImage( const std::string &filename ) {
 	return m_images.Load( filename );

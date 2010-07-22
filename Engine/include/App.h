@@ -13,6 +13,7 @@ extern "C" {
 #include "AnimData.h"
 #include "KeyManager.h"
 #include "ResourceManager.h"
+#include "Camera.h"
 
 #undef LoadImage // Undefines LoadImage macro from WinUser
 
@@ -73,6 +74,9 @@ class App {
 
   /// Returns input in app.
   const sf::Input &GetInput() const;
+
+  /// Returns the camera in app.
+  const nt::scene::Camera &GetCamera() const;
 
   /// Returns an Image given a filename, insuring that no
   /// duplicate Image is loaded into memory
@@ -135,6 +139,7 @@ class App {
   sf::Color m_clearColor; //Color to clear the screen to
   sf::Event	m_event; //holds the most current event
   sf::RenderWindow	m_window; //SFML's window
+  nt::scene::Camera m_camera;
 
   // TEMPORARY
   bool m_nextStateSet;
