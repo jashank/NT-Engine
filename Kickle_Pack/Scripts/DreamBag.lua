@@ -8,8 +8,10 @@ math.randomseed( os.time() )
 local DreamBag = {}
 
 function DreamBag.HandleCollision( self, other )
+  otherType = other:GetType()
   if ( not self:IsMoving() and (
-        other:GetType() == "Slime" or other:GetType() == "Penguin" )) then
+        otherType == "Slime" or otherType == "Penguin" or
+        otherType == "IceBlock" )) then
     local dir = math.random( Util.UP, Util.RIGHT )
     local canMove = false
     local tileX, tileY = Util.GetTileInDirection( self, dir )

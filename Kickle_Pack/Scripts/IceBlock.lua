@@ -81,6 +81,7 @@ function IceBlock.HandleCollision( self, other )
       slimeSpawnX,
       slimeSpawnY
     )
+    State.DestroyObject( other )
 
   elseif otherType == "Penguin" then
     State.DestroyObject( other )
