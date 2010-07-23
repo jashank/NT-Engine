@@ -131,6 +131,20 @@ Object::Object(
 }
 
 
+void Object::Init() {
+  lua_State *L = App::GetApp()->GetLuaState();
+  lua_rawgeti( L, LUA_REGISTRYINDEX, m_id );
+  lua_getfield( L, -1, "Init" );
+  if ( lua_isfunction( L, -1 )) {
+    if ( lua_isfunction( L, -1 )) {
+      Lunar<Object>::push( L, this );
+      lua_call( L, 1, 0 );
+    }
+    lua_settop( L, 0 );
+  } 
+}
+
+
 void Object::HandleEvents() {
   if ( !m_moving ) {
     m_input.ScanInput( m_ptrCallScriptFunc );

@@ -77,6 +77,8 @@ bool ObjectManager::LoadData( const TiXmlElement *dataRoot ) {
     LogErr( "No object specified in <objects>. Thus, not necessary." );
     return false;
   }
+  
+  InitObjs();
   return true;
 }
 
@@ -189,6 +191,7 @@ int ObjectManager::LuaCreateObject( lua_State *L ) {
   if ( tileX >= 0 && tileY >= 0 ) {
     Object *newObject = ObjectAttorney::Create( path, tileX, tileY, 0 );
     Inst().AddObject( newObject );
+    ObjectAttorney::Init( newObject );
     Lunar<Object>::push( L, newObject );
     return 1;
   } else {
@@ -333,6 +336,13 @@ int ObjectManager::LuaObjectBlockingTile( lua_State *L ) {
 /********************************************
   Private Methods
 *********************************************/
+void ObjectManager::InitObjs() {
+  for ( ObjItr obj = m_objects.begin(); obj != m_objects.end(); ++obj ) {
+    ObjectAttorney::Init( *obj );
+  } 
+}
+
+
 void ObjectManager::AddObject( Object *object ) {
   m_objects.push_back( object );
 }

@@ -71,6 +71,9 @@ class ObjectManager {
   ObjectManager( const ObjectManager &manager );
   ObjectManager& operator=( const ObjectManager &manager );
 
+  /// Calls Init 
+  void InitObjs();
+
   /// Add 'Object' passed.
   void AddObject( Object *object );
   /// Remove 'Object' passed.

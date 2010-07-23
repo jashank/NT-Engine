@@ -9,20 +9,21 @@ local Slime = {}
 Slime.spawnPointX = -1
 Slime.spawnPointY = -1
 
-function Slime.AI( self )
-  if Slime.spawnPointX == -1 and Slime.spawnPointY == -1 then
-    spawnPoint = State.GetNearestObject( "SpawnPoint", self:GetTile() )
-    if spawnPoint then
-      Slime.spawnPointX, Slime.spawnPointY = spawnPoint:GetTile()
-    end
+function Slime.Init( self )
+  local spawnPoint = State.GetNearestObject( "SpawnPoint", self:GetTile())
+  if spawnPoint then
+    Slime.spawnPointX, Slime.spawnPointY = spawnPoint:GetTile()
   end
+end
 
+
+function Slime.AI( self )
   Util.GenericEnemyAI( self )
 end
 
 
 function Slime.HandleCollision( self, other )
-  otherType = other:GetType()
+  local otherType = other:GetType()
 	if otherType == "Slime" or otherType == "Penguin" then
 		self:Reverse()
     self:PlayAnimation( self:GetDir())

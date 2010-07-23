@@ -16,7 +16,7 @@ Kickle.state = STANDING --Current state kickle is in
 Kickle.godMode = false
 
 function Kickle.HandleCollision( self, other )
-  otherType = other:GetType()
+  local otherType = other:GetType()
   -- Things that kill Kickle
 	if ( otherType == "Slime" or otherType == "Penguin" or 
        otherType == "IceBlock" ) then

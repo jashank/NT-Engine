@@ -17,12 +17,10 @@ function IceBreath.AI( self )
   if not self:Move() then
     State.DestroyObject( self )
   end
-
-  self:PlayAnimation( self:GetDir() )
 end
 
 function IceBreath.HandleCollision( self, other )
-  otherType = other:GetType()
+  local otherType = other:GetType()
 	if ( otherType == "Slime" ) then
     IceBlock = State.CreateObject(
                  "Kickle_Pack/Objects/IceBlock.xml",

@@ -8,7 +8,7 @@ math.randomseed( os.time() )
 local DreamBag = {}
 
 function DreamBag.HandleCollision( self, other )
-  otherType = other:GetType()
+  local otherType = other:GetType()
   if ( not self:IsMoving() and (
         otherType == "Slime" or otherType == "Penguin" or
         otherType == "IceBlock" )) then

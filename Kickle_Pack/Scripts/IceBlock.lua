@@ -12,15 +12,15 @@ IceBlock.destroyed = false
 IceBlock.slimeSpawnX = -1
 IceBlock.slimeSpawnY = -1
 
+function IceBlock.Init( self )
+  self:ResetTimer()
+  IceBlock.startingX, IceBlock.startingY = self:GetTile()
+end
+
 function IceBlock.AI( self )
-  if IceBlock.startingX == -1 and IceBlock.startingY == -1 then
-    self:ResetTimer()
-    IceBlock.startingX, IceBlock.startingY = self:GetTile()
-  else 
-    local timeFrozen = self:GetElapsedTime()
-    if ( timeFrozen >= 45 ) then
-      IceBlock.destroyed = true
-    end
+  local timeFrozen = self:GetElapsedTime()
+  if ( timeFrozen >= 45 ) then
+    IceBlock.destroyed = true
   end
 
 	if IceBlock.moving then
@@ -68,7 +68,7 @@ end
 
 
 function IceBlock.HandleCollision( self, other )
-  otherType = other:GetType()
+  local otherType = other:GetType()
 	if otherType == "IceBreath" then
 		State.DestroyObject( other )
     self:ResetTimer() -- Refreezes IceBlock

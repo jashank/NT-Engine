@@ -2,16 +2,14 @@
 
 local Pillar = {}
 
-Pillar.raise = false
 Pillar.lower = false
 
+function Pillar.Init( self )
+  self:PlayAnimation( 0 )
+end
 
 function Pillar.AI( self )
-  if ( not Pillar.raise and not Pillar.lower ) then
-    Pillar.raise = true
-    self:PlayAnimation( 0 )
-
-  elseif ( Pillar.lower and not self:IsAnimating() ) then
+  if ( Pillar.lower and not self:IsAnimating() ) then
     State.DestroyObject( self )
   end
 end

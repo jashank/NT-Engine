@@ -2,7 +2,7 @@
 local OneUp = {}
 
 function OneUp.HandleCollision( self, other )
-  otherType = other:GetType()
+  local otherType = other:GetType()
   if ( otherType == "Kickle" ) then
     State.DestroyObject( self )
   end

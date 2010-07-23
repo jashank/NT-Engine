@@ -39,6 +39,9 @@ class Object : public AnimSprite {
   /// Restricts copy assignment
   Object& operator=( const Object &object );
 
+  /// Initializes Object via definition of 'Init' in Object's script
+  void Init();
+
   /// Handles events generated for Object
   void HandleEvents();
 
@@ -212,6 +215,13 @@ class ObjectAttorney {
     int y, 
     int strip ) 
   { return new Object( filepath, x, y, strip ); }
+
+  /**
+   * Calls Object's Init function.
+   * @param obj to call Init on
+   */
+  static void Init( Object* const obj )
+  { obj->Init(); }
   
   /**
    * Calls Object's HandleEvents function.
