@@ -42,6 +42,7 @@ class InputHandler {
   InputHandler( const InputHandler &handler );
   InputHandler& operator=( const InputHandler &handler );
 
+  std::vector<sf::Key::Code> m_prevKeys; // Keys held down in previous state
   std::vector<KeyEntry> m_keyRegistry; // All keys registered for this handler
 };
 

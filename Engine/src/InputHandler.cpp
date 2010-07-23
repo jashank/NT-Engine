@@ -1,5 +1,7 @@
 #include "InputHandler.h"
 
+#include <algorithm>
+
 #include "tinyxml.h"
 
 #include "App.h"
@@ -48,6 +50,13 @@ bool InputHandler::LoadInputList( const TiXmlElement *inputRoot ) {
         return false;
       }
     } while ( (input = input->NextSiblingElement( "input" )) );
+    
+    for ( unsigned int i = 0; i < m_keyRegistry.size(); ++i ) {
+      sf::Key::Code code = m_keyRegistry[i].first.key;
+      if ( App::GetApp()->GetInput().IsKeyDown( code )) {
+        m_prevKeys.push_back( code );
+      }
+    }  
   } else {
     LogErr( "No <input> element specified in input list. Thus, not needed." );
     return false;
@@ -58,9 +67,18 @@ bool InputHandler::LoadInputList( const TiXmlElement *inputRoot ) {
 
 void InputHandler::ScanInput( const boost::function1<void, std::string&> &func ) {
   static App* app = App::GetApp();
+  
+  for ( unsigned int i = 0; i < m_prevKeys.size(); ++i ) {
+    if ( !app->GetInput().IsKeyDown( m_prevKeys[i] )) {
+      m_prevKeys.erase( m_prevKeys.begin() + i );
+    }
+  }
 
   for( unsigned int i = 0; i < m_keyRegistry.size(); ++i ) {
-    if( app->GetInput().IsKeyDown( m_keyRegistry[i].first.key )) {
+    sf::Key::Code code = m_keyRegistry[i].first.key;
+    if( app->GetInput().IsKeyDown( code ) &&
+        std::find( m_prevKeys.begin(), m_prevKeys.end(), code ) ==
+          m_prevKeys.end()) {
       Key key = app->GetKey( m_keyRegistry[i].first.key );
 
       //Check if key has been held down long enough
