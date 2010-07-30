@@ -48,7 +48,7 @@ class Object : public AnimSprite {
   /// Updates the Object's collision
   void UpdateCollision( Object* const collisionObj );
 
-  /// Updates the Object's movement
+  /// Updates the Object's movement and other AI related script stuff
   void UpdateAI();
 
   /// Updates the Object's rendering
@@ -253,20 +253,20 @@ class ObjectAttorney {
   { obj->UpdateRendering(); }
   
   /**
-   * Calls Object's GetTileX function.
+   * Returns Object's x tile coordinate. 
    * @param obj object to call GetTileX on
    * @return obj's x coordinate on the tile map
    */
   static int GetTileX( const Object* const obj )
-  { return obj->GetTileX(); }
+  { return obj->m_tileX; }
 
   /**
-   * Calls Object's GetTileY function.
+   * Returns Object's y tile coordinate.
    * @param obj object to call GetTileY on
    * @return obj's y coordinate on the tile map
    */
   static int GetTileY( const Object* const obj )
-  { return obj->GetTileY(); }
+  { return obj->m_tileY; }
   
   /**
    * Returns whether Object is blocking the tile it is on.

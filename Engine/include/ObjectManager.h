@@ -2,6 +2,7 @@
 #define OBJECTMANAGER_H
 
 #include <list>
+#include <map>
 #include <string>
 #include <vector>
 
@@ -17,7 +18,7 @@ class ObjectManager {
  public:
   static const int NULL_OBJECT = -1;
 
-  ObjectManager() {}
+  ObjectManager() {} 
   ~ObjectManager();
 
   /// Parses data from <objects> section of state file
@@ -62,8 +63,10 @@ class ObjectManager {
   static int LuaObjectBlockingTile( lua_State *L );
 
  private:
-  typedef std::list<Object*>::iterator ObjItr;
-  typedef std::list<Object*>::const_iterator ObjItrConst;
+  typedef std::list<Object*>::iterator ListItr;
+  typedef std::list<Object*>::const_iterator ListItrConst;
+  typedef std::multimap<std::string, Object*>::iterator MapItr;
+  typedef std::multimap<std::string, Object*>::const_iterator MapItrConst;
 
   static const luaL_Reg LuaFuncs[];
 
@@ -71,17 +74,14 @@ class ObjectManager {
   ObjectManager( const ObjectManager &manager );
   ObjectManager& operator=( const ObjectManager &manager );
 
-  /// Calls Init 
-  void InitObjs();
-
-  /// Add 'Object' passed.
-  void AddObject( Object *object );
-  /// Remove 'Object' passed.
-  void RemoveObject( Object *object );
+  /// Add Object passed to storage of objects. 
+  void AddObject( Object* const obj );
+  /// Remove Object passed.
+  void RemoveObject( Object* const obj );
 
   /// Returns Object in the ObjectManager with the given 'objectType'
   /// as its type. Returns NULL if an object isn't found.
-  Object* GetObject( const std::string &objectType ) const;
+  Object* GetObject( const std::string &objType ) const;
 
   /// If an object is on the specified tile location, that object is returned.
   /// Returns NULL otherwise.
@@ -89,14 +89,24 @@ class ObjectManager {
 
   /// Collision detection for non-solid Objects using rectangular
   /// collision detection. Returns Object that 'object' collided with,
-  /// or NULL otherwise.
-  Object* DetectCollision( const Object *object );
+  /// or NULL otherwise. x and y are coordinate to check.
+  Object* DetectCollision( int x, int y, const Object* const obj );
+
+  /// Checks to see if Object has moved from coord passed
+  /// and adjusts accordingly in the object grid. Since function can modify
+  /// list, returns appropriate iterator to continue using.
+  ListItr AdjustGridCoord( int x, int y, ListItr objItr );
+
+  /// Calls TileManager's TileOnMap method
+  bool TileOnMap( int x, int y ) const;
 
   /// Returns current instance of ObjectManager in application
   static ObjectManager& Inst();
 
-  /// List of Objects that manager is holding
-  std::list<Object*> m_objects;
+  /// Key is Object's type, holds all Object's of that type
+  std::multimap<std::string, Object*> m_objTypes;
+  /// Stores Objects relative to their tile position (x, y, objects)
+  std::vector<std::vector<std::list<Object*> > > m_objGrid;
   /// Holds Objects that were sent to be destroyed on the last update
   std::vector<Object*> m_toBeDestroyed;
 };
