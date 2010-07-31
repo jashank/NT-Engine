@@ -39,12 +39,28 @@ end
 
 -- Returns next logical direction via order of Up, Down, Left, Right
 function Util.GetNextDir( dir )
-  if ( dir == Util.UP ) then
+  if dir == Util.UP then
     return Util.DOWN
-  elseif ( dir == Util.DOWN ) then
+  elseif dir == Util.DOWN then
     return Util.LEFT
-  elseif ( dir == Util.LEFT ) then
+  elseif dir == Util.LEFT then
     return Util.RIGHT
+  else
+    return Util.UP
+  end
+end
+
+
+-- Returns opposite of direction passed
+function Util.GetOppositeDir( dir )
+  if dir == Util.UP then
+    return Util.DOWN
+  elseif dir == Util.DOWN then
+    return Util.UP
+  elseif dir == Util.LEFT then
+    return Util.RIGHT
+  elseif dir == Util.RIGHT then
+    return Util.LEFT
   else
     return Util.UP
   end

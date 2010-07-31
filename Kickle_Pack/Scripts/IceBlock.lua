@@ -1,10 +1,11 @@
 package.path = package.path .. ";Kickle_Pack/Scripts/?.lua"
-Util = require ("ObjectUtilities")
+Util = require "ObjectUtilities"
 
 --IceBlock Behavior Table
 
 local IceBlock = {}
 
+IceBlock.kicked = false
 IceBlock.moving = false
 IceBlock.startingX = -1
 IceBlock.startingY = -1
@@ -23,10 +24,32 @@ function IceBlock.AI( self )
     IceBlock.destroyed = true
   end
 
-	if IceBlock.moving then
-		local facingX, facingY = Util.GetTileObjectFaces( self )
-    local tileType = State.GetTileInfo( facingX, facingY )
+  local facingX, facingY = Util.GetTileObjectFaces( self )
+  local tileType = State.GetTileInfo( facingX, facingY )
+  local obj = State.GetObjectOnTile( facingX, facingY )
+  local objType
+  if obj then
+    objType = obj:GetType()
+  end 
 
+  if IceBlock.kicked then
+    IceBlock.kicked = false
+
+    local facingSpring = false
+    if objType == "Spring" then
+      facingSpring = ( self:GetDir() == Util.GetOppositeDir( obj:GetDir()))
+    end      
+    
+    if ( State.ObjectBlockingTile( facingX, facingY ) and not facingSpring ) or 
+       ( not State.TileIsCrossable( facingX, facingY ) and
+         tileType ~= "water" ) then 
+      IceBlock.destroyed = true
+    else
+      IceBlock.moving = true
+    end
+  end
+
+	if IceBlock.moving then
 		if tileType == "water" or tileType == "" then
       IceBlock.destroyed = true
       if tileType == "water" then
@@ -35,11 +58,11 @@ function IceBlock.AI( self )
         State.SetTile( facingX, facingY, tileName, 0 )
       end
     else
-      obj = State.GetObjectOnTile( facingX, facingY )
       if obj then
         self:SetNoClip( obj:GetType() == "Spring" )
       end
     end
+
     IceBlock.moving = self:Move()
   end
 

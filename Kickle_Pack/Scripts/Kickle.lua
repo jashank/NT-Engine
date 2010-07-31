@@ -159,22 +159,12 @@ function Kickle.PerformAttack( self )
       if objType == "IceBlock" then
         Kickle.state = KICKING
         self:PlayAnimation( kickleDir + Kickle.state );
-
-        local blockFacingX, blockFacingY =
-          Util.GetTileInDirection( objOnTile, kickleDir )
-        local tileType = State.GetTileInfo( blockFacingX, blockFacingY )
-        if (( State.TileIsCrossable( blockFacingX, blockFacingY ) or
-              tileType == "water" ) and
-              not State.ObjectBlockingTile( blockFacingX, blockFacingY )) then
-          objOnTile:GetTable().moving = true
-          objOnTile:SetDir( kickleDir );
-        else 
-          objOnTile:GetTable().destroyed = true
-        end
+        objOnTile:GetTable().kicked = true
+        objOnTile:SetDir( kickleDir )
         return
-    
+
       elseif objType == "Penguin" and 
-             objOnTile:GetTable().frozen == true then
+             objOnTile:GetTable().frozen then
         Kickle.state = KICKING
         self:PlayAnimation( kickleDir + Kickle.state )
         State.DestroyObject( objOnTile )
