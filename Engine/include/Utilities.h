@@ -23,6 +23,12 @@ std::string GetXmlFileName( std::string filepath );
 /// Rounds values up. For example 15 or 15.5 goes to 16
 int RoundUp( float toRoundUp );
 
+/// Returns whether 2 floating point values are "equal"
+bool Equals( float a, float b );
+
+/// Returns whether float a is greater than float b
+bool Greater( float a, float b );
+
 /// Clears the logs it is the first thing that is called in the
 /// main function.
 void ClearLog();

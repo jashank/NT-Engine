@@ -28,8 +28,8 @@ function Penguin.HandleCollision( self, other )
     State.DestroyObject( other )
   
   elseif otherType == "Slime" then
-    self:Reverse()
-    self:PlayAnimation( self:GetDir())
+    local dir = self:SetDir( Util.GetOppositeDir( self:GetDir()))
+    self:PlayAnimation( dir )
   end
 end
 

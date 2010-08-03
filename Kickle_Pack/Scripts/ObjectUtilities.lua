@@ -84,52 +84,45 @@ function Util.GetRandomDir( dirsNotToUse )
 end
 
 
--- Generic enemy AI for a Object to use. Tries its hardest to get
--- to Kickle, if all else fails tries to find any direction it can 
--- possibly move.
+-- Generic enemy AI for an Object to use. Moves in same direction until
+-- either it hits the same axis as Kickle (in which case it changes direction
+-- to go towards Kickle unless it can't move in that direction)
+-- or can't move any further.
 function Util.GenericEnemyAI( enemy )
-	local Kickle = State.GetObject( "Kickle" )
-
-	if ( Kickle ) then
-		local enemyX, enemyY = enemy:GetTile()
-    local KickleX, KickleY = Kickle:GetTile()
-
-		local distanceX = math.abs( enemyX - KickleX )
-		local distanceY = math.abs( enemyY - KickleY )
-
-		local dir = Util.UP;
-
-		if ( distanceX > distanceY ) then
-			if ( enemyX < KickleX ) then
-				dir = Util.RIGHT
-			elseif ( enemyX > KickleX ) then
-				dir = Util.LEFT
-			else
-				dir = math.random( Util.LEFT, Util.RIGHT )
-			end
-		else
-			if ( enemyY < KickleY ) then
-				dir = Util.DOWN
-			elseif ( enemyY > KickleY ) then
-				dir = Util.UP
-			else
-				dir = math.random( Util.UP, Util.DOWN )
-			end
-		end
-
-		enemy:SetDir( dir )
-
-    local dirsTried = { dir }
-    while #dirsTried < 4 and not enemy:Move() do
-      dir = Util.GetRandomDir( dirsTried )
-      enemy:SetDir( dir )
-      dirsTried[#dirsTried+1] = dir
+  local kickle = State.GetObject( "Kickle" )
+  if kickle then
+    local enemyX, enemyY = enemy:GetTile()
+    local kickleX, kickleY = kickle:GetTile()
+    local newDir = enemy:GetDir()
+    if enemyX == kickleX then
+      if enemyY < kickleY then
+        newDir = Util.DOWN
+      elseif enemyY > kickleY then
+        newDir = Util.UP
+      end
+    elseif enemyY == kickleY then
+      if enemyX < kickleX then
+        newDir = Util.RIGHT
+      elseif enemyX > kickleX then
+        newDir = Util.LEFT
+      end
     end
-
-    if #dirsTried < 4 then
-	    enemy:PlayAnimation( dir )
+    local facingX, facingY = Util.GetTileInDir( newDir, enemyX, enemyY )
+    if State.TileIsCrossable( facingX, facingY ) and
+       not State.ObjectBlockingTile( facingX, facingY ) then
+      enemy:SetDir( newDir )
     end
-	end
+  end
+
+  local facingX, facingY = Util.GetTileObjectFaces( enemy )
+  if not State.TileIsCrossable( facingX, facingY ) or  
+     State.ObjectBlockingTile( facingX, facingY ) then
+    enemy:SetDir( Util.GetNextDir( enemy:GetDir() ))
+  end
+
+  enemy:PlayAnimation( enemy:GetDir())
+  enemy:Move()
 end
+
 
 return Util

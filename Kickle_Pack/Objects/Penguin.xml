@@ -2,7 +2,7 @@
 <object>
   <animation path="Kickle_Pack/Animations/PenguinAnim_48x72.xml" />
   <script path="Kickle_Pack/Scripts/Penguin.lua" />
-  <speed ppf="1.0" />
+  <speed pps="60" />
   <rect x="8" y="33" width="31" height="27" />
   <tile block="false" />
 </object>

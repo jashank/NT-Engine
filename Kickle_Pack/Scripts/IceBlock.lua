@@ -85,7 +85,6 @@ function IceBlock.AI( self )
       IceBlock.slimeSpawnX,
       IceBlock.slimeSpawnY
     )
-
   end
 end
 
@@ -111,10 +110,10 @@ function IceBlock.HandleCollision( self, other )
   
   elseif otherType == "Spring" then
     if other:GetFrame() <= 4 then
-      self:SlowDown( 1 )
+      self:SlowDown( 60 )
     elseif self:GetSpeed() == 0 and other:GetFrame() >= 5 then
-      self:Reverse()
-      self:SetSpeed( 4 )
+      self:SetDir( Util.GetOppositeDir( self:GetDir())) 
+      self:SetSpeed( 240 )
     end
   end
 end

@@ -1,7 +1,6 @@
 #include "Utilities.h"
 
 #include <cmath>
-
 #include <cstdarg>
 #include <cstdio>
 #include <fstream>
@@ -39,9 +38,22 @@ std::string GetXmlFileName( std::string filepath ) {
   return filepath;
 }
 
-int RoundUp( float toRoundUp) {
+
+int RoundUp( float toRoundUp ) {
   return int(toRoundUp+1.0f);
 }
+
+
+bool Equals( float a, float b ) {
+  // 0.0001 epsilon is close enough for NT Engine
+  return ( fabs( a - b ) <  0.0001 );
+}
+
+
+bool Greater( float a, float b ) {
+  return (( a - b ) > 0.f ); 
+}
+ 
 
 void ClearLog() {
   //ios::trunc erases previous content contained by file opened.

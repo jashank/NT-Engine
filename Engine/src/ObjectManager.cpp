@@ -248,6 +248,9 @@ int ObjectManager::LuaDestroyObject( lua_State *L ) {
   if ( objToDestroy ) {
     lua_remove( L, 1 );
     Inst().RemoveObject( objToDestroy );
+  } else {
+    LogLuaErr( "No Object passed to DestroyObject." );
+    return luaL_error( L, "No Object passed to DestroyObject." );
   }
   return 0;
 }

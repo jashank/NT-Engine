@@ -26,7 +26,7 @@ class Object : public AnimSprite {
 
  private:
   /// An Object's direction can be Up, Down, Left, or Right
-  enum Dir { Up, Down, Left, Right };
+  enum Dir { UP, DOWN, LEFT, RIGHT };
   typedef std::pair< Key, std::string > KeyEntry;
   friend class ObjectAttorney;
 
@@ -90,7 +90,13 @@ class Object : public AnimSprite {
   int LuaIsAnimating( lua_State *L );
 
   /// Returns whether Object is moving
-  int LuaMoving( lua_State *L );
+  int LuaIsMoving( lua_State *L );
+
+  /// Returns whether Object is on collision course with object passed
+  /// i.e. both objects are heading towards the same point and will pass
+  /// it at same time based on their current state. Returns true if objects
+  /// are already colliding.
+  int LuaOnCollisionCourse( lua_State *L );
 
 	/// Allows Lua to access type of Object
   int LuaGetType( lua_State *L );
@@ -161,6 +167,13 @@ class Object : public AnimSprite {
   /// Function pointer registered to CallLuaFunc for use with InputHandler
   const boost::function1<void, std::string&> m_ptrCallScriptFunc;
 
+  /// Returns Object's x and y velocity in vector terms. Up is negative,
+  /// down is positive, left is negative, right is positive.
+  sf::Vector2f GetVelocityVector();
+
+  /// Returns opposite of dir passed.
+  Dir GetOppositeDir( Dir dir );
+
   /******************************************
    * Data Members
    *****************************************/
@@ -171,7 +184,7 @@ class Object : public AnimSprite {
   bool m_noClip; // When true, allows object to pass through solid objects and tiles
   Dir m_direction; // Current direction  object is moving
   float m_distance; // Distance traveled from last grid location
-  float m_speed; // m_speed at which object moves
+  float m_speed; // Speed in pixels per second 
   InputHandler m_input; // Handles input for this Object
   int m_id; // ID of object
   int m_tileX; // X tile coordinate of object

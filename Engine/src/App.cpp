@@ -137,10 +137,6 @@ const sf::Input& App::GetInput() const {
   return m_window.GetInput();
 }
 
-const nt::scene::Camera& App::GetCamera() const {
-  return m_camera;
-}
-
 
 sf::Image* App::LoadImage( const std::string &filename ) {
 	return m_images.Load( filename );
@@ -199,9 +195,6 @@ void App::Run() {
 		}
 
 		m_window.Clear( m_clearColor );
-		//Display FPS
-		sprintf( m_fpsStrBuff, "FPS: %4.2g", m_fps );
-		m_window.Draw( sf::String( m_fpsStrBuff )  );
 
 		//Render and Display
 		m_currentState->Render();

@@ -1,5 +1,8 @@
 #include "Object.h"
 
+#include <algorithm>
+#include <cmath>
+
 #include "boost/bind/bind.hpp"
 extern "C" {
 #include "lualib.h"
@@ -24,13 +27,13 @@ Lunar<Object>::RegType Object::methods[] = {
   { "PlayAnimationReverse", &Object::LuaPlayAnimationReverse },
   { "GetFrame", &Object::LuaGetFrame },
   { "IsAnimating", &Object::LuaIsAnimating },
-  { "IsMoving", &Object::LuaMoving },
+  { "IsMoving", &Object::LuaIsMoving },
+  { "OnCollisionCourse", &Object::LuaOnCollisionCourse },
   { "GetType", &Object::LuaGetType },
   { "GetTile", &Object::LuaGetTile },
   { "BlockTile", &Object::LuaBlockTile },
   { "GetDir", &Object::LuaGetDir },
   { "SetDir", &Object::LuaSetDir },
-  { "Reverse", &Object::LuaReverse },
   { "GetTable", &Object::LuaGetTable },
   { "SetNoClip", &Object::LuaSetNoClip },
   { "ResetTimer", &Object::LuaResetTimer },
@@ -48,7 +51,7 @@ Object::Object( lua_State *L )
    m_moving( false ),
    m_blockingTile( false ),
    m_noClip( false ),
-   m_direction( Up ),
+   m_direction( UP ),
    m_distance( 0.0f ),
    m_speed( 0.0f ),
    m_id( -1 ),
@@ -93,7 +96,7 @@ Object::Object(
    m_moving( false ),
    m_blockingTile( false ),
    m_noClip( false ),
-   m_direction( Up ),
+   m_direction( UP ),
    m_distance( 0.0f ),
    m_speed( 0.0f ),
    m_id( -1 ),
@@ -203,19 +206,19 @@ int Object::LuaMove( lua_State *L ) {
     int nextTileY = m_tileY;
 
     switch ( m_direction ) {
-      case Up: {
+      case UP: {
         nextTileY--;
         break;
       }
-      case Down: {
+      case DOWN: {
         nextTileY++;
         break;
       }
-      case Left: {
+      case LEFT: {
         nextTileX--;
         break;
       }
-      case Right: {
+      case RIGHT: {
         nextTileX++;
         break;
       }
@@ -307,9 +310,76 @@ int Object::LuaIsAnimating( lua_State *L ) {
 }
 
 
-int Object::LuaMoving( lua_State *L ) {
+int Object::LuaIsMoving( lua_State *L ) {
   lua_pushboolean( L, m_moving );
   return 1;
+}
+
+
+int Object::LuaOnCollisionCourse( lua_State *L ) {
+  Object* const other = Lunar<Object>::check( L, 1 );
+  if ( other ) {
+    sf::FloatRect thisRect = m_collisionRect;
+    sf::FloatRect otherRect = other->m_collisionRect;
+
+    float distLR = otherRect.Left - thisRect.Right;
+    float distRL = thisRect.Left - otherRect.Right;
+    float distTB = otherRect.Top - thisRect.Bottom;
+    float distBT = thisRect.Top - otherRect.Bottom;
+
+    bool intersectingX = 
+      ( fabs( distRL ) < ( thisRect.GetWidth() + otherRect.GetWidth() ));
+    bool intersectingY = 
+      ( fabs( distBT ) < ( thisRect.GetHeight() + otherRect.GetHeight() ));
+    if ( intersectingX && intersectingY ) {
+      lua_pushboolean ( L, true );
+      return 1;
+    }
+    
+    sf::Vector2f velVec = GetVelocityVector() - other->GetVelocityVector();
+    float timeLR = 0.f;
+    float timeRL = 0.f;
+    float timeTB = 0.f;
+    float timeBT = 0.f;
+
+    // Can use direct comparison b/c unmoving velVec assigned to 0 exactly
+    if ( velVec.x != 0.f ) {
+      timeLR = distLR / velVec.x;
+      timeRL = -distRL / velVec.x;
+    } else if ( !intersectingX ) {
+      lua_pushboolean( L, false );
+      return 1;
+    }
+
+    if ( velVec.y != 0.f ) {
+      timeTB = distTB / velVec.y;
+      timeBT = -distBT / velVec.y;
+    } else if ( !intersectingY ) {
+      lua_pushboolean( L, false );
+      return 1;
+    }
+
+    float timeXMin = std::min( timeLR, timeRL );
+    float timeXMax = std::max( timeLR, timeRL );
+    float timeYMin = std::min( timeTB, timeBT );
+    float timeYMax = std::max( timeTB, timeBT );
+    if ( timeXMin == 0.f && timeXMax == 0.f && intersectingX ) {
+      timeXMin = timeYMin;
+      timeXMax = timeYMax;
+    }
+    if ( timeYMin == 0.f && timeYMax == 0.f && intersectingY ) {
+      timeYMin = timeXMin;
+      timeYMax = timeXMax;
+    }
+
+    bool willCollide = ( !( timeXMin > timeYMax ) && !( timeXMax < timeYMin )); 
+    lua_pushboolean( L, willCollide );
+    return 1;
+        
+  } else {
+    LogLuaErr( "No Object passed to IsMovingToward in Object: " + m_type );
+    return luaL_error( L, "No Object passed to IsMovingToward." );
+  }
 }
 
 
@@ -343,39 +413,21 @@ int Object::LuaSetDir( lua_State *L ) {
     LogLuaErr( "Didn't pass number to SetDir in Object: " + m_type );
     return luaL_error( L, "Didn't pass number to SetDir" );
   }
-  m_direction = static_cast<Dir>( lua_tointeger( L, -1 ) );
-  return 0;
-}
 
-
-int Object::LuaReverse( lua_State *L ) {
-  m_distance = m_state->GetTileManager().GetTileDim() - m_distance;
-
-  switch( m_direction ) {
-    case Up: {
-      m_direction = Down;
-      break;
+  Dir dir = static_cast<Dir>( lua_tointeger( L, -1 ) );
+  if ( !m_moving ) {
+    m_direction = dir;
+  } else {
+    if ( dir == GetOppositeDir( m_direction )) {
+      m_distance = m_state->GetTileManager().GetTileDim() - m_distance;
+      m_direction = dir;
+    } else {
+      LogLuaErr( "Direction passed to SetDir will unalign Object: " + m_type );
+      return luaL_error( L, "Direction passed to SetDir will unalign Object" );
     }
-    case Down: {
-      m_direction = Up;
-      break;
-    }
-    case Left: {
-      m_direction = Right;
-      break;
-    }
-    case Right: {
-      m_direction = Left;
-      break;
-    }
-    default: {
-      LogLuaErr( "In Reverse, no direction for Object: " + m_type );
-      return luaL_error( L, "In Reverse, no direction for Object" );
-    }
-  }
-
-  m_moving = true;
-  return 0;
+  }  
+  lua_pushinteger( L, m_direction );
+  return 1;
 }
 
 
@@ -443,116 +495,6 @@ int Object::LuaSpeedUp( lua_State *L ) {
 }
 
 
-void Object::InitLua() {
-  lua_State *L = App::GetApp()->GetLuaState();
-  luaL_dofile( L, m_luaScript.c_str() );
-  if ( lua_istable( L, -1 )) {
-    m_id = luaL_ref( L, LUA_REGISTRYINDEX );
-  }
-}
-
-
-void Object::MovementUpdate() {
-  int halfTile = m_state->GetTileManager().GetTileDim() / 2;
-  float prevDistance = m_distance;
-  m_distance += m_speed;
-  
-  bool nextTile = ( prevDistance < halfTile && m_distance >= halfTile );
-
-  switch( m_direction ) {
-    case Up: {
-      Move( 0.0f, -m_speed );
-      m_collisionRect.Offset( 0.0f, -m_speed );
-      if ( nextTile ) {
-        --m_tileY;
-      }
-      break;
-    }
-    case Down: {
-      Move( 0.0f, m_speed );
-      m_collisionRect.Offset( 0.0f, m_speed );
-      if ( nextTile ) {
-        ++m_tileY;
-      }
-      break;
-    }
-    case Left: {
-      Move( -m_speed, 0.0f );
-      m_collisionRect.Offset( -m_speed, 0.0f );
-      if ( nextTile ) {
-        --m_tileX; 
-      }
-      break;
-    }
-    case Right: {
-      Move( m_speed, 0.0f );
-      m_collisionRect.Offset( m_speed, 0.0f );
-      if ( nextTile ) {
-        ++m_tileX;
-      }
-      break;
-    }
-    default: {}
-  }
-
-  if( m_distance >= m_state->GetTileManager().GetTileDim()) {
-    m_moving = false;
-    CorrectMovement();
-    m_distance = 0.0f;
-  }
-}
-
-
-void Object::CorrectMovement() {
-  static float diff = 0.0f;
-  //Calculate the amount of distance to move back
-  diff = m_distance - m_state->GetTileManager().GetTileDim();
-
-  //Find the correct direction to move back
-  switch( m_direction ) {
-    case Up: {
-      Move( 0.0f, diff );
-      m_collisionRect.Offset( 0.0f, diff );
-      break;
-    }
-    case Down: {
-      Move( 0.0f, -diff );
-      m_collisionRect.Offset( 0.0f, -diff );
-      break;
-    }
-    case Left: {
-      Move( diff, 0.0f );
-      m_collisionRect.Offset( diff, 0.0f );
-      break;
-    }
-    case Right: {
-      Move( -diff, 0.0f );
-      m_collisionRect.Offset( -diff, 0.0f );
-      break;
-    }
-    default: {}
-  }
-
-  SetPosition( round( GetPosition().x ), round( GetPosition().y ) );
-  m_collisionRect.Top = round( m_collisionRect.Top );
-  m_collisionRect.Bottom = round( m_collisionRect.Bottom );
-  m_collisionRect.Left = round( m_collisionRect.Left );
-  m_collisionRect.Right = round( m_collisionRect.Right );
-}
-
-
-void Object::CallScriptFunc( std::string &funcName ) {
-  lua_State *L = App::GetApp()->GetLuaState();
-  lua_rawgeti( L, LUA_REGISTRYINDEX, m_id );
-  lua_getfield( L, -1, funcName.c_str() );
-  if( lua_isfunction( L, -1 ) ) {
-    Lunar<Object>::push( L, this );
-    lua_call( L, 1, 0 );
-  }
-  lua_settop( L, 0 );
-}
-
-
 bool Object::LoadCollisionData( const std::string &filepath ) {
   TiXmlDocument doc ( filepath.c_str() );
 
@@ -593,6 +535,7 @@ bool Object::LoadCollisionData( const std::string &filepath ) {
   return true;
 }
 
+
 bool Object::LoadObjectData( const std::string &filepath ) {
   TiXmlDocument doc ( filepath.c_str() );
 
@@ -630,7 +573,7 @@ bool Object::LoadObjectData( const std::string &filepath ) {
 
   TiXmlElement *speed = root->FirstChildElement( "speed" );
   if ( speed ) {
-    speed->QueryFloatAttribute( "ppf", &m_speed );
+    speed->QueryFloatAttribute( "pps", &m_speed );
   }
 
   //Load input data if there is any
@@ -643,4 +586,166 @@ bool Object::LoadObjectData( const std::string &filepath ) {
   }
 
   return true;
+}
+
+
+void Object::InitLua() {
+  lua_State *L = App::GetApp()->GetLuaState();
+  luaL_dofile( L, m_luaScript.c_str() );
+  if ( lua_istable( L, -1 )) {
+    m_id = luaL_ref( L, LUA_REGISTRYINDEX );
+  }
+}
+
+
+void Object::MovementUpdate() {
+  int halfTile = m_state->GetTileManager().GetTileDim() / 2;
+  float prevDist = m_distance;
+  float distThisFrame = m_speed * App::GetApp()->GetDeltaTime();
+  m_distance += distThisFrame;
+  
+  bool nextTile = ( prevDist < halfTile && m_distance >= halfTile );
+
+  switch( m_direction ) {
+    case UP: {
+      Move( 0.0f, -distThisFrame );
+      m_collisionRect.Offset( 0.0f, -distThisFrame );
+      if ( nextTile ) {
+        --m_tileY;
+      }
+      break;
+    }
+    case DOWN: {
+      Move( 0.0f, distThisFrame );
+      m_collisionRect.Offset( 0.0f, distThisFrame );
+      if ( nextTile ) {
+        ++m_tileY;
+      }
+      break;
+    }
+    case LEFT: {
+      Move( -distThisFrame, 0.0f );
+      m_collisionRect.Offset( -distThisFrame, 0.0f );
+      if ( nextTile ) {
+        --m_tileX; 
+      }
+      break;
+    }
+    case RIGHT: {
+      Move( distThisFrame, 0.0f );
+      m_collisionRect.Offset( distThisFrame, 0.0f );
+      if ( nextTile ) {
+        ++m_tileX;
+      }
+      break;
+    }
+    default: {}
+  }
+
+  if( m_distance >= m_state->GetTileManager().GetTileDim()) {
+    m_moving = false;
+    CorrectMovement();
+    m_distance = 0.0f;
+  }
+}
+
+
+void Object::CorrectMovement() {
+  static float diff = 0.0f;
+  //Calculate the amount of distance to move back
+  diff = m_distance - m_state->GetTileManager().GetTileDim();
+
+  //Find the correct direction to move back
+  switch( m_direction ) {
+    case UP: {
+      Move( 0.0f, diff );
+      m_collisionRect.Offset( 0.0f, diff );
+      break;
+    }
+    case DOWN: {
+      Move( 0.0f, -diff );
+      m_collisionRect.Offset( 0.0f, -diff );
+      break;
+    }
+    case LEFT: {
+      Move( diff, 0.0f );
+      m_collisionRect.Offset( diff, 0.0f );
+      break;
+    }
+    case RIGHT: {
+      Move( -diff, 0.0f );
+      m_collisionRect.Offset( -diff, 0.0f );
+      break;
+    }
+    default: {}
+  }
+
+  SetPosition( round( GetPosition().x ), round( GetPosition().y ) );
+  m_collisionRect.Top = round( m_collisionRect.Top );
+  m_collisionRect.Bottom = round( m_collisionRect.Bottom );
+  m_collisionRect.Left = round( m_collisionRect.Left );
+  m_collisionRect.Right = round( m_collisionRect.Right );
+}
+
+
+void Object::CallScriptFunc( std::string &funcName ) {
+  lua_State *L = App::GetApp()->GetLuaState();
+  lua_rawgeti( L, LUA_REGISTRYINDEX, m_id );
+  lua_getfield( L, -1, funcName.c_str() );
+  if( lua_isfunction( L, -1 ) ) {
+    Lunar<Object>::push( L, this );
+    lua_call( L, 1, 0 );
+  }
+  lua_settop( L, 0 );
+}
+
+
+sf::Vector2f Object::GetVelocityVector() {
+  sf::Vector2f velVec( 0.f, 0.f );
+  if ( m_moving ) {
+    switch ( m_direction ) {
+      case UP: {
+        velVec.y = -m_speed;
+        break;
+      }
+      case DOWN: {
+        velVec.y = m_speed;
+        break;
+      }
+      case LEFT: {
+        velVec.x = -m_speed;
+        break;
+      }
+      case RIGHT: {
+        velVec.x = m_speed;
+        break;
+      }
+      default:; // Object should have direction, just return 0 vel
+    }
+  }
+  return velVec;
+}
+
+
+Object::Dir Object::GetOppositeDir( Dir dir ) {
+  switch ( dir ) {
+    case UP: {
+      return DOWN;
+      break;
+    }
+    case DOWN: {
+      return UP;
+      break;
+    }
+    case LEFT: {
+      return RIGHT;
+      break;
+    }
+    case RIGHT: {
+      return LEFT;
+    }
+    default: {
+      return UP;
+    }
+  }
 }

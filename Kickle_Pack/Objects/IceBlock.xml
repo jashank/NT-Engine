@@ -2,7 +2,7 @@
 <object>
   <animation path="Kickle_Pack/Animations/IceBlockAnim_48x48.xml" />
   <script path="Kickle_Pack/Scripts/IceBlock.lua" />
-  <speed ppf="4.0" />
+  <speed pps="240" />
   <rect x="4" y="4" width="40" height="40" />
   <tile block="true" />
 </object>

@@ -2,7 +2,7 @@
 <object>
   <animation path="Kickle_Pack/Animations/KickleAnim_48x60.xml" />
   <script path="Kickle_Pack/Scripts/Kickle.lua" />
-  <speed ppf="2.5" />
+  <speed pps="150" />
   <rect x="15" y="32" width="18" height="20" />
   <tile block="false" />
   <input_list>

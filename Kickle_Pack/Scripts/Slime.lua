@@ -8,6 +8,7 @@ local Slime = {}
 
 Slime.spawnPointX = -1
 Slime.spawnPointY = -1
+Slime.hitSlime = nil
 
 function Slime.Init( self )
   local spawnPoint = State.GetNearestObject( "SpawnPoint", self:GetTile())
@@ -25,9 +26,9 @@ end
 function Slime.HandleCollision( self, other )
   local otherType = other:GetType()
 	if otherType == "Slime" or otherType == "Penguin" then
-		self:Reverse()
-    self:PlayAnimation( self:GetDir())
-	end
+    local dir = self:SetDir( Util.GetOppositeDir( self:GetDir())) 	
+    self:PlayAnimation( dir )
+  end
 end
 
 return Slime

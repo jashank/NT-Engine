@@ -75,9 +75,6 @@ class App {
   /// Returns input in app.
   const sf::Input &GetInput() const;
 
-  /// Returns the camera in app.
-  const nt::scene::Camera &GetCamera() const;
-
   /// Returns an Image given a filename, insuring that no
   /// duplicate Image is loaded into memory
   sf::Image* LoadImage( const std::string &filename );
@@ -124,7 +121,6 @@ class App {
 
   static App *m_instance; //Single instance of App
 
-  char m_fpsStrBuff[50]; //String for displaying current FPS
   float m_time; //Total time since app was first created.
   float	m_deltaTime; //Time in seconds spent on last frame render
   float	m_fps; //Frames per Second
@@ -139,7 +135,6 @@ class App {
   sf::Color m_clearColor; //Color to clear the screen to
   sf::Event	m_event; //holds the most current event
   sf::RenderWindow	m_window; //SFML's window
-  nt::scene::Camera m_camera;
 
   // TEMPORARY
   bool m_nextStateSet;
