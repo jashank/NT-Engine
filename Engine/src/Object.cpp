@@ -1,6 +1,5 @@
 #include "Object.h"
 
-#include <algorithm>
 #include <cmath>
 
 #include "boost/bind/bind.hpp"
@@ -29,6 +28,7 @@ Lunar<Object>::RegType Object::methods[] = {
   { "IsAnimating", &Object::LuaIsAnimating },
   { "IsMoving", &Object::LuaIsMoving },
   { "OnCollisionCourse", &Object::LuaOnCollisionCourse },
+  { "SetNotColliding", &Object::LuaSetNotColliding },
   { "GetType", &Object::LuaGetType },
   { "GetTile", &Object::LuaGetTile },
   { "BlockTile", &Object::LuaBlockTile },
@@ -155,8 +155,10 @@ void Object::HandleEvents() {
 }
 
 
-void Object::UpdateCollision( Object *collisionObj ) {
+void Object::UpdateCollision( Object* const collisionObj ) {
   // collisionObj not NULL guaranteed by ObjectManager
+  m_collidingWith.push_back( collisionObj );
+
   lua_State *L = App::GetApp()->GetLuaState();
   lua_rawgeti( L, LUA_REGISTRYINDEX, m_id );
   lua_getfield( L, -1, "HandleCollision" );
@@ -377,8 +379,20 @@ int Object::LuaOnCollisionCourse( lua_State *L ) {
     return 1;
         
   } else {
-    LogLuaErr( "No Object passed to IsMovingToward in Object: " + m_type );
-    return luaL_error( L, "No Object passed to IsMovingToward." );
+    LogLuaErr( "No Object passed to OnCollisionCourse in Object: " + m_type );
+    return luaL_error( L, "No Object passed to OnCollisionCourse." );
+  }
+}
+
+
+int Object::LuaSetNotColliding( lua_State *L ) {
+  Object* const other = Lunar<Object>::check( L, 1 );
+  if ( other ) {
+    m_collidingWith.remove( other );
+    return 0;
+  } else {
+    LogLuaErr( "No Object passed to SetNotColliding in Object: " + m_type );
+    return luaL_error( L, "No Object passed to SetNotColliding." );
   }
 }
 

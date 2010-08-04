@@ -90,7 +90,7 @@ class ObjectManager {
   /// Collision detection for non-solid Objects using rectangular
   /// collision detection. Returns Object that 'object' collided with,
   /// or NULL otherwise. x and y are coordinate to check.
-  Object* DetectCollision( int x, int y, const Object* const obj );
+  Object* DetectCollision( Object* const obj );
 
   /// Checks to see if Object has moved from coord passed
   /// and adjusts accordingly in the object grid. Since function can modify

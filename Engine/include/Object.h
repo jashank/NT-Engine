@@ -1,6 +1,8 @@
 #ifndef OBJECT_H
 #define OBJECT_H
 
+#include <algorithm>
+#include <list>
 #include <string>
 
 #include "boost/function/function1.hpp"
@@ -45,7 +47,9 @@ class Object : public AnimSprite {
   /// Handles events generated for Object
   void HandleEvents();
 
-  /// Updates the Object's collision
+  /// Updates the Object's collision. An Object only detects a collision with
+  /// another object once. It can't only detect another collision with the 
+  /// object until after the two have separated.
   void UpdateCollision( Object* const collisionObj );
 
   /// Updates the Object's movement and other AI related script stuff
@@ -97,6 +101,10 @@ class Object : public AnimSprite {
   /// it at same time based on their current state. Returns true if objects
   /// are already colliding.
   int LuaOnCollisionCourse( lua_State *L );
+ 
+  /// Removes Object passed from this Object's list of Objects it believes it
+  /// is colliding with.
+  int LuaSetNotColliding( lua_State *L );
 
 	/// Allows Lua to access type of Object
   int LuaGetType( lua_State *L );
@@ -191,6 +199,7 @@ class Object : public AnimSprite {
   int m_tileY; // Y tile coordinate of object
   sf::Clock m_timer; // Timer that Object can use from its script
   sf::FloatRect m_collisionRect; // Object's collision box
+  std::list<Object*> m_collidingWith; // Objects this Object is colliding with
   std::string m_luaScript; // Filepath to the lua script
   std::string m_type; // What type of  object (slime, kickle, etc.)
 };
@@ -304,6 +313,31 @@ class ObjectAttorney {
    */
   static const sf::FloatRect& GetRect( const Object* const obj )
   { return obj->m_collisionRect; }
+ 
+  /**
+   * Returns whether other is in obj's list of Objects it believes it
+   * is colliding with.
+   * @param obj object thats list is to be checked
+   * @param other object to check for in obj's list
+   * @return Whether other is in obj's list
+   */
+  static bool IsCollidingWith(
+    const Object* const obj, 
+    const Object* const other )
+  { return ( std::find( 
+               obj->m_collidingWith.begin(), 
+               obj->m_collidingWith.end(), 
+               other 
+             ) != obj->m_collidingWith.end()); }
+
+  /**
+   * Removes object passed from Object's list of Objects it believes
+   * it is currently colliding with.
+   * @param obj object thats collision list needs to be updated
+   * @param other object that needs to be removed from obj's collision list
+   */
+  static void RemoveFromCollidingWith( Object* const obj, Object* const other )
+  { obj->m_collidingWith.remove( other ); }
 };  
 
 #endif // OBJECT_H

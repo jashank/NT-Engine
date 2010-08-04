@@ -125,10 +125,12 @@ void ObjectManager::Update() {
     for ( unsigned int y = 0; y < m_objGrid[x].size(); ++y ) {
       ListItr obj = m_objGrid[x][y].begin();
       for ( unsigned int i = 0; i < m_objGrid[x][y].size(); ++i ) {
-        Object *otherObj = DetectCollision( x, y, *obj );
+        Object* const otherObj = DetectCollision( *obj );
         if ( otherObj ) {
           ObjectAttorney::UpdateCollision( *obj, otherObj );
           obj = AdjustGridCoord( x, y, obj );
+        } else {
+          ++obj;
         }
       }
     }
@@ -419,28 +421,35 @@ Object* ObjectManager::ObjectOnTile( int x, int y ) const {
 }
 
 
-Object* ObjectManager::DetectCollision( 
-  int x,
-  int y, 
-  const Object* const obj 
-) {
-  for ( ListItr otherObj = m_objGrid[x][y].begin();
-        otherObj != m_objGrid[x][y].end(); otherObj++ ) {
-    if ( *otherObj != obj ) {
-      if ( ObjectAttorney::GetRect( obj ).Intersects(
-           ObjectAttorney::GetRect( *otherObj ))) {
-        // So next collision check will return a different object colliding
-        // with 'object' if there is one
-        m_objGrid[x][y].splice( 
-          m_objGrid[x][y].end(), 
-          m_objGrid[x][y], 
-          otherObj 
-        );
-        return m_objGrid[x][y].back();
+Object* ObjectManager::DetectCollision( Object* const obj ) {
+  for ( unsigned int x = 0; x < m_objGrid.size(); ++x ) {
+    for ( unsigned int y = 0; y < m_objGrid[x].size(); ++y ) {
+      for ( ListItr otherObj = m_objGrid[x][y].begin();
+            otherObj != m_objGrid[x][y].end(); ++otherObj ) {
+        if ( *otherObj != obj && std::find( 
+               m_toBeDestroyed.begin(), m_toBeDestroyed.end(), *otherObj ) ==
+               m_toBeDestroyed.end()) {
+          bool collidingWithObj = 
+            ObjectAttorney::IsCollidingWith( obj, *otherObj );
+          bool intersects = 
+            ObjectAttorney::GetRect( obj ).Intersects( 
+              ObjectAttorney::GetRect( *otherObj ));
+          if ( !collidingWithObj && intersects ) {
+            // So next collision check will return a different object colliding
+            // with 'object' if there is one
+            m_objGrid[x][y].splice( 
+              m_objGrid[x][y].end(), 
+              m_objGrid[x][y], 
+              otherObj 
+            );
+            return m_objGrid[x][y].back();
+          } else if ( collidingWithObj && !intersects ) {
+            ObjectAttorney::RemoveFromCollidingWith( obj, *otherObj );
+          }
+        }
       }
     }
   }
-
   return NULL;
 }
 

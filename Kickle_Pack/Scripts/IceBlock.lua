@@ -115,6 +115,7 @@ function IceBlock.HandleCollision( self, other )
       self:SetDir( Util.GetOppositeDir( self:GetDir())) 
       self:SetSpeed( 240 )
     end
+    self:SetNotColliding( other )
   end
 end
 
