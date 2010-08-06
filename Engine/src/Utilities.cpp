@@ -67,12 +67,6 @@ void LogMsg( const std::string &msg ) {
   file.close();
 }
 
-void LogErr( const std::ostringstream &msg ) {
-  DEBUG_STATEMENT( std::cout << "[ERR] - " << msg.str(); )
-  std::ofstream file( "Engine.log", std::ios::out|std::ios::app );
-  file << "[ERR] - " << msg.str() << "\n";
-  file.close();
-}
 
 void LogErr( const std::string &msg ) {
   DEBUG_STATEMENT( std::cout << "[ERR] - " << msg; )
@@ -81,8 +75,11 @@ void LogErr( const std::string &msg ) {
   file.close();
 }
 
+
 void LogLuaErr( const std::string &msg ) {
   std::ofstream file( "Engine.log", std::ios::out|std::ios::app );
-  file << "[LUA] - " << msg << "\n";
+  file << "[LUA_ERR] - " << msg << "\n";
   file.close();
 }
+
+

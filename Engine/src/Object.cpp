@@ -4,7 +4,7 @@
 
 #include "boost/bind/bind.hpp"
 extern "C" {
-#include "lualib.h"
+  #include "lualib.h"
 }
 
 #include "App.h"
@@ -251,9 +251,9 @@ int Object::LuaGetAnimation( lua_State *L ) {
 
 
 int Object::LuaSetAnimation( lua_State *L ) {
-  if( !lua_isnumber( L, -1 )) {
+  if ( !lua_isnumber( L, -1 )) {
     LogLuaErr( "Didn't pass number to SetAnimation in Object: " + m_type );
-    return luaL_error( L, "Didn't pass number to SetAnimation" );
+    return 0;
   }
   int animation = lua_tointeger( L, -1 );
   SetAnimation( animation );
@@ -263,10 +263,10 @@ int Object::LuaSetAnimation( lua_State *L ) {
 
 int Object::LuaSetAnimationReverse( lua_State *L ) {
   if ( !lua_isnumber( L, -1 )) {
-    LogLuaErr(
+    LogLuaErr( 
       "Didn't pass number to SetAnimationReverse in Object: " + m_type
     );
-    return luaL_error( L, "Didn't pass number to SetAnimationReverse" );
+    return 0;
   }
   int animation = lua_tointeger( L, -1 );
   SetAnimation( animation, true );
@@ -277,7 +277,7 @@ int Object::LuaSetAnimationReverse( lua_State *L ) {
 int Object::LuaPlayAnimation( lua_State *L ) {
   if ( !lua_isnumber( L, -1 )) {
     LogLuaErr( "Didn't pass number to PlayAnimation in Object: " + m_type );
-    return luaL_error( L, "Didn't pass number to PlayAnimation" );
+    return 0;
   }
   int animation = lua_tointeger( L, -1 );
   SetAnimation( animation );
@@ -291,7 +291,7 @@ int Object::LuaPlayAnimationReverse( lua_State *L ) {
     LogLuaErr( 
       "Didn't pass number to PlayAnimationReverse in Object: " + m_type 
     );
-    return luaL_error( L, "Didn't pass number to PlayAnimationReverse" );
+    return 0;
   }
   int animation = lua_tointeger( L, -1 );
   SetAnimation( animation, true );
@@ -380,7 +380,7 @@ int Object::LuaOnCollisionCourse( lua_State *L ) {
         
   } else {
     LogLuaErr( "No Object passed to OnCollisionCourse in Object: " + m_type );
-    return luaL_error( L, "No Object passed to OnCollisionCourse." );
+    return 0;
   }
 }
 
@@ -392,7 +392,7 @@ int Object::LuaSetNotColliding( lua_State *L ) {
     return 0;
   } else {
     LogLuaErr( "No Object passed to SetNotColliding in Object: " + m_type );
-    return luaL_error( L, "No Object passed to SetNotColliding." );
+    return 0;
   }
 }
 
@@ -425,7 +425,7 @@ int Object::LuaGetDir( lua_State *L ) {
 int Object::LuaSetDir( lua_State *L ) {
   if( !lua_isnumber( L, -1 ) ) {
     LogLuaErr( "Didn't pass number to SetDir in Object: " + m_type );
-    return luaL_error( L, "Didn't pass number to SetDir" );
+    return 0;
   }
 
   Dir dir = static_cast<Dir>( lua_tointeger( L, -1 ) );
@@ -437,7 +437,7 @@ int Object::LuaSetDir( lua_State *L ) {
       m_direction = dir;
     } else {
       LogLuaErr( "Direction passed to SetDir will unalign Object: " + m_type );
-      return luaL_error( L, "Direction passed to SetDir will unalign Object" );
+      return 0;
     }
   }  
   lua_pushinteger( L, m_direction );
@@ -478,7 +478,7 @@ int Object::LuaGetSpeed( lua_State *L ) {
 int Object::LuaSetSpeed( lua_State *L ) {
   if ( !lua_isnumber( L, -1 )) {
     LogLuaErr( "Number not passed to SetSpeed for Object: " + m_type );
-    return luaL_error( L, "Number not passed to SetSpeed for Object" );
+    return 0;
   }
   m_speed = lua_tonumber( L, -1 );
   return 0;
@@ -488,7 +488,7 @@ int Object::LuaSetSpeed( lua_State *L ) {
 int Object::LuaSlowDown( lua_State *L ) {
   if ( !lua_isnumber( L, -1 )) {
     LogLuaErr( "Number not passed to SlowDown for Object: " + m_type );
-    return luaL_error( L, "Number not passed to SlowDown for Object" );
+    return 0;
   }
   m_speed -= lua_tonumber( L, -1 );
 
@@ -502,7 +502,7 @@ int Object::LuaSlowDown( lua_State *L ) {
 int Object::LuaSpeedUp( lua_State *L ) {
   if ( !lua_isnumber( L, -1 )) {
     LogLuaErr( "Number not passed to SpeedUp for Object: " + m_type );
-    return luaL_error( L, "Number not passed to SpeedUp for Object" );
+    return 0;
   }
   m_speed += lua_tonumber( L, -1 );
   return 0;

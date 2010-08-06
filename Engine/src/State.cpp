@@ -137,7 +137,7 @@ void State::RegisterLuaFuncs( lua_State *L  ) {
 int State::LuaLoadPath( lua_State *L ) {
   if ( !lua_isstring( L, -1 )) {
     LogLuaErr( "String not passed to LoadPath" );
-    return luaL_error( L, "String not passed to LoadPath" );
+    return 0;
   }
   App::GetApp()->SetNextState( lua_tostring( L, -1 ));
   return 0;
@@ -155,7 +155,7 @@ int State::LuaPortal( lua_State *L ) {
 
   if ( !lua_isstring( L, -1 )) {
     LogLuaErr( "String not passed to Portal" );
-    return luaL_error( L, "String not passed to Portal" );
+    return 0;
   }
   std::map<std::string, std::string>::const_iterator port =
     currentState->m_portals.find( lua_tostring( L, -1 ));
@@ -175,7 +175,7 @@ int State::LuaGetName( lua_State *L ) {
 int State::LuaLogErr( lua_State *L ) {
   if ( !lua_isstring( L, -1 )) {
     LogLuaErr( "String not passed to LuaLogLuaErr" );
-    return luaL_error( L, "String not passed to LuaLogLuaErr" );
+    return 0;
   }
   LogLuaErr( lua_tostring( L, -1 ));
   return 0;

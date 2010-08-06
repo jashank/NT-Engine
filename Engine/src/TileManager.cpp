@@ -147,13 +147,13 @@ void TileManager::RegisterLuaFuncs( lua_State *L ) {
 int TileManager::LuaGetTileInfo( lua_State *L ) {
   if ( !lua_isnumber( L, -2 ) ) {
     LogLuaErr( "Number not passed to x position in GetTile." );
-    return luaL_error( L, "Number not passed to x position in GetTile." );
+    return 0;
   }
   int tileX = lua_tointeger( L, -2 );
 
   if ( !lua_isnumber( L, -1 ) ) {
     LogLuaErr( "Number not passed to y position in GetTile." );
-    return luaL_error( L, "Number not passed to y position in GetTile." );
+    return 0;
   }
   int tileY = lua_tointeger( L, -1 );
 
@@ -174,13 +174,13 @@ int TileManager::LuaGetTileInfo( lua_State *L ) {
 int TileManager::LuaTileIsCrossable( lua_State *L ) {
   if ( !lua_isnumber( L, -2 ) ) {
     LogLuaErr( "Number not passed to x position in TileIsCrossable." );
-    return luaL_error( L, "Number not passed to x position in TileIsCrossable." );
+    return 0;
   }
   int tileX = lua_tointeger( L, -2 );
 
   if ( !lua_isnumber( L, -1 ) ) {
     LogLuaErr( "Number not passed to y position in TileIsCrossable." );
-    return luaL_error( L, "Number not passed to y position in TileIsCrossable." );
+    return 0;
   }
   int tileY = lua_tointeger( L, -1 );
  
@@ -197,25 +197,25 @@ int TileManager::LuaTileIsCrossable( lua_State *L ) {
 int TileManager::LuaSetTile( lua_State *L ) {
   if ( !lua_isnumber( L, -4 ) ) {
     LogLuaErr( "Number not passed to x position in SetTile." );
-    return luaL_error( L, "Number not passed to x position in SetTile." );
+    return 0;
   }
   int tileX = lua_tointeger( L, -4 );
 
   if ( !lua_isnumber( L, -3 ) ) {
     LogLuaErr( "Number not passed to y position in SetTile." );
-    return luaL_error( L, "Number not passed to y position in SetTile." );
+    return 0;
   }
   int tileY = lua_tointeger( L, -3 );
 
   if ( !lua_isstring( L, -2 ) ) {
     LogLuaErr( "String not passed to tile name in SetTile." );
-    return luaL_error( L, "String not passed to tile name in SetTile." );
+    return 0;
   }
   std::string tileName = lua_tostring( L, -2 );
 
   if ( !lua_isnumber( L, -1 ) ) {
     LogLuaErr( "Number not passed to collision ID in SetTile." );
-    return luaL_error( L, "Number not passed to collision ID in SetTile." );
+    return 0;
   }
   int collisionID = lua_tointeger( L, -1 );
 
@@ -224,6 +224,7 @@ int TileManager::LuaSetTile( lua_State *L ) {
     Inst().SetCollision( tileX, tileY, collisionID );
   } else {
     LogLuaErr( "Tile location not on map passed to SetTile" );
+    return 0;
   }
 
   return 0;

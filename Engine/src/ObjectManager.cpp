@@ -220,14 +220,13 @@ void ObjectManager::RegisterLuaFuncs( lua_State *L ) {
 int ObjectManager::LuaCreateObject( lua_State *L ) {
   if( !lua_isstring( L, -3 )) {
     LogLuaErr( "String not passed for file path in CreateObject." );
-    return luaL_error( L, "String not passed for file path in CreateObject." );
+    return 0;
   }
   std::string path = lua_tostring( L, -3 );
 
   if( !lua_isnumber( L, -2 ) || !lua_isnumber( L, -1 )) {
     LogLuaErr( "Number not passed to tile location in CreateObject." );
-    return luaL_error( L,
-      "Number not passed to tile location  in CreateObject." );
+    return 0;
   }
   int tileX = lua_tointeger( L, -2 );
   int tileY = lua_tointeger( L, -1 );
@@ -250,18 +249,18 @@ int ObjectManager::LuaDestroyObject( lua_State *L ) {
   if ( objToDestroy ) {
     lua_remove( L, 1 );
     Inst().RemoveObject( objToDestroy );
+    return 0;
   } else {
     LogLuaErr( "No Object passed to DestroyObject." );
-    return luaL_error( L, "No Object passed to DestroyObject." );
+    return 0;
   }
-  return 0;
 }
 
 
 int ObjectManager::LuaGetObject( lua_State *L ) {
   if ( !lua_isstring( L, -1 ) ) {
     LogLuaErr( "String not passed for Object type in GetObject." );
-    return luaL_error( L, "String not passed for Object type in GetObject." );
+    return 0;
   }
   std::string type = lua_tostring( L, -1 );
 
@@ -273,7 +272,7 @@ int ObjectManager::LuaGetObject( lua_State *L ) {
 int ObjectManager::LuaGetObjects( lua_State *L ) {
   if ( !lua_isstring( L, -1 ) ) {
     LogLuaErr( "String not passed for Object type in GetObject." );
-    return luaL_error( L, "String not passed for Object type in GetObject." );
+    return 0;
   }
   std::string type = lua_tostring( L, -1 );
 
@@ -297,15 +296,13 @@ int ObjectManager::LuaGetObjects( lua_State *L ) {
 int ObjectManager::LuaGetNearestObject( lua_State *L ) {
   if ( !lua_isstring( L, -3 )) {
     LogLuaErr( "String not passed for object type to GetNearestObject." );
-    return luaL_error( L,
-      "String not passed for object type to GetNearestObject." );
+    return 0;
   }
   std::string type = lua_tostring( L, -3 );
 
   if ( !lua_isnumber( L, -2 ) || !lua_isnumber( L, -1 )) {
     LogLuaErr( "Number not passed for tile location to GetNearestObject" );
-    return luaL_error( L,
-      "Number not passed for tile location to GetNearestObject" );
+    return 0;
   }
   int tileX = lua_tointeger( L, -2 );
   int tileY = lua_tointeger( L, -1 );
@@ -340,13 +337,13 @@ int ObjectManager::LuaGetNearestObject( lua_State *L ) {
 int ObjectManager::LuaGetObjectOnTile( lua_State *L ) {
   if ( !lua_isnumber( L, -2 ) ) {
     LogLuaErr( "Number not passed to x position in GetObjectOnTile." );
-    return luaL_error( L, "Number not passed to x position in GetObjectOnTile." );
+    return 0;
   }
   int tileX = lua_tointeger( L, -2 );
 
   if ( !lua_isnumber( L, -1 ) ) {
-    LogLuaErr( "Number not passed to y position in GetObjectOnTile." );
-    return luaL_error( L, "Number not passed to y position in GetObjectOnTile." );
+    LogLuaErr( "Number not passed to y position in GetObjectOnTile.");
+    return 0;
   }
   int tileY = lua_tointeger( L, -1 );
 
@@ -363,13 +360,13 @@ int ObjectManager::LuaGetObjectOnTile( lua_State *L ) {
 int ObjectManager::LuaObjectBlockingTile( lua_State *L ) {
   if ( !lua_isnumber( L, -2 ) ) {
     LogLuaErr( "Number not passed to x position in ObjectBlockingTile" );
-    return luaL_error( L, "Number not passed to x position in ObjectBlockingTile." );
+    return 0;
   }
   int tileX = lua_tointeger( L, -2 );
 
   if ( !lua_isnumber( L, -1 ) ) {
     LogLuaErr( "Number not passed to y position in ObjectBlockingTile." );
-    return luaL_error( L, "Number not passed to y position in ObjectBlockingTile." );
+    return 0;
   }
   int tileY = lua_tointeger( L, -1 );
 
