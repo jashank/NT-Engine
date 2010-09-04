@@ -12,7 +12,7 @@ SRC := $(shell echo *.cpp)
 OBJS := $(addprefix obj/, $(SRC:.cpp=.o))
 
 all:    ${OBJS}
-	$(CPP) -o ../../NTEngine ${OBJS} ${LDFLAGS} ${LDLIBS}
+	$(CPP) -o ../../nt ${OBJS} ${LDFLAGS} ${LDLIBS}
 
 obj/%.o: %.cpp
 	${CPP} -c -o $@ ${CFLAGS} $<

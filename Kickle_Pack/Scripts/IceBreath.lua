@@ -17,6 +17,8 @@ function IceBreath.AI( self )
   if not self:Move() then
     State.DestroyObject( self )
   end
+
+  self:PlayAnim()
 end
 
 function IceBreath.HandleCollision( self, other )

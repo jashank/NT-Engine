@@ -1,4 +1,4 @@
 <?xml version="1.0"?>
-<GUI>
+<object>
   <animation path="Kickle_Pack/Animations/TitleImageAnim.xml" />
-</GUI>
+</object>

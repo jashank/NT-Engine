@@ -4,72 +4,137 @@
 #include <string>
 
 #include <SFML/Graphics/Image.hpp>
-class TiXmlElement;
 
+#include "Rect.h"
+#include "Vector.h"
+
+class TiXmlElement;
+  
+/**
+ * Stores and provides information on animations parsed in from animation file.
+ */
 class AnimData {
 public:
   AnimData() {}
   ~AnimData() {}
 
-  /// Loads AnimData from an xml file
-  bool LoadFromFile( const std::string &filename );
+  /**
+   * Loads all animations from an animation file.
+   * @param filepath path to the file to be loaded. 
+   * @return True if all of file is successfully loaded.
+   */
+  bool LoadFromFile( const std::string &filepath );
 
-  /// Returns true if given animation is looped
-  bool IsLooped( int animation ) const;
+  /**
+   * @param animIndex index into animations stored by AnimData.
+   * Validity of index is checked.
+   * @return True if index is valid and animation at index is looped.
+   */
+  bool IsLooped( int animIndex ) const;
 
-  /// Returns frame time for given animation and frame
-  float GetFrameTime( int animation, int frame ) const;
+  /**
+   * @param animIndex index into animations stored by AnimData. Validity
+   * of index is checked.
+   * @param frameIndex index into frame times that Animation is storing.
+   * Validity of index is checked.
+   * @return Time (in seconds) to be spent rendering frame at frameIndex. 
+   * Time of first frame if frameIndex is invalid or there are no unique frame 
+   * times, and 0 if animIndex is invalid.  
+   */
+  float GetFrameTime( int animIndex, int frameIndex ) const;
+ 
+  /**
+   * @param animIndex index into animations stored by AnimData. Validity  
+   * of index is checked.
+   * @return (x,y) pixel coordinates of where the animation is located on the 
+   * sheet it was drawn on. (0,0) if index is invalid.
+   */
+  nt::core::IntVec GetAnimPosition( int animIndex ) const;
 
-  /// Returns first frame's x and y for given animation
-  int GetAnimX( int animation ) const;
-  int GetAnimY( int animation ) const;
-
-  /// Returns frame height from given animation
-  int GetFrameHeight( int animation ) const;
-
-  /// Returns frame width for given animation
-  int GetFrameWidth( int animation ) const;
-
-  /// Returns number of animations held by AnimData
+  //@{
+  /**
+   * @param animIndex index into animations stored by AnimData. Validity 
+   * of index is checked.
+   * @return Height and width in pixels of single frame in animation. 0 if 
+   * index is invalid.
+   */
+  int GetFrameWidth( int animIndex ) const;
+  int GetFrameHeight( int animIndex ) const;
+  //@}
+  
+  /**
+   * @return Number of animations held.
+   */
   int GetNumAnims() const;
 
-  /// Returns number of frames for given animation
-  int GetNumFrames( int animation ) const;
+  /**
+   * @param animIndex index into animations stored by AnimData. Validity 
+   * of index is checked.
+   * @return Number of frames in animation. 0 if index is invalid. 
+   */
+  int GetNumFrames( int animIndex ) const;
 
-  /// Returns the Rect for the given animation and frame
-  sf::IntRect GetFrameRect( int animation,  int frame ) const;
+  /**
+   * @param animIndex index into animations stored by AnimData. Validity
+   * of index is checked.
+   * @param frameIndex index into frames of animation. Validity of index is
+   * checked.
+   * @return Rectangle containing top, left, right, and bottom pixel coordinates 
+   * of frame on sheet it is located on. Rect of first frame if frame index is
+   * invalid and (0,0,0,0) rect if animation index is invalid.
+   */
+  nt::core::IntRect GetFrameRect( int animIndex, int frameIndex ) const;
 
-  /// Returns the animation's image
-  sf::Image& GetImage( int animation ) const;
+  /**
+   * @param animIndex index into animations stored by AnimData. Validity
+   * of index is checked.
+   * @return Sheet that animation was drawn on. NULL if index is invalid.
+   */
+  sf::Image* GetImage( int animIndex ) const;
 
 private:
-  enum CommonTag { ON, OFF };
-
+  /**
+   * Holds data for an animation.
+   */
   struct Animation {
     Animation();
     ~Animation() {}
 
-    bool uniqueFrameTimes; /// True if each frame has it's own time
-    bool isLooped; ///True if animation is looped
-    std::vector<float> frameTimes;
-    int numFrames; ///Total frames in animation
-    sf::IntRect	frameRect; ///(x,y)-first frame (w,h)-frame sizes
-    sf::Image *image; /// Holds pointer to image designated to animation (stored in ResourceManager)
-    std::string name; /// Name of animation loaded in
+    bool uniqueFrameTimes; /** True if each frame has its own time. */ 
+    bool isLooped; /** True if animation loops back on itself. */ 
+    std::vector<float> frameTimes; /** Only stores 1 time if no unique times. */
+    int numFrames; /** Number of frames in animation. */
+    nt::core::IntRect	frameRect; /** (x,y)-first frame (w,h)-frame sizes */
+    sf::Image *image; /** Image that animation is on. */
+    std::string name; /** Name assigned to animation in animation file. */
   };
 
-  /// Restricts copy constructor, and assignment.
+  //@{
+  /**
+   * Restrict copy constructor and assignment.
+   */
   AnimData( const AnimData &data );
   AnimData& operator=( const AnimData &data );
+  //@}
 
-  /// Parses strip passed, adding animation to m_anims. If flag is ON, function
-  /// assumes that strip has parent <common>. Otherwise it doesn't
-  /// (direct child of <sheet>). Must also pass sheet that strip is under.
-  /// Returns whether parsing was successful.
+  /**
+   * Used with ParseStrip method, indicating whether strip passed is a
+   * child of a <common> tag. 
+   */
+  enum CommonTag { ON, OFF };
+
+  /**
+   * Parses strip passed, adding animation to m_anims. If flag is ON, assumes
+   * that strip has parent <common>.
+   * @param strip XML strip element to be parsed.
+   * @param sheet image sheet that animation is located on.
+   * @param flag whether strip is child of <common> in animation file.
+   * @return Whether strip was successfully parsed.
+   */
   bool ParseStrip( const TiXmlElement *strip, sf::Image *sheet, CommonTag flag );
 
-  Animation m_common; /// Data from last <common> tag loaded in
-  std::vector<Animation> m_anims; /// Holds information on all animations
+  Animation m_common; /** Data from last <common> tag loaded in. */
+  std::vector<Animation> m_anims; /** Stores all animations. */
 };
 
-#endif
+#endif // ANIMDATA_H

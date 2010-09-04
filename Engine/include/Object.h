@@ -5,215 +5,347 @@
 #include <list>
 #include <string>
 
-#include "boost/function/function1.hpp"
+#include <boost/function/function1.hpp>
+#include <SFML/System/Clock.hpp>
 
 #include "AnimSprite.h"
 #include "InputHandler.h"
 #include "Key.h"
 #include "Lunar.h"
+#include "Rect.h"
+#include "TimedString.h"
+#include "Vector.h"
 
 class State;
 
-/** 
- * Object class. An Object's movement is restricted defined tile-based
- * movements. It is also heavily customizable via its associated lua script
- * and xml file.
-*/
+/**
+ * Objects are heavily customizable via their associated lua script and xml 
+ * file. They make up everything that has behavior in the app. They are 
+ * restricted to tile-based placement and movement. The class provides an API 
+ * to assist in writing behavior in an object's script. Almost everything is
+ * private because the only class that uses Objects is the ObjectManager, and
+ * it accesses this through the ObjectAttorney interface.
+ *
+ * See the Object Guide for more information.
+ */
 class Object : public AnimSprite {
  public:
-  static const char className[];
-  static Lunar<Object>::RegType methods[];
+  /**
+   * Lunar requires Object constructor that just takes pointer to lua_State. 
+   */
   Object( lua_State *L );
+
   ~Object();
 
+  static const char className[]; /** Stores name of class. Needed by Lunar. */
+
+  /**
+   * Stores method names for the Object API to associate with methods in the
+   * Object class. For example, "Move" is matched with &Object::LuaMove.
+   */
+  static Lunar<Object>::RegType methods[]; 
+
  private:
-  /// An Object's direction can be Up, Down, Left, or Right
+  /**
+   * Objects can only travel in 2 dimensions.
+   */
   enum Dir { UP, DOWN, LEFT, RIGHT };
   typedef std::pair< Key, std::string > KeyEntry;
   friend class ObjectAttorney;
 
-  /// Constructor
+  /**
+   * The standard constructor used by ObjectAttorney.
+   * @param filepath path to Object's XML file.
+   * @param tileX x tile coordinate Object will start on.
+   * @param tileY y tile coordinate Object will start on.
+   * @param strip animation strip Object will begin with.
+   */
   Object( const std::string &filepath, int tileX, int tileY, int strip );
 
-  /// Restricts copy constructor
+  //@{
+  /**
+   * Restricts copy constructor and assignment.
+   */
   Object( const Object &object );
-
-  /// Restricts copy assignment
   Object& operator=( const Object &object );
+  //@}
 
-  /// Initializes Object via definition of 'Init' in Object's script
+  /**
+   * Calls Object's 'Init' function in its lua script (if defined), passing
+   * this Object as argument.
+   */
   void Init();
 
-  /// Handles events generated for Object
+  /**
+   * If Object isn't moving, checks keys registered for this Object, calling 
+   * their corresponding lua function with self as argument if the key 
+   * specifications are met (held down long enough, etc.).
+   */
   void HandleEvents();
 
-  /// Updates the Object's collision. An Object only detects a collision with
-  /// another object once. It can't only detect another collision with the 
-  /// object until after the two have separated.
-  void UpdateCollision( Object* const collisionObj );
+  /**
+   * Calls Object's 'HandleCollision' function in its lua script (if defined),
+   * passing self as first argument and Object that this Object collided
+   * with as second argument. Once an Object collides with another, those
+   * Objects won't 'HandleCollision' with each other again until after they
+   * separated (unless user undoes this with SetNotColliding). 
+   * @param collisionObj Object this Object collided with.
+   */
+  void UpdateCollision( Object* collisionObj );
 
-  /// Updates the Object's movement and other AI related script stuff
+  /**
+   * If the Object isn't moving, calls Object's 'AI' function in its 
+   * lua script (if defined) passing self as argument. Otherwise, updates
+   * movement for Object.
+   */
   void UpdateAI();
 
-  /// Updates the Object's rendering
+  /**
+   * Updates Object's sprite animation (if applicable).
+   */
   void UpdateRendering();
 
-  /// Returns x-location of Object on  grid
-  int GetTileX() const;
-
-  /// Returns y-location of Object on  grid
-  int GetTileY() const;
-
-  /************************************************
-  Lua Functions
-  ************************************************/
-	/// Allows user to tell Object to move from Lua.
-	/// Returns true if Object can move in the direction it is facing,
-	/// or is in motion. False if it can't move in the direction it is facing.
+  //@{
+  /**
+   * Lua functions. See the Object API for how these functions interact with
+   * the Object's lua script.
+   * @param L lua state Object is in. Note that there is only one state in
+   * application at any time.
+   * @return Number of arguments pushed on the lua stack.
+   */
   int LuaMove( lua_State *L );
 
-  /// Returns current animation ID
-  int LuaGetAnimation( lua_State *L );
+  int LuaGetAnim( lua_State *L );
 
-	/// Sets clip to animation on sheet corresponding to index top to bottom
-  int LuaSetAnimation( lua_State *L );
+  int LuaSetAnim( lua_State *L );
 
-  /// Same as above, but clip is set to last in strip 
-  int LuaSetAnimationReverse( lua_State *L );
+  int LuaPlayAnim( lua_State *L );
 
-  /// Plays animation on sheet corresponding to index top to bottom
-  int LuaPlayAnimation( lua_State *L );
+  int LuaStopAnim( lua_State *L );
 
-  /// Same as above, but animation starts at end and goes backwards
-  int LuaPlayAnimationReverse( lua_State *L );
+  int LuaPauseAnim( lua_State *L );
 
-  /// Returns frame that object is on in its animation
+  int LuaRestartAnim( lua_State *L );
+
+  int LuaSetReverseAnim( lua_State *L );
+
   int LuaGetFrame( lua_State *L );
 
-	/// Returns whether Object is animating
   int LuaIsAnimating( lua_State *L );
 
-  /// Returns whether Object is moving
   int LuaIsMoving( lua_State *L );
 
-  /// Returns whether Object is on collision course with object passed
-  /// i.e. both objects are heading towards the same point and will pass
-  /// it at same time based on their current state. Returns true if objects
-  /// are already colliding.
   int LuaOnCollisionCourse( lua_State *L );
  
-  /// Removes Object passed from this Object's list of Objects it believes it
-  /// is colliding with.
   int LuaSetNotColliding( lua_State *L );
 
-	/// Allows Lua to access type of Object
   int LuaGetType( lua_State *L );
 
-  /// Wrap GetTileX and GetTileY to allow it to be exposed to Lua
   int LuaGetTile( lua_State *L );
 
-  /// Takes boolean. True means Object should block tile it is on,
-  /// false means it shouldn't.
   int LuaBlockTile( lua_State *L );
 
-  /// Allows user to get and set the Object's direction from Lua
   int LuaGetDir( lua_State *L );
+
   int LuaSetDir( lua_State *L );
 
-  /// Allows Lua to reverse direction of Object
-  int LuaReverse( lua_State *L );
-
-  /// Allows user to get the Object's table (to change variables in it, etc.)
   int LuaGetTable( lua_State *L );
 
-  /// Sets the Object's `noClip` to true or false
   int LuaSetNoClip( lua_State *L );
 
-  /// Sets the starting time to the current system time
   int LuaResetTimer( lua_State *L );
 
-  /// Returns the elapsed time since timer was last reset in seconds
-  /// Has floating point precision
   int LuaGetElapsedTime( lua_State *L );
 
-  /// Returns speed of Object
   int LuaGetSpeed( lua_State *L );
 
-  /// Sets speed to speed passed (float)
   int LuaSetSpeed( lua_State *L );
 
-  /// Reduces speed by float given. Speed can't go below zero.
   int LuaSlowDown( lua_State *L );
 
-  /// Increases speed by float given. Speed set to zero if greater than numeric
-  /// limit.
   int LuaSpeedUp( lua_State *L );
 
-  /************************************************
-   * Helper Functions
-   ***********************************************/
-  /// Loads Object given a path to an xml file, returning true if load was
-  /// successful. Called by constructor.
+  int LuaPrint( lua_State *L );
+
+  int LuaSetText( lua_State *L );
+
+  int LuaClearText( lua_State *L );
+  
+  int LuaSetTextFont( lua_State *L );
+
+  int LuaSetTextSize( lua_State *L );
+
+  int LuaSetTextColor( lua_State *L );
+
+  int LuaSetTextRotation( lua_State *L );
+
+  int LuaScaleText( lua_State *L );
+
+  int LuaSetTextPos( lua_State *L );
+
+  int LuaSetPrintTime( lua_State *L );
+
+  //@}
+
+  //@{
+  /**
+   * Helper functions.
+   */
+
+  /**
+   * Loads all data except collision data from Object's XML file.
+   * @param filepath path to Object's XML file.
+   * @return True if load was successful (no syntax errors in file).
+   */
   bool LoadObjectData( const std::string &filepath );
 
-	/// Loads Object's collision data given path to xml file, returning true if
-  /// load was successful. Called by constructor.
+  /**
+   * Loads collision data in Object's XML file.
+   * @param filepath path to Object's XML file.
+   * @return True if load was successful (no syntax errors in file).
+   */
   bool LoadCollisionData( const std::string &filepath );
 
-	/// Initializes the lua script. Called by constructor.
+  /**
+   * Stores reference to Object's Lua table in its script to enable calling
+   * Lua functions from application. If Object doesn't have a script or doesn't
+   * return a table from its script, reference is nil and script functions 
+   * won't be called on it.
+   */
   void InitLua();
 
-	/// Updates the movement of Object
+  /**
+   * Updates movement of Object given its direction, speed, etc. Assumes that
+   * Object is currently moving.
+   */
   void MovementUpdate();
 
-  /// Corrects movement of object when it exceeds next grid location
-  void CorrectMovement();
+  /**
+   * Realigns object if it has traveled past the center of the next tile it
+   * is traveling to. 
+   */
+  void Realign();
 
-  /// Calls lua function named 'funcName' that is in this Object's script
-  void CallScriptFunc( std::string &funcName );
+  /**
+   * Calls function in Object's script, passing self as argument. If reference
+   * to Object's table is nil, nothing happens.
+   * @param funcName name of function in Object's script to call.
+   */
+  void CallScriptFunc( std::string funcName );
 
-  /// Function pointer registered to CallLuaFunc for use with InputHandler
+  /**
+   * @return Object's x and y velocity in a 2D vector. Upward and leftward vel
+   * are negative, downward and rightward vel are positive.
+   */
+  nt::core::FloatVec GetVelocityVector();
+
+  /**
+   * @return Opposite direction Object is traveling.
+   */
+  Dir GetOppositeDir( Dir dir );
+  //@}
+
+  /***********************
+   Private Data Members
+  ***********************/
+  /**
+   * If true, keep moving in m_direction.
+   */
+  bool m_moving; 
+
+  /**
+   * If true, block other Objects from accessing this Object's tile.
+   */
+  bool m_blockingTile;
+
+  /**
+   * If true, allow this Object to pass through objects blocking tiles and
+   * non-crossable tiles.
+   */
+  bool m_noClip;
+
+  /**
+   * Pointer to CallScriptFunc method.
+   */
   const boost::function1<void, std::string&> m_ptrCallScriptFunc;
 
-  /// Returns Object's x and y velocity in vector terms. Up is negative,
-  /// down is positive, left is negative, right is positive.
-  sf::Vector2f GetVelocityVector();
+  /**
+   * Direction Object is currently facing.
+   */
+  Dir m_direction; 
 
-  /// Returns opposite of dir passed.
-  Dir GetOppositeDir( Dir dir );
+  /**
+   * Distance traveled (in pixels) from last point of alignment on grid.
+   */
+  float m_distance; 
 
-  /******************************************
-   * Data Members
-   *****************************************/
-  static State *m_state; // Pointer to application's current state
+  /**
+   * Speed in pixels per second.
+   */
+  float m_speed; 
 
-  bool m_moving; // If true; keep moving in m_direction
-  bool m_blockingTile; // True if object blocks other objects from accessing tile it is on
-  bool m_noClip; // When true, allows object to pass through solid objects and tiles
-  Dir m_direction; // Current direction  object is moving
-  float m_distance; // Distance traveled from last grid location
-  float m_speed; // Speed in pixels per second 
-  InputHandler m_input; // Handles input for this Object
-  int m_id; // ID of object
-  int m_tileX; // X tile coordinate of object
-  int m_tileY; // Y tile coordinate of object
+  /**
+   * Handles input for Object.
+   */
+  InputHandler m_input;
+
+  /**
+   * Unique key into Lua registry index that holds reference to Object's table 
+   * (if it has one). Initialized to LUA_NOREF. Assigned to in InitLua so if 
+   * Object's script exists and returns table (no longer LUA_NOREF), m_id will 
+   * be a valid key associated with reference in the Lua registry index. 
+   */
+  int m_id; 
+
+  /**
+   * (x,y) coordinates of Object on tile map.
+   */
+  nt::core::IntVec m_coords; 
+  
+  /**
+   * Object's bounding box for collision.
+   */
+  nt::core::FloatRect m_collisionRect; // Object's collision box
+
+  /**
+   * Timer that Object can use from its script.
+   */
   sf::Clock m_timer; // Timer that Object can use from its script
-  sf::FloatRect m_collisionRect; // Object's collision box
-  std::list<Object*> m_collidingWith; // Objects this Object is colliding with
-  std::string m_luaScript; // Filepath to the lua script
-  std::string m_type; // What type of  object (slime, kickle, etc.)
+
+  /**
+   * String that Object can manipulate from its script. This is rendered.
+   */
+  nt::core::TimedString m_text; 
+
+  /**
+   * Pointer to application's current state.
+   */
+  static State *m_state; 
+
+  /**
+   * Objects this Object is colliding with.
+   */
+  std::list<Object*> m_collidingWith; 
+
+  /**
+   * File path to this Object's lua script (if it has one).
+   */
+  std::string m_luaScript; 
+
+  /**
+   * Type of object, equivalent to the Object's file name without the '.xml'.
+   */
+  std::string m_type; 
 };
 
 
 /**
- * Establishes Attorney-Client idiom between Object and ObjectManager.
- * <p>
+ * Establishes Attorney-Client idiom between Object and ObjectManager. 
  * Since Object only needs to be accessed by ObjectManager, and 'friend'
  * doesn't offer any granularity (it's all or nothing), it is appropriate to
  * establish a contract between Object and ObjectManager to give ObjectManager
  * access to only some of Object, while still completely encapsulating Object
  * from the rest of the application.
- * <p>
  * Note that no NULL pointer checking is done. ObjectManager guarantees that
  * all pointers passed are valid.
  *
@@ -231,7 +363,7 @@ class ObjectAttorney {
    *              Object will use as its first animation 
    * @return pointer to the dynamically allocated Object
    */
-  static Object* const Create( 
+  static Object* Create( 
     const std::string &filepath, 
     int x, 
     int y, 
@@ -242,14 +374,14 @@ class ObjectAttorney {
    * Calls Object's Init function.
    * @param obj to call Init on
    */
-  static void Init( Object* const obj )
+  static void Init( Object *obj )
   { obj->Init(); }
   
   /**
    * Calls Object's HandleEvents function.
    * @param obj object to call HandleEvents on
    */
-  static void HandleEvents( Object* const obj ) 
+  static void HandleEvents( Object *obj ) 
   { obj->HandleEvents(); }
 
   /**
@@ -257,45 +389,37 @@ class ObjectAttorney {
    * @param obj object to call HandleCollision on
    * @param collisionObj object that obj is colliding with
    */ 
-  static void UpdateCollision( Object* const obj, Object* const collisionObj ) 
+  static void UpdateCollision( Object *obj, Object* collisionObj ) 
   { obj->UpdateCollision( collisionObj ); }
 
   /**
    * Calls Object's UpdateAI function.
    * @param obj object to call UpdateAI on
    */
-  static void UpdateAI( Object* const obj ) 
+  static void UpdateAI( Object *obj ) 
   { obj->UpdateAI(); }
 
   /**
    * Calls Object's UpdateRendering function.
    * @param obj object to call UpdateRendering on
    */
-  static void UpdateRendering( Object* const obj ) 
+  static void UpdateRendering( Object *obj ) 
   { obj->UpdateRendering(); }
-  
-  /**
-   * Returns Object's x tile coordinate. 
-   * @param obj object to call GetTileX on
-   * @return obj's x coordinate on the tile map
-   */
-  static int GetTileX( const Object* const obj )
-  { return obj->m_tileX; }
 
   /**
-   * Returns Object's y tile coordinate.
-   * @param obj object to call GetTileY on
-   * @return obj's y coordinate on the tile map
+   * Returns tile coordinates of Object.
+   * @param obj obj to call GetTile on.
+   * @return obj's tile coordinates.
    */
-  static int GetTileY( const Object* const obj )
-  { return obj->m_tileY; }
+  static const nt::core::IntVec& GetTile( const Object *obj )
+  { return obj->m_coords; }
   
   /**
    * Returns whether Object is blocking the tile it is on.
    * @param obj object to check
    * @return true if obj is blocking tile, false otherwise
    */
-  static int BlockingTile( const Object* const obj )
+  static int BlockingTile( const Object *obj )
   { return obj->m_blockingTile; }
  
   /**
@@ -303,7 +427,7 @@ class ObjectAttorney {
    * @param obj object to retrieve type from
    * @return object's type
    */
-  static const std::string& GetType( const Object* const obj )
+  static const std::string& GetType( const Object *obj )
   { return obj->m_type; }
 
   /**
@@ -311,7 +435,7 @@ class ObjectAttorney {
    * @param obj object to retrieve collision rectangle from
    * @return obj's collision rectangle
    */
-  static const sf::FloatRect& GetRect( const Object* const obj )
+  static const nt::core::FloatRect& GetRect( const Object *obj )
   { return obj->m_collisionRect; }
  
   /**
@@ -322,8 +446,8 @@ class ObjectAttorney {
    * @return Whether other is in obj's list
    */
   static bool IsCollidingWith(
-    const Object* const obj, 
-    const Object* const other )
+    const Object *obj, 
+    const Object* other )
   { return ( std::find( 
                obj->m_collidingWith.begin(), 
                obj->m_collidingWith.end(), 
@@ -336,8 +460,16 @@ class ObjectAttorney {
    * @param obj object thats collision list needs to be updated
    * @param other object that needs to be removed from obj's collision list
    */
-  static void RemoveFromCollidingWith( Object* const obj, Object* const other )
+  static void RemoveFromCollidingWith( Object *obj, Object *other )
   { obj->m_collidingWith.remove( other ); }
+
+  /**
+   * Returns sf::String that Object holds.
+   * @param obj Object to get sf::String from.
+   * @return sf::String that Object holds.
+   */
+  static const sf::String& GetText( const Object *obj )
+  { return obj->m_text; }
 };  
 
 #endif // OBJECT_H

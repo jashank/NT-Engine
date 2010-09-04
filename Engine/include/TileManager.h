@@ -1,4 +1,3 @@
-
 #ifndef TILEMANAGER_H
 #define TILEMANAGER_H
 
@@ -17,109 +16,209 @@ class AnimSprite;
 class TiXmlElement;
 
 /**
- * Class TileManager. This class manages the tiles that are drawn on the
- * screen and provides an interface through lua to modify the tiles
- * and retrive information on them. It also updates and renders each
- * frame and is completely determined by XML. It is a component of
- * State and is the foundation of Objects which are tied to tiles it is
- * core component of the engine.
+ * Holds and manages all Tiles in the current state. Provides functions to 
+ * State API to modify the tiles and retrieve information from them. Note that
+ * tile information and animations are specified in the same file (an animation
+ * file).
  */
 class TileManager {
  public:
   TileManager();
   ~TileManager();
 
-  /// Parses data from <tile_map> section of state file
-  /// Returns whether load was successful.
+  /**
+   * Loads tile information from <tiles> element of State XML file. 
+   * @param dataRoot parent element of tile information.
+   * @return True if load was successful (no syntax errors). 
+   */
   bool LoadData( const TiXmlElement *dataRoot );
 
-  /// Updates TileManager
+  /**
+   * Updates animations for tiles on screen.
+   */
   void Update();
-  /// Renders TileManager
+
+  /**
+   * Renders tiles on screen.
+   */
 	void Render();
 
-  /// Return dimensions of tile for this map (tiles are square)
+  /**
+   * @return Dimensions of tiles in this State (since tiles are square, only
+   * necessary to return one integer).
+   */
   int GetTileDim() const;
 
-  /// Return number of tiles on map horizontally and vertically
+  /**
+   * @return Width (in tiles) of tile map.
+   */
   int GetMapWidth() const;
+
+  /**
+   * @return Height (in tiles) of tile map.
+   */
   int GetMapHeight() const;
 
-  /// Returns true if the tile at X Y is solid, else false;
+  /**
+   * Checks to make sure coordinate passed is valid.
+   * @param x x tile coordinate to check.
+   * @param y y tile coordinate to check.
+   * @return True if tile at (x,y) can be crossed.
+   */
   bool TileIsCrossable( int x, int y ) const;
 
-  /// Returns true if tile coordinate passed is on map 
+  /**
+   * @param x x tile coordinate to check.
+   * @param y y tile coordinate to check.
+   * @return True if tile exists on map at (x, y).
+   */
   bool TileOnMap( int x, int y ) const;
 
-  /*******************************
-   * Lua Functions
-   * ****************************/
-  /// Registers lua functions to state passed
+  /**
+   * Registers Lua functions to the State API for access in scripts.
+   * @param L lua state that functions will be registered in.
+   */
   static void RegisterLuaFuncs( lua_State *L );
 
-  /// Returns type, name, and id of tile (in that order).
-  /// ("", "", -1) if no tile is invalid.
+  //@{
+  /**
+   * Lua functions. See the State API for how these functions manipulate the
+   * current state.
+   * @param L lua state Object is in. Note that there is only one state in
+   * application at any time.
+   * @return Number of arguments pushed on the lua stack.
+   */
   static int LuaGetTileInfo( lua_State *L );
 
-  /// Returns whether tile specified is crossable. False if tile is invalid.
   static int LuaTileIsCrossable( lua_State *L );
 
-  /// Sets tile specified to tile associated with name passed.
-  /// Also must pass collisionID, 0 for crossable, 1 for not crossable.
   static int LuaSetTile( lua_State *L );
+  //@}
 
  private:
   typedef std::map< int, Tile* >::iterator TileInfoIter;
   typedef std::map< int, Tile* >::const_iterator ConstTileInfoIter;
 
-  static const Tile NULL_TILE_INFO;
-  static const luaL_Reg LuaFuncs[];
+  static const int CROSSABLE = 0;
+  static const int BLANK_TILE_ID = -1;
 
-  /// Restricts copy constructor, and assignment.
+  //@{
+  /**
+   * Restrict copy constructor and assignment.
+   */
   TileManager( const TileManager &manager );
   TileManager& operator=( const TileManager &manager );
+  //@}
 
-  /// Sets up tile animations from animation file passed
-  /// Returns whether load was successful.
+  /**
+   * Loads animation data for tiles.
+   * @param animPath path to tile animation file.
+   * @return True if load was successful (no syntax errors).
+   */
   bool LoadTileAnims( const std::string &animPath );
 
-  /// Loads layout of tiles from data in xml element passed
-  /// Returns whether load was successful.
-  bool LoadTileLayout( const TiXmlElement *root );
+  /**
+   * Loads layout of tiles from xml element <layout> passed.
+   * @param root <layout> element to load data from.
+   * @return True if load was successful (no syntax errors).
+   */
+  bool LoadTileLayout( const TiXmlElement *layout );
 
-  /// Retrieves tile info from <strip> tag
-  /// Returns whether load was successful.
-  bool GetTileInfo( const TiXmlElement *strip );
+  /**
+   * Loads tile information from <strip> element in tile animation file.
+   * @param strip <strip> element to load data from.
+   * @return True if load was successful (no syntax errors).
+   */
+  bool LoadTileInfo( const TiXmlElement *strip );
 
-  /// Changes the value of the tile sheet to value passed if it is valid, else -1
+  /**
+   * Changes tile at x,y to tile associated with tile name passed. Checks to
+   * make sure that x,y coordinate is valid on tile grid.
+   * @param x x tile coordinate to change.
+   * @param y y tile coordinate to change.
+   * @param tileName type of tile associated with this tile name will be the
+   * new tile at the tile coordinate passed.
+   */
   void SetTile( int x, int y, const std::string &tileName );
 
-  /// Returns type, name, and id of tile
-  const Tile& GetTile( int x, int y );
+  /**
+   * Checks to make sure x,y coordinate exists on map.
+   * @param x x tile coordinate to check.
+   * @param y y tile coordinate to check.
+   * @return Tile at x,y coordinate passed. NULL if coordinate is invalid or
+   * no tile located at coordinate.
+   */
+  const Tile* GetTile( int x, int y ) const;
 
-  /// Changes the value of the tile sheet to that value if it is valid.
-  /// Else -1.
+  /**
+   * Checks to make sure x,y coordinate exists on map.
+   * @param x x tile coordinate to change.
+   * @param y y tile coordinate to change.
+   * @param collisionId collision ID to set to tile. 0 is crossable, anything
+   * else is not crossable. 
+   */
   void SetCollision( int x, int y, int collisionId );
 
-  /// Returns instance of TileManager in application
+  /**
+   * Needed by Lua functions because they are required to be static.
+   * @return Instance of TileManager in current State.
+   */
   static TileManager& Inst();
 
-  AnimSprite *m_tileSprites;
-  int m_numTileTypes;
-  int m_width; // Number of tiles x dir
-  int m_height; // Number of tiles y dir
-  int m_numTiles;
-  int m_tileDim;
-  // Name of tile is key. Used for setting tiles.
-  std::map<std::string, Tile> m_tileDataName;
-  // Id of tile is key. Used for getting tiles.
-  // Holds references to data stored in m_tileDataName.
-  std::map<int, Tile*> m_tileDataId;
-  std::vector<std::vector<int> > m_layout;
+  /**
+   * Method names for State API to associate with methods in TileManager. 
+   * For example, "GetTileInfo" is LuaGetTileInfo.
+   */
+  static const luaL_Reg LuaFuncs[];
 
-  // Collision Stuff
-  static const int NOT_CROSSABLE = 1;
-  static const int CROSSABLE = 0;
+  /**
+   * Array of animated sprites for the different tiles.
+   */
+  AnimSprite *m_tileSprites;
+
+  /**
+   * The number of different tiles loaded in.
+   */
+  int m_numTileTypes;
+
+  /**
+   * Number of tiles on x-axis.
+   */
+  int m_width; 
+
+  /**
+   * Number of tiles on y-axis.
+   */
+  int m_height; 
+
+  /**
+   * Number of tiles in TileManager (which is equivalent to the 
+   * number of tiles in the current State's tile map).
+   */
+  int m_numTiles;
+
+  /**
+   * Tile dimensions (in pixels). Only a single value since tiles must be
+   * perfect squares. Ex: a value of 48 would indicate 48x48 tiles.
+   */
+  int m_tileDim;
+
+  /**
+   * 'Name of tile/Tile' pairs. 
+   */
+  std::map<std::string, Tile> m_tileDataName;
+
+  /**
+   * 'ID of tile/pointer to Tile' pairs.
+   */
+  std::map<int, Tile*> m_tileDataId;
+
+  /**
+   * 2D matrix representing layout of tiles on 2D grid. 
+   * Accessed via typical (x,y).
+   */
+  std::vector<std::vector<int> > m_layout;
 };
 
-#endif
+#endif // TILEMANAGER_H
+

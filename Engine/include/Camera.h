@@ -23,7 +23,7 @@ class Camera {
   /// Sets m_objectCulling to objectCulling
   void SetObjectCulling( bool objectCulling );
 
-  nt::core::Rect frame;
+  nt::core::IntRect frame;
  private:
   bool  m_tileCulling;
   bool m_objectCulling;

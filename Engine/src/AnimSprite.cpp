@@ -1,30 +1,46 @@
 #include "AnimSprite.h"
 
+#include <SFML/Graphics/Rect.hpp>
+
 #include "App.h"
+
 /************************************************
-Private Methods
+Public Methods
 ************************************************/
 AnimSprite::AnimSprite()
  : m_animData( NULL ),
-   m_play( false ),
-   m_reverse( false ),
-   m_frameTime( 0.0f ),
-   m_animation( 0 ),
-   m_frame( 0 ) {
+   m_playing( false ),
+   m_reversed( false ),
+   m_setToReverse( false ),
+   m_frameTimeLeft( 0.0f ),
+   m_animNum( -1 ),
+   m_frameNum( -1 ) {
 }
 
+
+void AnimSprite::Update() {
+  if( m_playing ) {
+	  m_frameTimeLeft -= App::GetApp()->GetDeltaTime();
+	  if( m_frameTimeLeft <= 0.0f ) {
+		  NextFrame();
+	  }
+  }
+  m_setToReverse = false;
+}
+
+
 const AnimData *AnimSprite::GetAnimData() const {
-	  return m_animData;
+  return m_animData;
 }
 
 
 int AnimSprite::GetFrame() const {
-	return m_frame;
+	return m_frameNum;
 }
 
 
 int AnimSprite::GetAnimation() const {
-	return m_animation;
+	return m_animNum;
 }
 
 
@@ -42,108 +58,118 @@ void AnimSprite::LoadAnimData( const std::string &filepath ) {
 
 
 void AnimSprite::Play() {
-  if( m_animData ) {
-  	m_play = true;
-  }
+  m_playing = true;
 }
 
 
 void AnimSprite::Pause() {
-	m_play = false;
+	m_playing = false;
 }
 
 
 void AnimSprite::Restart() {
-	if( m_animData ) {
-	  Stop();
-	  m_frameTime = m_animData->GetFrameTime( m_animation, m_frame );
+	Stop();
+  Play(); 
+}
+
+
+void AnimSprite::Stop() {
+	Pause();
+  if( !m_reversed ) {
+    SetFrame( 0 );
   }
+  else {
+    SetFrame( m_animData->GetNumFrames( m_animNum ) - 1 );
+  }
+  m_frameTimeLeft = m_animData->GetFrameTime( m_animNum, m_frameNum );
 }
 
 
-void AnimSprite::SetFrame( int frame ) {
-	m_frame = frame;
+void AnimSprite::SetReverse( bool reversed ) {
+  m_setToReverse = reversed;
+  m_reversed = reversed;
 }
 
 
-void AnimSprite::SetAnimation( int animation, bool reverse ) {
-  if( m_animData ) {
-    if ( m_reverse ) {
-      m_reverse = false;
+void AnimSprite::SetFrame( int frameNum ) {
+	m_frameNum = frameNum;
+  
+  nt::core::IntRect frameRect = 
+    m_animData->GetFrameRect( m_animNum, m_frameNum );
+  sf::IntRect subRect(
+    frameRect.topLeft.x,
+    frameRect.topLeft.y,
+    frameRect.bottomRight.x,
+    frameRect.bottomRight.y
+  );
+
+  SetSubRect( subRect );
+}
+
+
+void AnimSprite::SetAnimation( int animIndex ) {
+  if( m_animData && m_animNum != animIndex ) {
+    m_animNum = animIndex;   
+
+    m_reversed = m_setToReverse;
+    m_setToReverse = false;
+
+    sf::Image *sheet = m_animData->GetImage( m_animNum );
+    if ( sheet ) {
+      SetImage( *sheet );
     }
-    m_reverse = reverse;
-    m_animation = animation;
-    SetImage( m_animData->GetImage( m_animation ));
-    if ( !m_animData->IsLooped( m_animation)) {
-      Restart();
-    }
-    SetSubRect( m_animData->GetFrameRect( m_animation, m_frame ) );
+    
+    Stop();
   }
 }
 
 
 void AnimSprite::SetAnimData( const AnimData *animData ) {
 	m_animData = animData;
-  m_frameTime = m_animData->GetFrameTime( m_animation, m_frame );
-  SetImage( m_animData->GetImage( m_animation ));
-}
+  m_frameTimeLeft = m_animData->GetFrameTime( m_animNum, m_frameNum );
 
-
-void AnimSprite::Stop() {
-	Pause();
-  if( !m_reverse ) {
-    SetFrame( 0 );
-  }
-  else {
-    SetFrame( m_animData->GetNumFrames( m_animation )-1 );
+  sf::Image *sheet = m_animData->GetImage( m_animNum );
+  if ( sheet ) {
+    SetImage( *sheet );
   }
 }
-
-
-void AnimSprite::Update() {
-	if( m_play ) {
-	  m_frameTime -= App::GetApp()->GetDeltaTime();
-	  if( m_frameTime <= 0.0f ) {
-		  NextFrame();
-		  SetSubRect( m_animData->GetFrameRect( m_animation, m_frame ) );
-		  m_frameTime = m_animData->GetFrameTime( m_animation, m_frame );
-	  }
-  }
-}
-
 
 /************************************************
 Protected Methods
 ************************************************/
 bool AnimSprite::IsAnimating() {
-  return m_play;
+  return m_playing;
 }
+
 /************************************************
 Private Methods
 ************************************************/
-
 void AnimSprite::NextFrame() {
-  if( !m_reverse ) {
-	  ++m_frame;
-	  if( m_frame >= m_animData->GetNumFrames( m_animation ) ) {
-		  if( m_animData->IsLooped( m_animation ) ) {
-			  m_frame = 0;
+  int frameNum = m_frameNum;
+  if( !m_reversed ) {
+	  ++frameNum;
+	  if( frameNum >= m_animData->GetNumFrames( m_animNum ) ) {
+		  if( m_animData->IsLooped( m_animNum ) ) {
+			  frameNum = 0;
 		  }
 		  else {
-        --m_frame;
+        --frameNum;
 			  Pause();
 		  }
 	  }
   }
   else {
-	  --m_frame;
-	  if( m_frame == 0 ) {
-		  if( m_animData->IsLooped( m_animation ) ) {
-			  m_frame = m_animData->GetNumFrames( m_animation )-1;
+	  --frameNum;
+	  if( frameNum == 0 ) {
+		  if( m_animData->IsLooped( m_animNum ) ) {
+			  frameNum = m_animData->GetNumFrames( m_animNum )-1;
 		  }
 		  else {
 			  Pause();
 		  }
 	  }
   }
+  SetFrame( frameNum );
+  m_frameTimeLeft = m_animData->GetFrameTime( m_animNum, m_frameNum );
 }
+

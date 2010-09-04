@@ -19,28 +19,13 @@ void Config::Load() {
 }
 
 
-void Config::SetScreenWidth( int screenWidth ) {
-  m_screenWidth = screenWidth;
-}
-
-
 int Config::GetScreenWidth() {
   return m_screenWidth;
 }
 
 
-void Config::SetScreenHeight( int screenHeight ) {
-  m_screenHeight = screenHeight;
-}
-
-
 int Config::GetScreenHeight() {
   return m_screenHeight;
-}
-
-
-void Config::SetFPS( int FPS ) {
-  m_FPS = FPS;
 }
 
 

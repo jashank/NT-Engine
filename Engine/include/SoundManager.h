@@ -4,58 +4,79 @@
 #include <string>
 #include <vector>
 
+#include <SFML/Audio/Music.hpp>
+
 class TiXmlElement;
-namespace sf {
-  class Music;
-}
+
 /**
- * Class SoundManager. Creates a vector of the music which is loaded in
- * from XML and is then managed through Play(), Pause() and SetLoop().
- * The SoundManager is also updated which simply checks if the next song
- * should be played and therefore continues to iterate through the play
- * list.
+ * Holds and manages all sound in the current state. Currently only manages
+ * playlist of music specified for state.
  */
 class SoundManager {
  public:
-  /// Constructor
   SoundManager();
-  /// Destructor - Empty.
   ~SoundManager() {}
 
-  /// Parses data from <sound> section of state file.
-  /// Returns whether data load was successful.
+  /**
+   * Loads sound in from <sound> element of State XML file.
+   * @param dataRoot parent element of sounds to be used in this state.
+   * @return True if load was successful (no syntax errors).
+   */
   bool LoadData( const TiXmlElement *dataRoot );
 
-  /// Sets m_play to true
+  /**
+   * Plays current song in playlist.
+   */
   void Play();
 
-  /// Sets m_play to false
+  /**
+   * Pauses current song in playlist.
+   */
   void Pause();
 
-  /// Sets m_loop to loop
+  /**
+   * @param loop whether playlist should loop back to first song when finished.
+   */
   void SetLoop( bool loop );
 
-  /// Returns m_play
+  /**
+   * @return True if current song if playlist is playing.
+   */
   bool IsPlaying() const;
 
-  /// Checks if the song is finished and if it should play the next song.
+  /**
+   * Checks if current song in playlist is finished. If so, changes to next
+   * song or stops music depending on if there is another song in the playlist
+   * or the playlist is looped. 
+   */
   void Update();
 
  private:
-  /// Restricts copy constructor, and assignment.
+  //@{
+  /**
+   * Restrict copy constructor and assignment.
+   */
   SoundManager( const SoundManager &soundList );
   SoundManager& operator=( const SoundManager &soundList );
+  //@}
 
-  /// Adds music found at file path to the playlist
-  bool AddMusic( const std::string &musicPath );
+  /**
+   * Adds music found at file path to playlist.
+   * @param filePath path to music file to add.
+   * @return True if music loaded successfully.
+   */
+  bool AddMusic( const std::string &filePath );
 
-  /// Plays the next song in the playlist
+  /**
+   * Plays the next song in the playlist, switching back to the first if the
+   * playlist is looped.
+   */
   void PlayNextSong();
 
-  unsigned int m_playlistIndex; // Index of the current music.
-  sf::Music *m_currentMusic; // Music currently playing
-  bool m_loop;
-  std::vector<sf::Music*> m_playlist;
+  unsigned int m_playlistIndex; /** Index to current music in playlist. */
+  sf::Music *m_currentMusic; /** Current music playing in playlist. */
+  bool m_loop; /** Whether the playlist repeats after finishing last song. */
+  std::vector<sf::Music*> m_playlist; /** Songs to play in current State. */
 };
 
 #endif // SOUNDMANAGER_H

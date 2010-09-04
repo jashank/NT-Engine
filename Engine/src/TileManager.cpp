@@ -17,8 +17,6 @@ extern "C" {
 /******************************
 Constant Members
 ******************************/
-const Tile TileManager::NULL_TILE_INFO = Tile( "", "", -1, NOT_CROSSABLE );
-
 const luaL_reg TileManager::LuaFuncs[] = {
   { "GetTileInfo", LuaGetTileInfo },
   { "TileIsCrossable", LuaTileIsCrossable },
@@ -42,7 +40,6 @@ TileManager::~TileManager() {
   SAFEDELETEA( m_tileSprites );
 }
 
-
 /***************************************
 Public Methods
 ***************************************/
@@ -64,9 +61,6 @@ bool TileManager::LoadData( const TiXmlElement *dataRoot ) {
     } else {
       LogErr( "No path specified in <animation> tag for tiles in state file." );
     }
-  } else {
-    LogErr( "No <animation> tag for tiles in state file." );
-    return false;
   }
 
   const TiXmlElement *layout = dataRoot->FirstChildElement( "layout" );
@@ -92,19 +86,26 @@ void TileManager::Update() {
 
 
 void TileManager::Render() {
-  static App* app = App::GetApp();
+  if ( m_tileSprites ) {
+    static App* app = App::GetApp();
 
-	int tile = 0;
-  static float x, y = 0.0f;
-	for ( int i = 0; i < m_height; i++ ) {
-		for ( int j = 0; j < m_width; j++ ) {
-			tile = m_layout[i][j];
-      x = static_cast<float>( j ) * m_tileDim;
-      y = static_cast<float>( i ) * m_tileDim;
-      m_tileSprites[tile].SetPosition( x, y );
-			app->Draw( m_tileSprites[tile] );
-		}
-	}
+    int tile = 0;
+    static float x = 0.f;
+    static float y = 0.f;
+    for ( int i = 0; i < m_width; ++i ) {
+      for ( int j = 0; j < m_height; ++j ) {
+        tile = m_layout[i][j];
+        // Should there be protection against someone putting in tile 
+        // ID too large? -- TODO
+        if ( tile != BLANK_TILE_ID ) {
+          x = static_cast<float>( i ) * m_tileDim;
+          y = static_cast<float>( j ) * m_tileDim;
+          m_tileSprites[tile].SetPosition( x, y );
+          app->Draw( m_tileSprites[tile] );
+        }
+      }
+    }
+  }
 }
 
 
@@ -124,9 +125,11 @@ int TileManager::GetMapHeight() const {
 
 
 bool TileManager::TileIsCrossable( int x, int y )  const {
-  ConstTileInfoIter iter = m_tileDataId.find( m_layout[y][x] );
-  if ( iter != m_tileDataId.end() ) {
-    return ( iter->second->cid == CROSSABLE);
+  if ( TileOnMap( x, y )) { 
+    ConstTileInfoIter iter = m_tileDataId.find( m_layout[x][y] );
+    if ( iter != m_tileDataId.end() ) {
+      return ( iter->second->cid == CROSSABLE );
+    }
   }
   return false;
 }
@@ -136,34 +139,39 @@ bool TileManager::TileOnMap( int x, int y ) const {
   return ( x >= 0 && x < m_width && y >= 0 && y < m_height );
 }
 
-/********************************
- * Lua Functions
- * *****************************/
+
 void TileManager::RegisterLuaFuncs( lua_State *L ) {
   luaL_register( L, "State", LuaFuncs );
 }
 
-
+/********************************
+ * Lua Functions
+ * *****************************/
 int TileManager::LuaGetTileInfo( lua_State *L ) {
   if ( !lua_isnumber( L, -2 ) ) {
-    LogLuaErr( "Number not passed to x position in GetTile." );
+    LogLuaErr( "Number not passed to x position in GetTileInfo." );
     return 0;
   }
   int tileX = lua_tointeger( L, -2 );
 
   if ( !lua_isnumber( L, -1 ) ) {
-    LogLuaErr( "Number not passed to y position in GetTile." );
+    LogLuaErr( "Number not passed to y position in GetTileInfo." );
     return 0;
   }
   int tileY = lua_tointeger( L, -1 );
 
   if ( Inst().TileOnMap( tileX, tileY )) {
-    Tile tile = Inst().GetTile( tileX, tileY );
-    lua_pushstring( L, tile.type.c_str() );
-    lua_pushstring( L, tile.name.c_str() );
-    lua_pushinteger( L,tile.id );
-    lua_pushinteger( L, tile.cid );
-    return 4;
+    const Tile *tile = Inst().GetTile( tileX, tileY );
+    if ( tile ) {
+      lua_pushstring( L, tile->type.c_str() );
+      lua_pushstring( L, tile->name.c_str() );
+      lua_pushinteger( L,tile->id );
+      lua_pushinteger( L, tile->cid );
+      return 4;
+    } else {
+      LogLuaErr( "Tile coordinate passed to GetTileInfo has no information." );
+      return 0;
+    }
   } else {
     LogLuaErr( "Tile coordinate not on map passed to GetTileInfo" );
     return 0;
@@ -218,15 +226,16 @@ int TileManager::LuaSetTile( lua_State *L ) {
     return 0;
   }
   int collisionID = lua_tointeger( L, -1 );
+  
+  Inst().SetTile( tileX, tileY, tileName );
+  Inst().SetCollision( tileX, tileY, collisionID );
 
   if ( Inst().TileOnMap( tileX, tileY )) {
     Inst().SetTile( tileX, tileY, tileName );
     Inst().SetCollision( tileX, tileY, collisionID );
   } else {
     LogLuaErr( "Tile location not on map passed to SetTile" );
-    return 0;
   }
-
   return 0;
 }
 
@@ -262,7 +271,7 @@ bool TileManager::LoadTileAnims( const std::string &animPath ) {
             TiXmlElement *strip = elem->FirstChildElement( "strip" );
             if ( strip ) {
               do {
-                if ( !GetTileInfo( strip )) {
+                if ( !LoadTileInfo( strip )) {
                   LogErr( "Couldn't retrieve tile information from tile"
                       "animation file: " + animPath );
                   return false;
@@ -270,7 +279,7 @@ bool TileManager::LoadTileAnims( const std::string &animPath ) {
               } while ( (strip = strip->NextSiblingElement( "strip" )) );
             }
           } else if ( strcmp( elem->Value(), "strip" ) == 0 ) {
-            if ( !GetTileInfo( elem )) {
+            if ( !LoadTileInfo( elem )) {
               LogErr( "Couldn't retrive tile information from tile"
                   "animation file: " + animPath );
               return false;
@@ -286,34 +295,42 @@ bool TileManager::LoadTileAnims( const std::string &animPath ) {
 }
 
 
-bool TileManager::LoadTileLayout( const TiXmlElement *root ) {
-  if ( !root->Attribute( "width", &m_width ) ||
-       !root->Attribute( "height", &m_height )) {
+bool TileManager::LoadTileLayout( const TiXmlElement *layout ) {
+  if ( !layout->Attribute( "width", &m_width ) ||
+       !layout->Attribute( "height", &m_height )) {
     LogErr( "Didn't specify width and height for tile layout." );
     return false;
   }
+
+  m_layout.resize( m_width );
+  for ( int i = 0; i < m_width; ++i ) {
+    m_layout[i].assign( m_height, BLANK_TILE_ID );
+  }
+
   m_numTiles = m_width * m_height;
 
-  std::stringstream tileMapStream( root->GetText(), std::ios_base::in );
+  const char *layoutText = layout->GetText();
+  if ( layoutText ) {
+    int column = 0;
+    int row = 0;
+    std::stringstream tileMapStream( layoutText, std::ios_base::in );
+    int currentTile = -1;
 
-  int currentTile = 0;
-
-  for( int i = 0; i < m_width; i++ ) {
-    m_layout.push_back( std::vector<int>() );
-    for ( int j = 0; j < m_height; j++ ) {
-      if ( tileMapStream >> currentTile ) {
-        m_layout[i].push_back( currentTile );
-      } else {
-        m_layout[i].push_back( -1 );
+    while ( tileMapStream >> currentTile && row < m_height ) {
+      m_layout[column][row] = currentTile;
+      ++column;
+      if ( column >= m_width ) {
+        column = 0;
+        ++row;
       }
     }
   }
-
+       
   return true;
 }
 
 
-bool TileManager::GetTileInfo( const TiXmlElement *strip ) {
+bool TileManager::LoadTileInfo( const TiXmlElement *strip ) {
   std::string tileName, tileType;
   int tileId = 0;
   int tileCid = 0;
@@ -348,30 +365,36 @@ bool TileManager::GetTileInfo( const TiXmlElement *strip ) {
 
 
 void TileManager::SetTile( int x, int y, const std::string &tileName ) {
-  std::map<std::string, Tile>::iterator tileDataItr
-   = m_tileDataName.find( tileName );
-  if ( tileDataItr != m_tileDataName.end() ) {
-    m_layout[y][x] = tileDataItr->second.id;
+  if ( TileOnMap( x, y )) {
+    std::map<std::string, Tile>::iterator tileDataItr
+     = m_tileDataName.find( tileName );
+    if ( tileDataItr != m_tileDataName.end() ) {
+      m_layout[x][y] = tileDataItr->second.id;
+    }
   }
 }
 
 
-const Tile& TileManager::GetTile( int x, int y ) {
-  int id = m_layout[y][x];
-  TileInfoIter tile = m_tileDataId.find( id );
-  if( tile != m_tileDataId.end() ) {
-    return *m_tileDataId[id];
+const Tile* TileManager::GetTile( int x, int y ) const {
+  if ( TileOnMap( x, y )) { 
+    int id = m_layout[x][y];
+    ConstTileInfoIter tile = m_tileDataId.find( id );
+    if( tile != m_tileDataId.end() ) {
+      return tile->second;
+    }
   }
-  
-  return NULL_TILE_INFO;
+  return NULL;
 }
 
 
 void TileManager::SetCollision( int x, int y, int collisionId ) {
-  m_tileDataId[m_layout[y][x]]->cid = collisionId;
+  if ( TileOnMap( x, y )) {
+    m_tileDataId[m_layout[x][y]]->cid = collisionId;
+  }
 }
 
 
 TileManager& TileManager::Inst() {
   return App::GetApp()->GetCurrentState()->GetTileManager();
 }
+

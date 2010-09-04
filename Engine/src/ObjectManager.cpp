@@ -5,15 +5,14 @@
 
 #include <cstdlib>
 
-#include <SFML/Graphics.hpp>
-
 #include "App.h"
 #include "Config.h"
 #include "Object.h"
-#include "TileManager.h"
 #include "State.h"
+#include "TileManager.h"
 #include "tinyxml.h"
 #include "Utilities.h"
+#include "Vector.h"
 
 /*******************************************
  Data Members
@@ -158,9 +157,8 @@ void ObjectManager::Update() {
   for ( unsigned int i = 0; i < m_toBeDestroyed.size(); i++ ) {
     Object *delObj = m_toBeDestroyed[i];
     
-    int x = ObjectAttorney::GetTileX( delObj );
-    int y = ObjectAttorney::GetTileY( delObj );
-    m_objGrid[x][y].remove( delObj );
+    nt::core::IntVec coords = ObjectAttorney::GetTile( delObj );
+    m_objGrid[coords.x][coords.y].remove( delObj );
         
     std::string type = ObjectAttorney::GetType( delObj ); 
     std::pair<MapItr, MapItr> objects = m_objTypes.equal_range( type );
@@ -192,7 +190,9 @@ void ObjectManager::Render() const {
   }
 
   while ( !renderOrder.empty() ) {
-    App::GetApp()->Draw( *renderOrder.top().second );
+    const Object *obj = renderOrder.top().second;
+    App::GetApp()->Draw( *obj );
+    App::GetApp()->Draw( ObjectAttorney::GetText( obj ));
     renderOrder.pop();
   }
 }
@@ -208,15 +208,15 @@ bool ObjectManager::ObjectBlockingTile( int x, int y ) const {
   return false;
 }
 
-/***************************************
- * Lua Functions
- * ************************************/
+
 void ObjectManager::RegisterLuaFuncs( lua_State *L ) {
   luaL_register( L, "State", LuaFuncs );
   Lunar<Object>::Register( L );
 }
 
-
+/***************************************
+ * Lua Functions
+ * ************************************/
 int ObjectManager::LuaCreateObject( lua_State *L ) {
   if( !lua_isstring( L, -3 )) {
     LogLuaErr( "String not passed for file path in CreateObject." );
@@ -307,25 +307,27 @@ int ObjectManager::LuaGetNearestObject( lua_State *L ) {
   int tileX = lua_tointeger( L, -2 );
   int tileY = lua_tointeger( L, -1 );
 
-  int distanceX = 100; // Turn into width of 3d vector when implemented
-  int distanceY = 100; // Turn into height of 3d vector when implemented
+  int distanceX = 
+    App::GetApp()->GetCurrentState()->GetTileManager().GetMapWidth();
+  int distanceY = 
+    App::GetApp()->GetCurrentState()->GetTileManager().GetMapHeight();
+
   Object *nearestObj = NULL;
 
-  for ( unsigned int x = 0; x < Inst().m_objGrid.size(); ++x ) {
-    for ( unsigned int y = 0; y < Inst().m_objGrid[x].size(); ++y ) {
-      for ( ListItr obj = Inst().m_objGrid[x][y].begin();
-            obj != Inst().m_objGrid[x][y].end(); ++obj ) {
-        if (( type != "" && ObjectAttorney::GetType( *obj ) == type ) ||
-            ( type == "" )) {
-          int distanceX2 = abs( ObjectAttorney::GetTileX( *obj ) - tileX );
-          int distanceY2 = abs( ObjectAttorney::GetTileY( *obj ) - tileY );
-          if (( distanceX2 + distanceY2 ) < ( distanceX + distanceY )) {
-            distanceX = distanceX2;
-            distanceY = distanceY2;
-            nearestObj = *obj;
-          }
-        }
-      }
+  std::pair<MapItrConst, MapItrConst> keyRange =  
+    Inst().m_objTypes.equal_range( type );
+  
+  for ( MapItrConst itr = keyRange.first; itr != keyRange.second; ++itr ) {
+    Object *obj = (*itr).second;
+
+    nt::core::IntVec coords = ObjectAttorney::GetTile( obj );
+    int distanceX2 = abs( coords.x - tileX );
+    int distanceY2 = abs( coords.y - tileY );
+
+    if (( distanceX2 + distanceY2 ) < ( distanceX + distanceY )) {
+      distanceX = distanceX2;
+      distanceY = distanceY2;
+      nearestObj = obj;
     }
   }
 
@@ -382,17 +384,16 @@ int ObjectManager::LuaObjectBlockingTile( lua_State *L ) {
 /********************************************
   Private Methods
 *********************************************/
-void ObjectManager::AddObject( Object* const obj ) {
+void ObjectManager::AddObject( Object *obj ) {
   m_objTypes.insert( std::make_pair(
     ObjectAttorney::GetType( obj ), obj )); 
   
-  int x = ObjectAttorney::GetTileX( obj );
-  int y = ObjectAttorney::GetTileY( obj );
-  m_objGrid[x][y].push_back( obj );
+  nt::core::IntVec coords = ObjectAttorney::GetTile( obj );
+  m_objGrid[coords.x][coords.y].push_back( obj );
 }
 
 
-void ObjectManager::RemoveObject( Object* const obj ) {
+void ObjectManager::RemoveObject( Object *obj ) {
   if ( std::find( m_toBeDestroyed.begin(),
     m_toBeDestroyed.end(), obj ) == m_toBeDestroyed.end() ) {
     m_toBeDestroyed.push_back( obj );
@@ -418,7 +419,7 @@ Object* ObjectManager::ObjectOnTile( int x, int y ) const {
 }
 
 
-Object* ObjectManager::DetectCollision( Object* const obj ) {
+Object* ObjectManager::DetectCollision( Object *obj ) {
   for ( unsigned int x = 0; x < m_objGrid.size(); ++x ) {
     for ( unsigned int y = 0; y < m_objGrid[x].size(); ++y ) {
       for ( ListItr otherObj = m_objGrid[x][y].begin();
@@ -456,13 +457,12 @@ ObjectManager::ListItr ObjectManager::AdjustGridCoord(
   int y, 
   ListItr objItr 
 ) {
-  // GetTileX and GetTileY guaranteed to be valid indices
+  // GetTile guaranteed to return Vector with valid indices
   Object* const obj = *objItr;
-  int newX = ObjectAttorney::GetTileX( obj );
-  int newY = ObjectAttorney::GetTileY( obj );
-  if ( x != newX || y != newY  ) {
+  nt::core::IntVec coords = ObjectAttorney::GetTile( obj );
+  if ( x != coords.x || y != coords.y  ) {
     objItr = m_objGrid[x][y].erase( objItr );
-    m_objGrid[newX][newY].push_back( obj );
+    m_objGrid[coords.x][coords.y].push_back( obj );
     return objItr;
   }
   return ++objItr;

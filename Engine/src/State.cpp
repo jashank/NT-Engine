@@ -26,8 +26,8 @@ const luaL_Reg State::LuaFuncs[] = {
 /*******************************************
  Public Member Functions
 *******************************************/
-bool State::LoadFromFile( const std::string &path ) {
-  TiXmlDocument doc( path.c_str() );
+bool State::LoadFromFile( const std::string &filePath ) {
+  TiXmlDocument doc( filePath.c_str() );
 
   if ( doc.LoadFile() ) {
     TiXmlElement *root = doc.FirstChildElement( "state" );
@@ -35,7 +35,7 @@ bool State::LoadFromFile( const std::string &path ) {
       TiXmlElement *elem = root->FirstChildElement( "tiles" );
       if ( elem ) {
         if ( !m_tileManager.LoadData( elem )) {
-          LogErr( "Problem loading tiles in state file " + path );
+          LogErr( "Problem loading tiles in state file " + filePath );
           return false;
         }
       }
@@ -43,15 +43,7 @@ bool State::LoadFromFile( const std::string &path ) {
       elem = root->FirstChildElement( "objects" );
       if ( elem ) {
         if ( !m_objectManager.LoadData( elem )) {
-          LogErr( "Problem loading Objects in state file " + path );
-          return false;
-        }
-      }
-
-      elem = root->FirstChildElement( "GUI" );
-      if ( elem ) {
-        if ( !m_guiManager.LoadData( elem )) {
-          LogErr( "Problem loading GUI in state file " + path );
+          LogErr( "Problem loading Objects in state file " + filePath );
           return false;
         }
       }
@@ -59,7 +51,7 @@ bool State::LoadFromFile( const std::string &path ) {
       elem = root->FirstChildElement( "sound" );
       if ( elem ) {
         if ( !m_soundManager.LoadData( elem )) {
-          LogErr( "Problem loading sound in state file " + path );
+          LogErr( "Problem loading sound in state file " + filePath );
           return false;
         }
       }
@@ -74,36 +66,49 @@ bool State::LoadFromFile( const std::string &path ) {
             if ( name && portPath ) {
               m_portals.insert( std::make_pair( name, portPath ));
             } else {
-              LogErr( "Name or path not specified for port in State: " + path );
+              LogErr( "Name or path not specified for port in State: " + filePath );
             }
           } while ( (port = port->NextSiblingElement( "port" )) );
         }
       }
 
+      elem = root->FirstChildElement( "fonts" );
+      if ( elem ) {
+        const TiXmlElement *port = elem->FirstChildElement( "font" );
+        if ( port ) {
+          do {
+            const char *path = port->Attribute( "path" );
+            if ( path ) {
+              App::GetApp()->LoadFont( path );
+            } else {
+              LogErr( "Name or path not specified for font in State: " + filePath );
+            }
+          } while ( (port = port->NextSiblingElement( "font" )) );
+        }
+      }
+
     } else {
-      LogErr( "<state> tag not specified in state file " + path );
+      LogErr( "<state> tag not specified in state file " + filePath );
       return false;
     }
-    m_path = path;
-    m_name = GetXmlFileName( path );
+    m_path = filePath;
+    m_name = GetFileName( filePath );
     return true;
   }
 
-  LogErr( "State file not found: " + path );
+  LogErr( "State file not found: " + filePath );
   return false;
 }
 
 
 void State::HandleEvents() {
   m_objectManager.HandleEvents();
-  m_guiManager.HandleEvents();
 }
 
 
 void State::Update() {
   m_tileManager.Update();
   m_objectManager.Update();
-  m_guiManager.Update();
   m_soundManager.Update();
 }
 
@@ -112,7 +117,6 @@ void State::Render() {
   // The rendering order is important.
   m_tileManager.Render();
   m_objectManager.Render();
-  m_guiManager.Render();
 }
 
 

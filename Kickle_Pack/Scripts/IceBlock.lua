@@ -119,4 +119,10 @@ function IceBlock.HandleCollision( self, other )
   end
 end
 
+
+function IceBlock.Kick( self, dir )
+  IceBlock.kicked = true
+  self:SetDir( dir )
+end 
+
 return IceBlock

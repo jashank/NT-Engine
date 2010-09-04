@@ -1,9 +1,9 @@
 #ifndef APP_H
 #define APP_H
 
-#include <SFML/Graphics.hpp>
 #include <SFML/Audio/Music.hpp>
 #include <SFML/Audio/SoundBuffer.hpp>
+#include <SFML/Graphics.hpp>
 
 // TEMPORARY
 extern "C" {
@@ -13,28 +13,26 @@ extern "C" {
 #include "AnimData.h"
 #include "KeyManager.h"
 #include "ResourceManager.h"
-#include "Camera.h"
 
 #undef LoadImage // Undefines LoadImage macro from WinUser
 
 class State;
 class AnimData;
 
-///Template specialization to handle sf::Music's OpenFromFile()
-///instead of the typical LoadFromFile()
+/**
+ * Template specialization to handle sf::Music's OpenFromFile() instead of
+ * the typical LoadFromFile().
+ * @param filepath path to file to load.
+ * @return Pointer to sf::Music that was loaded, NULL if unable to load.
+ */
 template<>
-sf::Music* ResourceLoader<sf::Music>::Load( const std::string& filename );
+sf::Music* ResourceLoader<sf::Music>::Load( const std::string& filepath );
 
-
-/*! \class App
- * -Initializes SFML\n
- * -Initializes ResoureManagers\n
- * -Initializes StateManager\n
- * -Calculates DeltaTime\n
- * -Calculates FPS\n
- * -Polls for events\n
- * -Loads Resources\n
-*/
+/**
+ * Singleton that Controls application. Initializes SFML, ResourceManagers, 
+ * and StateManager. Provides access to time tracking, FPS info, 
+ * event polling, and resource loading.
+ */
 class App {
  public:
   static App* CreateApp(
@@ -73,11 +71,15 @@ class App {
   const sf::Event &GetEvent() const;
 
   /// Returns input in app.
-  const sf::Input &GetInput() const;
+  const sf::Input* GetInput() const;
 
   /// Returns an Image given a filename, insuring that no
   /// duplicate Image is loaded into memory
   sf::Image* LoadImage( const std::string &filename );
+
+  /// Returns a Font given a filename, insuring that no
+  /// duplicate Font is loaded into memory.
+  sf::Font* LoadFont( const std::string &font );
 
   /// Returns a Sound given a filename, insuring that no
   /// duplicate Sound is loaded into memory
@@ -128,6 +130,7 @@ class App {
 
   //Resource Managers
   ResourceManager< sf::Image > m_images;
+  ResourceManager< sf::Font > m_fonts;
   ResourceManager< sf::SoundBuffer > m_sounds;
   ResourceManager< sf::Music > m_music;
   ResourceManager< AnimData > m_anims;

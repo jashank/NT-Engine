@@ -2,112 +2,159 @@
 #define RECT_H
 
 #include "Vector.h"
-/**
- * Class Rect. A generic class that will be more heavily used in future
- * versions of the engine and may form part of a core:: namespace. It
- * will be used in the camera class. TODO make a template. 
- */
 
 namespace nt {
 namespace core {
 
-class Rect {
- public:
-  /// Empty Constructor NOT IMPLEMENTED
-  Rect() : topLeft( 0.0f,0.0f ), bottomRight( 0.0f,0.0f ) {}
-  /// Four Variable  Constructor NOT IMPLEMENTED
-  Rect( float left, float top, float right, float bottom ) 
+/**
+ * Rectangle with (x,y) coordinates for top left and bottom right members.
+ */ 
+template< typename T >
+struct Rect {
+  Rect() {}
+  /**
+   * @param left leftmost x-coordinate.
+   * @param top topmost y-coordinate.
+   * @param right rightmost x-coordinate.
+   * @param bottom bottommost y-coordinate.
+   */
+  Rect( T left, T top, T right, T bottom ) 
         : topLeft( left, top ), bottomRight( right, bottom ) {}
-  /// Two Variable Vector Constructor NOT IMPLEMENTED
-  Rect( nt::core::Vector<float> upperLeft, 
-        nt::core::Vector<float> lowerRight)
-        : topLeft( upperLeft ), bottomRight( lowerRight ) {}
+
+  /**
+   * @param topLeft 2D Vector with coordinates for top left of rectangle.
+   * @param bottomRight 2D Vector with coordinates for bottom right of rectangle.
+   */
+  Rect( nt::core::Vector<T> topLeftCorner, 
+        nt::core::Vector<T> bottomRightCorner )
+        : topLeft( topLeftCorner ), bottomRight( bottomRightCorner ) {}
+
   ~Rect() {}
   
-  // Useful Methods
+  /**
+   * @return Distance in pixels between leftmost x and rightmost x.
+   */
+  T GetWidth() const {
+    return ( bottomRight.x - topLeft.x );
+  }
 
-  /// Returns topLeft.x
-  float GetX() const;
+  /**
+   * @return Distance in pixels between topmost y and bottommost y.
+   */
+  T GetHeight() const {
+    return ( bottomRight.y - topLeft.y );
+  }
 
-  /// Sets topLeft.x to x if x <= bottomRight.x
-  void SetX( float x );
+  /**
+   * @return Vector with (width,height) of rect.
+   */
+  nt::core::Vector<T> GetSize() const {
+    return nt::core::Vector<T>( GetWidth(), GetHeight() );
+  }
 
-  /// Returns topLeft.y
-  float GetY() const;
+  /**
+   * @return Area in pixels of the rectangle (width*height).
+   */
+  T GetArea() const {
+    return ( GetWidth() * GetHeight() );
+  } 
+
+  /**
+   * @return Vector containing coordinates (x,y,z) of center of rectangle.
+   */
+  nt::core::Vector<T> GetCenter() const {
+    T centerX = ( topLeft.x + bottomRight.x ) / 2;
+    T centerY = ( topLeft.y + bottomRight.y ) / 2;
+    return nt::core::Vector<T>( centerX, centerY );
+  }
+
+  /**
+   * @param x x-coordinate to check.
+   * @param y y-coordinate to check.
+   * @return True if coordinate is inside Rect. Considered inside if on edge.
+   */
+  bool Contains( T x, T y ) const {
+    return ( topLeft.x <= x &&
+             topLeft.y <= y &&
+             bottomRight.x >= x &&
+             bottomRight.y >= y );
+  }
   
-  /// Sets topLeft.y to y if y <= bottomRight.x
-  void SetY( float y );
+  /**
+   * @param other Rect to test intersection against.
+   * @return True if Rect intersects with other. To intersect means that part
+   * of one rectangle crosses at least unit over the part of another rectangle.
+   * Exact overlapping is not considered an intersection.
+   */
+  bool Intersects( const Rect<T> &other ) const {
+    return ( topLeft.x < other.bottomRight.x &&
+             topLeft.y < other.bottomRight.y &&
+             bottomRight.x > other.topLeft.x &&
+             bottomRight.y > other.topLeft.y );
+  } 
 
-  /// Returns bottomRight.x
-  float GetX2() const;
+  /**
+   * Moves Rect by values passed in x and y directions.
+   * @param x amount to move in x direction.
+   * @param y amount to move in y direction.
+   */
+  void Offset( T x, T y ) {
+    topLeft.x += x;
+    topLeft.y += y;
+    bottomRight.x += x;
+    bottomRight.y += y;
+  }
 
-  /// Sets bottomRight.x if x2 >= topLeft.x
-  void SetX2( float x2 );
+  /**
+   * Sets new center for this Rect, adjusting position of other coordinates
+   * accordingly (size of Rect is unchanged).
+   * @param x x-coordinate for new center.
+   * @param y y-coordinate for new center.
+   */
+  void SetCenter( T x, T y ) {
+    topLeft.x = x - GetWidth() / 2;
+    topLeft.y = y - GetHeight() / 2;
+    bottomRight.x = x + GetWidth() / 2;
+    bottomRight.y = y + GetHeight() / 2;
+  }
 
-  /// Gets bottomRight.y
-  float GetY2() const;
+  /**
+   * Sets new position for this Rect. Position is the coordinates for the
+   * Rect's top left corner. Other coordinates are adjusted accordingly (width
+   * and height remain unchanged).
+   * @param x x-coordinate for new position.
+   * @param y y-coordinate for new position.
+   */
+  void SetPosition( T x, T y ) {
+    topLeft.x = x;
+    topLeft.y = y;
+    bottomRight.x = topLeft.x + GetWidth();
+    bottomRight.y = topLeft.y + GetHeight();
+  }
 
-  /// Sets bottomRight.y to y2 if >= topLeft.y
-  void SetY2( float y2 );
+  /**
+   * Scales this Rect to new size. For example, passing a Vector of (3,5) will
+   * make the Rect have a width of 3 and height of 5. Position of Rect doesn't
+   * change.
+   * @param x amount to scale width wise.
+   * @param y amount to scale height wise.
+   */
+  void Scale( T x, T y ) {
+    bottomRight.x = topLeft.x + x;
+    bottomRight.y = topLeft.y + y;
+  }
 
-  /// Returns bottomRight.x-topLeft.x
-  float GetWidth() const;
-
-  /// Returns bottomRight.y-topLeft.y
-  float GetHeight() const;
-
-  /// Returns a vector containing width and height of the Rect
-  nt::core::Vector<float> GetSize() const;
-
-  /// Returns the widths times the height. Just a helpful method
-  float GetArea() const;
-
-  /// Returns a vector with the X and Y (potentially Z) coords of the
-  /// center of the rectangle.
-  nt::core::Vector<float> GetCenter() const;
-
-  /// Returns true if the vector position is within the rectangle.
-  bool Contains( const nt::core::Vector<float> pos ) const;
-  
-  /// Returns true if the rectangles intersect.
-  bool Intersects( const Rect &other ) const;
-  
-  // Setters
-  /// Returns a vector(topLeft.x+width/2, topLeft.y+height/2)
-  /// This is particularly useful for focusing on game objects
-  /// for RPG like / top down games
-  void SetCenter( nt::core::Vector<float> centerPosition );
-
-  /// Sets the topLeft position
-  void SetPosition( nt::core::Vector<float> position );
-
-  /// Sets the bottomRight position
-  void SetScale( nt::core::Vector<float> scale );
-
-  // Overload Operators
-  /*
-  // Offset to the right
-  Rect operator+( const Vector<float> &pos ) const;
-  // Offest to the left
-  Rect operator-( const Vector<float> &pos ) const;
-
-  Rect operator+=( const Vector<float> &pos ) const;
-  Rect operator-=( const Vector<float> &pos ) const;
-
-   Have to take note of float rounding errors
-  bool operator==( const Rect &other ) const;
-  bool operator!=( const Rect &other ) const;
-  bool operator<( const Rect &other ) const;
-  bool operator>( const Rect &other ) const;
-  bool operator<=( const Rect &other ) const;
-  bool operator>=( const Rect &other ) const;  
-  */
-
- private:
-  nt::core::Vector<float> topLeft;
-  nt::core::Vector<float> bottomRight;
-
+  Vector<T> topLeft;
+  Vector<T> bottomRight;
 };
+
+//@{
+/**
+ * Common Rect types.
+ */
+typedef Rect<int> IntRect;
+typedef Rect<float> FloatRect;
+//@}
 
 } // namespace core
 } // namespace nt

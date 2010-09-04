@@ -2,45 +2,44 @@
 #define CONFIG_H
 
 /**
- * Class Config. Defines some of the basic properties of the game such
- * as the FPS rate and the screen size. This is being phased out in
- * preference of a more generic system that is specified in XML.
+ * Retrieves information from game's config file (FPS, screen size, 
+ * starting state) and holds it for application use.
  */
-
-class Config {
+ class Config {
  public:
-  /// Constructor
-  Config();
-  /// Destructor
-  ~Config();
-
-  /// Loads Config data from Config file.
+  /**
+   * Loads data from config file.
+   */
   static void Load();
 
-  /// Sets m_screenWidth to screenWidth
-  static void SetScreenWidth( int screenWidth );
-  
-  /// Returns m_screenWidth
+  /**
+   * @return Screen's width.
+   */
   static int GetScreenWidth();
   
-  /// Sets m_screenHeight to screenHeight
-  static void SetScreenHeight( int screenHeight );
-
-  /// Returns m_screenHeight
+  /**
+   * @return Screen's height.
+   */
   static int GetScreenHeight();
 
-  /// Sets m_FPS to FPS
-  static void SetFPS( int FPS );
-
-  /// Returns m_FPS
+  /**
+   * @return Application's FPS.
+   */
   static int GetFPS();
 
 private:
+  //@{
+  /**
+   * Restrict default constructor and destructor.
+   */
+  Config();
+  ~Config();
+  //@}
 
   static int m_screenWidth;
   static int m_screenHeight;
   static int m_FPS;
 };
 
-#endif
+#endif // CONFIG_H
 

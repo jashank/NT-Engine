@@ -1,6 +1,5 @@
 #include "Utilities.h"
 
-#include <cmath>
 #include <cstdarg>
 #include <cstdio>
 #include <fstream>
@@ -18,24 +17,24 @@ std::string ToLowerCase( std::string str ) {
 }
 
 
-std::string GetXmlFileName( std::string filepath ) {
-  size_t lastPeriod = filepath.find_last_of( '.' );
-  size_t lastSlash = filepath.find_last_of( '\\' );
+std::string GetFileName( std::string filePath ) {
+  size_t lastPeriod = filePath.find_last_of( '.' );
+  size_t lastSlash = filePath.find_last_of( '\\' );
   if( lastSlash == std::string::npos ) {
-    lastSlash = filepath.find_last_of( '/' );
+    lastSlash = filePath.find_last_of( '/' );
   }
 
   if( lastPeriod == std::string::npos ||
       lastSlash == std::string::npos ||
       lastPeriod < lastSlash ) {
-    // Improper filepath, unable to determine type
+    // Improper filePath, unable to determine type
     return "";
   } else {
     // Grab the filename substring between lastSlash and lastPeriod
-    filepath = filepath.substr( lastSlash+1, (lastPeriod-lastSlash)-1 );
+    filePath = filePath.substr( lastSlash+1, (lastPeriod-lastSlash)-1 );
   }
 
-  return filepath;
+  return filePath;
 }
 
 
@@ -43,17 +42,6 @@ int RoundUp( float toRoundUp ) {
   return int(toRoundUp+1.0f);
 }
 
-
-bool Equals( float a, float b ) {
-  // 0.0001 epsilon is close enough for NT Engine
-  return ( fabs( a - b ) <  0.0001 );
-}
-
-
-bool Greater( float a, float b ) {
-  return (( a - b ) > 0.f ); 
-}
- 
 
 void ClearLog() {
   //ios::trunc erases previous content contained by file opened.

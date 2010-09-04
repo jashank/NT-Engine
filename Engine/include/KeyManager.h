@@ -1,40 +1,83 @@
 #ifndef KEYMANAGER_H
 #define KEYMANAGER_H
 
-#include <SFML/Graphics.hpp>
 #include <string>
-
 #include <vector>
+
+#include <SFML/Window/Event.hpp>
+#include <SFML/Window/Input.hpp>
 
 #include "Key.h"
 
+/**
+ * Registers keys for monitoring (keeping track of whether they are pressed
+ * and how long they are held down).
+ */
 class KeyManager {
  public:
   KeyManager();
 
-  /// Takes key string, interprets it, and sets keyResult as the appropriate
-  /// key code
+  /**
+   * Initializes KeyManager with SFML input monitor.
+   * @param input SFML input monitor that keeps track of key state.
+   */  
+  void Init( const sf::Input &input );
+
+
+  /**
+   * Takes string representation of key (ex: "up" == up arrow key), and puts
+   * associated SFML key code in keyResult.
+   * @param keyString string representation of key.
+   * @param keyResult SFML key code to assign the found key code to.
+   * @return False if there is no key code associated with key string passed. 
+   */
   static bool InterpretKey( std::string keyString, sf::Key::Code &keyResult );
 
-  /// Returns monitored Key corresponding to sf::Key::Code:: key.
-  /// Returns default constructed Key if none found.
+  /**
+   * @param key SFML key code used to search for registered Key.
+   * @return Registered Key corresponding to key code passed. Returns default
+   * constructed Key if none found.
+   */
   Key GetKey( sf::Key::Code key ) const;
 
-  void Init( const sf::Input &input );
+  /**
+   * Creates Key corresponding to SFML key code passed and registers it
+   * for monitoring.
+   * @param key SFML key code to associate Key created with.
+   */
   void RegisterKey( sf::Key::Code key );
+
+  /**
+   * Refreshes data on all keys monitored (whether they have been pressed and
+   * if so, how long they have been pressed).
+   */
   void Update();
 
  private:
-  /// Restricts copy constructor and assignment.
+  //@{
+  /** 
+   * Restrict copy constructor and assignment.
+   */
   KeyManager( const KeyManager &manager );
   KeyManager& operator=( const KeyManager &manager );
+  //@}
 
-  /// Contains the keys that are to be monitored
-  std::vector< Key > m_keys;
+  /**
+   * SFML input monitoring used.
+   */
+  const sf::Input *m_input; 
 
-  const sf::Input *m_input; //Used to access keystates
+  /**
+   * Holds extra key strings for associating with key codes that SFML doesn't
+   * string cast appropriately.
+   */ 
+  static const std::string m_extraKeys[]; 
 
-  static const std::string m_extraKeys[];
+  /**
+   * Keys being monitored.
+   */
+  std::vector<Key> m_keys;
 };
 
-#endif
+#endif // KEYMANAGER_H
+

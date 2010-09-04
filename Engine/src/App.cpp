@@ -11,13 +11,12 @@ extern "C" {
 #include "TileManager.h"
 #include "Utilities.h"
 
-//Template specialization to handle sf::Music's OpenFromFile()
-//instead of the typical LoadFromFile()
+// Specialize Load for sf::Music
 template<>
-sf::Music* ResourceLoader< sf::Music >::Load( const std::string &filename ) {
+sf::Music* ResourceLoader< sf::Music >::Load( const std::string &filepath ) {
 	std::auto_ptr< sf::Music > resource( new sf::Music() );
-	if( !resource->OpenFromFile( filename ) ) {
-    LogErr( "Song in" + filename + "failed to load." );
+	if( !resource->OpenFromFile( filepath ) ) {
+    LogErr( "Song in" + filepath + "failed to load." );
     return NULL;
 	}
 	return resource.release();
@@ -27,7 +26,6 @@ sf::Music* ResourceLoader< sf::Music >::Load( const std::string &filename ) {
 Data Members
 ************************************************/
 App* App::m_instance = NULL;
-
 
 /************************************************
 Constructor and Destructor
@@ -133,13 +131,18 @@ const sf::Event& App::GetEvent() const  {
 }
 
 
-const sf::Input& App::GetInput() const {
-  return m_window.GetInput();
+const sf::Input* App::GetInput() const {
+  return &(m_window.GetInput());
 }
 
 
 sf::Image* App::LoadImage( const std::string &filename ) {
 	return m_images.Load( filename );
+}
+
+
+sf::Font* App::LoadFont( const std::string &filename ) {
+  return m_fonts.Load( filename );
 }
 
 
@@ -186,6 +189,7 @@ void App::Run() {
 		  SAFEDELETE( m_currentState );
 
       m_images.Clear();
+      m_fonts.Clear();
       m_sounds.Clear();
       m_music.Clear();
       m_anims.Clear();

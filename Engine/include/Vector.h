@@ -1,64 +1,36 @@
 #ifndef VECTOR_H
 #define VECTOR_H
 
+#include "Utilities.h"
+
 namespace nt {
 namespace core {
 
-template< typename T >
 /**
- * Vector Class. The vector is a generic all purpose type to be used 
- * throught the engine. This is still a work in progress and will play
- * a much larger role in the engine in later builds. Part of namespace
- * core.
+ * 3D Vector supporting various operations.
  */
-
-class Vector {
- public:
-  /// Empty Constructor
+template< typename T >
+struct Vector {
   Vector() : x( 0 ), y( 0 ), z( 0 ) {}
-  /// 2-Dimensional Constructor
+
+  /**
+   * Constructor for 2D Vector.
+   */
   Vector( T xPos, T yPos ) : x( xPos ), y( yPos ), z( 0 ) {}
-  /// 3-Dimensional Constructor
+
+  /**
+   * Constructor for 3D Vector.
+   */
   Vector( T xPos, T yPos, T zPos ) : x( xPos ), y( yPos ), z( zPos ){}
-  /// Vector Constructor - TODO Remove.
+
   Vector( const Vector<T> &other) 
           : x( other.x ), y( other.y ), z( other.z ) {}
-  /// Empty Destructor
+
   ~Vector() {}
 
-  // Overload Operators
-  // Asignment Overloading
-  /*Vector<T>& operator=( const Vector<T>& other );
-  Vector<T>& operator+=( const Vector<T>& other );
-  Vector<T>& operator-=( const Vector<T>& other );
-  Vector<T>& operator*=( const Vector<T>& other );
-  Vector<T>& operator/=( const Vector* other );
-
-  // Mathematical Overloading
-  Vector<T> operator+( const Vector<T> &other ) const;
-  Vector<T> operator-( const Vector<T> &other ) const;
-  Vector<T> operator-() const; // Make Negative
-  Vector<T> operator*( const Vector<T> &other ) const ;
-  Vector<T> operator/( const Vector<T> &other ) const;
-  
-  // Boolean Overloading
-  To be implemented later on.
-  bool operator==( const Vector<T> &other ) const;
-  bool operator!=( const Vector<T> &other ) const;
-  bool operator<( const Vector<T> &other ) const;
-  bool operator>( const Vector<T> &other ) const;
-  bool operator<=( const Vector<T> &other ) const;
-  bool operator>=( const Vector<T> &other ) const;
-  */
-  // Data
-  T x;
-  T y;
-  T z;
-
-  /***********************************************
-  Implementation
-  ************************************************/
-  /// Simply sets x,y,z to that of others x,y,z data members.
+  /**
+   * @return This Vector with x,y,z assigned to by other's x,y,z.
+   */
   Vector<T>& operator=( const Vector<T>& other ) {
     x = other.x;
     y = other.y;
@@ -66,7 +38,9 @@ class Vector {
     return *this;
   }
 
-  /// += others data members x,y,z to self's x,y,z
+  /**
+   * @return This vector with other's x,y,z added to this' x,y,z.
+   */
   Vector<T>& operator+=( const Vector<T>& other ) {
     x += other.x;
     y += other.y;
@@ -74,7 +48,9 @@ class Vector {
     return *this;
   }
 
-  /// -= others data members x,y,z to self's x,y,z
+  /**
+   * @return This vector with other's x,y,z subtracted from this' x,y,z.
+   */
   Vector<T>& operator-=( const Vector<T>& other ) {
     x -= other.x;
     y -= other.y;
@@ -82,7 +58,9 @@ class Vector {
     return *this;
   }
 
-  /// *= others data members x,y,z to self's x,y,z
+  /**
+   * @return This vector with x,y,z multipled by other's x,y,z.
+   */
   Vector<T>& operator*=( const Vector<T>& other ) {
     x *= other.x;
     y *= other.y;
@@ -90,7 +68,9 @@ class Vector {
     return *this;
   }
 
-  /// /= others data memebers x,y,z,to self's x,y,z
+  /**
+   * @return This vector with x,y,z divided by other's x,y,z. 
+   */
   Vector<T>& operator/=( const Vector* other ) {
     x /= other.x;
     y /= other.y;
@@ -98,52 +78,68 @@ class Vector {
     return *this;
   }
 
-  /// Mathematical Overloading
+  /**
+   * @return Vector with x,y,z of this and other added.
+   */
   Vector<T> operator+( const Vector<T> &other ) const {
     return Vector<T>(x+other.x, y+other.y, z+other.z);
   }
 
+  /**
+   * @return Vector with x,y,z of other subtracted from this.
+   */
   Vector<T> operator-( const Vector<T> &other ) const {
     return Vector<T>(x-other.x, y-other.y, z-other.z);
   }
 
+  /**
+   * @return Vector with this' members negated.
+   */
   Vector<T> operator-() const {
     return Vector<T>(-x, -y, -z);
   }
 
+  /**
+   * @return Vector with x,y,z of other multiplied by this.
+   */
   Vector<T> operator*( const Vector<T> &other ) const {
     return Vector<T>(x*other.x, y*other.y, z*other.z);
   }
 
+  /**
+   * @return Vector with x,y,z of other dividied by this.
+   */
   Vector<T> operator/( const Vector<T> &other ) const {
     return Vector<T>(x / other.x, y / other.y, z / other.z );
   }
-  
-  // Boolean Overloading
-  /* need to implement for rounding errors on floats
+
+
   bool operator==( const Vector<T> &other ) const {
-  
+    // Equals used for floats.
+    return ( Equals<T>( x, other.x ) && Equals<T>( y, other.y ) && 
+             Equals<T>( z, other.z ));
   }
 
   bool operator!=( const Vector<T> &other ) const {
+    return ( !Equals<T>( x, other.x ) || !Equals<T>( y, other.y ) ||
+             !Equals<T>( z, other.z ));
   }
 
-  bool operator<( const Vector<T> &other ) const {
-  }
-
-  bool operator>( const Vector<T> &other ) const {
-  }
-
-  bool operator<=( const Vector<T> &other ) const {
-  }
-
-  bool operator>=( const Vector<T> &other ) const {
-  }
-  */
+  T x; /** x-coordinate of Vector. */
+  T y; /** y-coordinate of Vector. */
+  T z; /** z-coordinate of Vector. */
 };
 
-} // namespace core.
-} // namespace nt.
+//@{
+/**
+ * Common Vector types.
+ */
+typedef Vector<int> IntVec;
+typedef Vector<float> FloatVec;
+//@}
+ 
+} // namespace core
+} // namespace nt
 
 #endif // VECTOR_H
 

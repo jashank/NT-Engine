@@ -49,8 +49,7 @@ const std::string KeyManager::m_extraKeys[] = {
 Constructor
 *************************/
 KeyManager::KeyManager()
- : m_input( NULL ) {
-}
+ : m_input( NULL ) {}
 
 /*************************
 Public Methods

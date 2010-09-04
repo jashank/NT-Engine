@@ -1,10 +1,11 @@
 <?xml version="1.0"?>
-<GUI>
+<object>
   <animation path="Kickle_Pack/Animations/TitlePlayAnim.xml" />
   <script path="Kickle_Pack/Scripts/TitlePlayButton.lua" />
   <rect x="0" y="0" width="250" height="125" />
 
   <input_list>
+    <input mouse="MouseClicked" function="MousePressed" />
     <input key="return" repeat="false" delay="0" function="MousePressed"/>
   </input_list>
-</GUI>
+</object>

@@ -2,13 +2,18 @@
 
 <state>
 
-  <GUI>
-    <component type="image"  path="Kickle_Pack/GUI/TitleImage.xml">
-      <instance x="0" y="0" />
-    </component>
-    <component type="button" path="Kickle_Pack/GUI/TitlePlayButton.xml">
-      <instance x="235" y="298" />
-    </component>
-  </GUI>
+  <tiles>
+    <size px="48" />
+    <layout width="15" height="15" />
+  </tiles>
 
+  <objects>
+    <object path="Kickle_Pack/Objects/TitleImage.xml">
+      <inst x="0" y="0" />
+    </object>
+    <object path="Kickle_Pack/Objects/TitlePlayButton.xml">
+      <inst x="5" y="7" />
+    </object>
+  </objects>
+ 
 </state>

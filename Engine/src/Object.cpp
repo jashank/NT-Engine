@@ -2,10 +2,11 @@
 
 #include <cmath>
 
-#include "boost/bind/bind.hpp"
+#include <boost/bind/bind.hpp>
 extern "C" {
   #include "lualib.h"
 }
+#include <SFML/Graphics/Color.hpp>
 
 #include "App.h"
 #include "State.h"
@@ -19,11 +20,13 @@ const char Object::className[] = "Object";
 
 Lunar<Object>::RegType Object::methods[] = {
   { "Move", &Object::LuaMove },
-  { "GetAnimation", &Object::LuaGetAnimation },
-  { "SetAnimation", &Object::LuaSetAnimation },
-  { "SetAnimationReverse", &Object::LuaSetAnimationReverse },
-  { "PlayAnimation", &Object::LuaPlayAnimation },
-  { "PlayAnimationReverse", &Object::LuaPlayAnimationReverse },
+  { "GetAnim", &Object::LuaGetAnim },
+  { "SetAnim", &Object::LuaSetAnim },
+  { "PlayAnim", &Object::LuaPlayAnim },
+  { "StopAnim", &Object::LuaStopAnim },
+  { "PauseAnim", &Object::LuaPauseAnim },
+  { "RestartAnim", &Object::LuaRestartAnim },
+  { "SetReverseAnim", &Object::LuaSetReverseAnim },
   { "GetFrame", &Object::LuaGetFrame },
   { "IsAnimating", &Object::LuaIsAnimating },
   { "IsMoving", &Object::LuaIsMoving },
@@ -42,21 +45,29 @@ Lunar<Object>::RegType Object::methods[] = {
   { "SetSpeed", &Object::LuaSetSpeed },
   { "SlowDown", &Object::LuaSlowDown },
   { "SpeedUp", &Object::LuaSpeedUp },
+  { "Print", &Object::LuaPrint },
+  { "ClearText", &Object::LuaClearText },
+  { "SetText", &Object::LuaSetText },
+  { "SetTextFont", &Object::LuaSetTextFont },
+  { "SetTextSize", &Object::LuaSetTextSize },
+  { "SetTextColor", &Object::LuaSetTextColor },
+  { "SetTextRotation", &Object::LuaSetTextRotation },
+  { "ScaleText", &Object::LuaScaleText },
+  { "SetTextPos", &Object::LuaSetTextPos },
+  { "SetPrintTime", &Object::LuaSetPrintTime },
   { NULL, NULL }
 };
 
 
 Object::Object( lua_State *L )
- : m_ptrCallScriptFunc( boost::bind( &Object::CallScriptFunc, this, _1 )),
-   m_moving( false ),
+ : m_moving( false ),
    m_blockingTile( false ),
    m_noClip( false ),
+   m_ptrCallScriptFunc( boost::bind( &Object::CallScriptFunc, this, _1 )),
    m_direction( UP ),
    m_distance( 0.0f ),
    m_speed( 0.0f ),
-   m_id( -1 ),
-   m_tileX( 0 ),
-   m_tileY( 0 ) {
+   m_id( LUA_NOREF ) {
   m_state = App::GetApp()->GetCurrentState();
 
   if( !lua_isstring( L, -1 ) ) {
@@ -92,21 +103,22 @@ Object::Object(
   int tileY,
   int strip
 )
- : m_ptrCallScriptFunc( boost::bind( &Object::CallScriptFunc, this, _1 )),
-   m_moving( false ),
+ : m_moving( false ),
    m_blockingTile( false ),
    m_noClip( false ),
+   m_ptrCallScriptFunc( boost::bind( &Object::CallScriptFunc, this, _1 )),
    m_direction( UP ),
    m_distance( 0.0f ),
    m_speed( 0.0f ),
-   m_id( -1 ),
-   m_tileX( tileX ),
-   m_tileY( tileY ) {
+   m_id( LUA_NOREF ),
+   m_coords( tileX, tileY ) {
   m_state = App::GetApp()->GetCurrentState();
 
   if( !LoadObjectData( filepath ) ) {
     LogErr( "Object XML file " + filepath + " didn't load correctly." );
   }
+
+  SetAnimation( strip );
 
   //Calculate the float positions given tileX and tileY
   //Taking into account tile size, and max tiles across/down
@@ -122,9 +134,7 @@ Object::Object(
       y -= GetAnimData()->GetFrameHeight( GetAnimation() ) % tileDim;
     }
   }
-
   SetPosition( x, y );
-  SetAnimation( strip );
 
   if( !LoadCollisionData( filepath ) ) {
     LogErr( "Object XML file " + filepath + " didn't load correctly." );
@@ -135,22 +145,14 @@ Object::Object(
 
 
 void Object::Init() {
-  lua_State *L = App::GetApp()->GetLuaState();
-  lua_rawgeti( L, LUA_REGISTRYINDEX, m_id );
-  lua_getfield( L, -1, "Init" );
-  if ( lua_isfunction( L, -1 )) {
-    if ( lua_isfunction( L, -1 )) {
-      Lunar<Object>::push( L, this );
-      lua_call( L, 1, 0 );
-    }
-    lua_settop( L, 0 );
-  } 
+  CallScriptFunc( "Init" );
 }
 
 
 void Object::HandleEvents() {
   if ( !m_moving ) {
-    m_input.ScanInput( m_ptrCallScriptFunc );
+    m_input.ScanKeys( m_ptrCallScriptFunc );
+    m_input.ScanMouse( m_ptrCallScriptFunc, m_collisionRect );
   }
 }
 
@@ -159,15 +161,17 @@ void Object::UpdateCollision( Object* const collisionObj ) {
   // collisionObj not NULL guaranteed by ObjectManager
   m_collidingWith.push_back( collisionObj );
 
-  lua_State *L = App::GetApp()->GetLuaState();
-  lua_rawgeti( L, LUA_REGISTRYINDEX, m_id );
-  lua_getfield( L, -1, "HandleCollision" );
-  if ( lua_isfunction( L, -1 ) ) {
-    Lunar<Object>::push( L, this );
-    Lunar<Object>::push( L, collisionObj );
-    lua_call( L, 2, 0 );
+  if ( m_id != LUA_NOREF ) {
+    lua_State *L = App::GetApp()->GetLuaState();
+    lua_rawgeti( L, LUA_REGISTRYINDEX, m_id );
+    lua_getfield( L, -1, "HandleCollision" );
+    if ( lua_isfunction( L, -1 ) ) {
+      Lunar<Object>::push( L, this );
+      Lunar<Object>::push( L, collisionObj );
+      lua_call( L, 2, 0 );
+    }
+    lua_settop( L, 0 );
   }
-  lua_settop( L, 0 );
 }
 
 
@@ -175,64 +179,50 @@ void Object::UpdateAI() {
   if( m_moving ) {
     MovementUpdate();
   } else {
-    lua_State *L = App::GetApp()->GetLuaState();
-    lua_rawgeti( L, LUA_REGISTRYINDEX, m_id );
-    lua_getfield( L, -1, "AI" );
-    if ( lua_isfunction( L, -1 )) {
-      Lunar<Object>::push( L, this );
-      lua_call( L, 1, 0 );
-    }
-    lua_settop( L, 0 );
+    CallScriptFunc( "AI" );
   }
 }
 
 
 void Object::UpdateRendering() {
   AnimSprite::Update();
+  m_text.UpdatePrint();
 }
 
-
-int Object::GetTileX() const {
-  return m_tileX;
-}
-
-
-int Object::GetTileY() const {
-  return m_tileY;
-}
-
-
+/********************
+ * Lua API
+ ********************/
 int Object::LuaMove( lua_State *L ) {
   if( !m_moving ) {
-    int nextTileX = m_tileX;
-    int nextTileY = m_tileY;
+    nt::core::IntVec nextCoords = m_coords;
 
     switch ( m_direction ) {
       case UP: {
-        nextTileY--;
+        --nextCoords.y;
         break;
       }
       case DOWN: {
-        nextTileY++;
+        ++nextCoords.y;
         break;
       }
       case LEFT: {
-        nextTileX--;
+        --nextCoords.x;
         break;
       }
       case RIGHT: {
-        nextTileX++;
+        ++nextCoords.x;
         break;
       }
       default: {}
     }
 
-    if ( m_state->GetTileManager().TileOnMap( nextTileX, nextTileY )) {
+    // Need to check if tile is on map because of no clip.
+    if ( m_state->GetTileManager().TileOnMap( nextCoords.x, nextCoords.y )) {
       if (( m_noClip ) ||
           ( m_state->GetTileManager().TileIsCrossable( 
-              nextTileX, nextTileY  ) &&
+              nextCoords.x, nextCoords.y  ) &&
             !m_state->GetObjectManager().ObjectBlockingTile( 
-              nextTileX, nextTileY ))) {
+              nextCoords.x, nextCoords.y ))) {
         m_moving = true;
       }
     }
@@ -244,58 +234,52 @@ int Object::LuaMove( lua_State *L ) {
 }
 
 
-int Object::LuaGetAnimation( lua_State *L ) {
+int Object::LuaGetAnim( lua_State *L ) {
   lua_pushinteger( L, GetAnimation());
   return 1;
 }
 
 
-int Object::LuaSetAnimation( lua_State *L ) {
+int Object::LuaSetAnim( lua_State *L ) {
   if ( !lua_isnumber( L, -1 )) {
     LogLuaErr( "Didn't pass number to SetAnimation in Object: " + m_type );
     return 0;
   }
-  int animation = lua_tointeger( L, -1 );
-  SetAnimation( animation );
+  SetAnimation( lua_tointeger( L, -1 ));
   return 0;
 }
 
 
-int Object::LuaSetAnimationReverse( lua_State *L ) {
-  if ( !lua_isnumber( L, -1 )) {
-    LogLuaErr( 
-      "Didn't pass number to SetAnimationReverse in Object: " + m_type
-    );
-    return 0;
-  }
-  int animation = lua_tointeger( L, -1 );
-  SetAnimation( animation, true );
-  return 0;
-}
-
-
-int Object::LuaPlayAnimation( lua_State *L ) {
-  if ( !lua_isnumber( L, -1 )) {
-    LogLuaErr( "Didn't pass number to PlayAnimation in Object: " + m_type );
-    return 0;
-  }
-  int animation = lua_tointeger( L, -1 );
-  SetAnimation( animation );
+int Object::LuaPlayAnim( lua_State *L ) {
   Play();
   return 0;
 }
 
 
-int Object::LuaPlayAnimationReverse( lua_State *L ) { 
-  if ( !lua_isnumber( L, -1 )) {
-    LogLuaErr( 
-      "Didn't pass number to PlayAnimationReverse in Object: " + m_type 
-    );
+int Object::LuaStopAnim( lua_State *L ) {
+  Stop();
+  return 0;
+}
+
+
+int Object::LuaPauseAnim( lua_State *L ) {
+  Pause();
+  return 0;
+}
+
+
+int Object::LuaRestartAnim( lua_State *L ) {
+  Restart();
+  return 0;
+}
+
+
+int Object::LuaSetReverseAnim( lua_State *L ) {
+  if ( lua_gettop( L ) == 0 ) {
+    LogLuaErr( "Didn't pass anything to SetReverseAnim in Object: " + m_type );
     return 0;
   }
-  int animation = lua_tointeger( L, -1 );
-  SetAnimation( animation, true );
-  Play();
+  SetReverse( lua_toboolean( L, -1 ));
   return 0;
 }
 
@@ -321,13 +305,13 @@ int Object::LuaIsMoving( lua_State *L ) {
 int Object::LuaOnCollisionCourse( lua_State *L ) {
   Object* const other = Lunar<Object>::check( L, 1 );
   if ( other ) {
-    sf::FloatRect thisRect = m_collisionRect;
-    sf::FloatRect otherRect = other->m_collisionRect;
+    nt::core::FloatRect thisRect = m_collisionRect;
+    nt::core::FloatRect otherRect = other->m_collisionRect;
 
-    float distLR = otherRect.Left - thisRect.Right;
-    float distRL = thisRect.Left - otherRect.Right;
-    float distTB = otherRect.Top - thisRect.Bottom;
-    float distBT = thisRect.Top - otherRect.Bottom;
+    float distLR = otherRect.topLeft.x - thisRect.bottomRight.x;
+    float distRL = thisRect.topLeft.x - otherRect.bottomRight.x;
+    float distTB = otherRect.topLeft.y - thisRect.bottomRight.y;
+    float distBT = thisRect.topLeft.y - otherRect.bottomRight.y;
 
     bool intersectingX = 
       ( fabs( distRL ) < ( thisRect.GetWidth() + otherRect.GetWidth() ));
@@ -338,7 +322,7 @@ int Object::LuaOnCollisionCourse( lua_State *L ) {
       return 1;
     }
     
-    sf::Vector2f velVec = GetVelocityVector() - other->GetVelocityVector();
+    nt::core::FloatVec velVec = GetVelocityVector() - other->GetVelocityVector();
     float timeLR = 0.f;
     float timeRL = 0.f;
     float timeTB = 0.f;
@@ -404,8 +388,8 @@ int Object::LuaGetType( lua_State *L ) {
 
 
 int Object::LuaGetTile( lua_State *L ) {
-  lua_pushinteger( L, m_tileX );
-  lua_pushinteger( L, m_tileY );
+  lua_pushinteger( L, m_coords.x );
+  lua_pushinteger( L, m_coords.y );
   return 2;
 }
 
@@ -452,6 +436,10 @@ int Object::LuaGetTable( lua_State *L ) {
 
 
 int Object::LuaSetNoClip( lua_State *L ) {
+  if ( lua_gettop( L ) == 0 ) {
+    LogLuaErr( "Nothing passed to SetNoClip in Object: " + m_type );
+    return 0;
+  }
   m_noClip = lua_toboolean( L, -1 );
   return 0;
 }
@@ -509,6 +497,115 @@ int Object::LuaSpeedUp( lua_State *L ) {
 }
 
 
+int Object::LuaPrint( lua_State *L ) {
+  m_text.StartPrint();  
+  return 0;
+}
+
+
+int Object::LuaSetText( lua_State *L ) {
+  if ( !lua_isstring( L, -1 )) {
+    LogLuaErr( "String not passed to SetText for Object: " + m_type );
+    return 0;
+  } 
+  m_text.BufferText( lua_tostring( L, -1 ));
+  m_text.SetPosition( GetPosition().x, GetPosition().y );
+  return 0;
+}
+
+
+int Object::LuaClearText( lua_State *L ) {
+  m_text.SetText( "" );
+  return 0;
+}  
+
+
+int Object::LuaSetTextFont( lua_State *L ) {
+  if ( !lua_isstring( L, -1 )) {
+    LogLuaErr( "String not passed to SetTextFont for Object: " + m_type );
+    return 0;
+  }
+  sf::Font *font =  App::GetApp()->LoadFont( lua_tostring( L, -1 ));
+
+  if ( font ) {
+    m_text.SetFont( *font );
+  } 
+  return 0;
+}
+
+
+int Object::LuaSetTextSize( lua_State *L ) {
+  if ( !lua_isnumber( L, -1 )) {
+    LogLuaErr( "Number not passed to SetTextSize for Object: " + m_type );
+    return 0;
+  }
+  m_text.SetSize( lua_tonumber( L, -1 ));
+  return 0;
+}
+
+
+int Object::LuaSetTextColor( lua_State *L ) {
+  if ( !lua_isnumber( L, -3 ) || !lua_isnumber( L, -2 ) ||
+       !lua_isnumber( L, -1 )) {
+    LogLuaErr( 
+      "Number not passed to one of 'rgb' values in SetTextColor for Object: " + 
+      m_type
+    );
+    return 0;
+  }
+  int r = lua_tonumber( L, -3 );
+  int g = lua_tonumber( L, -2 );
+  int b = lua_tonumber( L, -1 );
+  sf::Color color( r, g, b );
+
+  m_text.SetColor( color );
+  return 0;
+}
+
+
+int Object::LuaSetTextRotation( lua_State *L ) {
+  if ( !lua_isnumber( L, -1 )) {
+    LogLuaErr( "Number not passed to SetTextRotation for Object: " + m_type );
+    return 0;
+  }
+  m_text.SetRotation( lua_tonumber( L, -1 ));
+  return 0;
+}
+
+
+int Object::LuaScaleText( lua_State *L ) {
+  if ( !lua_isnumber( L, -2 ) || !lua_isnumber( L, -1 )) {
+    LogLuaErr( "Numbers not passed to ScaleText for Object: " + m_type );
+    return 0;
+  }
+  m_text.SetScale( lua_tonumber( L, -2 ), lua_tonumber( L, -1 ));
+  return 0;
+}
+
+
+int Object::LuaSetTextPos( lua_State *L ) {
+  if ( !lua_isnumber( L, -2 ) || !lua_isnumber( L, -1 )) {
+    LogLuaErr( "Numbers not passed SetTextPos for Object: " + m_type );
+    return 0;
+  }
+  float offsetX = lua_tonumber( L, -2 );
+  float offsetY = lua_tonumber( L, -1 );
+
+  m_text.SetPosition( GetPosition().x + offsetX, GetPosition().y + offsetY );
+  return 0;
+}
+
+
+int Object::LuaSetPrintTime( lua_State *L ) {
+  if ( !lua_isnumber( L, -1 )) {
+    LogLuaErr( "Number not passed to SetPrintTime for Object: " + m_type );
+    return 0;
+  }
+  m_text.SetPrintTime( lua_tonumber( L, -1 ));
+  return 0;
+}
+
+
 bool Object::LoadCollisionData( const std::string &filepath ) {
   TiXmlDocument doc ( filepath.c_str() );
 
@@ -521,17 +618,18 @@ bool Object::LoadCollisionData( const std::string &filepath ) {
 
   TiXmlElement *rect = root->FirstChildElement( "rect" );
   if ( rect ) {
-    rect->QueryFloatAttribute( "x", &m_collisionRect.Left );
-    m_collisionRect.Left += GetPosition().x;
+    rect->QueryFloatAttribute( "x", &m_collisionRect.topLeft.x );
+    m_collisionRect.topLeft.x += GetPosition().x;
 
-    rect->QueryFloatAttribute( "y", &m_collisionRect.Top );
-    m_collisionRect.Top += GetPosition().y;
+    rect->QueryFloatAttribute( "y", &m_collisionRect.topLeft.y );
+    m_collisionRect.topLeft.y += GetPosition().y;
+    
+    float width = 0;
+    float height = 0;
+    rect->QueryFloatAttribute( "width", &width );
+    rect->QueryFloatAttribute( "height", &height );
 
-    rect->QueryFloatAttribute( "width", &m_collisionRect.Right );
-    m_collisionRect.Right += m_collisionRect.Left;
-
-    rect->QueryFloatAttribute( "height", &m_collisionRect.Bottom );
-    m_collisionRect.Bottom += m_collisionRect.Top;
+    m_collisionRect.Scale( width, height );
   }
 
   TiXmlElement *tile = root->FirstChildElement( "tile" );
@@ -558,7 +656,7 @@ bool Object::LoadObjectData( const std::string &filepath ) {
     return false;
   }
 
-  m_type = GetXmlFileName( filepath );
+  m_type = GetFileName( filepath );
 
   TiXmlHandle handleDoc( &doc );
   TiXmlElement *root = handleDoc.FirstChildElement( "object" ).Element();
@@ -608,7 +706,7 @@ void Object::InitLua() {
   luaL_dofile( L, m_luaScript.c_str() );
   if ( lua_istable( L, -1 )) {
     m_id = luaL_ref( L, LUA_REGISTRYINDEX );
-  }
+  } 
 }
 
 
@@ -625,7 +723,7 @@ void Object::MovementUpdate() {
       Move( 0.0f, -distThisFrame );
       m_collisionRect.Offset( 0.0f, -distThisFrame );
       if ( nextTile ) {
-        --m_tileY;
+        --m_coords.y;
       }
       break;
     }
@@ -633,7 +731,7 @@ void Object::MovementUpdate() {
       Move( 0.0f, distThisFrame );
       m_collisionRect.Offset( 0.0f, distThisFrame );
       if ( nextTile ) {
-        ++m_tileY;
+        ++m_coords.y;
       }
       break;
     }
@@ -641,7 +739,7 @@ void Object::MovementUpdate() {
       Move( -distThisFrame, 0.0f );
       m_collisionRect.Offset( -distThisFrame, 0.0f );
       if ( nextTile ) {
-        --m_tileX; 
+        --m_coords.x;
       }
       break;
     }
@@ -649,7 +747,7 @@ void Object::MovementUpdate() {
       Move( distThisFrame, 0.0f );
       m_collisionRect.Offset( distThisFrame, 0.0f );
       if ( nextTile ) {
-        ++m_tileX;
+        ++m_coords.x;
       }
       break;
     }
@@ -658,64 +756,68 @@ void Object::MovementUpdate() {
 
   if( m_distance >= m_state->GetTileManager().GetTileDim()) {
     m_moving = false;
-    CorrectMovement();
+    Realign();
     m_distance = 0.0f;
   }
 }
 
 
-void Object::CorrectMovement() {
+void Object::Realign() {
   static float diff = 0.0f;
   //Calculate the amount of distance to move back
   diff = m_distance - m_state->GetTileManager().GetTileDim();
 
-  //Find the correct direction to move back
-  switch( m_direction ) {
-    case UP: {
-      Move( 0.0f, diff );
-      m_collisionRect.Offset( 0.0f, diff );
-      break;
+  if ( diff > 0.f ) {
+    //Find the correct direction to move back
+    switch( m_direction ) {
+      case UP: {
+        Move( 0.0f, diff );
+        m_collisionRect.Offset( 0.0f, diff );
+        break;
+      }
+      case DOWN: {
+        Move( 0.0f, -diff );
+        m_collisionRect.Offset( 0.0f, -diff );
+        break;
+      }
+      case LEFT: {
+        Move( diff, 0.0f );
+        m_collisionRect.Offset( diff, 0.0f );
+        break;
+      }
+      case RIGHT: {
+        Move( -diff, 0.0f );
+        m_collisionRect.Offset( -diff, 0.0f );
+        break;
+      }
+      default: {}
     }
-    case DOWN: {
-      Move( 0.0f, -diff );
-      m_collisionRect.Offset( 0.0f, -diff );
-      break;
-    }
-    case LEFT: {
-      Move( diff, 0.0f );
-      m_collisionRect.Offset( diff, 0.0f );
-      break;
-    }
-    case RIGHT: {
-      Move( -diff, 0.0f );
-      m_collisionRect.Offset( -diff, 0.0f );
-      break;
-    }
-    default: {}
   }
 
   SetPosition( round( GetPosition().x ), round( GetPosition().y ) );
-  m_collisionRect.Top = round( m_collisionRect.Top );
-  m_collisionRect.Bottom = round( m_collisionRect.Bottom );
-  m_collisionRect.Left = round( m_collisionRect.Left );
-  m_collisionRect.Right = round( m_collisionRect.Right );
+  m_collisionRect.topLeft.x = round( m_collisionRect.topLeft.x );
+  m_collisionRect.topLeft.y = round( m_collisionRect.topLeft.y );
+  m_collisionRect.bottomRight.x = round( m_collisionRect.bottomRight.x );
+  m_collisionRect.bottomRight.y = round( m_collisionRect.bottomRight.y );
 }
 
 
-void Object::CallScriptFunc( std::string &funcName ) {
-  lua_State *L = App::GetApp()->GetLuaState();
-  lua_rawgeti( L, LUA_REGISTRYINDEX, m_id );
-  lua_getfield( L, -1, funcName.c_str() );
-  if( lua_isfunction( L, -1 ) ) {
-    Lunar<Object>::push( L, this );
-    lua_call( L, 1, 0 );
+void Object::CallScriptFunc( std::string funcName ) {
+  if ( m_id != LUA_NOREF ) {
+    lua_State *L = App::GetApp()->GetLuaState();
+    lua_rawgeti( L, LUA_REGISTRYINDEX, m_id );
+    lua_getfield( L, -1, funcName.c_str() );
+    if( lua_isfunction( L, -1 ) ) {
+      Lunar<Object>::push( L, this );
+      lua_call( L, 1, 0 );
+    }
+    lua_settop( L, 0 );
   }
-  lua_settop( L, 0 );
 }
 
 
-sf::Vector2f Object::GetVelocityVector() {
-  sf::Vector2f velVec( 0.f, 0.f );
+nt::core::FloatVec Object::GetVelocityVector() {
+  nt::core::FloatVec velVec( 0.f, 0.f );
   if ( m_moving ) {
     switch ( m_direction ) {
       case UP: {
@@ -763,3 +865,4 @@ Object::Dir Object::GetOppositeDir( Dir dir ) {
     }
   }
 }
+

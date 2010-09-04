@@ -20,5 +20,6 @@
     <input key="z" repeat="false" delay="0" function="PerformAttack" />
     <input key="g" repeat="false" delay="0" function="GodMode" />
     <input key="SPACE" repeat="false" delay="0" function="Suicide" />
+    <input mouse="MouseClicked" function="PerformPillar" />
   </input_list>
 </object>

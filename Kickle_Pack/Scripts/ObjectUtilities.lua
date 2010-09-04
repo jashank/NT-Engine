@@ -84,6 +84,13 @@ function Util.GetRandomDir( dirsNotToUse )
 end
 
 
+-- Sets an object's animation and then plays it.
+function Util.SetAndPlay( object, animIndex )
+  object:SetAnim( animIndex )
+  object:PlayAnim()
+end
+
+
 -- Generic enemy AI for an Object to use. Moves in same direction until
 -- either it hits the same axis as Kickle (in which case it changes direction
 -- to go towards Kickle unless it can't move in that direction)
@@ -120,9 +127,10 @@ function Util.GenericEnemyAI( enemy )
     enemy:SetDir( Util.GetNextDir( enemy:GetDir() ))
   end
 
-  enemy:PlayAnimation( enemy:GetDir())
+  
+  Util.SetAndPlay( enemy, enemy:GetDir())
   enemy:Move()
 end
 
-
 return Util
+

@@ -3,14 +3,16 @@
 #include <sstream>
 
 #include "App.h"
+#include "Rect.h"
 #include "tinyxml.h"
 #include "Utilities.h"
+#include "Vector.h"
 
 /************************************************
 Public Methods
 ************************************************/
-bool AnimData::LoadFromFile( const std::string &filename ) {
-  TiXmlDocument doc ( filename.c_str() );
+bool AnimData::LoadFromFile( const std::string &filepath ) {
+  TiXmlDocument doc ( filepath.c_str() );
 
   if ( doc.LoadFile() ) {
     static App *app = App::GetApp();
@@ -24,10 +26,11 @@ bool AnimData::LoadFromFile( const std::string &filename ) {
         if ( elem ) {
           do {
             if ( strcmp( elem->Value(), "common" ) == 0 ) {
-              elem->QueryIntAttribute( "x", &m_common.frameRect.Left );
-              elem->QueryIntAttribute( "y", &m_common.frameRect.Top );
-              elem->QueryIntAttribute( "width", &m_common.frameRect.Right );
-              elem->QueryIntAttribute( "height", &m_common.frameRect.Bottom );
+              elem->QueryIntAttribute( "x", &m_common.frameRect.topLeft.x );
+              elem->QueryIntAttribute( "y", &m_common.frameRect.topLeft.y );
+              elem->QueryIntAttribute( "width", &m_common.frameRect.bottomRight.x );
+              elem->QueryIntAttribute( "height", &m_common.frameRect.bottomRight.y );
+
               elem->QueryIntAttribute( "num_frames", &m_common.numFrames );
               const char *looped = elem->Attribute( "looped" );
               if ( looped ) {
@@ -50,51 +53,69 @@ bool AnimData::LoadFromFile( const std::string &filename ) {
           } while ( (elem = elem->NextSiblingElement()) );
         }
       } else {
-        LogErr( "Sheet in animation file: " + filename + " not found." );
+        LogErr( "Sheet in animation file: " + filepath + " not found." );
         return false;
       }
     } while ( (sheet = sheet->NextSiblingElement( "sheet" )) );
   } else {
-    LogErr( "File not found: " + filename );
+    LogErr( "File not found: " + filepath );
     return false;
   }
   return true;
 }
 
 
-bool AnimData::IsLooped( int animation ) const {
-	return m_anims[animation%m_anims.size()].isLooped;
+bool AnimData::IsLooped( int animIndex ) const {
+  if ( animIndex >= 0 && (unsigned int) animIndex < m_anims.size() ) {
+    return m_anims[animIndex].isLooped;
+  } else {
+    return false;
+  }
 }
 
 
-float AnimData::GetFrameTime( int animation, int frame ) const {
-  static const Animation* a = 0;
-  a = &m_anims[animation%m_anims.size()];
-
-	if( a->uniqueFrameTimes ) {
-		return a->frameTimes[frame%(a->numFrames)];
-	}
-	return a->frameTimes[0];
+float AnimData::GetFrameTime( int animIndex, int frameIndex ) const {
+  static const Animation* a = NULL;
+  if ( animIndex >= 0 && (unsigned int) animIndex < m_anims.size() ) {
+    a = &m_anims[animIndex];
+    if ( a->uniqueFrameTimes && frameIndex > 0 && frameIndex < a->numFrames ) {
+      return a->frameTimes[frameIndex];
+    } else {
+      return a->frameTimes[0];
+    }
+  } else {
+    return 0.f;
+  }
 }
 
 
-int AnimData::GetAnimX( int animation ) const {
-	return m_anims[animation%m_anims.size()].frameRect.Left;
+nt::core::IntVec AnimData::GetAnimPosition( int animIndex ) const {
+  if ( animIndex >= 0 && (unsigned int) animIndex < m_anims.size() ) {
+    return nt::core::IntVec( 
+             m_anims[animIndex].frameRect.topLeft.x,
+             m_anims[animIndex].frameRect.topLeft.y
+           );
+  } else {
+    return nt::core::IntVec( 0, 0 );
+  }
+} 
+
+
+int AnimData::GetFrameWidth( int animIndex ) const {
+  if ( animIndex >= 0 && (unsigned int) animIndex < m_anims.size() ) {
+    return m_anims[animIndex].frameRect.GetWidth();
+  } else {
+    return 0;
+  }
 }
 
 
-int AnimData::GetAnimY( int animation ) const {
-	return m_anims[animation%m_anims.size()].frameRect.Top;
-}
-
-
-int AnimData::GetFrameWidth( int animation ) const {
-	return m_anims[animation%m_anims.size()].frameRect.GetWidth();
-}
-
-
-int AnimData::GetFrameHeight( int animation ) const {
-	return m_anims[animation%m_anims.size()].frameRect.GetHeight();
+int AnimData::GetFrameHeight( int animIndex ) const {
+  if ( animIndex >= 0 && (unsigned int) animIndex < m_anims.size() ) {
+    return m_anims[animIndex].frameRect.GetHeight();
+  } else {
+    return 0;
+  }
 }
 
 
@@ -103,30 +124,42 @@ int AnimData::GetNumAnims() const {
 }
 
 
-int AnimData::GetNumFrames( int animation ) const {
-	return m_anims[animation%m_anims.size()].numFrames;
+int AnimData::GetNumFrames( int animIndex ) const {
+  if ( animIndex >= 0 && (unsigned int) animIndex < m_anims.size() ) {
+    return m_anims[animIndex].numFrames;
+  } else {
+    return 0;
+  }
 }
 
 
-sf::IntRect AnimData::GetFrameRect(
-  int animation,
-  int frame
+nt::core::IntRect AnimData::GetFrameRect( 
+  int animIndex, 
+  int frameIndex 
 ) const {
-	static sf::IntRect rect;
-  static const Animation* a = 0;
-
-  a = &m_anims[animation%m_anims.size()];
-	rect.Top = a->frameRect.Top;
-	rect.Left = a->frameRect.Left + (frame%a->numFrames) * a->frameRect.GetWidth();
-	rect.Bottom = a->frameRect.Bottom;
-	rect.Right = rect.Left + a->frameRect.GetWidth();
-
-	return rect;
+  static const Animation *a = NULL;
+  if ( animIndex >= 0 && (unsigned int) animIndex < m_anims.size() ) {
+    a = &m_anims[animIndex];
+    if ( frameIndex > 0 && frameIndex < a->numFrames ) {
+      nt::core::IntRect rect = a->frameRect;
+      rect.topLeft.x += frameIndex * a->frameRect.GetWidth();
+      rect.bottomRight.x = rect.topLeft.x + a->frameRect.GetWidth();
+      return rect;
+    } else {
+      return a->frameRect;
+    }
+  } else {
+    return nt::core::IntRect( 0, 0, 0, 0 );
+  }
 }
 
 
-sf::Image& AnimData::GetImage( int animation ) const {
-  return *(m_anims[animation%m_anims.size()].image);
+sf::Image* AnimData::GetImage( int animIndex ) const {
+  if ( animIndex >= 0 && (unsigned int) animIndex < m_anims.size() ) {
+    return m_anims[animIndex].image;
+  } else {
+    return NULL;
+  }
 }
 
 /************************************************
@@ -155,13 +188,13 @@ bool AnimData::ParseStrip(
 
   const TiXmlElement *clip = strip->FirstChildElement( "clip" );
   if ( clip ) {
-    clip->QueryIntAttribute( "x", &anim.frameRect.Left );
-    clip->QueryIntAttribute( "y", &anim.frameRect.Top );
-    clip->QueryIntAttribute( "width", &anim.frameRect.Right );
-    clip->QueryIntAttribute( "height", &anim.frameRect.Bottom );
+    clip->QueryIntAttribute( "x", &anim.frameRect.topLeft.x );
+    clip->QueryIntAttribute( "y", &anim.frameRect.topLeft.y );
+    clip->QueryIntAttribute( "width", &anim.frameRect.bottomRight.x );
+    clip->QueryIntAttribute( "height", &anim.frameRect.bottomRight.y );
   }
-  anim.frameRect.Right += anim.frameRect.Left;
-  anim.frameRect.Bottom += anim.frameRect.Top;
+  anim.frameRect.bottomRight.x += anim.frameRect.topLeft.x;
+  anim.frameRect.bottomRight.y += anim.frameRect.topLeft.y;
 
   const TiXmlElement *flow = strip->FirstChildElement( "flow" );
   if ( flow ) {

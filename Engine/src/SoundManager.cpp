@@ -1,7 +1,5 @@
 #include "SoundManager.h"
 
-#include <SFML/Audio.hpp>
-
 #include "App.h"
 #include "tinyxml.h"
 #include "Utilities.h"
@@ -79,12 +77,12 @@ void SoundManager::Update() {
 /******************************
 Private Methods
 ******************************/
-bool SoundManager::AddMusic( const std::string &musicPath ) {
-  sf::Music *music = App::GetApp()->LoadMusic( musicPath );
+bool SoundManager::AddMusic( const std::string &filePath ) {
+  sf::Music *music = App::GetApp()->LoadMusic( filePath );
   if ( music ) {
     m_playlist.push_back( music );
   } else {
-    LogErr( "Unable to load music file " + musicPath );
+    LogErr( "Unable to load music file " + filePath );
     return false;
   }
   return true;
@@ -92,7 +90,7 @@ bool SoundManager::AddMusic( const std::string &musicPath ) {
 
 
 void SoundManager::PlayNextSong() {
-  if ( m_playlistIndex < m_playlist.size() || m_loop ) {
+  if ( (unsigned int) m_playlistIndex < m_playlist.size() || m_loop ) {
     m_playlistIndex = m_playlistIndex % m_playlist.size();
     if ( IsPlaying() ) {
       m_currentMusic->Stop();

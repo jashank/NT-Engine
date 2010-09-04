@@ -5,16 +5,15 @@ Util = require "ObjectUtilities"
 local Spring = {}
 
 function Spring.Init( self )
-  local dir = self:GetAnimation()
+  local dir = self:GetAnim()
   self:SetDir( Util.GetOppositeDir( dir ))
 end
 
 function Spring.HandleCollision( self, other )
+  self:StopAnim()
   local otherType = other:GetType()
   if otherType == "IceBlock" then
-    if not self:IsAnimating() then
-      self:PlayAnimation( self:GetAnimation() )
-    end
+    self:PlayAnim()
   end
 end
 
