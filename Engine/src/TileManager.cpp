@@ -267,23 +267,10 @@ bool TileManager::LoadTileAnims( const std::string &animPath ) {
       TiXmlElement *elem = sheet->FirstChildElement();
       if ( elem ) {
         do {
-          if ( strcmp( elem->Value(), "common" ) == 0 ) {
-            TiXmlElement *strip = elem->FirstChildElement( "strip" );
-            if ( strip ) {
-              do {
-                if ( !LoadTileInfo( strip )) {
-                  LogErr( "Couldn't retrieve tile information from tile"
-                      "animation file: " + animPath );
-                  return false;
-                }
-              } while ( (strip = strip->NextSiblingElement( "strip" )) );
-            }
-          } else if ( strcmp( elem->Value(), "strip" ) == 0 ) {
-            if ( !LoadTileInfo( elem )) {
-              LogErr( "Couldn't retrive tile information from tile"
-                  "animation file: " + animPath );
-              return false;
-            }
+          if ( !LoadTileInfo( elem )) {
+            LogErr( "Couldn't retrieve tile information from tile animation"
+                    "file: " + animPath );
+            return false;
           }
         } while ( (elem = elem->NextSiblingElement()) );
       }
