@@ -25,14 +25,20 @@ class MainWindow(QtGui.QMainWindow):
         mapView = QtGui.QGraphicsView(self.tileMap)
         tileBarView = QtGui.QGraphicsView(self.tileBar)
 
-        button = tilebar.LoadTilesButton()
-        QtCore.QObject.connect(button, QtCore.SIGNAL('selectedFile'),
+        loadTiles = tilebar.LoadTilesButton()
+        QtCore.QObject.connect(loadTiles, QtCore.SIGNAL('selectedFile'),
             self.tileBar.loadTiles)
 
+        setMapDims = tilemap.SetMapDimButton()
+        QtCore.QObject.connect(setMapDims, QtCore.SIGNAL('gotDims'),
+            self.tileMap.setDims)
+
+
         hbox = QtGui.QHBoxLayout()
+        hbox.addWidget(setMapDims)
         hbox.addWidget(mapView)
         hbox.addWidget(tileBarView)
-        hbox.addWidget(button)
+        hbox.addWidget(loadTiles)
 
         mainWidget = QtGui.QWidget()
         mainWidget.setLayout(hbox)

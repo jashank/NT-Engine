@@ -1,125 +1,128 @@
 <?xml version="1.0"?>
 
-<sheet path="Kickle_Pack/Sheets/kickle_48x60.png" >
+<animations>
 
-    <strip name="up_standing">
-      <clip x="0" y="0" width="48" height="60" />
-      <flow num_frames="8" looped="true" />
-      <frame_times> 0.1 </frame_times>
-    </strip>
+  <sheet path="Kickle_Pack/Sheets/kickle_48x60.png" >
 
-    <strip name="down_standing">
-      <clip x="0" y="60" width="48" height="60" />
-      <flow num_frames="8" looped="true" />
-      <frame_times> 0.1 </frame_times>
-    </strip>
+      <strip name="up_standing">
+        <clip x="0" y="0" width="48" height="60" />
+        <flow num_frames="8" looped="true" />
+        <frame_times> 0.1 </frame_times>
+      </strip>
 
-    <strip name="left_standing">
-      <clip x="0" y="120" width="48" height="60" />
-      <flow num_frames="8" looped="true" />
-      <frame_times> 0.1 </frame_times>
-    </strip>>
+      <strip name="down_standing">
+        <clip x="0" y="60" width="48" height="60" />
+        <flow num_frames="8" looped="true" />
+        <frame_times> 0.1 </frame_times>
+      </strip>
 
-    <strip name="right_standing">
-      <clip x="0" y="180" width="48" height="60" />
-      <flow num_frames="8" looped="true" />
-      <frame_times> 0.1 </frame_times>
-    </strip>
+      <strip name="left_standing">
+        <clip x="0" y="120" width="48" height="60" />
+        <flow num_frames="8" looped="true" />
+        <frame_times> 0.1 </frame_times>
+      </strip>>
 
-    <strip name="up_walking">
-      <clip x="0" y="240" width="48" height="60" />
-      <flow num_frames="8" looped="true" />
-      <frame_times> 0.07 </frame_times>
-    </strip>
+      <strip name="right_standing">
+        <clip x="0" y="180" width="48" height="60" />
+        <flow num_frames="8" looped="true" />
+        <frame_times> 0.1 </frame_times>
+      </strip>
 
-    <strip name="down_walking">
-      <clip x="0" y="300" width="48" height="60" />
-      <flow num_frames="8" looped="true" />
-      <frame_times> 0.07 </frame_times>
-    </strip>
+      <strip name="up_walking">
+        <clip x="0" y="240" width="48" height="60" />
+        <flow num_frames="8" looped="true" />
+        <frame_times> 0.07 </frame_times>
+      </strip>
 
-    <strip name="left_walking">
-      <clip x="0" y="360" width="48" height="60" />
-      <flow num_frames="8" looped="true" />
-      <frame_times> 0.07 </frame_times>
-    </strip>
+      <strip name="down_walking">
+        <clip x="0" y="300" width="48" height="60" />
+        <flow num_frames="8" looped="true" />
+        <frame_times> 0.07 </frame_times>
+      </strip>
 
-    <strip name="right_walking">
-      <clip x="0" y="420" width="48" height="60" />
-      <flow num_frames="8" looped="true" />
-      <frame_times> 0.07 </frame_times>
-    </strip>
+      <strip name="left_walking">
+        <clip x="0" y="360" width="48" height="60" />
+        <flow num_frames="8" looped="true" />
+        <frame_times> 0.07 </frame_times>
+      </strip>
 
-    <strip name="up_kicking">
-      <clip x="0" y="480" width="48" height="60" />
-      <flow num_frames="8" looped="false" />
-      <frame_times> 0.05 </frame_times>
-    </strip>
+      <strip name="right_walking">
+        <clip x="0" y="420" width="48" height="60" />
+        <flow num_frames="8" looped="true" />
+        <frame_times> 0.07 </frame_times>
+      </strip>
 
-    <strip name="down_kicking">
-      <clip x="0" y="540" width="48" height="60" />
-      <flow num_frames="8" looped="false" />
-      <frame_times> 0.05 </frame_times>
-    </strip>
+      <strip name="up_kicking">
+        <clip x="0" y="480" width="48" height="60" />
+        <flow num_frames="8" looped="false" />
+        <frame_times> 0.05 </frame_times>
+      </strip>
 
-    <strip name="left_kicking">
-      <clip x="0" y="600" width="48" height="60" />
-      <flow num_frames="8" looped="false" />
-      <frame_times> 0.05 </frame_times>
-    </strip>
+      <strip name="down_kicking">
+        <clip x="0" y="540" width="48" height="60" />
+        <flow num_frames="8" looped="false" />
+        <frame_times> 0.05 </frame_times>
+      </strip>
 
-    <strip name="right_kicking">
-      <clip x="0" y="660" width="48" height="60" />
-      <flow num_frames="8" looped="false" />
-      <frame_times> 0.05 </frame_times>
-    </strip>
+      <strip name="left_kicking">
+        <clip x="0" y="600" width="48" height="60" />
+        <flow num_frames="8" looped="false" />
+        <frame_times> 0.05 </frame_times>
+      </strip>
 
-    <strip name="up_raise_pillar">
-      <clip x="0" y="720" width="48" height="60" />
-      <flow num_frames="8" looped="false" />
-      <frame_times> 0.05 </frame_times>
-    </strip>
+      <strip name="right_kicking">
+        <clip x="0" y="660" width="48" height="60" />
+        <flow num_frames="8" looped="false" />
+        <frame_times> 0.05 </frame_times>
+      </strip>
 
-    <strip name="down_raise_pillar">
-      <clip x="0" y="780" width="48" height="60" />
-      <flow num_frames="8" looped="false" />
-      <frame_times> 0.05 </frame_times>
-    </strip>
+      <strip name="up_raise_pillar">
+        <clip x="0" y="720" width="48" height="60" />
+        <flow num_frames="8" looped="false" />
+        <frame_times> 0.05 </frame_times>
+      </strip>
 
-    <strip name="left_raise_pillar">
-      <clip x="0" y="840" width="48" height="60" />
-      <flow num_frames="8" looped="false" />
-      <frame_times> 0.05 </frame_times>
-    </strip>
+      <strip name="down_raise_pillar">
+        <clip x="0" y="780" width="48" height="60" />
+        <flow num_frames="8" looped="false" />
+        <frame_times> 0.05 </frame_times>
+      </strip>
 
-    <strip name="right_raise_pillar">
-      <clip x="0" y="900" width="48" height="60" />
-      <flow num_frames="8" looped="false" />
-      <frame_times> 0.05 </frame_times>
-    </strip>
+      <strip name="left_raise_pillar">
+        <clip x="0" y="840" width="48" height="60" />
+        <flow num_frames="8" looped="false" />
+        <frame_times> 0.05 </frame_times>
+      </strip>
 
-    <strip name="up_dying">
-      <clip x="0" y="960" width="48" height="60" />
-      <flow num_frames="8" looped="false" />
-      <frame_times> 0.1 </frame_times>
-    </strip>
+      <strip name="right_raise_pillar">
+        <clip x="0" y="900" width="48" height="60" />
+        <flow num_frames="8" looped="false" />
+        <frame_times> 0.05 </frame_times>
+      </strip>
 
-    <strip name="down_dying">
-      <clip x="0" y="1020" width="48" height="60" />
-      <flow num_frames="8" looped="false" />
-      <frame_times> 0.1 </frame_times>
-    </strip>
+      <strip name="up_dying">
+        <clip x="0" y="960" width="48" height="60" />
+        <flow num_frames="8" looped="false" />
+        <frame_times> 0.1 </frame_times>
+      </strip>
 
-    <strip name="left_dying">
-      <clip x="0" y="1080" width="48" height="60" />
-      <flow num_frames="8" looped="false" />
-      <frame_times> 0.1 </frame_times>
-    </strip>
+      <strip name="down_dying">
+        <clip x="0" y="1020" width="48" height="60" />
+        <flow num_frames="8" looped="false" />
+        <frame_times> 0.1 </frame_times>
+      </strip>
 
-    <strip name="right_dying">
-      <clip x="0" y="1140" width="48" height="60" />
-      <flow num_frames="8" looped="false" />
-      <frame_times> 0.1 </frame_times>
-    </strip>
+      <strip name="left_dying">
+        <clip x="0" y="1080" width="48" height="60" />
+        <flow num_frames="8" looped="false" />
+        <frame_times> 0.1 </frame_times>
+      </strip>
 
-</sheet>
+      <strip name="right_dying">
+        <clip x="0" y="1140" width="48" height="60" />
+        <flow num_frames="8" looped="false" />
+        <frame_times> 0.1 </frame_times>
+      </strip>
+
+  </sheet>
+</animations>

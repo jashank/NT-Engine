@@ -1,4 +1,7 @@
 <?xml version="1.0"?>
+
+<animations>
+
 <sheet path="Kickle_Pack/Sheets/title_background.png">
 
   <strip name="background">
@@ -7,3 +10,4 @@
   </strip>
 
 </sheet>
+</animations>

@@ -18,7 +18,8 @@ bool AnimData::LoadFromFile( const std::string &filepath ) {
     static App *app = App::GetApp();
     TiXmlHandle handleDoc( &doc );
 
-    TiXmlElement *sheet = handleDoc.FirstChildElement( "sheet" ).Element();
+    TiXmlElement *root = handleDoc.FirstChildElement( "animations" ).Element();
+    TiXmlElement *sheet = root->FirstChildElement( "sheet" );
     do {
       sf::Image *loadedSheet = app->LoadImage( sheet->Attribute( "path" ));
       if ( loadedSheet ) {

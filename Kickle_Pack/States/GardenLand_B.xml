@@ -3,7 +3,7 @@
 <state>
 
   <tiles>
-    <size px="48" />
+    <size px="48"/>
     <animation path="Kickle_Pack/Animations/TileAnims_48x48.xml" />
     <layout width="15" height="15">
       12 12 12 12 12 12 12 12 12 12 12 12 12 12 12

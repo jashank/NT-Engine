@@ -1,9 +1,13 @@
 <?xml version="1.0"?>
-<sheet path="Kickle_Pack/Sheets/titlePlay.png">
 
-  <strip name="play">
-    <clip x="0" y="0" width="250" height="125" />
-    <flow num_frames="1" />
-  </strip>
+<animations>
 
-</sheet>
+  <sheet path="Kickle_Pack/Sheets/titlePlay.png">
+
+    <strip name="play">
+      <clip x="0" y="0" width="250" height="125" />
+      <flow num_frames="1" />
+    </strip>
+
+  </sheet>
+</animations>

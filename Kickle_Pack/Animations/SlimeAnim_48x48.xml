@@ -1,31 +1,35 @@
 <?xml version="1.0"?>
-<sheet path="Kickle_Pack/Sheets/slime_48x48.png">
 
-  <strip name="up_walking">
-    <clip x="0" y="0" width="48" height="48" />
-    <flow num_frames="8" looped="true" />
-    <frame_times> 0.1 </frame_times>
-  </strip>
+<animations>
 
+  <sheet path="Kickle_Pack/Sheets/slime_48x48.png">
 
-  <strip name="down_walking">
-    <clip x="0" y="48" width="48" height="48" />
-    <flow num_frames="8" looped="true" />
-    <frame_times> 0.1 </frame_times>
-  </strip>
+    <strip name="up_walking">
+      <clip x="0" y="0" width="48" height="48" />
+      <flow num_frames="8" looped="true" />
+      <frame_times> 0.1 </frame_times>
+    </strip>
 
 
-  <strip name="left_walking">
-    <clip x="0" y="96" width="48" height="48" />
-    <flow num_frames="8" looped="true" />
-    <frame_times> 0.1 </frame_times>
-  </strip>>
+    <strip name="down_walking">
+      <clip x="0" y="48" width="48" height="48" />
+      <flow num_frames="8" looped="true" />
+      <frame_times> 0.1 </frame_times>
+    </strip>
 
 
-  <strip name="right_walking">
-    <clip x="0" y="144" width="48" height="48" />
-    <flow num_frames="8" looped="true" />
-    <frame_times> 0.1 </frame_times>
-  </strip>
+    <strip name="left_walking">
+      <clip x="0" y="96" width="48" height="48" />
+      <flow num_frames="8" looped="true" />
+      <frame_times> 0.1 </frame_times>
+    </strip>>
 
-</sheet>
+
+    <strip name="right_walking">
+      <clip x="0" y="144" width="48" height="48" />
+      <flow num_frames="8" looped="true" />
+      <frame_times> 0.1 </frame_times>
+    </strip>
+
+  </sheet>
+</animations>

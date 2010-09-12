@@ -262,7 +262,8 @@ bool TileManager::LoadTileAnims( const std::string &animPath ) {
     doc.LoadFile();
     TiXmlHandle handleDoc( &doc );
 
-    TiXmlElement *sheet = handleDoc.FirstChildElement( "sheet" ).Element();
+    TiXmlElement *root = handleDoc.FirstChildElement( "animations" ).Element();
+    TiXmlElement *sheet = root->FirstChildElement( "sheet" );
     if ( sheet ) {
       TiXmlElement *elem = sheet->FirstChildElement();
       if ( elem ) {
