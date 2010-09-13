@@ -6,7 +6,9 @@ import tilemap, tilebar
 
 
 class MainWindow(QtGui.QMainWindow):
+    """Holds all components of app and specifies how they interact."""
     def __init__(self, parent = None):
+        """Sets up components of application."""
         QtGui.QMainWindow.__init__(self, parent)
 
         self.setWindowTitle('NT State Editor')

@@ -14,6 +14,12 @@ def subInPath(origPath, subPath):
     found it will return the full path (as far back as origPath goes),
     otherwise throwing an exception that 'subPath' wasn't found.
 
+    Arguments: origPath -- original path to search.
+               subPath -- path to substitute into original path.
+
+    Returns: New path if subPath subbed into origPath. If the path doesn't
+        exist, a "Path subbed in not found." exception will be raised.
+
     """
     origSplit = split(origPath, sep)
     subSplit = split(subPath, sep)
