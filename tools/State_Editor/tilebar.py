@@ -6,47 +6,6 @@ from PyQt4 import QtCore, QtGui
 from fileop import subInPath
 
 
-class HighlightEffect(QtGui.QGraphicsEffect):
-    """A highlight effect for rectangular QGraphicsPixmapItems."""
-    def __init__(self, thickness, parent = None):
-        """Sets up color and area around which item will be highlighted.
-
-        Arguments: thickness -- thickness of highlight in pixels
-
-        """
-        QtGui.QGraphicsEffect.__init__(self, parent)
-        # semi-transparent yellow
-        self.color = QtGui.QColor(255, 255, 0, 128)
-        self.offset = QtCore.QPoint(thickness, thickness)
-
-    def boundingRectFor(self, sourceRect):
-        """Returns bounding rect for source that effect will surround.
-
-        Overrides parent function.
-
-        """
-        return sourceRect.adjusted( -self.offset.x(), -self.offset.y(),
-            self.offset.x(), self.offset.y())
-
-    def draw(self, painter):
-        """Draws effect, overrides parent function."""
-        if self.sourceIsPixmap():
-            pixmap, offset = self.sourcePixmap()
-            bound = self.boundingRectFor(pixmap.rect())
-
-            painter.save()
-            painter.setPen(QtCore.Qt.NoPen)
-            painter.setBrush(self.color)
-
-            drawPoint = QtCore.QPoint(
-                offset.x() - self.offset.x(), offset.y() - self.offset.y())
-            bound.moveTopLeft(drawPoint)
-
-            painter.drawRoundedRect(bound, 5, 5, QtCore.Qt.RelativeSize)
-            painter.drawPixmap(offset, pixmap)
-            painter.restore()
-
-
 class Tile(QtGui.QGraphicsPixmapItem):
     """QGraphicsPixMap item with id member for state file output."""
     def __init__(self, parent = None):
@@ -55,6 +14,8 @@ class Tile(QtGui.QGraphicsPixmapItem):
 
         self._idAttr = -1
         self._size = 0
+
+    def __deepcopy__(
 
     def getSize(self):
         """Returns size of this tile."""
@@ -97,32 +58,57 @@ class LoadTilesButton(QtGui.QPushButton):
 
 
 class TileBar(QtGui.QGraphicsScene):
-    """Holds tiles loaded in, organizing tiles in 5 column rows."""
+    """Holds tiles loaded in, organizing tiles in 5 column rows.
+
+    SIGNALS - selectedTile, self.selectedTile -- emitted by mouseMoveEvent
+
+    """
     def __init__(self, parent = None):
-        """Default initialization."""
+        """Initializes members to starting values."""
         QtGui.QGraphicsScene.__init__(self, parent)
 
-        self.tileSelected = None
+        self.defOpacity = 0.45
+        self.mousePressed = False
+        self.selectedTile = None
 
     def mousePressEvent(self, event):
-        """If left-click is on a tile, that tile is selected and highlighted.
+        """Sets mouse pressed to true if left button is pressed.
 
-        Overrides mousePressEvent in QGraphicsScene.
+        Overrides mousePressEvent in QGraphicsScene. Also calls mouseMoveEvent
+        to perform action.
 
         """
         if event.button() == QtCore.Qt.LeftButton:
-            point = event.buttonDownScenePos(QtCore.Qt.LeftButton)
+            self.mousePressed = True
+            self.mouseMoveEvent(event)
+
+    def mouseReleaseEvent(self, event):
+        """Sets mouse pressed to false if left button is pressed.
+
+        Overrides mouseReleaseEvent in QGraphicsScene.
+
+        """
+        if event.button() == QtCore.Qt.LeftButton:
+            self.mousePressed = False
+
+    def mouseMoveEvent(self, event):
+        """Selects tile under cursor if mouse is pressed.
+
+        Emits 'selectedTile', self.selectedTile if a tile is selected. Overrides
+        mouseMoveEvent in QGraphicsScene.
+
+        """
+        if self.mousePressed:
+            point = event.scenePos()
             tile = self.itemAt(point)
 
-            if tile != None:
-                if self.tileSelected != None:
-                    self.tileSelected.setGraphicsEffect(None)
+            if tile != None and self.selectedTile != tile:
+                if self.selectedTile != None:
+                    self.selectedTile.setOpacity(self.defOpacity)
 
-                self.tileSelected = tile
-
-                # 16 seems like a nice number!
-                thickness = self.tileSelected.getSize() / 16
-                self.tileSelected.setGraphicsEffect(HighlightEffect(thickness))
+                self.selectedTile = tile
+                self.selectedTile.setOpacity(1)
+                self.emit(QtCore.SIGNAL('selectedTile'), self.selectedTile)
 
     def loadTiles(self, pathname):
         """Loads tiles from NT tile animation file.
@@ -171,10 +157,12 @@ class TileBar(QtGui.QGraphicsScene):
 
                 tile.setPos(posX, posY)
                 tile.setSize(int(width))
+                tile.setOpacity(self.defOpacity)
                 self.addItem(tile)
 
-                self.addLine(posX, posY, posX + float(width), posY)
-                self.addLine(posX, posY, posX, posY + float(height))
+                # (-1) because lines were 1 pixel too long
+                self.addLine(posX, posY, posX + float(width) - 1, posY)
+                self.addLine(posX, posY, posX, posY + float(height) - 1)
 
                 column += 1
                 if column > MAX_COLUMNS:

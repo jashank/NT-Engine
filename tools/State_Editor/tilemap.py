@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+from copy import deepcopy
 from PyQt4 import QtCore, QtGui
 
 
@@ -107,8 +108,63 @@ class SetMapDimButton(QtGui.QPushButton):
 class TileMap(QtGui.QGraphicsScene):
     """Grid for user to map tiles to a map for an NT State."""
     def __init__(self, parent = None):
-        """Default initialization."""
+        """Initializes members to starting values."""
         QtGui.QGraphicsScene.__init__(self, parent)
+
+        # in tiles
+        self.mapWidth = 0
+        self.mapHeight = 0
+
+        self.mousePressed = False
+
+        # Current Object or Tile selected for mapping
+        self.selection = None
+
+        # size == dimensions of tile, i.e. (size x size)
+        self.tileSize = 0
+
+    def mousePressEvent(self, event):
+        """Sets mouse pressed to true if left button is pressed.
+
+        Overrides mousePressEvent in QGraphicsScene. Also calls mouseMoveEvent
+        to perform action.
+
+        """
+        if event.button() == QtCore.Qt.LeftButton:
+            self.mousePressed = True
+            self.mouseMoveEvent(event)
+
+    def mouseReleaseEvent(self, event):
+        """Sets mouse pressed to false if left button is pressed.
+
+        Overrides mouseReleaseEvent in QGraphicsScene.
+
+        """
+        if event.button() == QtCore.Qt.LeftButton:
+            self.mousePressed = False
+
+    def mouseMoveEvent(self, event):
+        """Maps selected item (if any) to location on grid under cursor.
+
+        Only called if mouse is currently pressed. Overrides mouseMoeveEvent
+        in QGraphicsScene.
+
+        """
+        if self.mousePressed:
+            point = event.scenePos()
+
+            if self.selection:
+
+                # this probably compares by ref, need to define
+                if self.itemAt(point) != self.selection:
+                    self.removeItem(self.itemAt(point))
+
+                x = int(point.x() / self.tileSize)
+                y = int(point.y() / self.tileSize)
+
+                item = deepcopy(self.selection)
+                item.setPos(self.tileSize * x, self.tileSize * y)
+                self.addItem(item)
 
     def setDims(self, tileSize, mapWidth, mapHeight):
         """Sets up grid given dimensions passed.
@@ -117,19 +173,30 @@ class TileMap(QtGui.QGraphicsScene):
                    mapWidth -- width of map in tiles.
                    mapHeight -- height of map in tiles.
 
+        Dimensions are checked to make sure they are okay.
+
         """
-        for item in self.items():
-            self.removeItem(item)
+        if (tileSize > 0 and mapWidth >= 0 and mapHeight >= 0):
+            self.tileSize = tileSize
+            self.mapWidth = mapWidth
+            self.mapHeight = mapHeight
 
-        gridWidth = tileSize * mapWidth
-        gridHeight = tileSize * mapHeight
+            for item in self.items():
+                self.removeItem(item)
 
-        for i in range(0, mapWidth + 1):
-            x = i * tileSize
-            self.addLine(x, 0, x, gridHeight)
+            gridWidth = tileSize * mapWidth
+            gridHeight = tileSize * mapHeight
 
-        for i in range(0, mapHeight + 1):
-            y = i * tileSize
-            self.addLine(0, y, gridWidth, y)
+            for i in range(0, mapWidth + 1):
+                x = i * tileSize
+                self.addLine(x, 0, x, gridHeight)
+
+            for i in range(0, mapHeight + 1):
+                y = i * tileSize
+                self.addLine(0, y, gridWidth, y)
+
+    def setSelection(self, selection):
+        """Sets selection to QGraphicsItem passed."""
+        self.selection = selection
 
 

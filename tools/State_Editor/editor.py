@@ -23,6 +23,8 @@ class MainWindow(QtGui.QMainWindow):
 
         self.tileMap = tilemap.TileMap()
         self.tileBar = tilebar.TileBar()
+        QtCore.QObject.connect(self.tileBar, QtCore.SIGNAL('selectedTile'),
+            self.tileMap.setSelection)
 
         mapView = QtGui.QGraphicsView(self.tileMap)
         tileBarView = QtGui.QGraphicsView(self.tileBar)
@@ -44,6 +46,7 @@ class MainWindow(QtGui.QMainWindow):
 
         mainWidget = QtGui.QWidget()
         mainWidget.setLayout(hbox)
+        mainWidget.setMouseTracking(True)
 
         self.setCentralWidget(mainWidget)
 
