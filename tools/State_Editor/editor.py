@@ -40,15 +40,15 @@ class MainWindow(QtGui.QMainWindow):
         fill = tilemap.FillButton()
         QtCore.QObject.connect(fill, QtCore.SIGNAL('fill'), self.tileMap.fill)
 
-        hbox = QtGui.QHBoxLayout()
-        hbox.addWidget(setMapDims)
-        hbox.addWidget(fill)
-        hbox.addWidget(mapView)
-        hbox.addWidget(tileBarView)
-        hbox.addWidget(loadTiles)
+        layout = QtGui.QGridLayout()
+        layout.addWidget(mapView, 0, 0, 2, 2)
+        layout.addWidget(setMapDims, 2, 0)
+        layout.addWidget(fill, 2, 1)
+        layout.addWidget(tileBarView, 0, 2, 2, 1)
+        layout.addWidget(loadTiles, 2, 2)
 
         mainWidget = QtGui.QWidget()
-        mainWidget.setLayout(hbox)
+        mainWidget.setLayout(layout)
         mainWidget.setMouseTracking(True)
 
         self.setCentralWidget(mainWidget)

@@ -143,11 +143,14 @@ class TileMap(QtGui.QGraphicsScene):
         # size == dimensions of tile, i.e. (size x size)
         self.tileSize = 0
 
+        self.zValLine = 1
+
     def fill(self):
         if self.selection:
             self.mapping.clear()
             for item in self.items():
-                self.removeItem(item)
+                if item.zValue() != self.zValLine:
+                    self.removeItem(item)
 
             for i in range(0, self.mapWidth):
                 for j in range(0, self.mapHeight):
@@ -202,10 +205,10 @@ class TileMap(QtGui.QGraphicsScene):
                 y = int(pos.y() / self.tileSize)
                 point = QtCore.QPoint(x, y)
 
-                # need to ensure that user isn't pressing a grid line
+                # 
                 image = self.itemAt(pos)
                 if (self.mapping.get(point) != self.selection and
-                    (image == None or image.isEnabled())):
+                    (image == None or image.zValue() != self.zValLine)):
 
                     self.removeItem(image)
 
@@ -239,16 +242,17 @@ class TileMap(QtGui.QGraphicsScene):
             gridWidth = tileSize * mapWidth
             gridHeight = tileSize * mapHeight
 
+            # lines have z value of 1 to be rendered over tiles
             for i in range(0, mapWidth + 1):
                 x = i * tileSize
                 line = QtGui.QGraphicsLineItem(x, 0, x, gridHeight)
-                line.setEnabled(False)
+                line.setZValue(self.zValLine)
                 self.addItem(line)
 
             for i in range(0, mapHeight + 1):
                 y = i * tileSize
                 line = QtGui.QGraphicsLineItem(0, y, gridWidth, y)
-                line.setEnabled(False)
+                line.setZValue(self.zValLine)
                 self.addItem(line)
 
     def setSelection(self, selection):

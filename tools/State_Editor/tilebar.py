@@ -130,7 +130,7 @@ class TileBar(QtGui.QGraphicsScene):
         posX = 0
         posY = 0
         column = 0
-        MAX_COLUMNS = 5
+        MAX_COLUMNS = 4
 
         for sheet in sheets:
             sheetPath = sheet.get('path')
@@ -163,7 +163,7 @@ class TileBar(QtGui.QGraphicsScene):
                 self.addLine(posX, posY, posX, posY + float(height) - 1)
 
                 column += 1
-                if column > MAX_COLUMNS:
+                if column >= MAX_COLUMNS:
                     posY += float(height)
                     posX = 0
                     column = 0
