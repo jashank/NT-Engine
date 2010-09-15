@@ -1,8 +1,7 @@
 #!/usr/bin/env python
 
-from copy import deepcopy
 from PyQt4 import QtCore, QtGui
-
+from tilebar import Tile
 
 class MapDialog(QtGui.QDialog):
     """Window for entering dimensions for the tile map.
@@ -111,6 +110,9 @@ class TileMap(QtGui.QGraphicsScene):
         """Initializes members to starting values."""
         QtGui.QGraphicsScene.__init__(self, parent)
 
+        #Maps points to Tiles and Objects
+        self.mapping = dict()
+
         # in tiles
         self.mapWidth = 0
         self.mapHeight = 0
@@ -151,20 +153,33 @@ class TileMap(QtGui.QGraphicsScene):
 
         """
         if self.mousePressed:
-            point = event.scenePos()
+            pos = event.scenePos()
+            posX = pos.x()
+            posY = pos.y()
 
-            if self.selection:
+            inGrid = (posX >= 0 and posX < self.mapWidth * self.tileSize and
+                      posY >= 0 and posY < self.mapHeight * self.tileSize)
 
-                # this probably compares by ref, need to define
-                if self.itemAt(point) != self.selection:
-                    self.removeItem(self.itemAt(point))
+            if self.selection and inGrid:
 
-                x = int(point.x() / self.tileSize)
-                y = int(point.y() / self.tileSize)
+                x = int(pos.x() / self.tileSize)
+                y = int(pos.y() / self.tileSize)
+                point = QtCore.QPoint(x, y)
 
-                item = deepcopy(self.selection)
-                item.setPos(self.tileSize * x, self.tileSize * y)
-                self.addItem(item)
+                # need to ensure that user isn't pressing a grid line
+                image = self.itemAt(pos)
+                if (self.mapping.get(point) != self.selection and
+                    (image == None or image.isEnabled())):
+
+                    self.removeItem(image)
+
+                    self.mapping[point] = self.selection
+
+                    # only put pixmap on view, store actual item internally
+                    item = QtGui.QGraphicsPixmapItem(
+                        self.selection.pixmap().copy())
+                    item.setPos(self.tileSize * x, self.tileSize * y)
+                    self.addItem(item)
 
     def setDims(self, tileSize, mapWidth, mapHeight):
         """Sets up grid given dimensions passed.
@@ -181,6 +196,7 @@ class TileMap(QtGui.QGraphicsScene):
             self.mapWidth = mapWidth
             self.mapHeight = mapHeight
 
+            self.mapping.clear()
             for item in self.items():
                 self.removeItem(item)
 
@@ -189,11 +205,15 @@ class TileMap(QtGui.QGraphicsScene):
 
             for i in range(0, mapWidth + 1):
                 x = i * tileSize
-                self.addLine(x, 0, x, gridHeight)
+                line = QtGui.QGraphicsLineItem(x, 0, x, gridHeight)
+                line.setEnabled(False)
+                self.addItem(line)
 
             for i in range(0, mapHeight + 1):
                 y = i * tileSize
-                self.addLine(0, y, gridWidth, y)
+                line = QtGui.QGraphicsLineItem(0, y, gridWidth, y)
+                line.setEnabled(False)
+                self.addItem(line)
 
     def setSelection(self, selection):
         """Sets selection to QGraphicsItem passed."""

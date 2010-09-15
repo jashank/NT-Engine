@@ -15,8 +15,6 @@ class Tile(QtGui.QGraphicsPixmapItem):
         self._idAttr = -1
         self._size = 0
 
-    def __deepcopy__(
-
     def getSize(self):
         """Returns size of this tile."""
         return self._size
