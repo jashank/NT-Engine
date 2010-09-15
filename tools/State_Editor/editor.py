@@ -37,9 +37,12 @@ class MainWindow(QtGui.QMainWindow):
         QtCore.QObject.connect(setMapDims, QtCore.SIGNAL('gotDims'),
             self.tileMap.setDims)
 
+        fill = tilemap.FillButton()
+        QtCore.QObject.connect(fill, QtCore.SIGNAL('fill'), self.tileMap.fill)
 
         hbox = QtGui.QHBoxLayout()
         hbox.addWidget(setMapDims)
+        hbox.addWidget(fill)
         hbox.addWidget(mapView)
         hbox.addWidget(tileBarView)
         hbox.addWidget(loadTiles)

@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 from PyQt4 import QtCore, QtGui
-from tilebar import Tile
 
 class MapDialog(QtGui.QDialog):
     """Window for entering dimensions for the tile map.
@@ -104,6 +103,25 @@ class SetMapDimButton(QtGui.QPushButton):
         self.emit(QtCore.SIGNAL('gotDims'), tileSize, mapWidth, mapHeight)
 
 
+class FillButton(QtGui.QPushButton):
+    """When pressed, fills map with selected item.
+
+    SIGNALS: 'fill' -- emitted by 'emitFill'
+
+    """
+    def __init__(self, parent = None):
+        """Initializes click functionality."""
+        QtGui.QPushButton.__init__(self, parent)
+
+        self.setText('Fill')
+
+        self.connect(self, QtCore.SIGNAL('clicked()'), self.emitFill)
+
+    def emitFill(self):
+        """Called when button is clicked. Emits 'fill' signal."""
+        self.emit(QtCore.SIGNAL('fill'))
+
+
 class TileMap(QtGui.QGraphicsScene):
     """Grid for user to map tiles to a map for an NT State."""
     def __init__(self, parent = None):
@@ -124,6 +142,24 @@ class TileMap(QtGui.QGraphicsScene):
 
         # size == dimensions of tile, i.e. (size x size)
         self.tileSize = 0
+
+    def fill(self):
+        if self.selection:
+            self.mapping.clear()
+            for item in self.items():
+                self.removeItem(item)
+
+            for i in range(0, self.mapWidth):
+                for j in range(0, self.mapHeight):
+                    point = QtCore.QPoint(i, j)
+                    self.mapping[point] = self.selection
+
+                    pos = QtCore.QPointF(i * self.tileSize, j * self.tileSize)
+                    pixmap = QtGui.QGraphicsPixmapItem(
+                        self.selection.pixmap().copy())
+                    pixmap.setPos(pos)
+
+                    self.addItem(pixmap)
 
     def mousePressEvent(self, event):
         """Sets mouse pressed to true if left button is pressed.
@@ -176,10 +212,10 @@ class TileMap(QtGui.QGraphicsScene):
                     self.mapping[point] = self.selection
 
                     # only put pixmap on view, store actual item internally
-                    item = QtGui.QGraphicsPixmapItem(
+                    pixmap = QtGui.QGraphicsPixmapItem(
                         self.selection.pixmap().copy())
-                    item.setPos(self.tileSize * x, self.tileSize * y)
-                    self.addItem(item)
+                    pixmap.setPos(self.tileSize * x, self.tileSize * y)
+                    self.addItem(pixmap)
 
     def setDims(self, tileSize, mapWidth, mapHeight):
         """Sets up grid given dimensions passed.
