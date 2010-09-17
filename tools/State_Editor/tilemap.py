@@ -19,9 +19,9 @@ class MapDialog(QtGui.QDialog):
         widthLabel = QtGui.QLabel('Width of map in tiles:')
         heightLabel = QtGui.QLabel('Height of map in tiles:')
 
-        self.tileSize = QtGui.QLineEdit('0')
-        self.mapWidth = QtGui.QLineEdit('0')
-        self.mapHeight = QtGui.QLineEdit('0')
+        self._tileSize = QtGui.QLineEdit('0')
+        self._mapWidth = QtGui.QLineEdit('0')
+        self._mapHeight = QtGui.QLineEdit('0')
 
         ok = QtGui.QPushButton()
         ok.setText('OK')
@@ -57,9 +57,9 @@ class MapDialog(QtGui.QDialog):
         Closes dialog window.
 
         """
-        size = int(self.tileSize.text())
-        width = int(self.mapWidth.text())
-        height = int(self.mapHeight.text())
+        size = int(self._tileSize.text())
+        width = int(self._mapWidth.text())
+        height = int(self._mapHeight.text())
 
         self.emit(QtCore.SIGNAL('gotDims'), size, width, height)
         self.done(1)
@@ -129,37 +129,37 @@ class TileMap(QtGui.QGraphicsScene):
         QtGui.QGraphicsScene.__init__(self, parent)
 
         #Maps points to Tiles and Objects
-        self.mapping = dict()
+        self._mapping = dict()
 
         # in tiles
-        self.mapWidth = 0
-        self.mapHeight = 0
+        self._mapWidth = 0
+        self._mapHeight = 0
 
-        self.mousePressed = False
+        self._mousePressed = False
 
         # Current Object or Tile selected for mapping
-        self.selection = None
+        self._selection = None
 
         # size == dimensions of tile, i.e. (size x size)
-        self.tileSize = 0
+        self._tileSize = 0
 
-        self.zValLine = 1
+        self._zValLine = 1
 
     def fill(self):
-        if self.selection:
-            self.mapping.clear()
+        if self._selection:
+            self._mapping.clear()
             for item in self.items():
-                if item.zValue() != self.zValLine:
+                if item.zValue() != self._zValLine:
                     self.removeItem(item)
 
-            for i in range(0, self.mapWidth):
-                for j in range(0, self.mapHeight):
+            for i in range(0, self._mapWidth):
+                for j in range(0, self._mapHeight):
                     point = QtCore.QPoint(i, j)
-                    self.mapping[point] = self.selection
+                    self._mapping[point] = self._selection
 
-                    pos = QtCore.QPointF(i * self.tileSize, j * self.tileSize)
+                    pos = QtCore.QPointF(i * self._tileSize, j * self._tileSize)
                     pixmap = QtGui.QGraphicsPixmapItem(
-                        self.selection.pixmap().copy())
+                        self._selection.pixmap().copy())
                     pixmap.setPos(pos)
 
                     self.addItem(pixmap)
@@ -172,7 +172,7 @@ class TileMap(QtGui.QGraphicsScene):
 
         """
         if event.button() == QtCore.Qt.LeftButton:
-            self.mousePressed = True
+            self._mousePressed = True
             self.mouseMoveEvent(event)
 
     def mouseReleaseEvent(self, event):
@@ -182,7 +182,7 @@ class TileMap(QtGui.QGraphicsScene):
 
         """
         if event.button() == QtCore.Qt.LeftButton:
-            self.mousePressed = False
+            self._mousePressed = False
 
     def mouseMoveEvent(self, event):
         """Maps selected item (if any) to location on grid under cursor.
@@ -191,33 +191,33 @@ class TileMap(QtGui.QGraphicsScene):
         in QGraphicsScene.
 
         """
-        if self.mousePressed:
+        if self._mousePressed:
             pos = event.scenePos()
             posX = pos.x()
             posY = pos.y()
 
-            inGrid = (posX >= 0 and posX < self.mapWidth * self.tileSize and
-                      posY >= 0 and posY < self.mapHeight * self.tileSize)
+            inGrid = (posX >= 0 and posX < self._mapWidth * self._tileSize and
+                      posY >= 0 and posY < self._mapHeight * self._tileSize)
 
-            if self.selection and inGrid:
+            if self._selection and inGrid:
 
-                x = int(pos.x() / self.tileSize)
-                y = int(pos.y() / self.tileSize)
+                x = int(pos.x() / self._tileSize)
+                y = int(pos.y() / self._tileSize)
                 point = QtCore.QPoint(x, y)
 
                 # 
                 image = self.itemAt(pos)
-                if (self.mapping.get(point) != self.selection and
-                    (image == None or image.zValue() != self.zValLine)):
+                if (self._mapping.get(point) != self._selection and
+                    (image == None or image.zValue() != self._zValLine)):
 
                     self.removeItem(image)
 
-                    self.mapping[point] = self.selection
+                    self._mapping[point] = self._selection
 
                     # only put pixmap on view, store actual item internally
                     pixmap = QtGui.QGraphicsPixmapItem(
-                        self.selection.pixmap().copy())
-                    pixmap.setPos(self.tileSize * x, self.tileSize * y)
+                        self._selection.pixmap().copy())
+                    pixmap.setPos(self._tileSize * x, self._tileSize * y)
                     self.addItem(pixmap)
 
     def setDims(self, tileSize, mapWidth, mapHeight):
@@ -231,11 +231,11 @@ class TileMap(QtGui.QGraphicsScene):
 
         """
         if (tileSize > 0 and mapWidth >= 0 and mapHeight >= 0):
-            self.tileSize = tileSize
-            self.mapWidth = mapWidth
-            self.mapHeight = mapHeight
+            self._tileSize = tileSize
+            self._mapWidth = mapWidth
+            self._mapHeight = mapHeight
 
-            self.mapping.clear()
+            self._mapping.clear()
             for item in self.items():
                 self.removeItem(item)
 
@@ -246,17 +246,17 @@ class TileMap(QtGui.QGraphicsScene):
             for i in range(0, mapWidth + 1):
                 x = i * tileSize
                 line = QtGui.QGraphicsLineItem(x, 0, x, gridHeight)
-                line.setZValue(self.zValLine)
+                line.setZValue(self._zValLine)
                 self.addItem(line)
 
             for i in range(0, mapHeight + 1):
                 y = i * tileSize
                 line = QtGui.QGraphicsLineItem(0, y, gridWidth, y)
-                line.setZValue(self.zValLine)
+                line.setZValue(self._zValLine)
                 self.addItem(line)
 
     def setSelection(self, selection):
         """Sets selection to QGraphicsItem passed."""
-        self.selection = selection
+        self._selection = selection
 
 

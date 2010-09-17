@@ -3,11 +3,12 @@
 
 from xml.etree.ElementTree import ElementTree
 from PyQt4 import QtCore, QtGui
+import barhelp
 from fileop import subInPath
 
 
 class Tile(QtGui.QGraphicsPixmapItem):
-    """QGraphicsPixMap item with id member for state file output."""
+    """Item with id member for state file output."""
     def __init__(self, parent = None):
         """idAttr is set to -1 because it implies a null tile."""
         QtGui.QGraphicsPixmapItem.__init__(self, parent)
@@ -31,7 +32,7 @@ class Tile(QtGui.QGraphicsPixmapItem):
 class LoadTilesButton(QtGui.QPushButton):
     """When pressed, opens dialog to select file to load tiles from.
 
-    SIGNALS: 'selectedFile', filename - emitted from 'selectFile'
+    SIGNALS: 'selectedFile', filename -- emitted from 'selectFile'
 
     """
     def __init__(self, parent = None):
@@ -58,16 +59,17 @@ class LoadTilesButton(QtGui.QPushButton):
 class TileBar(QtGui.QGraphicsScene):
     """Holds tiles loaded in, organizing tiles in 5 column rows.
 
-    SIGNALS - selectedTile, self.selectedTile -- emitted by mouseMoveEvent
+    SIGNALS - _selectedTile, self._selectedTile -- emitted by mouseMoveEvent
 
     """
     def __init__(self, parent = None):
         """Initializes members to starting values."""
         QtGui.QGraphicsScene.__init__(self, parent)
 
-        self.defOpacity = 0.45
-        self.mousePressed = False
-        self.selectedTile = None
+        self._defOpacity = 0.45
+        self._tilesPath = ""
+        self._mousePressed = False
+        self._selectedTile = None
 
     def mousePressEvent(self, event):
         """Sets mouse pressed to true if left button is pressed.
@@ -77,7 +79,7 @@ class TileBar(QtGui.QGraphicsScene):
 
         """
         if event.button() == QtCore.Qt.LeftButton:
-            self.mousePressed = True
+            self._mousePressed = True
             self.mouseMoveEvent(event)
 
     def mouseReleaseEvent(self, event):
@@ -87,26 +89,26 @@ class TileBar(QtGui.QGraphicsScene):
 
         """
         if event.button() == QtCore.Qt.LeftButton:
-            self.mousePressed = False
+            self._mousePressed = False
 
     def mouseMoveEvent(self, event):
         """Selects tile under cursor if mouse is pressed.
 
-        Emits 'selectedTile', self.selectedTile if a tile is selected. Overrides
+        Emits '_selectedTile', self._selectedTile if a tile is selected. Overrides
         mouseMoveEvent in QGraphicsScene.
 
         """
-        if self.mousePressed:
+        if self._mousePressed:
             point = event.scenePos()
             tile = self.itemAt(point)
 
-            if tile != None and self.selectedTile != tile:
-                if self.selectedTile != None:
-                    self.selectedTile.setOpacity(self.defOpacity)
+            if tile != None and self._selectedTile != tile:
+                if self._selectedTile != None:
+                    self._selectedTile.setOpacity(self._defOpacity)
 
-                self.selectedTile = tile
-                self.selectedTile.setOpacity(1)
-                self.emit(QtCore.SIGNAL('selectedTile'), self.selectedTile)
+                self._selectedTile = tile
+                self._selectedTile.setOpacity(1)
+                self.emit(QtCore.SIGNAL('_selectedTile'), self._selectedTile)
 
     def loadTiles(self, pathname):
         """Loads tiles from NT tile animation file.
@@ -120,6 +122,8 @@ class TileBar(QtGui.QGraphicsScene):
         """
         for item in self.items():
             self.removeItem(item)
+
+        self._tilesPath = pathname
 
         tree = ElementTree()
         tree.parse(pathname)
@@ -143,31 +147,15 @@ class TileBar(QtGui.QGraphicsScene):
                 tile = Tile()
                 tile.setId(strip.get('id'))
 
-                clip = strip.find('clip')
-                x = clip.get('x')
-                y = clip.get('y')
-                width = clip.get('width')
-                height = clip.get('height')
+                barhelp.clipFromSheet(sheetImg, strip, tile)
 
-                subImg = sheetImg.copy(int(x), int(y), int(width), int(height))
-                pixmap = QtGui.QPixmap.fromImage(subImg)
-                tile.setPixmap(pixmap)
+                tile.setSize(tile.pixmap().width())
+                lnX, lnY = barhelp.setForBar(posX, posY, self._defOpacity, tile)
 
-                tile.setPos(posX, posY)
-                tile.setSize(int(width))
-                tile.setOpacity(self.defOpacity)
                 self.addItem(tile)
+                self.addLine(lnX)
+                self.addLine(lnY)
 
-                # (-1) because lines were 1 pixel too long
-                self.addLine(posX, posY, posX + float(width) - 1, posY)
-                self.addLine(posX, posY, posX, posY + float(height) - 1)
-
-                column += 1
-                if column >= MAX_COLUMNS:
-                    posY += float(height)
-                    posX = 0
-                    column = 0
-                else:
-                    posX += float(width)
-
+                posX, posY, column = barhelp.updateGridPos(posX, posY, column,
+                    MAX_COLUMNS, tile.pixmap().width(), tile.pixmap().height())
 
