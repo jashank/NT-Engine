@@ -87,13 +87,21 @@ class LoadObjectDirButton(QtGui.QPushButton):
 
 
 class ObjectBar(QtGui.QGraphicsScene):
-    """Holds objects loaded in, organizing objects in 5 column rows."""
+    """Holds objects loaded in, organizing objects in 5 self._column rows."""
     def __init__(self, parent = None):
         """Default initialization."""
         QtGui.QGraphicsScene.__init__(self, parent)
 
         # Default opacity for Objects not selected
         self._defOpacity = 0.45
+
+        # Position and column where next item put into scene will go
+        self._posX = 0
+        self._posY = 0
+        self._column = 0
+
+        # Keeps track of greatest height of an item while adding items to row
+        self._greatestHeight = 0
 
     def loadObjects(self, filepaths):
         """Loads Objects from a QStringList of paths to object files."""
@@ -116,9 +124,6 @@ class ObjectBar(QtGui.QGraphicsScene):
 
         sheets = animRoot.findall('sheet')
 
-        posX = 0
-        posY = 0
-        column = 0
         MAX_COLUMNS = 4
         animNum = 0
 
@@ -134,14 +139,25 @@ class ObjectBar(QtGui.QGraphicsScene):
                 obj = Object()
                 obj.setPath(filepath)
                 obj.setAnimNum(animNum)
+                obj.setToolTip("Anim Num: " + str(animNum))
 
                 barhelp.clipFromSheet(sheetImg, strip, obj)
 
-                lnX, lnY = barhelp.setForBar(posX, posY, self._defOpacity, obj)
+                lnX, lnY = barhelp.setForBar(self._posX, self._posY,
+                    self._defOpacity, obj)
                 self.addItem(obj)
                 self.addLine(lnX)
                 self.addLine(lnY)
 
-                posX, posY, column = barhelp.updateGridPos(posX, posY, column,
-                    MAX_COLUMNS, obj.pixmap().width(), obj.pixmap().height())
+                if obj.pixmap().height() > self._greatestHeight:
+                    self._greatestHeight = obj.pixmap().height()
+
+                self._posX, self._posY, self._column = barhelp.updateGridPos(
+                    self._posX, self._posY, self._column, MAX_COLUMNS,
+                    obj.pixmap().width(), self._greatestHeight)
+
+                # On a new row
+                if self._column == 0:
+                    self._greatestHeight = 0
+
                 animNum += 1

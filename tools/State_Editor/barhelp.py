@@ -42,7 +42,7 @@ def setForBar(posX, posY, opacity, pixItem):
     pixItem.setPos(posX, posY)
     pixItem.setOpacity(opacity)
 
-    # (-1) because lines were 1 pixel too long
+    # (-1) because lines are 1 pixel too long
     lineX = QtCore.QLineF(posX, posY, posX + pixItem.pixmap().width() - 1, posY)
     lineY = QtCore.QLineF(posX, posY, posX, posY + pixItem.pixmap().height() - 1)
     return lineX, lineY

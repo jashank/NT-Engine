@@ -29,15 +29,15 @@ class MapDialog(QtGui.QDialog):
 
         sizeBox = QtGui.QHBoxLayout()
         sizeBox.addWidget(sizeLabel)
-        sizeBox.addWidget(self.tileSize)
+        sizeBox.addWidget(self._tileSize)
 
         widthBox = QtGui.QHBoxLayout()
         widthBox.addWidget(widthLabel)
-        widthBox.addWidget(self.mapWidth)
+        widthBox.addWidget(self._mapWidth)
 
         heightBox = QtGui.QHBoxLayout()
         heightBox.addWidget(heightLabel)
-        heightBox.addWidget(self.mapHeight)
+        heightBox.addWidget(self._mapHeight)
 
         layout = QtGui.QVBoxLayout()
         layout.addLayout(sizeBox)
@@ -236,8 +236,7 @@ class TileMap(QtGui.QGraphicsScene):
             self._mapHeight = mapHeight
 
             self._mapping.clear()
-            for item in self.items():
-                self.removeItem(item)
+            self.clear()
 
             gridWidth = tileSize * mapWidth
             gridHeight = tileSize * mapHeight

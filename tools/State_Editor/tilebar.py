@@ -59,7 +59,7 @@ class LoadTilesButton(QtGui.QPushButton):
 class TileBar(QtGui.QGraphicsScene):
     """Holds tiles loaded in, organizing tiles in 5 column rows.
 
-    SIGNALS - _selectedTile, self._selectedTile -- emitted by mouseMoveEvent
+    SIGNALS - selectedTile, self._selectedTile -- emitted by mouseMoveEvent
 
     """
     def __init__(self, parent = None):
@@ -94,7 +94,7 @@ class TileBar(QtGui.QGraphicsScene):
     def mouseMoveEvent(self, event):
         """Selects tile under cursor if mouse is pressed.
 
-        Emits '_selectedTile', self._selectedTile if a tile is selected. Overrides
+        Emits 'selectedTile', self._selectedTile if a tile is selected. Overrides
         mouseMoveEvent in QGraphicsScene.
 
         """
@@ -108,7 +108,7 @@ class TileBar(QtGui.QGraphicsScene):
 
                 self._selectedTile = tile
                 self._selectedTile.setOpacity(1)
-                self.emit(QtCore.SIGNAL('_selectedTile'), self._selectedTile)
+                self.emit(QtCore.SIGNAL('selectedTile'), self._selectedTile)
 
     def loadTiles(self, pathname):
         """Loads tiles from NT tile animation file.
@@ -120,8 +120,7 @@ class TileBar(QtGui.QGraphicsScene):
         Arguments: pathname -- name of path to tile animation file.
 
         """
-        for item in self.items():
-            self.removeItem(item)
+        self.clear()
 
         self._tilesPath = pathname
 
