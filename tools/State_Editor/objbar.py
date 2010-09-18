@@ -3,7 +3,7 @@
 
 from xml.etree.ElementTree import ElementTree
 from PyQt4 import QtCore, QtGui
-import barhelp
+import bar
 from fileop import subInPath
 
 
@@ -29,6 +29,10 @@ class Object(QtGui.QGraphicsPixmapItem):
     def setPath(self, path):
         """Set path to object file."""
         self._path = path
+
+    def getPath(self):
+        """Return path to object file."""
+        return self._path
 
 
 class LoadObjectsButton(QtGui.QPushButton):
@@ -58,57 +62,63 @@ class LoadObjectsButton(QtGui.QPushButton):
         self.emit(QtCore.SIGNAL('selectedFiles'), filenames)
 
 
-class LoadObjectDirButton(QtGui.QPushButton):
-    """When pressed, opens dialog for user to load all objects in a dir.
+class ClearButton(QtGui.QPushButton):
+    """Emits a 'clear' signal when pressed.
 
-    SIGNALS: 'selectedDir', dirpath -- emitted from 'selectDir'
+    SIGNALS: 'clear' -- emitted from 'emitClear'
 
     """
     def __init__(self, parent = None):
-        """Button is named and when clicked, calls selectDir."""
+        """Set text for button and connect."""
         QtGui.QPushButton.__init__(self, parent)
+        self.setText('Clear')
+        self.connect(self, QtCore.SIGNAL('clicked()'), self.emitClear)
 
-        self.setText('Load Object Dir')
+    def emitClear(self):
+       """Emits 'clear' signal.
 
-        self.connect(self, QtCore.SIGNAL('clicked()'), self.selectDir)
+       SIGNALS: clear
 
-    def selectDir(self):
-        """Opens dialog for user to select directory of object(s).
-
-        SIGNALS: 'selectedDir', dirpath -- emitted when directory is selected,
-            passing pathname of directory along.
-
-        """
-        dirName = QtGui.QFileDialog.getExistingDirectory(self,
-            'Select directory of Object files')
-        print dirName
-
-        self.emit(QtCore.SIGNAL('selectedDir'), dirName)
+       """
+       self.emit(QtCore.SIGNAL('clear'))
 
 
-class ObjectBar(QtGui.QGraphicsScene):
-    """Holds objects loaded in, organizing objects in 5 self._column rows."""
+class ObjectBar(bar.Bar):
+    """Holds objects loaded in, organizing objects in 4 column rows."""
     def __init__(self, parent = None):
         """Default initialization."""
-        QtGui.QGraphicsScene.__init__(self, parent)
-
-        # Default opacity for Objects not selected
-        self._defOpacity = 0.45
-
-        # Position and column where next item put into scene will go
-        self._posX = 0
-        self._posY = 0
-        self._column = 0
+        bar.Bar.__init__(self, parent)
 
         # Keeps track of greatest height of an item while adding items to row
         self._greatestHeight = 0
 
+        # Signal to emit when object is selected
+        self._selectSignal = 'selectedObject'
+
+        # List of paths of objects loaded in
+        self._paths = []
+
+    def clear(self):
+        """Overrides clear function to set all pos values back to starting."""
+        bar.Bar.clear(self)
+        self._posX = 0
+        self._posY = 0
+        self._column = 0
+        self._greatestHeight = 0
+        del self._paths[:]
+
     def loadObjects(self, filepaths):
         """Loads Objects from a QStringList of paths to object files."""
         for path in filepaths:
-            self.loadObject(path)
+            for loadedPath in self._paths:
+                if loadedPath == path:
+                    break
+            else:
+                self.loadObject(path)
 
     def loadObject(self, filepath):
+        self._paths.append(filepath)
+
         objTree = ElementTree()
         objTree.parse(filepath)
         objRoot = objTree.getroot()
@@ -141,9 +151,9 @@ class ObjectBar(QtGui.QGraphicsScene):
                 obj.setAnimNum(animNum)
                 obj.setToolTip("Anim Num: " + str(animNum))
 
-                barhelp.clipFromSheet(sheetImg, strip, obj)
+                bar.clipFromSheet(sheetImg, strip, obj)
 
-                lnX, lnY = barhelp.setForBar(self._posX, self._posY,
+                lnX, lnY = bar.setForBar(self._posX, self._posY,
                     self._defOpacity, obj)
                 self.addItem(obj)
                 self.addLine(lnX)
@@ -152,7 +162,7 @@ class ObjectBar(QtGui.QGraphicsScene):
                 if obj.pixmap().height() > self._greatestHeight:
                     self._greatestHeight = obj.pixmap().height()
 
-                self._posX, self._posY, self._column = barhelp.updateGridPos(
+                self._posX, self._posY, self._column = bar.updateGridPos(
                     self._posX, self._posY, self._column, MAX_COLUMNS,
                     obj.pixmap().width(), self._greatestHeight)
 
@@ -161,3 +171,4 @@ class ObjectBar(QtGui.QGraphicsScene):
                     self._greatestHeight = 0
 
                 animNum += 1
+

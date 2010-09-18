@@ -3,7 +3,7 @@
 
 from xml.etree.ElementTree import ElementTree
 from PyQt4 import QtCore, QtGui
-import barhelp
+import bar
 from fileop import subInPath
 
 
@@ -56,59 +56,18 @@ class LoadTilesButton(QtGui.QPushButton):
         self.emit(QtCore.SIGNAL('selectedFile'), filename)
 
 
-class TileBar(QtGui.QGraphicsScene):
-    """Holds tiles loaded in, organizing tiles in 5 column rows.
+class TileBar(bar.Bar):
+    """Holds tiles loaded in, organizing tiles in 4 column rows."""
 
-    SIGNALS - selectedTile, self._selectedTile -- emitted by mouseMoveEvent
-
-    """
     def __init__(self, parent = None):
         """Initializes members to starting values."""
-        QtGui.QGraphicsScene.__init__(self, parent)
+        bar.Bar.__init__(self, parent)
 
-        self._defOpacity = 0.45
+        # Path to animation file containing tiles
         self._tilesPath = ""
-        self._mousePressed = False
-        self._selectedTile = None
 
-    def mousePressEvent(self, event):
-        """Sets mouse pressed to true if left button is pressed.
-
-        Overrides mousePressEvent in QGraphicsScene. Also calls mouseMoveEvent
-        to perform action.
-
-        """
-        if event.button() == QtCore.Qt.LeftButton:
-            self._mousePressed = True
-            self.mouseMoveEvent(event)
-
-    def mouseReleaseEvent(self, event):
-        """Sets mouse pressed to false if left button is pressed.
-
-        Overrides mouseReleaseEvent in QGraphicsScene.
-
-        """
-        if event.button() == QtCore.Qt.LeftButton:
-            self._mousePressed = False
-
-    def mouseMoveEvent(self, event):
-        """Selects tile under cursor if mouse is pressed.
-
-        Emits 'selectedTile', self._selectedTile if a tile is selected. Overrides
-        mouseMoveEvent in QGraphicsScene.
-
-        """
-        if self._mousePressed:
-            point = event.scenePos()
-            tile = self.itemAt(point)
-
-            if tile != None and self._selectedTile != tile:
-                if self._selectedTile != None:
-                    self._selectedTile.setOpacity(self._defOpacity)
-
-                self._selectedTile = tile
-                self._selectedTile.setOpacity(1)
-                self.emit(QtCore.SIGNAL('selectedTile'), self._selectedTile)
+        # Signal to emit when tile is selected
+        self._selectSignal = 'selectedTile'
 
     def loadTiles(self, pathname):
         """Loads tiles from NT tile animation file.
@@ -146,15 +105,15 @@ class TileBar(QtGui.QGraphicsScene):
                 tile = Tile()
                 tile.setId(strip.get('id'))
 
-                barhelp.clipFromSheet(sheetImg, strip, tile)
+                bar.clipFromSheet(sheetImg, strip, tile)
 
                 tile.setSize(tile.pixmap().width())
-                lnX, lnY = barhelp.setForBar(posX, posY, self._defOpacity, tile)
+                lnX, lnY = bar.setForBar(posX, posY, self._defOpacity, tile)
 
                 self.addItem(tile)
                 self.addLine(lnX)
                 self.addLine(lnY)
 
-                posX, posY, column = barhelp.updateGridPos(posX, posY, column,
+                posX, posY, column = bar.updateGridPos(posX, posY, column,
                     MAX_COLUMNS, tile.pixmap().width(), tile.pixmap().height())
 

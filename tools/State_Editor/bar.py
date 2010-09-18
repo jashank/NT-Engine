@@ -1,7 +1,69 @@
-#! /usr/bin/env/python 
+#! /usr/bin/env python
+
 
 from xml.etree.ElementTree import ElementTree
 from PyQt4 import QtCore, QtGui
+
+
+class Bar(QtGui.QGraphicsScene):
+    """Base class for "bars" in the editor."""
+    def __init__(self, parent = None):
+        """Initialize members shared by bars."""
+        QtGui.QGraphicsScene.__init__(self, parent)
+
+        # QGraphicsPixmapItem currently selected in bar
+        self._selectedItem = None
+
+        # Signal to emit when item is selected
+        self._selectSignal = ""
+
+        # Default opacity for items in bar
+        self._defOpacity = 0.45
+
+        # Whether mouse is pressed in the bar
+        self._mousePressed = False
+
+        # Positional information for placement of next item in bar
+        self._posX = 0
+        self._posY = 0
+        self._column = 0
+        self._MAXCOLUMNS = 4
+
+    def mousePressEvent(self, event):
+        """Sets mouse pressed to true if left button is pressed."""
+        if event.button() == QtCore.Qt.LeftButton:
+            self._mousePressed = True
+            self.mouseMoveEvent(event)
+
+    def mouseReleaseEvent(self, event):
+        """Sets mouse pressed to false if left button is pressed."""
+        if event.button() == QtCore.Qt.LeftButton:
+            self._mousePressed = False
+
+    def mouseMoveEvent(self, event):
+        """Selects item under cursor if mouse is pressed.
+
+        Emits self._selectSignal, self._selectedItem if an item is selected.
+
+        """
+        if self._mousePressed:
+            point = event.scenePos()
+            item = self.itemAt(point)
+
+            if item != None and self._selectedItem != item:
+                if self._selectedItem != None:
+                    self._selectedItem.setOpacity(self._defOpacity)
+
+                self._selectedItem = item
+                self._selectedItem.setOpacity(1)
+                self.emit(QtCore.SIGNAL(self._selectSignal),
+                    self._selectedItem)
+
+    def unselect(self):
+        """Unselects currently selected item."""
+        if self._selectedItem != None:
+            self._selectedItem.setOpacity(self._defOpacity)
+            self._selectedItem = None
 
 
 def clipFromSheet(sheet, strip, pixItem):

@@ -205,7 +205,6 @@ class TileMap(QtGui.QGraphicsScene):
                 y = int(pos.y() / self._tileSize)
                 point = QtCore.QPoint(x, y)
 
-                # 
                 image = self.itemAt(pos)
                 if (self._mapping.get(point) != self._selection and
                     (image == None or image.zValue() != self._zValLine)):
