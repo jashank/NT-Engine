@@ -177,15 +177,22 @@ class TileMap(QtGui.QGraphicsScene):
                     self.addItem(pixmap)
 
     def mousePressEvent(self, event):
-        """Sets mouse pressed to true if left button is pressed.
+        """Handles mouse press events, responding accordingly.
 
-        Overrides mousePressEvent in QGraphicsScene. Also calls mouseMoveEvent
-        to perform action.
+        On a left button press, the function will call mouseMoveEvent
+        to start tile/object placement.
+
+        On a right button press, the function will call _removeItem to
+        remove the tile/object under the cursor.
 
         """
         if event.button() == QtCore.Qt.LeftButton:
             self._mousePressed = True
             self.mouseMoveEvent(event)
+
+        elif event.button() == QtCore.Qt.RightButton:
+            pos = event.scenePos()
+            self._removeItem(pos)
 
     def mouseReleaseEvent(self, event):
         """Sets mouse pressed to false if left button is pressed.
@@ -309,7 +316,7 @@ class TileMap(QtGui.QGraphicsScene):
     def _placeTile(self, pos, x, y, point):
         """Places tile at grid coordinate (x,y).
 
-        Arguments: pos -- Position relative to scene of area pressed
+        Arguments: pos -- Position of cursor relative to scene
                    x -- x coordinate on grid
                    y -- y coordinate on grid
                    point -- string representation of coordinates in form "x,y".
@@ -335,5 +342,33 @@ class TileMap(QtGui.QGraphicsScene):
             tileImg.setPos(self._tileSize * x, self._tileSize * y)
             tileImg.setZValue(self._zValTile)
             self.addItem(tileImg)
+
+    def _removeItem(self, pos):
+        """Removes the top item under cursor from the grid and internally.
+
+        Arguments: pos -- Position of cursor relative to scene
+
+        """
+        images = self.items(pos)
+
+        if len(images) > 0:
+            lines = [l for l in images if l.zValue() == self._zValLine]
+            if len(lines) > 0:
+                return
+
+            self.removeItem(images[0])
+
+            x = int(pos.x() / self._tileSize)
+            y = int(pos.y() / self._tileSize)
+            point = str(x) + "," + str(y)
+
+            objs = self._objMapping.get(point)
+            if objs and len(objs) > 0:
+                self._objMapping[point].pop()
+                return
+
+            tile = self._tileMapping.get(point)
+            if tile:
+                del self._tileMapping[point]
 
 
