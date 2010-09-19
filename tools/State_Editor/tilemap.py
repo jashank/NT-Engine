@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 
+
+from collections import defaultdict
 from PyQt4 import QtCore, QtGui
+
 
 class MapDialog(QtGui.QDialog):
     """Window for entering dimensions for the tile map.
@@ -128,14 +131,20 @@ class TileMap(QtGui.QGraphicsScene):
         """Initializes members to starting values."""
         QtGui.QGraphicsScene.__init__(self, parent)
 
-        #Maps points to Tiles and Objects
-        self._mapping = dict()
+        # Map coordinates to tiles and lists of objects
+        self._tileMapping = dict()
+        self._objMapping = defaultdict(list)
 
-        # in tiles
+        # Map dimensions in tiles
         self._mapWidth = 0
         self._mapHeight = 0
 
+        # Whether mouse is pressed on the map
         self._mousePressed = False
+
+        # Whether an object or tile is currently selected
+        self._objSelected = False
+        self._tileSelected = False
 
         # Current Object or Tile selected for mapping
         self._selection = None
@@ -143,19 +152,22 @@ class TileMap(QtGui.QGraphicsScene):
         # size == dimensions of tile, i.e. (size x size)
         self._tileSize = 0
 
-        self._zValLine = 1
+        # Z values of grid lines, objects, and tiles
+        self._zValLine = 2
+        self._zValObj = 1
+        self._zValTile = 0
 
     def fill(self):
         if self._selection:
-            self._mapping.clear()
+            self._tileMapping.clear()
             for item in self.items():
                 if item.zValue() != self._zValLine:
                     self.removeItem(item)
 
             for i in range(0, self._mapWidth):
                 for j in range(0, self._mapHeight):
-                    point = QtCore.QPoint(i, j)
-                    self._mapping[point] = self._selection
+                    point = str(i) + "," + str(j)
+                    self._tileMapping[point] = self._selection
 
                     pos = QtCore.QPointF(i * self._tileSize, j * self._tileSize)
                     pixmap = QtGui.QGraphicsPixmapItem(
@@ -203,21 +215,12 @@ class TileMap(QtGui.QGraphicsScene):
 
                 x = int(pos.x() / self._tileSize)
                 y = int(pos.y() / self._tileSize)
-                point = QtCore.QPoint(x, y)
+                point = str(x) + "," + str(y)
 
-                image = self.itemAt(pos)
-                if (self._mapping.get(point) != self._selection and
-                    (image == None or image.zValue() != self._zValLine)):
-
-                    self.removeItem(image)
-
-                    self._mapping[point] = self._selection
-
-                    # only put pixmap on view, store actual item internally
-                    pixmap = QtGui.QGraphicsPixmapItem(
-                        self._selection.pixmap().copy())
-                    pixmap.setPos(self._tileSize * x, self._tileSize * y)
-                    self.addItem(pixmap)
+                if self._objSelected:
+                    self._placeObject(pos, x, y, point)
+                elif self._tileSelected:
+                    self._placeTile(pos, x, y, point)
 
     def setDims(self, tileSize, mapWidth, mapHeight):
         """Sets up grid given dimensions passed.
@@ -234,7 +237,7 @@ class TileMap(QtGui.QGraphicsScene):
             self._mapWidth = mapWidth
             self._mapHeight = mapHeight
 
-            self._mapping.clear()
+            self._tileMapping.clear()
             self.clear()
 
             gridWidth = tileSize * mapWidth
@@ -253,8 +256,84 @@ class TileMap(QtGui.QGraphicsScene):
                 line.setZValue(self._zValLine)
                 self.addItem(line)
 
-    def setSelection(self, selection):
-        """Sets selection to QGraphicsItem passed."""
+    def setSelectionObject(self, selection):
+        """Sets selection to QGraphicsItem passed. Assumes it is Object."""
+        self._objSelected = True
+        self._tileSelected = False
         self._selection = selection
+
+    def setSelectionTile(self, selection):
+        """Sets selection to QGraphicsItem passed. Assumes it is Tile."""
+        self._tileSelected = True
+        self._objSelected = False
+        self._selection = selection
+
+    def _placeObject(self, pos, x, y, point):
+        """Places object at grid coordinate (x,y).
+
+        Arguments: pos -- Position relative to scene of area pressed
+                   x -- x coordinate on grid
+                   y -- y coordinate on grid
+                   point -- string representation of coordinates in form "x,y".
+                            Needed for storing in actual objects in dictionary.
+
+        """
+        images = self.items(pos)
+
+        lines = [l for l in images if l.zValue() == self._zValLine]
+        if len(lines) > 0:
+            return
+
+        objs = self._objMapping.get(point)
+        if objs:
+            clone = [o for o in objs if o == self._selection]
+            if len(clone) > 0:
+                return
+
+        # Store actual object internally, only placing its image on the grid
+        self._objMapping[point].append(self._selection)
+
+        objImg = QtGui.QGraphicsPixmapItem(
+                self._selection.pixmap().copy())
+
+        # Take object's height into account
+        yPos = self._tileSize * y
+        if objImg.pixmap().height() > self._tileSize:
+            yPos -= (objImg.pixmap().height() - self._tileSize)
+        objImg.setPos(self._tileSize * x, yPos)
+
+        objImg.setZValue(self._zValObj)
+        self.addItem(objImg)
+
+
+    def _placeTile(self, pos, x, y, point):
+        """Places tile at grid coordinate (x,y).
+
+        Arguments: pos -- Position relative to scene of area pressed
+                   x -- x coordinate on grid
+                   y -- y coordinate on grid
+                   point -- string representation of coordinates in form "x,y".
+                            Needed for storing in actual objects in dictionary.
+
+        """
+        images = self.items(pos)
+
+        lines = [l for l in images if l.zValue() == self._zValLine]
+        if len(lines) > 0:
+            return
+
+        if self._tileMapping.get(point) != self._selection:
+            tile = [t for t in images if t.zValue() == self._zValTile]
+            if len(tile) > 0:
+                self.removeItem(tile[0])
+
+            # Store actual tile internally, only placing its image on the grid
+            self._tileMapping[point] = self._selection
+
+            tileImg = QtGui.QGraphicsPixmapItem(
+                    self._selection.pixmap().copy())
+            tileImg.setPos(self._tileSize * x, self._tileSize * y)
+            tileImg.setZValue(self._zValTile)
+            self.addItem(tileImg)
 
 

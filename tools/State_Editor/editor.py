@@ -69,9 +69,9 @@ class MainWindow(QtGui.QMainWindow):
 
         # Bars -> Map
         QtCore.QObject.connect(self._tileBar, QtCore.SIGNAL('selectedTile'),
-            self._tileMap.setSelection)
+            self._tileMap.setSelectionTile)
         QtCore.QObject.connect(self._objBar, QtCore.SIGNAL('selectedObject'),
-            self._tileMap.setSelection)
+            self._tileMap.setSelectionObject)
 
         # Bars <-> Bars
         QtCore.QObject.connect(self._tileBar, QtCore.SIGNAL('selectedTile'),
