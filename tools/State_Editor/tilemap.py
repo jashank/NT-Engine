@@ -155,7 +155,7 @@ class TileMap(QtGui.QGraphicsScene):
 
     def fill(self):
         """Fills map with selected item."""
-        if self._selection:
+        if self._selection != None:
 
             # Filling with a tile selection clears existing tiles
             if self._tileSelected:
@@ -219,7 +219,7 @@ class TileMap(QtGui.QGraphicsScene):
             inGrid = (posX >= 0 and posX < self._mapWidth * self._tileSize and
                       posY >= 0 and posY < self._mapHeight * self._tileSize)
 
-            if self._selection and inGrid:
+            if self._selection != None and inGrid:
 
                 x = int(pos.x() / self._tileSize)
                 y = int(pos.y() / self._tileSize)
@@ -310,7 +310,7 @@ class TileMap(QtGui.QGraphicsScene):
             return
 
         objs = self._objMapping.get(point)
-        if objs:
+        if objs != None:
             clone = [o for o in objs if o == self._selection]
             if len(clone) > 0:
                 return
@@ -324,7 +324,7 @@ class TileMap(QtGui.QGraphicsScene):
         # Take object's height into account
         yPos = self._tileSize * y
         if objImg.pixmap().height() > self._tileSize:
-            yPos -= (objImg.pixmap().height() - self._tileSize)
+            yPos -= (objImg.pixmap().height() % self._tileSize)
         objImg.setPos(self._tileSize * x, yPos)
 
         objImg.setZValue(self._zValObj)
@@ -381,7 +381,7 @@ class TileMap(QtGui.QGraphicsScene):
             point = self._coordToKey(x, y)
 
             objs = self._objMapping.get(point)
-            if objs and len(objs) > 0:
+            if objs != None and len(objs) > 0:
                 self._objMapping[point].pop()
                 return
 

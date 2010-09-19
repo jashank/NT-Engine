@@ -102,52 +102,54 @@ class ObjectBar(bar.Bar):
         objTree.parse(filepath)
         objRoot = objTree.getroot()
 
-        relAnimPath = objRoot.find('animation').get('path')
-
-        # String cast for QString
-        absAnimPath = subInPath(str(filepath), relAnimPath)
-
-        animTree = ElementTree()
-        animTree.parse(absAnimPath)
-        animRoot = animTree.getroot()
-
-        sheets = animRoot.findall('sheet')
-
-        MAX_COLUMNS = 4
-        animNum = 0
-
-        for sheet in sheets:
-            sheetPath = sheet.get('path')
+        animElem = objRoot.find('animation')
+        if animElem != None:
+            relAnimPath = animElem.get('path')
 
             # String cast for QString
-            sheetImg = QtGui.QImage(subInPath(str(filepath), sheetPath))
+            absAnimPath = subInPath(str(filepath), relAnimPath)
 
-            strips = sheet.findall('strip')
+            animTree = ElementTree()
+            animTree.parse(absAnimPath)
+            animRoot = animTree.getroot()
 
-            for strip in strips:
-                obj = Object()
-                obj.setPath(filepath)
-                obj.setAnimNum(animNum)
-                obj.setToolTip("Anim Num: " + str(animNum))
+            sheets = animRoot.findall('sheet')
 
-                bar.clipFromSheet(sheetImg, strip, obj)
+            MAX_COLUMNS = 4
+            animNum = 0
 
-                lnX, lnY = bar.setForBar(self._posX, self._posY,
-                    self._defOpacity, obj)
-                self.addItem(obj)
-                self.addLine(lnX)
-                self.addLine(lnY)
+            for sheet in sheets:
+                sheetPath = sheet.get('path')
 
-                if obj.pixmap().height() > self._greatestHeight:
-                    self._greatestHeight = obj.pixmap().height()
+                # String cast for QString
+                sheetImg = QtGui.QImage(subInPath(str(filepath), sheetPath))
 
-                self._posX, self._posY, self._column = bar.updateGridPos(
-                    self._posX, self._posY, self._column, MAX_COLUMNS,
-                    obj.pixmap().width(), self._greatestHeight)
+                strips = sheet.findall('strip')
 
-                # On a new row
-                if self._column == 0:
-                    self._greatestHeight = 0
+                for strip in strips:
+                    obj = Object()
+                    obj.setPath(filepath)
+                    obj.setAnimNum(animNum)
+                    obj.setToolTip("Anim Num: " + str(animNum))
 
-                animNum += 1
+                    bar.clipFromSheet(sheetImg, strip, obj)
+
+                    lnX, lnY = bar.setForBar(self._posX, self._posY,
+                        self._defOpacity, obj)
+                    self.addItem(obj)
+                    self.addLine(lnX)
+                    self.addLine(lnY)
+
+                    if obj.pixmap().height() > self._greatestHeight:
+                        self._greatestHeight = obj.pixmap().height()
+
+                    self._posX, self._posY, self._column = bar.updateGridPos(
+                        self._posX, self._posY, self._column, MAX_COLUMNS,
+                        obj.pixmap().width(), self._greatestHeight)
+
+                    # On a new row
+                    if self._column == 0:
+                        self._greatestHeight = 0
+
+                    animNum += 1
 
