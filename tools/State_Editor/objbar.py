@@ -62,27 +62,6 @@ class LoadObjectsButton(QtGui.QPushButton):
         self.emit(QtCore.SIGNAL('selectedFiles'), filenames)
 
 
-class ClearButton(QtGui.QPushButton):
-    """Emits a 'clear' signal when pressed.
-
-    SIGNALS: 'clear' -- emitted from 'emitClear'
-
-    """
-    def __init__(self, parent = None):
-        """Set text for button and connect."""
-        QtGui.QPushButton.__init__(self, parent)
-        self.setText('Clear')
-        self.connect(self, QtCore.SIGNAL('clicked()'), self.emitClear)
-
-    def emitClear(self):
-       """Emits 'clear' signal.
-
-       SIGNALS: clear
-
-       """
-       self.emit(QtCore.SIGNAL('clear'))
-
-
 class ObjectBar(bar.Bar):
     """Holds objects loaded in, organizing objects in 4 column rows."""
     def __init__(self, parent = None):

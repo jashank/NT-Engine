@@ -2,7 +2,7 @@
 
 import sys
 from PyQt4 import QtCore, QtGui
-import objbar, tilebar, tilemap
+import commbutton, objbar, tilebar, tilemap
 
 
 class MainWindow(QtGui.QMainWindow):
@@ -36,13 +36,14 @@ class MainWindow(QtGui.QMainWindow):
         self._objBar = objbar.ObjectBar()
         self._objView = QtGui.QGraphicsView(self._objBar)
         self._loadObjects = objbar.LoadObjectsButton()
-        self._clearObjects = objbar.ClearButton()
+        self._clearObjects = commbutton.ClearButton()
 
         # Tile/Object Map
         self._tileMap = tilemap.TileMap()
         self._mapView = QtGui.QGraphicsView(self._tileMap)
-        self._setMapDims = tilemap.SetMapDimButton()
+        self._setMapDims = tilemap.SetMapDimsButton()
         self._fill = tilemap.FillButton()
+        self._clearMap = commbutton.ClearButton()
 
         # Tile Bar
         self._tileBar = tilebar.TileBar()
@@ -62,6 +63,8 @@ class MainWindow(QtGui.QMainWindow):
             self._tileMap.setDims)
         QtCore.QObject.connect(self._fill, QtCore.SIGNAL('fill'),
             self._tileMap.fill)
+        QtCore.QObject.connect(self._clearMap, QtCore.SIGNAL('clear'),
+            self._tileMap.clearPlacements)
 
         # Tile Bar - Buttons
         QtCore.QObject.connect(self._loadTiles, QtCore.SIGNAL('selectedFile'),
@@ -82,6 +85,7 @@ class MainWindow(QtGui.QMainWindow):
     def _layoutComponents(self):
         """Layout components onto a grid."""
         self._layout = QtGui.QGridLayout()
+        self._layout.setSpacing(15)
 
         # Object Bar Area
         self._layout.addWidget(self._objView, 0, 0, 1, 2)
@@ -89,13 +93,14 @@ class MainWindow(QtGui.QMainWindow):
         self._layout.addWidget(self._clearObjects, 1, 1)
 
         # Tile/Object Map Area
-        self._layout.addWidget(self._mapView, 0, 2, 1, 2)
+        self._layout.addWidget(self._mapView, 0, 2, 1, 3)
         self._layout.addWidget(self._setMapDims, 1, 2)
         self._layout.addWidget(self._fill, 1, 3)
+        self._layout.addWidget(self._clearMap, 1, 4)
 
         # Tile Bar Area
-        self._layout.addWidget(self._tileBarView, 0, 4, 1, 2)
-        self._layout.addWidget(self._loadTiles, 1, 4)
+        self._layout.addWidget(self._tileBarView, 0, 5, 1, 3)
+        self._layout.addWidget(self._loadTiles, 1, 6)
 
 
 app = QtGui.QApplication(sys.argv)

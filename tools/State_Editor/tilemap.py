@@ -5,7 +5,7 @@ from collections import defaultdict
 from PyQt4 import QtCore, QtGui
 
 
-class MapDialog(QtGui.QDialog):
+class MapDimsForm(QtGui.QDialog):
     """Window for entering dimensions for the tile map.
 
     SIGNALS: 'gotDims', size, width, height -- emitted from 'okPress'
@@ -30,24 +30,11 @@ class MapDialog(QtGui.QDialog):
         ok.setText('OK')
         ok.connect(ok, QtCore.SIGNAL('clicked()'), self.okPress)
 
-        sizeBox = QtGui.QHBoxLayout()
-        sizeBox.addWidget(sizeLabel)
-        sizeBox.addWidget(self._tileSize)
-
-        widthBox = QtGui.QHBoxLayout()
-        widthBox.addWidget(widthLabel)
-        widthBox.addWidget(self._mapWidth)
-
-        heightBox = QtGui.QHBoxLayout()
-        heightBox.addWidget(heightLabel)
-        heightBox.addWidget(self._mapHeight)
-
-        layout = QtGui.QVBoxLayout()
-        layout.addLayout(sizeBox)
-        layout.addLayout(widthBox)
-        layout.addLayout(heightBox)
-        layout.addWidget(ok)
-
+        layout = QtGui.QFormLayout()
+        layout.addRow(sizeLabel, self._tileSize)
+        layout.addRow(widthLabel, self._mapWidth)
+        layout.addRow(heightLabel, self._mapHeight)
+        layout.addRow(ok)
         self.setLayout(layout)
 
     def okPress(self):
@@ -68,7 +55,7 @@ class MapDialog(QtGui.QDialog):
         self.done(1)
 
 
-class SetMapDimButton(QtGui.QPushButton):
+class SetMapDimsButton(QtGui.QPushButton):
     """Opens dialog window for entering map dimensions when pressed.
 
     SIGNALS: 'gotDims', tileSize, mapWidth, mapHeight --
@@ -79,21 +66,21 @@ class SetMapDimButton(QtGui.QPushButton):
         """Sets button text and makes dimension dialog open when clicked."""
         QtGui.QPushButton.__init__(self, parent)
         self.setText('Map Dimensions')
-        self.connect(self, QtCore.SIGNAL('clicked()'), self.openMapDialog)
+        self.connect(self, QtCore.SIGNAL('clicked()'), self.openMapDimsForm)
 
-    def openMapDialog(self):
-        """Opens the map dimension dialog.
+    def openMapDimsForm(self):
+        """Opens the map dimensions forms.
 
         Will retrieve map dimensions from dimension dialog if entered and emit
         them in a 'gotDims' SIGNAL.
 
         """
-        dialog = MapDialog()
-        dialog.connect(dialog, QtCore.SIGNAL('gotDims'), self.emitDims)
-        dialog.exec_()
+        form = MapDimsForm()
+        form.connect(form, QtCore.SIGNAL('gotDims'), self.emitDims)
+        form.exec_()
 
     def emitDims(self, tileSize, mapWidth, mapHeight):
-        """Called if user enters values in dimensions dialog.
+        """Called if user enters values in dimensions form.
 
         SIGNALS: 'gotDims', tileSize, mapWidth, mapHeight -- contains
             specifications for tile size, map width, and map height.
@@ -157,24 +144,38 @@ class TileMap(QtGui.QGraphicsScene):
         self._zValObj = 1
         self._zValTile = 0
 
+    def clearPlacements(self):
+        """Clears images from grid and stored items."""
+        for i in self.items():
+            if i.zValue() != self._zValLine:
+                self.removeItem(i)
+
+        self._tileMapping.clear()
+        self._objMapping.clear()
+
     def fill(self):
+        """Fills map with selected item."""
         if self._selection:
-            self._tileMapping.clear()
-            for item in self.items():
-                if item.zValue() != self._zValLine:
-                    self.removeItem(item)
+
+            # Filling with a tile selection clears existing tiles
+            if self._tileSelected:
+                self._tileMapping.clear()
+                for item in self.items():
+                    if item.zValue() == self._zValTile:
+                        self.removeItem(item)
 
             for i in range(0, self._mapWidth):
                 for j in range(0, self._mapHeight):
-                    point = str(i) + "," + str(j)
-                    self._tileMapping[point] = self._selection
+                    # +1 to avoid grid lines
+                    pos = QtCore.QPointF(i * self._tileSize + 1,
+                        j * self._tileSize + 1)
 
-                    pos = QtCore.QPointF(i * self._tileSize, j * self._tileSize)
-                    pixmap = QtGui.QGraphicsPixmapItem(
-                        self._selection.pixmap().copy())
-                    pixmap.setPos(pos)
+                    point = self._coordToKey(i, j)
 
-                    self.addItem(pixmap)
+                    if self._objSelected:
+                        self._placeObject(pos, i, j, point)
+                    elif self._tileSelected:
+                        self._placeTile(pos, i, j, point)
 
     def mousePressEvent(self, event):
         """Handles mouse press events, responding accordingly.
@@ -222,7 +223,7 @@ class TileMap(QtGui.QGraphicsScene):
 
                 x = int(pos.x() / self._tileSize)
                 y = int(pos.y() / self._tileSize)
-                point = str(x) + "," + str(y)
+                point = self._coordToKey(x, y)
 
                 if self._objSelected:
                     self._placeObject(pos, x, y, point)
@@ -236,16 +237,33 @@ class TileMap(QtGui.QGraphicsScene):
                    mapWidth -- width of map in tiles.
                    mapHeight -- height of map in tiles.
 
-        Dimensions are checked to make sure they are okay.
+        Dimensions are checked to make sure they are okay. If items exists in
+        locations that no longer exist then they are removed. If tile size
+        changes then everything is removed regardless.
 
         """
         if (tileSize > 0 and mapWidth >= 0 and mapHeight >= 0):
+
+            if self._tileSize != tileSize:
+                self.clear()
+            else:
+                for line in self.items():
+                    if line.zValue() == self._zValLine:
+                        self.removeItem(line)
+
+            if self._mapWidth > mapWidth:
+                for x in range(mapWidth, self._mapWidth):
+                    for y in range(0, self._mapHeight):
+                        self._removeItemsAt(x, y)
+
+            if self._mapHeight > mapHeight:
+                for x in range(0, self._mapWidth):
+                    for y in range(mapHeight, self._mapHeight):
+                        self._removeItemsAt(x, y)
+
             self._tileSize = tileSize
             self._mapWidth = mapWidth
             self._mapHeight = mapHeight
-
-            self._tileMapping.clear()
-            self.clear()
 
             gridWidth = tileSize * mapWidth
             gridHeight = tileSize * mapHeight
@@ -360,7 +378,7 @@ class TileMap(QtGui.QGraphicsScene):
 
             x = int(pos.x() / self._tileSize)
             y = int(pos.y() / self._tileSize)
-            point = str(x) + "," + str(y)
+            point = self._coordToKey(x, y)
 
             objs = self._objMapping.get(point)
             if objs and len(objs) > 0:
@@ -370,5 +388,34 @@ class TileMap(QtGui.QGraphicsScene):
             tile = self._tileMapping.get(point)
             if tile:
                 del self._tileMapping[point]
+
+    def _removeItemsAt(self, x, y):
+        """Removes all items and images from coordinates on grid.
+
+        Arguments: x -- x coordinate for removal
+                   y -- y coordinate for removal
+
+        """
+        rectArea = QtCore.QRectF( x * self._tileSize,
+                    y * self._tileSize, self._tileSize, self._tileSize)
+
+        point = self._coordToKey(x, y)
+
+        if point in self._tileMapping:
+            del self._tileMapping[point]
+        if point in self._objMapping:
+            del self._objMapping[point]
+
+        for item in self.items(rectArea):
+            self.removeItem(item)
+
+    def _coordToKey(self, x, y):
+        """Given grid coords, returns key for use in internal mapping dicts.
+
+        Arguments: x -- x coordinate on mapping grid
+                   y -- y coordinate on mapping grid
+
+        """
+        return str(x) + "," + str(y)
 
 
