@@ -13,9 +13,9 @@ class ClearButton(QtGui.QPushButton):
         """Set text for button and connect."""
         QtGui.QPushButton.__init__(self, parent)
         self.setText('Clear')
-        self.connect(self, QtCore.SIGNAL('clicked()'), self.emitClear)
+        self.connect(self, QtCore.SIGNAL('clicked()'), self._emitClear)
 
-    def emitClear(self):
+    def _emitClear(self):
        """Emits 'clear' signal.
 
        SIGNALS: clear

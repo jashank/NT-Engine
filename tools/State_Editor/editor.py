@@ -2,7 +2,7 @@
 
 import sys
 from PyQt4 import QtCore, QtGui
-import commbutton, objbar, tilebar, tilemap
+import commbutton, objbar, sound, tilebar, tilemap
 
 
 class MainWindow(QtGui.QMainWindow):
@@ -38,6 +38,11 @@ class MainWindow(QtGui.QMainWindow):
         self._loadObjects = objbar.LoadObjectsButton()
         self._clearObjects = commbutton.ClearButton()
 
+        # Tile Bar
+        self._tileBar = tilebar.TileBar()
+        self._tileBarView = QtGui.QGraphicsView(self._tileBar)
+        self._loadTiles = tilebar.LoadTilesButton()
+
         # Tile/Object Map
         self._tileMap = tilemap.TileMap()
         self._mapView = QtGui.QGraphicsView(self._tileMap)
@@ -45,10 +50,8 @@ class MainWindow(QtGui.QMainWindow):
         self._fill = tilemap.FillButton()
         self._clearMap = commbutton.ClearButton()
 
-        # Tile Bar
-        self._tileBar = tilebar.TileBar()
-        self._tileBarView = QtGui.QGraphicsView(self._tileBar)
-        self._loadTiles = tilebar.LoadTilesButton()
+        # Sound
+        self._soundButton = sound.SoundButton()
 
     def _connectComponents(self):
         """Connects interactions between components."""
@@ -58,6 +61,10 @@ class MainWindow(QtGui.QMainWindow):
         QtCore.QObject.connect(self._clearObjects, QtCore.SIGNAL('clear'),
             self._objBar.clear)
 
+        # Tile Bar - Buttons
+        QtCore.QObject.connect(self._loadTiles, QtCore.SIGNAL('selectedFile'),
+            self._tileBar.loadTiles)
+
         # Tile/Object Map - Buttons
         QtCore.QObject.connect(self._setMapDims, QtCore.SIGNAL('gotDims'),
             self._tileMap.setDims)
@@ -65,10 +72,6 @@ class MainWindow(QtGui.QMainWindow):
             self._tileMap.fill)
         QtCore.QObject.connect(self._clearMap, QtCore.SIGNAL('clear'),
             self._tileMap.clearPlacements)
-
-        # Tile Bar - Buttons
-        QtCore.QObject.connect(self._loadTiles, QtCore.SIGNAL('selectedFile'),
-            self._tileBar.loadTiles)
 
         # Bars -> Map
         QtCore.QObject.connect(self._tileBar, QtCore.SIGNAL('selectedTile'),
@@ -101,6 +104,9 @@ class MainWindow(QtGui.QMainWindow):
         # Tile Bar Area
         self._layout.addWidget(self._tileBarView, 0, 5, 1, 3)
         self._layout.addWidget(self._loadTiles, 1, 6)
+
+        # Sound Area
+        self._layout.addWidget(self._soundButton, 0, 8)
 
 
 app = QtGui.QApplication(sys.argv)

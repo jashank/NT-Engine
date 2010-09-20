@@ -18,26 +18,22 @@ class MapDimsForm(QtGui.QDialog):
         self.setModal(True)
         self.setWindowTitle('Enter tile dimensions')
 
-        sizeLabel = QtGui.QLabel('Size of a tile in pixels:')
-        widthLabel = QtGui.QLabel('Width of map in tiles:')
-        heightLabel = QtGui.QLabel('Height of map in tiles:')
-
         self._tileSize = QtGui.QLineEdit('0')
         self._mapWidth = QtGui.QLineEdit('0')
         self._mapHeight = QtGui.QLineEdit('0')
 
         ok = QtGui.QPushButton()
         ok.setText('OK')
-        ok.connect(ok, QtCore.SIGNAL('clicked()'), self.okPress)
+        ok.connect(ok, QtCore.SIGNAL('clicked()'), self._okPress)
 
         layout = QtGui.QFormLayout()
-        layout.addRow(sizeLabel, self._tileSize)
-        layout.addRow(widthLabel, self._mapWidth)
-        layout.addRow(heightLabel, self._mapHeight)
+        layout.addRow('Size of a tile in pixels:', self._tileSize)
+        layout.addRow('Width of map in tiles:', self._mapWidth)
+        layout.addRow('Height of map in tiles:', self._mapHeight)
         layout.addRow(ok)
         self.setLayout(layout)
 
-    def okPress(self):
+    def _okPress(self):
         """Emits 'gotDims', size, width, height when OK is pressed.
 
         Note that this function tries to convert the text in the line edit
@@ -66,20 +62,21 @@ class SetMapDimsButton(QtGui.QPushButton):
         """Sets button text and makes dimension dialog open when clicked."""
         QtGui.QPushButton.__init__(self, parent)
         self.setText('Map Dimensions')
-        self.connect(self, QtCore.SIGNAL('clicked()'), self.openMapDimsForm)
+        self.connect(self, QtCore.SIGNAL('clicked()'), self._openMapDimsForm)
 
-    def openMapDimsForm(self):
+        self._form = MapDimsForm()
+        self._form.connect(self._form, QtCore.SIGNAL('gotDims'), self._emitDims)
+
+    def _openMapDimsForm(self):
         """Opens the map dimensions forms.
 
         Will retrieve map dimensions from dimension dialog if entered and emit
         them in a 'gotDims' SIGNAL.
 
         """
-        form = MapDimsForm()
-        form.connect(form, QtCore.SIGNAL('gotDims'), self.emitDims)
-        form.exec_()
+        self._form.exec_()
 
-    def emitDims(self, tileSize, mapWidth, mapHeight):
+    def _emitDims(self, tileSize, mapWidth, mapHeight):
         """Called if user enters values in dimensions form.
 
         SIGNALS: 'gotDims', tileSize, mapWidth, mapHeight -- contains
@@ -105,9 +102,9 @@ class FillButton(QtGui.QPushButton):
 
         self.setText('Fill')
 
-        self.connect(self, QtCore.SIGNAL('clicked()'), self.emitFill)
+        self.connect(self, QtCore.SIGNAL('clicked()'), self._emitFill)
 
-    def emitFill(self):
+    def _emitFill(self):
         """Called when button is clicked. Emits 'fill' signal."""
         self.emit(QtCore.SIGNAL('fill'))
 

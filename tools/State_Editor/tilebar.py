@@ -41,9 +41,9 @@ class LoadTilesButton(QtGui.QPushButton):
 
         self.setText('Load Tiles')
 
-        self.connect(self, QtCore.SIGNAL('clicked()'), self.selectFile)
+        self.connect(self, QtCore.SIGNAL('clicked()'), self._selectFile)
 
-    def selectFile(self):
+    def _selectFile(self):
         """Opens dialog for user to select file to load tiles from.
 
         SIGNALS: 'selectedFile', filename -- emitted when file is selected,
@@ -51,7 +51,7 @@ class LoadTilesButton(QtGui.QPushButton):
 
         """
         filename = QtGui.QFileDialog.getOpenFileName(self,
-            'Select tile animation file')
+            'Select tile animation file', "", "*.xml")
 
         self.emit(QtCore.SIGNAL('selectedFile'), filename)
 

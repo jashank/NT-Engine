@@ -47,9 +47,9 @@ class LoadObjectsButton(QtGui.QPushButton):
 
         self.setText('Load Object(s)')
 
-        self.connect(self, QtCore.SIGNAL('clicked()'), self.selectFiles)
+        self.connect(self, QtCore.SIGNAL('clicked()'), self._selectFiles)
 
-    def selectFiles(self):
+    def _selectFiles(self):
         """Opens dialog for user to select object file(s) to load.
 
         SIGNALS: 'selectedFiles', filenames -- emitted when file(s) is selected,
@@ -57,7 +57,7 @@ class LoadObjectsButton(QtGui.QPushButton):
 
         """
         filenames = QtGui.QFileDialog.getOpenFileNames(self,
-            'Select Object file(s)')
+            'Select Object file(s)', "", "*.xml")
 
         self.emit(QtCore.SIGNAL('selectedFiles'), filenames)
 
