@@ -2,7 +2,7 @@
 
 import sys
 from PyQt4 import QtCore, QtGui
-import commbutton, objbar, sound, tilebar, tilemap
+import commbutton, extras, objbar, tilebar, tilemap
 
 
 class MainWindow(QtGui.QMainWindow):
@@ -50,8 +50,8 @@ class MainWindow(QtGui.QMainWindow):
         self._fill = tilemap.FillButton()
         self._clearMap = commbutton.ClearButton()
 
-        # Sound
-        self._soundButton = sound.SoundButton()
+        # Extras
+        self._extrasButton = extras.ExtrasButton()
 
     def _connectComponents(self):
         """Connects interactions between components."""
@@ -105,8 +105,8 @@ class MainWindow(QtGui.QMainWindow):
         self._layout.addWidget(self._tileBarView, 0, 5, 1, 3)
         self._layout.addWidget(self._loadTiles, 1, 6)
 
-        # Sound Area
-        self._layout.addWidget(self._soundButton, 0, 8)
+        # Extras Area
+        self._layout.addWidget(self._extrasButton, 0, 8)
 
 
 app = QtGui.QApplication(sys.argv)

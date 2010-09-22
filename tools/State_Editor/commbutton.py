@@ -23,3 +23,12 @@ class ClearButton(QtGui.QPushButton):
        """
        self.emit(QtCore.SIGNAL('clear'))
 
+
+class RemoveButton(QtGui.QPushButton):
+    """Button with an X icon on it. Should be used for removal."""
+    def __init__(self, parent = None):
+        "Sets button icon to X."
+        QtGui.QPushButton.__init__(self, parent)
+        self.setIcon(QtGui.QIcon("cross.png"))
+
+
