@@ -48,10 +48,10 @@ bool State::LoadFromFile( const std::string &filePath ) {
         }
       }
 
-      elem = root->FirstChildElement( "sound" );
+      elem = root->FirstChildElement( "music" );
       if ( elem ) {
-        if ( !m_soundManager.LoadData( elem )) {
-          LogErr( "Problem loading sound in state file " + filePath );
+        if ( !m_musicManager.LoadData( elem )) {
+          LogErr( "Problem loading music in state file " + filePath );
           return false;
         }
       }
@@ -109,7 +109,7 @@ void State::HandleEvents() {
 void State::Update() {
   m_tileManager.Update();
   m_objectManager.Update();
-  m_soundManager.Update();
+  m_musicManager.Update();
 }
 
 

@@ -53,6 +53,19 @@ class MainWindow(QtGui.QMainWindow):
         # Extras
         self._extrasButton = extras.ExtrasButton()
 
+        # File Menu
+        self._fileMenu = self.menuBar().addMenu("File")
+        self._newAction = self._fileMenu.addAction('New')
+        self._newAction.setShortcut('Ctrl+N')
+        self._loadAction = self._fileMenu.addAction('Open')
+        self._loadAction.setShortcut('Ctrl+O')
+        self._saveAction = self._fileMenu.addAction('Save')
+        self._saveAction.setShortcut('Ctrl+S')
+        self._saveAsAction = self._fileMenu.addAction('Save As')
+        self._saveAsAction.setShortcut('Ctrl+Shift+S')
+        self._quitAction = self._fileMenu.addAction('Quit')
+        self._quitAction.setShortcut('Ctrl+Q')
+
     def _connectComponents(self):
         """Connects interactions between components."""
         # Object Bar - Buttons 
@@ -106,7 +119,7 @@ class MainWindow(QtGui.QMainWindow):
         self._layout.addWidget(self._loadTiles, 1, 6)
 
         # Extras Area
-        self._layout.addWidget(self._extrasButton, 0, 8)
+        self._layout.addWidget(self._extrasButton, 3, 3)
 
 
 app = QtGui.QApplication(sys.argv)

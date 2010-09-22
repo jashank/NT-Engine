@@ -123,8 +123,8 @@ class TileMap(QtGui.QGraphicsScene):
         self._mapWidth = 0
         self._mapHeight = 0
 
-        # Whether mouse is pressed on the map
-        self._mousePressed = False
+        # Button pressed on mouse, None if none pressed 
+        self._mousePressed = None 
 
         # Whether an object or tile is currently selected
         self._objSelected = False
@@ -175,31 +175,26 @@ class TileMap(QtGui.QGraphicsScene):
                         self._placeTile(pos, i, j, point)
 
     def mousePressEvent(self, event):
-        """Handles mouse press events, responding accordingly.
+        """Responds to right and left mouse presses.
 
-        On a left button press, the function will call mouseMoveEvent
-        to start tile/object placement.
-
-        On a right button press, the function will call _removeItem to
-        remove the tile/object under the cursor.
+        Sets mouse pressed to button pressed, calling mouseMoveEvent to
+        take appropriate action.
 
         """
-        if event.button() == QtCore.Qt.LeftButton:
-            self._mousePressed = True
+        if ((event.button() == QtCore.Qt.LeftButton or
+             event.button() == QtCore.Qt.RightButton) and
+             self._mousePressed == None):
+            self._mousePressed = event.button()
             self.mouseMoveEvent(event)
 
-        elif event.button() == QtCore.Qt.RightButton:
-            pos = event.scenePos()
-            self._removeItem(pos)
-
     def mouseReleaseEvent(self, event):
-        """Sets mouse pressed to false if left button is pressed.
+        """Sets mouse pressed to None when mouse is released.
 
         Overrides mouseReleaseEvent in QGraphicsScene.
 
         """
-        if event.button() == QtCore.Qt.LeftButton:
-            self._mousePressed = False
+        if event.button() == self._mousePressed:
+            self._mousePressed = None
 
     def mouseMoveEvent(self, event):
         """Maps selected item (if any) to location on grid under cursor.
@@ -208,8 +203,9 @@ class TileMap(QtGui.QGraphicsScene):
         in QGraphicsScene.
 
         """
-        if self._mousePressed:
-            pos = event.scenePos()
+        pos = event.scenePos()
+
+        if self._mousePressed == QtCore.Qt.LeftButton:
             posX = pos.x()
             posY = pos.y()
 
@@ -227,6 +223,9 @@ class TileMap(QtGui.QGraphicsScene):
                 elif self._tileSelected:
                     self._placeTile(pos, x, y, point)
 
+        elif self._mousePressed == QtCore.Qt.RightButton:
+            self._removePlacement(pos)
+
     def setDims(self, tileSize, mapWidth, mapHeight):
         """Sets up grid given dimensions passed.
 
@@ -235,28 +234,26 @@ class TileMap(QtGui.QGraphicsScene):
                    mapHeight -- height of map in tiles.
 
         Dimensions are checked to make sure they are okay. If items exists in
-        locations that no longer exist then they are removed. If tile size
-        changes then everything is removed regardless.
+        locations that no longer exist then they are removed.
 
         """
-        if (tileSize > 0 and mapWidth >= 0 and mapHeight >= 0):
+        if (tileSize > 0 and mapWidth >= 0 and mapHeight >= 0 and
+           (tileSize != self._tileSize or mapWidth != self._mapWidth or
+            mapHeight != self._mapHeight)):
 
-            if self._tileSize != tileSize:
-                self.clear()
-            else:
-                for line in self.items():
-                    if line.zValue() == self._zValLine:
-                        self.removeItem(line)
+            for line in self.items():
+                if line.zValue() == self._zValLine:
+                    self.removeItem(line)
 
             if self._mapWidth > mapWidth:
                 for x in range(mapWidth, self._mapWidth):
                     for y in range(0, self._mapHeight):
-                        self._removeItemsAt(x, y)
+                        self._removePlacementsAt(x, y)
 
             if self._mapHeight > mapHeight:
                 for x in range(0, self._mapWidth):
                     for y in range(mapHeight, self._mapHeight):
-                        self._removeItemsAt(x, y)
+                        self._removePlacementsAt(x, y)
 
             self._tileSize = tileSize
             self._mapWidth = mapWidth
@@ -358,7 +355,7 @@ class TileMap(QtGui.QGraphicsScene):
             tileImg.setZValue(self._zValTile)
             self.addItem(tileImg)
 
-    def _removeItem(self, pos):
+    def _removePlacement(self, pos):
         """Removes the top item under cursor from the grid and internally.
 
         Arguments: pos -- Position of cursor relative to scene
@@ -386,11 +383,11 @@ class TileMap(QtGui.QGraphicsScene):
             if tile:
                 del self._tileMapping[point]
 
-    def _removeItemsAt(self, x, y):
+    def _removePlacementsAt(self, x, y):
         """Removes all items and images from coordinates on grid.
 
-        Arguments: x -- x coordinate for removal
-                   y -- y coordinate for removal
+        Arguments: x -- x coordinate for removal, relative to tile grid
+                   y -- y coordinate for removal, relative to tile grid
 
         """
         rectArea = QtCore.QRectF( x * self._tileSize,

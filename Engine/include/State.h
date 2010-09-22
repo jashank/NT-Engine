@@ -9,7 +9,7 @@ extern "C" {
 }
 
 #include "ObjectManager.h"
-#include "SoundManager.h"
+#include "MusicManager.h"
 #include "TileManager.h"
 
 class lua_State;
@@ -102,8 +102,8 @@ class State {
   /** Manages all Objects in this State. */
   ObjectManager m_objectManager; /** Manages all Objects in this State. */
 
-  /** Manages all sound in this State. */
-  SoundManager m_soundManager; 
+  /** Manages all music in this State. */
+  MusicManager m_musicManager; 
 
   /**
    * 'name/file path' pairs that represent portals. A portal is like a

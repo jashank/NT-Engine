@@ -55,15 +55,10 @@
     </object>
   </objects>
   
-  <sound>
-    <music>
-      <song path="Kickle_Pack/Sound/stage_1.ogg"/>
-      <song path="Kickle_Pack/Sound/stage_2.ogg"/>
-    </music>
-    <sound_effects>
-      <!-- TODO -->
-    </sound_effects>
-  </sound>
+  <music>
+    <song path="Kickle_Pack/Sound/stage_1.ogg"/>
+    <song path="Kickle_Pack/Sound/stage_2.ogg"/>
+  </music>
 
   <portals>
     <port name="nextStage" path="Kickle_Pack/States/GardenLand_E.xml" />

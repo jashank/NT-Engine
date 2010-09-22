@@ -1,5 +1,5 @@
-#ifndef SOUNDMANAGER_H
-#define SOUNDMANAGER_H
+#ifndef MUSICMANAGER_H
+#define MUSICMANAGER_H
 
 #include <string>
 #include <vector>
@@ -9,17 +9,17 @@
 class TiXmlElement;
 
 /**
- * Holds and manages all sound in the current state. Currently only manages
+ * Holds and manages all music in the current state. Currently only manages
  * playlist of music specified for state.
  */
-class SoundManager {
+class MusicManager {
  public:
-  SoundManager();
-  ~SoundManager() {}
+  MusicManager();
+  ~MusicManager() {}
 
   /**
-   * Loads sound in from <sound> element of State XML file.
-   * @param dataRoot parent element of sounds to be used in this state.
+   * Loads music in from <music> element of State XML file.
+   * @param dataRoot parent element of musics to be used in this state.
    * @return True if load was successful (no syntax errors).
    */
   bool LoadData( const TiXmlElement *dataRoot );
@@ -56,8 +56,8 @@ class SoundManager {
   /**
    * Restrict copy constructor and assignment.
    */
-  SoundManager( const SoundManager &soundList );
-  SoundManager& operator=( const SoundManager &soundList );
+  MusicManager( const MusicManager &musicList );
+  MusicManager& operator=( const MusicManager &musicList );
   //@}
 
   /**
