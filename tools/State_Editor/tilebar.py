@@ -16,6 +16,10 @@ class Tile(QtGui.QGraphicsPixmapItem):
         self._idAttr = -1
         self._size = 0
 
+    def getId(self):
+        """Returns id of tile."""
+        return self._idAttr
+
     def getSize(self):
         """Returns size of this tile."""
         return self._size

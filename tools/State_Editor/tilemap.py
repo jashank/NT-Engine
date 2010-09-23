@@ -124,7 +124,7 @@ class TileMap(QtGui.QGraphicsScene):
         self._mapHeight = 0
 
         # Button pressed on mouse, None if none pressed 
-        self._mousePressed = None 
+        self._mousePressed = None
 
         # Whether an object or tile is currently selected
         self._objSelected = False
@@ -286,6 +286,15 @@ class TileMap(QtGui.QGraphicsScene):
         self._tileSelected = True
         self._objSelected = False
         self._selection = selection
+
+    def currentState(self):
+        """Returns all data relevant to map's current state.
+
+        Returns: tile size, map width, map height, tile mapping, object mapping.
+
+        """
+        return self._tileSize, self._mapWidth, self._mapHeight,
+               self._tileMapping, self._objMapping
 
     def _placeObject(self, pos, x, y, point):
         """Places object at grid coordinate (x,y).

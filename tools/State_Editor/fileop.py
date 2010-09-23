@@ -4,7 +4,6 @@ from os import sep
 from os.path import exists
 from string import join, split
 
-
 def subInPath(origPath, subPath):
     """Given original path, find subPath in it, and returns new path.
 
@@ -37,4 +36,5 @@ def subInPath(origPath, subPath):
     if not exists(newPath):
         raise Exception, "Path subbed in not found."
     return newPath
+
 
