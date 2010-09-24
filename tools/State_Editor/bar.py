@@ -29,6 +29,11 @@ class Bar(QtGui.QGraphicsScene):
         self._column = 0
         self._MAXCOLUMNS = 4
 
+    def clear(self):
+        """Calls scene clear and then sets selected item to none."""
+        QtGui.QGraphicsScene.clear(self)
+        self._selectedItem = None
+
     def mousePressEvent(self, event):
         """Sets mouse pressed to true if left button is pressed."""
         if event.button() == QtCore.Qt.LeftButton:

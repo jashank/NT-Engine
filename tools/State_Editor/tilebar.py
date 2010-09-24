@@ -92,6 +92,7 @@ class TileBar(bar.Bar):
         Arguments: pathname -- name of path to tile animation file.
 
         """
+        bar.Bar.clear(self)
         self.clear()
 
         self._tilesPath = pathname

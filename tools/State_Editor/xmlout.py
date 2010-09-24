@@ -30,16 +30,22 @@ def createTiles(size, path, mapWidth, mapHeight, tileMapping):
     layout = ElementTree.SubElement(root, "layout",
         {'width':str(mapWidth), 'height':str(mapHeight)})
     layoutText = []
-    for x in range(0, mapWidth):
-        for y in range(0, mapHeight):
+    hasTiles = False
+
+    # output by row
+    for y in range(0, mapHeight):
+        for x in range(0, mapWidth):
             key = str(x) + "," + str(y)
             tile = tileMapping.get(key)
             if not tile:
                 layoutText.append('-1')
             else:
                 layoutText.append(tile.getId())
+                hasTiles = True
 
-    layout.text = ' '.join(layoutText)
+    # Don't bother outputting a layout unless there is at least one tile
+    if hasTiles:
+        layout.text = ' '.join(layoutText)
 
     return root
 
