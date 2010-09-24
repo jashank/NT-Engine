@@ -13,8 +13,13 @@ class Tile(QtGui.QGraphicsPixmapItem):
         """idAttr is set to -1 because it implies a null tile."""
         QtGui.QGraphicsPixmapItem.__init__(self, parent)
 
+        self._animPath = ""
         self._idAttr = -1
         self._size = 0
+
+    def getAnimPath(self):
+        """Returns animation path to where tile is defined."""
+        return self._animPath
 
     def getId(self):
         """Returns id of tile."""
@@ -23,6 +28,10 @@ class Tile(QtGui.QGraphicsPixmapItem):
     def getSize(self):
         """Returns size of this tile."""
         return self._size
+
+    def setAnimPath(self, path):
+        """Sets animation path where this tile is defined."""
+        self._animPath = path
 
     def setId(self, idNum):
         """Sets id of this tile."""
@@ -107,6 +116,7 @@ class TileBar(bar.Bar):
 
             for strip in strips:
                 tile = Tile()
+                tile.setAnimPath(self._tilesPath)
                 tile.setId(strip.get('id'))
 
                 bar.clipFromSheet(sheetImg, strip, tile)

@@ -61,6 +61,21 @@ class ExtrasTab(QtGui.QWidget):
 
         self.setLayout(layout)
 
+    def getDataDict(self):
+        """Returns dictionary of (path, name) data currently stored."""
+        dataDict = dict()
+        for row in range(1, self._numRows - 1):
+            # 1st column holds QLabel path names
+            pathLabel = self.layout().itemAtPosition(row, 1).widget()
+            path = pathLabel.text()
+            # 2nd column holds optional name user assigned
+            nameField = self.layout().itemAtPosition(row, 2).widget()
+            name = nameField.text()
+
+            dataDict[path] = name
+
+        return dataDict
+
     def _selectFiles(self):
         """Brings up file dialog to select and add music files."""
         filenames = QtGui.QFileDialog.getOpenFileNames(self,
@@ -155,15 +170,15 @@ class Extras(QtGui.QDialog):
         layout.addWidget(self._ok)
         self.setLayout(layout)
 
+    def currentState(self):
+        """Returns data relevant to current state of Extras.
 
-class ExtrasButton(QtGui.QPushButton):
-    """Brings up Extras dialog when pressed."""
-    def __init__(self, parent = None):
-        """Initializes name and connections."""
-        QtGui.QPushButton.__init__(self, parent)
-        self.setText('Extras')
+        Returns: (path, name) dictionaries for music, portals, and fonts.
 
-        self._extras = Extras()
-        self.connect(self, QtCore.SIGNAL('clicked()'), self._extras.exec_)
+        """
+        musicDict = self._tabs.widget(0).getDataDict()
+        portalsDict = self._tabs.widget(1).getDataDict()
+        fontsDict = self._tabs.widget(2).getDataDict()
 
+        return musicDict, portalsDict, fontsDict
 

@@ -2,7 +2,7 @@
 
 import sys
 from PyQt4 import QtCore, QtGui
-import commbutton, extras, objbar, tilebar, tilemap
+import commbutton, extras, filesys, objbar, tilebar, tilemap
 
 
 class MainWindow(QtGui.QMainWindow):
@@ -51,7 +51,9 @@ class MainWindow(QtGui.QMainWindow):
         self._clearMap = commbutton.ClearButton()
 
         # Extras
-        self._extrasButton = extras.ExtrasButton()
+        self._extras = extras.Extras()
+        self._extrasButton = QtGui.QPushButton()
+        self._extrasButton.setText('Extras')
 
         # File Menu
         self._fileMenu = self.menuBar().addMenu("File")
@@ -97,6 +99,14 @@ class MainWindow(QtGui.QMainWindow):
             self._objBar.unselect)
         QtCore.QObject.connect(self._objBar, QtCore.SIGNAL('selectedObject'),
             self._tileBar.unselect)
+
+        # Extras
+        QtCore.QObject.connect(self._extrasButton, QtCore.SIGNAL('clicked()'),
+            self._extras.exec_)
+
+        # Actions
+        QtCore.QObject.connect(self._saveAction, QtCore.SIGNAL('triggered()'),
+            lambda tm=self._tileMap, ex=self._extras: filesys.save(tm, ex))
 
     def _layoutComponents(self):
         """Layout components onto a grid."""

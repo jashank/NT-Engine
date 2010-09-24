@@ -30,6 +30,10 @@ class Object(QtGui.QGraphicsPixmapItem):
         """Set path to object file."""
         self._path = path
 
+    def getAnimNum(self):
+        """Returns animation number."""
+        return self._animNum
+
     def getPath(self):
         """Return path to object file."""
         return self._path

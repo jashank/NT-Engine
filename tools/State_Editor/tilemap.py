@@ -293,8 +293,8 @@ class TileMap(QtGui.QGraphicsScene):
         Returns: tile size, map width, map height, tile mapping, object mapping.
 
         """
-        return self._tileSize, self._mapWidth, self._mapHeight,
-               self._tileMapping, self._objMapping
+        return (self._tileSize, self._mapWidth, self._mapHeight,
+                self._tileMapping, self._objMapping)
 
     def _placeObject(self, pos, x, y, point):
         """Places object at grid coordinate (x,y).
@@ -312,9 +312,11 @@ class TileMap(QtGui.QGraphicsScene):
         if len(lines) > 0:
             return
 
+        # Don't allow multiples of the same object on a tile
         objs = self._objMapping.get(point)
         if objs != None:
-            clone = [o for o in objs if o == self._selection]
+            clone = [o for o in objs if o.getPath() ==
+                     self._selection.getPath()]
             if len(clone) > 0:
                 return
 

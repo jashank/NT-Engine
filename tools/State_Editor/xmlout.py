@@ -3,7 +3,7 @@
 
 from collections import defaultdict
 from xml.dom import minidom
-from xml.etree.ElementTree import ElementTree
+import xml.etree.ElementTree as ElementTree
 from objbar import Object
 from tilebar import Tile
 
@@ -24,21 +24,22 @@ def createTiles(size, path, mapWidth, mapHeight, tileMapping):
     """
     root = ElementTree.Element("tiles")
 
-    sz = ElementTree.SubElement(root, "size", {'px':size})
+    sz = ElementTree.SubElement(root, "size", {'px':str(size)})
     anim = ElementTree.SubElement(root, "animation", {'path':path})
 
     layout = ElementTree.SubElement(root, "layout",
-        {'width':mapWidth, 'height':mapHeight})
+        {'width':str(mapWidth), 'height':str(mapHeight)})
     layoutText = []
     for x in range(0, mapWidth):
         for y in range(0, mapHeight):
             key = str(x) + "," + str(y)
             tile = tileMapping.get(key)
             if not tile:
-                layoutText.append(-1)
+                layoutText.append('-1')
             else:
                 layoutText.append(tile.getId())
-    layout.text.join(layoutText)
+
+    layout.text = ' '.join(layoutText)
 
     return root
 
@@ -55,20 +56,21 @@ def createObjects(objMapping):
     """
     root = ElementTree.Element('objects')
 
-    # Reverse mapping to get (Object path, coords)
+    # Reverse mapping to get (Object path, coords/object animation strip)
     invMapping = defaultdict(list)
     for coord, objects in objMapping.iteritems():
         for obj in objects:
-            invMapping[obj.getPath()].append(coord)
+            invMapping[obj.getPath()].append([coord, str(obj.getAnimNum())])
 
-    for objPath, coords in invMapping.iterItems():
+    for objPath, instances in invMapping.iteritems():
         objElem = ElementTree.Element('object', {'path':objPath})
 
-        for coord in coords:
-            splitCoords = coord.split(',')
-            coordElem = ElementTree.Element(objElem, 'inst',
-                {'x':splitCoords[0], 'y':splitCoords[1]})
-            objElem.append(coordElem)
+        for inst in instances:
+            splitCoords = inst[0].split(',')
+            instElem = ElementTree.Element('inst',
+                {'x':splitCoords[0], 'y':splitCoords[1],
+                 'strip':inst[1]})
+            objElem.append(instElem)
 
         root.append(objElem)
 
@@ -93,10 +95,12 @@ def createPathName(pathNameDict, parentStr, subElemStr):
     """
     root = ElementTree.Element(parentStr)
 
-    for path, name in musicDict.iteritems():
+    for path, name in pathNameDict.iteritems():
         subElem = ElementTree.Element(subElemStr,
             {'path':path, 'name':name})
         root.append(subElem)
+
+    return root
 
 def createState(tileElem, objElem, musicElem, portalElem, fontElem):
     """Returns <state> element for NT state file.
@@ -128,9 +132,9 @@ def createStateFile(stateElem, path):
     # elementtree outputs in a single line, so need to prettify first
     uglyString = ElementTree.tostring(stateElem)
     reparsed = minidom.parseString(uglyString)
-    reparsed.toprettyxml(indent="  ")
+    reparsed = reparsed.toprettyxml(indent="  ")
 
     xmlFile = open(path, 'w')
-    reparsed.writexml(xmlFile)
+    xmlFile.write(reparsed)
     xmlFile.close()
 

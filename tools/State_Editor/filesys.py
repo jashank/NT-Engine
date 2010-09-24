@@ -1,10 +1,12 @@
 #!/usr/bin/env python
 
 
+from xml.etree.ElementTree import ElementTree
 from PyQt4 import QtGui
 from extras import Extras
 from tilemap import TileMap
 import xmlout
+
 
 def save(tilemap, extras):
     """Saves data of state currently defined editor.
@@ -20,9 +22,29 @@ def save(tilemap, extras):
     """
     # If existing file
         # save over and return
-    filename = QtGui.QFileDialog.getSaveFileName("Save State File", "",
-        "*.xml")
+    filename = QtGui.QFileDialog.getSaveFileName(None, 'Save State File', '',
+        '*.xml')
+    if not filename:
+        return
 
-    size, mapWidth, mapHeight, tiles, objects = tileMap.currentState()
+    size, mapWidth, mapHeight, tiles, objects = tilemap.currentState()
+    tilesPath = ""
 
+    # if there are tiles then grab one and see what its animation is
+    for tile in tiles.itervalues():
+        tilesPath = tile.getAnimPath()
+        break
+
+    tileElem = xmlout.createTiles(size, tilesPath, mapWidth, mapHeight, tiles)
+    objectElem = xmlout.createObjects(objects)
+
+    musicDict, portalsDict, fontsDict = extras.currentState()
+    musicElem = xmlout.createPathName(musicDict, 'music', 'song')
+    portalElem = xmlout.createPathName(portalsDict, 'portals', 'port')
+    fontElem = xmlout.createPathName(fontsDict, 'fonts', 'font')
+
+    stateElem = xmlout.createState(tileElem, objectElem, musicElem, portalElem,
+        fontElem)
+
+    xmlout.createStateFile(stateElem, filename)
 
