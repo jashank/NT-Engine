@@ -2,6 +2,7 @@
 
 
 from collections import defaultdict
+from os.path import basename, splitext
 from xml.etree.ElementTree import ElementTree
 from PyQt4 import QtCore, QtGui
 import bar
@@ -68,7 +69,18 @@ class LoadObjectsButton(QtGui.QPushButton):
 
 
 class ObjectBar(bar.Bar):
-    """Holds objects loaded in, organizing objects in 4 column rows."""
+    """Holds objects loaded in, organizing objects in 4 column rows.
+
+    The Object Bar actually loads in a different object representation for all
+    of the object's animation strips so the user can choose from the object's
+    animations when selecting from the bar. Thus the loading in of one object
+    can actually lead to multiple objects being placed on the bar.
+
+    Note that this bar only holds Objects with animation files (i.e. those that
+    can be represented visually). Objects without animation files, called mod
+    objects, are loaded in separately.
+
+    """
     def __init__(self, parent = None):
         """Default initialization."""
         bar.Bar.__init__(self, parent)
@@ -98,10 +110,9 @@ class ObjectBar(bar.Bar):
            Returns None if none found.
         """
         objs = self._objDict.get(path)
-        if objs:
-            for obj in objs:
-                if obj.getAnimNum() == animNum:
-                    return obj
+        for obj in objs:
+            if obj.getAnimNum() == animNum:
+                return obj
 
         return None
 
@@ -112,60 +123,84 @@ class ObjectBar(bar.Bar):
                 self.loadObject(path)
 
     def loadObject(self, filepath):
+        """Loads object located at filepath.
+
+        If an object doesn't have an animation file, a default "script" image
+        is loaded in.
+
+        Arguments: filepath -- path to object's xml file
+        """
         objTree = ElementTree()
         objTree.parse(filepath)
         objRoot = objTree.getroot()
 
         animElem = objRoot.find('animation')
         relAnimPath = animElem.get('path')
-        if relAnimPath != "":
-            relAnimPath = animElem.get('path')
 
-            # String cast for QString
+        # Empty path means no animation file for object. So represent it
+        # via a visual representation for mod objects. 
+        objIsAnimated = (relAnimPath != '')
+
+        absAnimPath = ''
+        if objIsAnimated:
             absAnimPath = subInPath(str(filepath), relAnimPath)
+        else:
+            absAnimPath = 'mod_rep.xml'
 
-            animTree = ElementTree()
-            animTree.parse(absAnimPath)
-            animRoot = animTree.getroot()
+        animTree = ElementTree()
+        animTree.parse(absAnimPath)
+        animRoot = animTree.getroot()
 
-            sheets = animRoot.findall('sheet')
+        sheets = animRoot.findall('sheet')
 
-            MAX_COLUMNS = 4
-            animNum = 0
+        objFile = basename(filepath)
+        objName = splitext(objFile)[0]
 
-            for sheet in sheets:
-                sheetPath = sheet.get('path')
+        MAX_COLUMNS = 4
+        animNum = 0
 
-                # String cast for QString
+        for sheet in sheets:
+            sheetPath = sheet.get('path')
+
+            sheetImg = None
+            if objIsAnimated:
                 sheetImg = QtGui.QImage(subInPath(str(filepath), sheetPath))
+            else:
+                sheetImg = QtGui.QImage(sheetPath)
 
-                strips = sheet.findall('strip')
+            strips = sheet.findall('strip')
 
-                for strip in strips:
-                    obj = Object()
-                    self._objDict[filepath].append(obj)
-                    obj.setPath(filepath)
-                    obj.setAnimNum(animNum)
-                    obj.setToolTip("Strip Number: " + str(animNum))
+            for strip in strips:
+                obj = Object()
+                self._objDict[filepath].append(obj)
+                obj.setPath(filepath)
+                obj.setAnimNum(animNum)
 
-                    bar.clipFromSheet(sheetImg, strip, obj)
+                tipSuffix = ''
+                if objIsAnimated:
+                    tipSuffix = 'Strip ' + str(animNum)
+                else:
+                    tipSuffix = 'No Anim'
+                obj.setToolTip(objName + ': ' + tipSuffix)
 
-                    lnX, lnY = bar.setForBar(self._posX, self._posY,
-                        self._defOpacity, obj)
-                    self.addItem(obj)
-                    self.addLine(lnX)
-                    self.addLine(lnY)
+                bar.clipFromSheet(sheetImg, strip, obj)
 
-                    if obj.pixmap().height() > self._greatestHeight:
-                        self._greatestHeight = obj.pixmap().height()
+                lnX, lnY = bar.setForBar(self._posX, self._posY,
+                    self._defOpacity, obj)
+                self.addItem(obj)
+                self.addLine(lnX)
+                self.addLine(lnY)
 
-                    self._posX, self._posY, self._column = bar.updateGridPos(
-                        self._posX, self._posY, self._column, MAX_COLUMNS,
-                        obj.pixmap().width(), self._greatestHeight)
+                if obj.pixmap().height() > self._greatestHeight:
+                    self._greatestHeight = obj.pixmap().height()
 
-                    # On a new row
-                    if self._column == 0:
-                        self._greatestHeight = 0
+                self._posX, self._posY, self._column = bar.updateGridPos(
+                    self._posX, self._posY, self._column, MAX_COLUMNS,
+                    obj.pixmap().width(), self._greatestHeight)
 
-                    animNum += 1
+                # On a new row
+                if self._column == 0:
+                    self._greatestHeight = 0
+
+                animNum += 1
 

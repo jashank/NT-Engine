@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+
+<animations>
+
+  <sheet path="mod_rep.png">
+
+    <strip name="image">
+      <clip x="0" y="0" width="24" height="28" />
+      <flow num_frames="1"  />
+    </strip>
+
+  </sheet>
+
+</animations>
