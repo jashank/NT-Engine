@@ -76,8 +76,38 @@ class ExtrasTab(QtGui.QWidget):
 
         return dataDict
 
+    def addEntry(self, path, name):
+        """Adds an entry (new row) to the tab.
+
+        Arguments: path - path of file for entry
+                   name - user-specified name for entry
+
+        """
+        remove = RemoveButton()
+        label = QtGui.QLabel(path)
+        label.setScaledContents(True)
+        nameEntry = QtGui.QLineEdit(name)
+
+        self.layout().removeWidget(self._clear)
+        self.layout().removeWidget(self._add)
+
+        self.layout().addWidget(remove, self._numRows - 1, 0)
+        self.layout().addWidget(label, self._numRows - 1, 1)
+        self.layout().addWidget(nameEntry, self._numRows - 1, 2)
+
+        # Remove row that remove button is in when it is clicked
+        remove.connect(remove, QtCore.SIGNAL('clicked()'),
+            lambda row =
+                (self.layout().indexOf(remove) / self._numColumns):
+                    self._removeRow(row))
+
+
+        self.layout().addWidget(self._clear, self._numRows, 0)
+        self.layout().addWidget(self._add, self._numRows, 1)
+        self._numRows += 1
+
     def _selectFiles(self):
-        """Brings up file dialog to select and add music files."""
+        """Brings up file dialog to select and add files."""
         filenames = QtGui.QFileDialog.getOpenFileNames(self,
             self._fileDialogTitle, "", self._fileTypes)
 
@@ -91,28 +121,7 @@ class ExtrasTab(QtGui.QWidget):
                     break
 
             if not prevLoaded:
-                remove = RemoveButton()
-                label = QtGui.QLabel(path)
-                label.setScaledContents(True)
-                nameEntry = QtGui.QLineEdit()
-
-                self.layout().removeWidget(self._clear)
-                self.layout().removeWidget(self._add)
-
-                self.layout().addWidget(remove, self._numRows - 1, 0)
-                self.layout().addWidget(label, self._numRows - 1, 1)
-                self.layout().addWidget(nameEntry, self._numRows - 1, 2)
-
-                # Remove row that remove button is in when it is clicked
-                remove.connect(remove, QtCore.SIGNAL('clicked()'),
-                    lambda row =
-                        (self.layout().indexOf(remove) / self._numColumns):
-                            self._removeRow(row))
-
-
-                self.layout().addWidget(self._clear, self._numRows, 0)
-                self.layout().addWidget(self._add, self._numRows, 1)
-                self._numRows += 1
+                self.addEntry(path, "")
 
             prevLoaded = False
 
@@ -181,4 +190,31 @@ class Extras(QtGui.QDialog):
         fontsDict = self._tabs.widget(2).getDataDict()
 
         return musicDict, portalsDict, fontsDict
+
+    def addSong(self, path, name):
+        """Adds song to music tab.
+
+        Arguments: path - path to the music file
+                   name - shorthand name given to song file
+
+        """
+        self._tabs.widget(0).addEntry(path, name)
+
+    def addPortal(self, path, name):
+        """Adds portal to portals tab.
+
+        Arguments: path - path to the state file
+                   name - shorthand name given to state file
+
+        """
+        self._tabs.widget(1).addEntry(path, name)
+
+    def addFont(self, path, name):
+        """Adds font to fonts tab.
+
+        Arguments: path - path to the font file
+                   name - shorthand name given to font file
+
+        """
+        self._tabs.widget(2).addEntry(path, name)
 

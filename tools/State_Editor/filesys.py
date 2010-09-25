@@ -62,6 +62,7 @@ def load(tilemap, objbar, tilebar, extras):
     tree.parse(filename)
     root = tree.getroot()
 
+    # Load Tiles
     tiles = root.find('tiles')
 
     animPath = tiles.find('animation').get('path')
@@ -100,6 +101,7 @@ def load(tilemap, objbar, tilebar, extras):
                 pos.setX(1)
                 pos.setY(pos.y() + size)
 
+    # Load Objects
     objects = root.find('objects')
     allObjs = objects.findall('object')
 
@@ -121,7 +123,33 @@ def load(tilemap, objbar, tilebar, extras):
                 pos = QtCore.QPointF(x * size + 1, y * size + 1)
                 tilemap.placeObject(pos, x, y)
 
+    # Load Extras
+    music = root.find('music')
+    songs = music.findall('song')
+    _loadExtras(songs, extras.addSong)
+
+    portals = root.find('portals')
+    ports = portals.findall('port')
+    _loadExtras(ports, extras.addPortal)
+
+    fonts = root.find('fonts')
+    fontList = fonts.findall('font')
+    _loadExtras(fonts, extras.addFont)
+
     # Undo any selections for tilemap
     tilemap.setSelectionObject(None)
+
+def _loadExtras(elemList, extraAddFunc):
+    """Calls extraAddFunc on data in elemList.
+
+    Arguments: elemList - list of elements (should be sub elements of an
+                          'extras' type like <music>, <portals>, or <fonts>)
+                          to load data from.
+               extraAddFunc - function to call on data from each element
+    """
+    for elem in elemList:
+        path = elem.get('path')
+        name = elem.get('name')
+        extraAddFunc(path, name)
 
 

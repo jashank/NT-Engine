@@ -40,12 +40,14 @@
   </objects>
 
   <music>
-    <song path="Kickle_Pack/Sound/stage_1.ogg"/>
-    <song path="Kickle_Pack/Sound/stage_2.ogg"/>
+    <song path="Kickle_Pack/Sound/stage_1.ogg" name=""/>
+    <song path="Kickle_Pack/Sound/stage_2.ogg" name=""/>
   </music>
 
   <portals>
     <port name="nextStage" path="Kickle_Pack/States/GardenLand_E.xml" />
   </portals>
+
+  <fonts/>
 
 </state>
