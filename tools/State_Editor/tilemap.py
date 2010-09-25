@@ -167,12 +167,10 @@ class TileMap(QtGui.QGraphicsScene):
                     pos = QtCore.QPointF(i * self._tileSize + 1,
                         j * self._tileSize + 1)
 
-                    point = self._coordToKey(i, j)
-
                     if self._objSelected:
-                        self._placeObject(pos, i, j, point)
+                        self.placeObject(pos, i, j)
                     elif self._tileSelected:
-                        self._placeTile(pos, i, j, point)
+                        self.placeTile(pos, i, j)
 
     def mousePressEvent(self, event):
         """Responds to right and left mouse presses.
@@ -216,12 +214,11 @@ class TileMap(QtGui.QGraphicsScene):
 
                 x = int(pos.x() / self._tileSize)
                 y = int(pos.y() / self._tileSize)
-                point = self._coordToKey(x, y)
 
                 if self._objSelected:
-                    self._placeObject(pos, x, y, point)
+                    self.placeObject(pos, x, y)
                 elif self._tileSelected:
-                    self._placeTile(pos, x, y, point)
+                    self.placeTile(pos, x, y)
 
         elif self._mousePressed == QtCore.Qt.RightButton:
             self._removePlacement(pos)
@@ -296,15 +293,12 @@ class TileMap(QtGui.QGraphicsScene):
         return (self._tileSize, self._mapWidth, self._mapHeight,
                 self._tileMapping, self._objMapping)
 
-    def _placeObject(self, pos, x, y, point):
+    def placeObject(self, pos, x, y):
         """Places object at grid coordinate (x,y).
 
         Arguments: pos -- Position relative to scene of area pressed
                    x -- x coordinate on grid
                    y -- y coordinate on grid
-                   point -- string representation of coordinates in form "x,y".
-                            Needed for storing in actual objects in dictionary.
-
         """
         images = self.items(pos)
 
@@ -312,6 +306,7 @@ class TileMap(QtGui.QGraphicsScene):
         if len(lines) > 0:
             return
 
+        point = self._coordToKey(x, y)
         # Don't allow multiples of the same object on a tile
         objs = self._objMapping.get(point)
         if objs != None:
@@ -336,22 +331,21 @@ class TileMap(QtGui.QGraphicsScene):
         self.addItem(objImg)
 
 
-    def _placeTile(self, pos, x, y, point):
+    def placeTile(self, pos, x, y):
         """Places tile at grid coordinate (x,y).
 
-        Arguments: pos -- Position of cursor relative to scene
+        Arguments: pos -- Position of cursor relative to scene (QPointF)
                    x -- x coordinate on grid
                    y -- y coordinate on grid
-                   point -- string representation of coordinates in form "x,y".
-                            Needed for storing in actual objects in dictionary.
 
         """
-        images = self.items(pos)
 
+        images = self.items(pos)
         lines = [l for l in images if l.zValue() == self._zValLine]
         if len(lines) > 0:
             return
 
+        point = self._coordToKey(x, y)
         if self._tileMapping.get(point) != self._selection:
             tile = [t for t in images if t.zValue() == self._zValTile]
             if len(tile) > 0:

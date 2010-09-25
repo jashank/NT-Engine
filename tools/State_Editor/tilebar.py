@@ -76,11 +76,18 @@ class TileBar(bar.Bar):
         """Initializes members to starting values."""
         bar.Bar.__init__(self, parent)
 
+        # Dictionary containing (id, tile) pairs.
+        self._tileIds = dict()
+
         # Path to animation file containing tiles
         self._tilesPath = ""
 
         # Signal to emit when tile is selected
         self._selectSignal = 'selectedTile'
+
+    def getTile(self, tileId):
+        """Retrieve a tile by its id."""
+        return self._tileIds.get(tileId)
 
     def loadTiles(self, pathname):
         """Loads tiles from NT tile animation file.
@@ -94,6 +101,7 @@ class TileBar(bar.Bar):
         """
         bar.Bar.clear(self)
         self.clear()
+        self._tileIds.clear()
 
         self._tilesPath = pathname
 
@@ -118,7 +126,9 @@ class TileBar(bar.Bar):
             for strip in strips:
                 tile = Tile()
                 tile.setAnimPath(self._tilesPath)
-                tile.setId(strip.get('id'))
+                tileId = int(strip.get('id'))
+                tile.setId(tileId)
+                self._tileIds[tileId] = tile
 
                 bar.clipFromSheet(sheetImg, strip, tile)
 

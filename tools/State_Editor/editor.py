@@ -108,6 +108,10 @@ class MainWindow(QtGui.QMainWindow):
         QtCore.QObject.connect(self._saveAction, QtCore.SIGNAL('triggered()'),
             lambda tm=self._tileMap, ex=self._extras: filesys.save(tm, ex))
 
+        QtCore.QObject.connect(self._loadAction, QtCore.SIGNAL('triggered()'),
+            lambda tm=self._tileMap, ob=self._objBar, tb=self._tileBar,
+                   ex=self._extras: filesys.load(tm, ob, tb, ex))
+
     def _layoutComponents(self):
         """Layout components onto a grid."""
         self._layout = QtGui.QGridLayout()

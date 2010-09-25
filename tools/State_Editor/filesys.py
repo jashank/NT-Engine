@@ -2,8 +2,9 @@
 
 
 from xml.etree.ElementTree import ElementTree
-from PyQt4 import QtGui
+from PyQt4 import QtCore, QtGui
 from extras import Extras
+from fileop import subInPath
 from tilemap import TileMap
 import xmlout
 
@@ -47,4 +48,80 @@ def save(tilemap, extras):
         fontElem)
 
     xmlout.createStateFile(stateElem, filename)
+
+def load(tilemap, objbar, tilebar, extras):
+    filename = QtGui.QFileDialog.getOpenFileName(None, 'Select state file', "",
+        "*.xml")
+    if not filename:
+        return
+
+    # Convert to normal string for python
+    filename = str(filename)
+
+    tree = ElementTree()
+    tree.parse(filename)
+    root = tree.getroot()
+
+    tiles = root.find('tiles')
+
+    animPath = tiles.find('animation').get('path')
+    if animPath != "":
+        animPath = subInPath(filename, animPath)
+        tilebar.loadTiles(animPath)
+
+    layout = tiles.find('layout')
+
+    size = int(tiles.find('size').get('px'))
+    mapWidth = int(layout.get('width'))
+    mapHeight = int(layout.get('height'))
+    tilemap.setDims(size, mapWidth, mapHeight)
+
+    if layout.text:
+        # strip because there is whitespace on the ends
+        tileIds = str(layout.text).strip().split(' ')
+
+        # Go from (1,1) to avoid grid lines
+        pos = QtCore.QPointF(1,1)
+
+        pointX = 0
+        pointY = 0
+        for tid in tileIds:
+            tid = int(tid)
+            if tid != -1:
+                tile = tilebar.getTile(tid)
+                tilemap.setSelectionTile(tile)
+                tilemap.placeTile(pos, pointX, pointY)
+
+            pointX = pointX + 1
+            pos.setX(pos.x() + size)
+            if pointX >= mapWidth:
+                pointX = 0
+                pointY = pointY + 1
+                pos.setX(1)
+                pos.setY(pos.y() + size)
+
+    objects = root.find('objects')
+    allObjs = objects.findall('object')
+
+    for obj in allObjs:
+        path = obj.get('path')
+        absPath = subInPath(filename, path)
+        objbar.loadObject(absPath)
+
+        instances = obj.findall('inst')
+        for inst in instances:
+            strip = int(inst.get('strip'))
+            x = int(inst.get('x'))
+            y = int(inst.get('y'))
+
+            obj = objbar.getObject(absPath, strip)
+            if obj:
+                tilemap.setSelectionObject(obj)
+                # Add 1 to avoid grid lines
+                pos = QtCore.QPointF(x * size + 1, y * size + 1)
+                tilemap.placeObject(pos, x, y)
+
+    # Undo any selections for tilemap
+    tilemap.setSelectionObject(None)
+
 

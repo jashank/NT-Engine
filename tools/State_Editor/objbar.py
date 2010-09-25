@@ -1,6 +1,7 @@
 #! /usr/bin/env python
 
 
+from collections import defaultdict
 from xml.etree.ElementTree import ElementTree
 from PyQt4 import QtCore, QtGui
 import bar
@@ -78,8 +79,9 @@ class ObjectBar(bar.Bar):
         # Signal to emit when object is selected
         self._selectSignal = 'selectedObject'
 
-        # List of paths of objects loaded in
-        self._paths = []
+        # Dictionary of objects via (path, list of Objects) pairs
+        # Note that in the editor different strips are different Objects
+        self._objDict = defaultdict(list)
 
     def clear(self):
         """Overrides clear function to set all pos values back to starting."""
@@ -88,26 +90,35 @@ class ObjectBar(bar.Bar):
         self._posY = 0
         self._column = 0
         self._greatestHeight = 0
-        del self._paths[:]
+        self._objDict.clear()
+
+    def getObject(self, path, animNum):
+        """Returns object given path it loaded from and anim number.
+
+           Returns None if none found.
+        """
+        objs = self._objDict.get(path)
+        if objs:
+            for obj in objs:
+                if obj.getAnimNum() == animNum:
+                    return obj
+
+        return None
 
     def loadObjects(self, filepaths):
         """Loads Objects from a QStringList of paths to object files."""
         for path in filepaths:
-            for loadedPath in self._paths:
-                if loadedPath == path:
-                    break
-            else:
+            if path not in self._objDict:
                 self.loadObject(path)
 
     def loadObject(self, filepath):
-        self._paths.append(filepath)
-
         objTree = ElementTree()
         objTree.parse(filepath)
         objRoot = objTree.getroot()
 
         animElem = objRoot.find('animation')
-        if animElem != None:
+        relAnimPath = animElem.get('path')
+        if relAnimPath != "":
             relAnimPath = animElem.get('path')
 
             # String cast for QString
@@ -132,9 +143,10 @@ class ObjectBar(bar.Bar):
 
                 for strip in strips:
                     obj = Object()
+                    self._objDict[filepath].append(obj)
                     obj.setPath(filepath)
                     obj.setAnimNum(animNum)
-                    obj.setToolTip("Anim Num: " + str(animNum))
+                    obj.setToolTip("Strip Number: " + str(animNum))
 
                     bar.clipFromSheet(sheetImg, strip, obj)
 

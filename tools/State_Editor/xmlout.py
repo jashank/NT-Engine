@@ -40,7 +40,7 @@ def createTiles(size, path, mapWidth, mapHeight, tileMapping):
             if not tile:
                 layoutText.append('-1')
             else:
-                layoutText.append(tile.getId())
+                layoutText.append(str(tile.getId()))
                 hasTiles = True
 
     # Don't bother outputting a layout unless there is at least one tile
