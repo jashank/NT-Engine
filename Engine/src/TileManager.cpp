@@ -1,6 +1,6 @@
 #include "TileManager.h"
 
-#include <cstdio>
+#include <cstring>
 #include <sstream>
 #include <utility>
 
@@ -45,34 +45,23 @@ Public Methods
 ***************************************/
 bool TileManager::LoadData( const TiXmlElement *dataRoot ) {
   const TiXmlElement *tileSize = dataRoot->FirstChildElement( "size" );
-  if ( !tileSize->Attribute( "px", &m_tileDim )) {
-    LogErr( "Tile size not specified in state file." );
-    return false;
-  }
+  tileSize->Attribute( "px", &m_tileDim );
 
   const TiXmlElement *anims = dataRoot->FirstChildElement( "animation" );
-  if ( anims ) {
-    const char *path = anims->Attribute( "path" );
-    if ( path ) {
-      if ( !LoadTileAnims( path )) {
-        LogErr( "Problem loading tile information from animation file." );
-        return false;
-      }
-    } else {
-      LogErr( "No path specified in <animation> tag for tiles in state file." );
+  const char *path = anims->Attribute( "path" );
+  // Path may be empty, inferring that there are no tile animations
+  if ( strcmp( path, "" ) != 0 ) {
+    if ( !LoadTileAnims( path )) {
+      LogErr( "Problem loading tile information from animation file." );
+      return false;
     }
   }
 
   const TiXmlElement *layout = dataRoot->FirstChildElement( "layout" );
-  if ( layout ) {
-    if ( !LoadTileLayout( layout )) {
-      LogErr( "Problem loading tile layout in state file." );
-      return false;
-    }
-  } else {
-    LogErr( "No <layout> tag for tiles in state file." );
+  if ( !LoadTileLayout( layout )) {
+    LogErr( "Problem loading tile layout in state file." );
     return false;
-  }
+  } 
 
   return true;
 }
@@ -243,8 +232,6 @@ int TileManager::LuaSetTile( lua_State *L ) {
 Private Methods
 ************************************/
 bool TileManager::LoadTileAnims( const std::string &animPath ) {
-  // Robust error handling not needed as much in this func b/c
-  // already done when loading animation file
   static App *app = App::GetApp();
   AnimData *tileAnims = app->LoadAnim( animPath );
 
@@ -262,28 +249,16 @@ bool TileManager::LoadTileAnims( const std::string &animPath ) {
     doc.LoadFile();
     TiXmlHandle handleDoc( &doc );
 
-    TiXmlElement *sheet = handleDoc.FirstChildElement( "sheet" ).Element();
+    TiXmlElement *root = handleDoc.FirstChildElement( "animations" ).Element();
+    TiXmlElement *sheet = root->FirstChildElement( "sheet" );
     if ( sheet ) {
       TiXmlElement *elem = sheet->FirstChildElement();
       if ( elem ) {
         do {
-          if ( strcmp( elem->Value(), "common" ) == 0 ) {
-            TiXmlElement *strip = elem->FirstChildElement( "strip" );
-            if ( strip ) {
-              do {
-                if ( !LoadTileInfo( strip )) {
-                  LogErr( "Couldn't retrieve tile information from tile"
-                      "animation file: " + animPath );
-                  return false;
-                }
-              } while ( (strip = strip->NextSiblingElement( "strip" )) );
-            }
-          } else if ( strcmp( elem->Value(), "strip" ) == 0 ) {
-            if ( !LoadTileInfo( elem )) {
-              LogErr( "Couldn't retrive tile information from tile"
-                  "animation file: " + animPath );
-              return false;
-            }
+          if ( !LoadTileInfo( elem )) {
+            LogErr( "Couldn't retrieve tile information from tile animation"
+                    "file: " + animPath );
+            return false;
           }
         } while ( (elem = elem->NextSiblingElement()) );
       }
@@ -296,11 +271,8 @@ bool TileManager::LoadTileAnims( const std::string &animPath ) {
 
 
 bool TileManager::LoadTileLayout( const TiXmlElement *layout ) {
-  if ( !layout->Attribute( "width", &m_width ) ||
-       !layout->Attribute( "height", &m_height )) {
-    LogErr( "Didn't specify width and height for tile layout." );
-    return false;
-  }
+  layout->Attribute( "width", &m_width );
+  layout->Attribute( "height", &m_height );
 
   m_layout.resize( m_width );
   for ( int i = 0; i < m_width; ++i ) {
@@ -310,6 +282,7 @@ bool TileManager::LoadTileLayout( const TiXmlElement *layout ) {
   m_numTiles = m_width * m_height;
 
   const char *layoutText = layout->GetText();
+  // Grids with no tiles mapped will just be empty
   if ( layoutText ) {
     int column = 0;
     int row = 0;

@@ -1,86 +1,62 @@
-<?xml version="1.0"?>
-
+<?xml version="1.0" ?>
 <state>
-
   <tiles>
-    <size px="48" />
-    <animation path="Kickle_Pack/Animations/TileAnims_48x48.xml" />
-    <layout width="15" height="15">
-      12 12 12 12 12 12 12 12 12 12 12 12 12 12 12
-      12 12 12 12 12 12 12  4 12 12 12 12 12 12 12
-      12 12 12 12 12  6  7  7  7  8 12 12 12 12 12
-      12 12 12 12 12 16 17 17 17 18 12 12 12 12 12
-      12 12 12 12 12  7 12  7 12  7 12 12 12 12 12
-      12 12  7 12 12 17 12 17 12 17 12 12  7 12 12
-      12  7 17  7 12  3  4  4  4  5 12  7 17  7 12
-       4 17 14 17  3  1  1  1  1  1  5 17 14 17  4 
-       7 14 12  3  1  1  1  1  1  1  1  5 12 14  7 
-      17  7  4  1  1  1  1  1  1  1  1  1  4  7 17
-      14 17  6  1  1  1  1  1  1  1  1  1  8 17 14
-      12 14 16  6  1  1  1  1  1  1  1  8 18 14 12
-      12 12 13 16  6  1  1  1  1  1  8 18 15 12 12
-      12 12 12 13 16  6  7  7  7  8 18 15 12 12 12
-      12 12 12 12 13 16 17 17 17 18 15 12 12 12 12	
+    <size px="48"/>
+    <animation path="Kickle_Pack/Animations/TileAnims_48x48.xml"/>
+    <layout height="15" width="15">
+      12 12 12 12 12 12 12 12 12 12 12 12 12 12 12 12 12 12 12 12 12 12 4 12 12 12 12 12 12 12 12 12 12 12 12 6 7 7 7 8 12 12 12 12 12 12 12 12 12 12 16 17 17 17 18 12 12 12 12 12 12 12 12 12 12 7 12 7 12 7 12 12 12 12 12 12 12 7 12 12 17 12 17 12 17 12 12 7 12 12 12 7 17 7 12 3 4 4 4 5 12 7 17 7 12 4 17 14 17 3 1 1 1 1 1 5 17 14 17 4 7 14 12 3 1 1 1 1 1 1 1 5 12 14 7 17 7 4 1 1 1 1 1 1 1 1 1 4 7 17 14 17 6 1 1 1 1 1 1 1 1 1 8 17 14 12 14 16 6 1 1 1 1 1 1 1 8 18 14 12 12 12 13 16 6 1 1 1 1 1 8 18 15 12 12 12 12 12 13 16 6 7 7 7 8 18 15 12 12 12 12 12 12 12 13 16 17 17 17 18 15 12 12 12 12
     </layout>
   </tiles>
-  
   <objects>
+    <object path="Kickle_Pack/Objects/DreamBag.xml">
+      <inst strip="0" x="9" y="2"/>
+      <inst strip="0" x="5" y="2"/>
+      <inst strip="0" x="7" y="7"/>
+    </object>
     <object path="Kickle_Pack/Objects/StageManager.xml">
-      <inst x="0" y="0" />
-    </object>
-		<object path="Kickle_Pack/Objects/Slime.xml">
-	    <inst x="4" y="9" />
-			<inst x="10" y="9" />
-		</object>
-		<object path="Kickle_Pack/Objects/DreamBag.xml">
-			<inst x="5" y="2" />
-			<inst x="9" y="2" />
-			<inst x="7" y="7" />
-		</object>
-		<object path="Kickle_Pack/Objects/Kickle.xml">
-			<inst x="7" y="11" />
-		</object>
-		<object path="Kickle_Pack/Objects/SpawnPoint.xml">
-			<inst x="2" y="9" />
-			<inst x="12" y="9" />
-    </object>
-    <object path="Kickle_Pack/Objects/Rock.xml">
-      <inst x="2" y="5" />
-      <inst x="12" y="5" />
-      <inst x="1" y="6" />
-      <inst x="13" y="6" />
-      <inst x="3" y="6" />
-      <inst x="11" y="6" />
-      <inst x="0" y="7" />
-      <inst x="14" y="7" />
-      <inst x="0" y="8" />
-      <inst x="14" y="8" />
-      <inst x="1" y="9" />
-      <inst x="13" y="9" />
-      <inst x="2" y="10" />
-      <inst x="12" y="10" />
+      <inst strip="0" x="0" y="0"/>
     </object>
     <object path="Kickle_Pack/Objects/Popsicle.xml">
-      <inst x="5" y="4" />
-      <inst x="9" y="4" />
+      <inst strip="0" x="9" y="4"/>
+      <inst strip="0" x="5" y="4"/>
+    </object>
+    <object path="Kickle_Pack/Objects/Kickle.xml">
+      <inst strip="0" x="7" y="11"/>
+    </object>
+    <object path="Kickle_Pack/Objects/SpawnPoint.xml">
+      <inst strip="0" x="12" y="9"/>
+      <inst strip="0" x="2" y="9"/>
     </object>
     <object path="Kickle_Pack/Objects/Penguin.xml">
-      <inst x="7" y="2" />
+      <inst strip="0" x="7" y="2"/>
+    </object>
+    <object path="Kickle_Pack/Objects/Rock.xml">
+      <inst strip="0" x="0" y="7"/>
+      <inst strip="0" x="1" y="6"/>
+      <inst strip="0" x="0" y="8"/>
+      <inst strip="0" x="13" y="6"/>
+      <inst strip="0" x="2" y="5"/>
+      <inst strip="0" x="13" y="9"/>
+      <inst strip="0" x="12" y="5"/>
+      <inst strip="0" x="2" y="10"/>
+      <inst strip="0" x="1" y="9"/>
+      <inst strip="0" x="11" y="6"/>
+      <inst strip="0" x="12" y="10"/>
+      <inst strip="0" x="14" y="8"/>
+      <inst strip="0" x="14" y="7"/>
+      <inst strip="0" x="3" y="6"/>
+    </object>
+    <object path="Kickle_Pack/Objects/Slime.xml">
+      <inst strip="0" x="10" y="9"/>
+      <inst strip="0" x="4" y="9"/>
     </object>
   </objects>
-  
-  <sound>
-    <music>
-      <song path="Kickle_Pack/Sound/stage_1.ogg"/>
-      <song path="Kickle_Pack/Sound/stage_2.ogg"/>
-    </music>
-    <sound_effects>
-      <!-- TODO -->
-    </sound_effects>
-  </sound>
-
+  <music>
+    <song name="" path="Kickle_Pack/Sound/stage_2.ogg"/>
+    <song name="" path="Kickle_Pack/Sound/stage_1.ogg"/>
+  </music>
   <portals>
-    <port name="nextStage" path="Kickle_Pack/States/GardenLand_C.xml" />
+    <port name="nextStage" path="Kickle_Pack/States/GardenLand_C.xml"/>
   </portals>
-
- </state>
+  <fonts/>
+</state>

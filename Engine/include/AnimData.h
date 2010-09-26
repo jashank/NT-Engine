@@ -118,22 +118,13 @@ private:
   //@}
 
   /**
-   * Used with ParseStrip method, indicating whether strip passed is a
-   * child of a <common> tag. 
-   */
-  enum CommonTag { ON, OFF };
-
-  /**
-   * Parses strip passed, adding animation to m_anims. If flag is ON, assumes
-   * that strip has parent <common>.
+   * Parses strip passed, adding animation to m_anims.
    * @param strip XML strip element to be parsed.
    * @param sheet image sheet that animation is located on.
-   * @param flag whether strip is child of <common> in animation file.
    * @return Whether strip was successfully parsed.
    */
-  bool ParseStrip( const TiXmlElement *strip, sf::Image *sheet, CommonTag flag );
+  bool ParseStrip( const TiXmlElement *strip, sf::Image *sheet );
 
-  Animation m_common; /** Data from last <common> tag loaded in. */
   std::vector<Animation> m_anims; /** Stores all animations. */
 };
 

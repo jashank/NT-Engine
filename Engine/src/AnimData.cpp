@@ -18,37 +18,17 @@ bool AnimData::LoadFromFile( const std::string &filepath ) {
     static App *app = App::GetApp();
     TiXmlHandle handleDoc( &doc );
 
-    TiXmlElement *sheet = handleDoc.FirstChildElement( "sheet" ).Element();
+    TiXmlElement *root = handleDoc.FirstChildElement( "animations" ).Element();
+    TiXmlElement *sheet = root->FirstChildElement( "sheet" );
     do {
       sf::Image *loadedSheet = app->LoadImage( sheet->Attribute( "path" ));
       if ( loadedSheet ) {
+        // A strip
         TiXmlElement *elem = sheet->FirstChildElement();
         if ( elem ) {
           do {
-            if ( strcmp( elem->Value(), "common" ) == 0 ) {
-              elem->QueryIntAttribute( "x", &m_common.frameRect.topLeft.x );
-              elem->QueryIntAttribute( "y", &m_common.frameRect.topLeft.y );
-              elem->QueryIntAttribute( "width", &m_common.frameRect.bottomRight.x );
-              elem->QueryIntAttribute( "height", &m_common.frameRect.bottomRight.y );
-
-              elem->QueryIntAttribute( "num_frames", &m_common.numFrames );
-              const char *looped = elem->Attribute( "looped" );
-              if ( looped ) {
-                m_common.isLooped = ( strcmp( looped, "true" ) == 0 );
-              }
-
-              TiXmlElement *strip = elem->FirstChildElement( "strip" );
-              if ( strip ) {
-                do {
-                  if ( !ParseStrip( strip, loadedSheet, ON )) {
-                    return false;
-                  }
-                } while ( (strip = strip->NextSiblingElement( "strip" )));
-              }
-            } else if ( strcmp( elem->Value(), "strip") == 0 ) {
-              if ( !ParseStrip( elem, loadedSheet, OFF )) {
-                return false;
-              }
+            if ( !ParseStrip( elem, loadedSheet )) {
+              return false;
             }
           } while ( (elem = elem->NextSiblingElement()) );
         }
@@ -170,15 +150,9 @@ AnimData::Animation::Animation()
   isLooped( false ),
   numFrames( 1 ) {}
 
-bool AnimData::ParseStrip(
-  const TiXmlElement *strip,
-  sf::Image *sheet,
-  CommonTag flag
-) {
+bool AnimData::ParseStrip( const TiXmlElement *strip, sf::Image *sheet ) {
   Animation anim;
-  if ( flag == ON ) {
-    anim = m_common;
-  }
+
   anim.image = sheet;
 
   const char *name = strip->Attribute( "name" );

@@ -1,4 +1,4 @@
-#include "SoundManager.h"
+#include "MusicManager.h"
 
 #include "App.h"
 #include "tinyxml.h"
@@ -7,7 +7,7 @@
 /********************************
 Constructor and Destructor
 ********************************/
-SoundManager::SoundManager()
+MusicManager::MusicManager()
  : m_playlistIndex( 0 ),
    m_currentMusic( NULL ),
    m_loop( false ) {}
@@ -15,60 +15,51 @@ SoundManager::SoundManager()
 /***********************************
 Public Methods
 ***********************************/
-bool SoundManager::LoadData( const TiXmlElement *dataRoot ) {
-  // Music is optional
-  const TiXmlElement *playlist =
-    dataRoot->FirstChildElement( "music" );
-  if ( playlist ) {
-    const TiXmlElement *song = playlist->FirstChildElement( "song" );
-    if ( song ) {
-      do {
-        const char *path = song->Attribute( "path" );
-        if ( path ) {
-          if ( !AddMusic( path )) {
-            return false;
-          }
-        } else {
-          LogErr( "No path specified for song." );
+bool MusicManager::LoadData( const TiXmlElement *dataRoot ) {
+  const TiXmlElement *song = dataRoot->FirstChildElement( "song" );
+  if ( song ) {
+    do {
+      const char *path = song->Attribute( "path" );
+      if ( path ) {
+        if ( !AddMusic( path )) {
           return false;
         }
-      } while ( (song = song->NextSiblingElement( "song" )) );
-    } else {
-      LogErr( "<music> tag not necessary when no songs specified." );
-      return false;
-    }
+      } else {
+        LogErr( "No path specified for song." );
+        return false;
+      }
+    } while ( (song = song->NextSiblingElement( "song" )) );
   }
-  // SOUND EFFECTS
   return true;
 }
 
 
-void SoundManager::Play() {
+void MusicManager::Play() {
   if ( m_currentMusic ) {
     m_currentMusic->Play();
   }
 }
 
 
-void SoundManager::Pause() {
+void MusicManager::Pause() {
   if ( m_currentMusic ) {
     m_currentMusic->Pause();
   }
 }
 
 
-void SoundManager::SetLoop( bool loop ) {
+void MusicManager::SetLoop( bool loop ) {
   m_loop = loop;
 }
 
 
-bool SoundManager::IsPlaying() const {
+bool MusicManager::IsPlaying() const {
   return m_currentMusic &&
     ( m_currentMusic->GetStatus() == sf::Sound::Playing );
 }
 
 
-void SoundManager::Update() {
+void MusicManager::Update() {
   if( !IsPlaying() ) {
     PlayNextSong();
   }
@@ -77,7 +68,7 @@ void SoundManager::Update() {
 /******************************
 Private Methods
 ******************************/
-bool SoundManager::AddMusic( const std::string &filePath ) {
+bool MusicManager::AddMusic( const std::string &filePath ) {
   sf::Music *music = App::GetApp()->LoadMusic( filePath );
   if ( music ) {
     m_playlist.push_back( music );
@@ -89,7 +80,7 @@ bool SoundManager::AddMusic( const std::string &filePath ) {
 }
 
 
-void SoundManager::PlayNextSong() {
+void MusicManager::PlayNextSong() {
   if ( (unsigned int) m_playlistIndex < m_playlist.size() || m_loop ) {
     m_playlistIndex = m_playlistIndex % m_playlist.size();
     if ( IsPlaying() ) {

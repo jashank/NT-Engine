@@ -1,6 +1,7 @@
 #include "Object.h"
 
 #include <cmath>
+#include <cstring>
 
 #include <boost/bind/bind.hpp>
 extern "C" {
@@ -649,7 +650,7 @@ bool Object::LoadCollisionData( const std::string &filepath ) {
 
 
 bool Object::LoadObjectData( const std::string &filepath ) {
-  TiXmlDocument doc ( filepath.c_str() );
+  TiXmlDocument doc( filepath.c_str() );
 
   if ( !doc.LoadFile() ) {
     LogErr( "Unable to load Object file: " + filepath );
@@ -662,14 +663,9 @@ bool Object::LoadObjectData( const std::string &filepath ) {
   TiXmlElement *root = handleDoc.FirstChildElement( "object" ).Element();
 
   TiXmlElement *animation = root->FirstChildElement( "animation" );
-  if( animation ) {
-    const char *animPath = animation->Attribute( "path" );
-    if ( animPath ) {
-      LoadAnimData( animPath );
-    } else {
-      LogErr( "No animation path specified in Object: " + filepath );
-      return false;
-    }
+  const char *animPath = animation->Attribute( "path" );
+  if ( strcmp( animPath, "" ) != 0 ) {
+    LoadAnimData( animPath );
   }
 
   TiXmlElement *script = root->FirstChildElement( "script" );

@@ -1,31 +1,35 @@
 <?xml version="1.0"?>
 
-<sheet path="Kickle_Pack/Sheets/iceBreath_48x48.png" >
+<animations>
 
-  <strip name="up">
-    <clip x="0" y="0" width="48" height="48" />
-    <flow num_frames="2" looped="true" />
-    <frame_times> 0.1 </frame_times>
-  </strip>
+  <sheet path="Kickle_Pack/Sheets/iceBreath_48x48.png" >
 
-
-  <strip name="down">
-    <clip x="0" y="48" width="48" height="48" />
-    <flow num_frames="2" looped="true" />
-    <frame_times> 0.1 </frame_times>
-  </strip>
+    <strip name="up">
+      <clip x="0" y="0" width="48" height="48" />
+      <flow num_frames="2" looped="true" />
+      <frame_times> 0.1 </frame_times>
+    </strip>
 
 
-  <strip name="left">
-    <clip x="0" y="96" width="48" height="48" />
-    <flow num_frames="2" looped="true" />
-    <frame_times> 0.1 </frame_times>
-  </strip>>
+    <strip name="down">
+      <clip x="0" y="48" width="48" height="48" />
+      <flow num_frames="2" looped="true" />
+      <frame_times> 0.1 </frame_times>
+    </strip>
 
 
-  <strip name="right">
-    <clip x="0" y="144" width="48" height="48" />
-    <flow num_frames="2" looped="true" />
-    <frame_times> 0.1 </frame_times>
-  </strip>
-</sheet>
+    <strip name="left">
+      <clip x="0" y="96" width="48" height="48" />
+      <flow num_frames="2" looped="true" />
+      <frame_times> 0.1 </frame_times>
+    </strip>>
+
+
+    <strip name="right">
+      <clip x="0" y="144" width="48" height="48" />
+      <flow num_frames="2" looped="true" />
+      <frame_times> 0.1 </frame_times>
+    </strip>
+
+  </sheet>
+</animations>

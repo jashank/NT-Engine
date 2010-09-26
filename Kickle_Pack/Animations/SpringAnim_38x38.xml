@@ -1,26 +1,32 @@
 <?xml version="1."?>
-<sheet path="Kickle_Pack/Sheets/spring_38x38.png">
-  <common x="0" width="39" height="39" num_frames="8" looped="false" >
 
-    <strip name="top" >
-      <clip  y="0" />
-      <frame_times> 0.05 0.05 0.05 0.2 0.05 0.05 0.05 0.05 </frame_times>
-    </strip>
+<animations>
 
-    <strip name="bottom" >
-      <clip  y="39" />
-      <frame_times> 0.05 0.05 0.05 0.2 0.05 0.05 0.05 0.05 </frame_times>
-    </strip>
+  <sheet path="Kickle_Pack/Sheets/spring_38x38.png">
 
-    <strip name="left" >
-      <clip  y="78" />
-      <frame_times> 0.05 0.05 0.05 0.2 0.05 0.05 0.05 0.05 </frame_times>
-    </strip>
+      <strip name="top" >
+        <clip x="0" y="0" width="39" height="39" />
+        <flow num_frames="8" looped="false" />
+        <frame_times> 0.05 0.05 0.05 0.2 0.05 0.05 0.05 0.05 </frame_times>
+      </strip>
 
-    <strip name="right" >
-      <clip  y="117" />
-      <frame_times> 0.05 0.05 0.05 0.2 0.05 0.05 0.05 0.05 </frame_times>
-    </strip>
+      <strip name="bottom" >
+        <clip x="0" y="39" width="39" height="39" />
+        <flow num_frames="8" looped="false" />
+        <frame_times> 0.05 0.05 0.05 0.2 0.05 0.05 0.05 0.05 </frame_times>
+      </strip>
 
-  </common>
-</sheet>
+      <strip name="left" >
+        <clip x="0" y="78" width="39" height="39" />
+        <flow num_frames="8" looped="false" />
+        <frame_times> 0.05 0.05 0.05 0.2 0.05 0.05 0.05 0.05 </frame_times>
+      </strip>
+
+      <strip name="right" >
+        <clip x="0" y="117" width="39" height="39" />
+        <flow num_frames="8" looped="false" />
+        <frame_times> 0.05 0.05 0.05 0.2 0.05 0.05 0.05 0.05 </frame_times>
+      </strip>
+
+  </sheet>
+</animations>
