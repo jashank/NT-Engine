@@ -9,7 +9,7 @@ from tilemap import TileMap
 import xmlout
 
 
-def save(workingPack, tilemap, extras):
+def save(workingPack, tilemap, extras, filename):
     """Saves data of state currently defined in editor.
 
     Will first check to see if this is just overwriting an existing file that
@@ -20,16 +20,11 @@ def save(workingPack, tilemap, extras):
     Arguments: workingPack -- path to pack to save to
                tilemap -- tile map to get data from
                extras -- extras dialog to get data from
+               filename -- path to file to save to
+
+    Returns: Path to file that was saved to.
 
     """
-    # If existing file
-        # save over and return
-    filename = QtGui.QFileDialog.getSaveFileName(None, 'Save State File',
-        workingPack, '*.xml')
-    if not filename:
-        return
-    filename = str(filename)
-
     size, mapWidth, mapHeight, tiles, objects = tilemap.currentState()
     tilesPath = ''
 
@@ -51,22 +46,41 @@ def save(workingPack, tilemap, extras):
         fontElem)
 
     xmlout.createStateFile(stateElem, filename)
+    return filename
 
-def load(workingPack, tilemap, objbar, tilebar, extras):
+def saveAs(workingPack, tilemap, extras):
+    """Calls save, but first opening a file dialog to prompt user
+
+    If user cancels during dialog, returns None.
+
+    """
+    filename = QtGui.QFileDialog.getSaveFileName(None, 'Save State File',
+        workingPack, '*.xml')
+    if not filename:
+        return None
+    filename = str(filename)
+
+    saveFile = save(workingPack, tilemap, extras, filename)
+    return saveFile
+
+def load(workingPack, tilemap, dimsButton, objbar, tilebar, extras):
     """Loads NT state file into editor.
 
     Arguments: workingPack -- Pack currently being worked on, which is where
                               state should be loaded from
                tilemap -- editor's tilemap
+               dimsButton -- button to set dimensions for tile map
                objbar -- editor's object bar
                tilebar -- editor's tile bar
                extras -- editor's extras section
+
+    Returns: Path of file loaded. None if user cancels.
 
     """
     filename = QtGui.QFileDialog.getOpenFileName(None, 'Select state file',
         workingPack, "*.xml")
     if not filename:
-        return
+        return None
     filename = str(filename)
 
     tree = ElementTree()
@@ -91,7 +105,7 @@ def load(workingPack, tilemap, objbar, tilebar, extras):
     size = int(tiles.find('size').get('px'))
     mapWidth = int(layout.get('width'))
     mapHeight = int(layout.get('height'))
-    tilemap.setDims(size, mapWidth, mapHeight)
+    dimsButton.setDims(size, mapWidth, mapHeight)
 
     if layout.text:
         # strip because there is whitespace on the ends
@@ -154,6 +168,8 @@ def load(workingPack, tilemap, objbar, tilebar, extras):
 
     # Undo any selections for tilemap
     tilemap.setSelectionObject(None)
+
+    return filename
 
 def _loadExtras(filename, elemList, extraAddFunc):
     """Calls extraAddFunc on data in elemList.

@@ -86,6 +86,11 @@ class TileBar(bar.Bar):
         # Signal to emit when tile is selected
         self._selectSignal = 'selectedTile'
 
+    def clear(self):
+        """Clears contents of tile bar."""
+        bar.Bar.clear(self)
+        self._tileIds.clear()
+
     def getTile(self, tileId):
         """Retrieve a tile by its id."""
         return self._tileIds.get(tileId)
@@ -100,9 +105,7 @@ class TileBar(bar.Bar):
         Arguments: pathname -- name of path to tile animation file.
 
         """
-        bar.Bar.clear(self)
         self.clear()
-        self._tileIds.clear()
 
         self._tilesPath = pathname
 

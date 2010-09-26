@@ -33,6 +33,13 @@ class MapDimsForm(QtGui.QDialog):
         layout.addRow(ok)
         self.setLayout(layout)
 
+    def setDims(self, tileSize, mapWidth, mapHeight):
+        """Used for non-GUI modification of tile map dimensions."""
+        self._tileSize.setText(str(tileSize))
+        self._mapWidth.setText(str(mapWidth))
+        self._mapHeight.setText(str(mapHeight))
+        self._okPress()
+
     def _okPress(self):
         """Emits 'gotDims', size, width, height when OK is pressed.
 
@@ -66,6 +73,10 @@ class SetMapDimsButton(QtGui.QPushButton):
 
         self._form = MapDimsForm()
         self._form.connect(self._form, QtCore.SIGNAL('gotDims'), self._emitDims)
+
+    def setDims(self, tileSize, mapWidth, mapHeight):
+        """Used for non-GUI modification of tile map dimensions."""
+        self._form.setDims(tileSize, mapWidth, mapHeight)
 
     def _openMapDimsForm(self):
         """Opens the map dimensions forms.
@@ -226,15 +237,17 @@ class TileMap(QtGui.QGraphicsScene):
     def setDims(self, tileSize, mapWidth, mapHeight):
         """Sets up grid given dimensions passed.
 
+        This function should only be called when the appropriate signal is
+        received from the Set Map Dimensions button. Dimensions are checked to
+        make sure they are okay. If items exists in locations that no longer
+        exist then they are removed.
+
         Arguments: tileSize -- size of a tile (i.e. if 48, then tile is 48x48).
                    mapWidth -- width of map in tiles.
                    mapHeight -- height of map in tiles.
 
-        Dimensions are checked to make sure they are okay. If items exists in
-        locations that no longer exist then they are removed.
-
         """
-        if (tileSize > 0 and mapWidth >= 0 and mapHeight >= 0 and
+        if (tileSize >= 0 and mapWidth >= 0 and mapHeight >= 0 and
            (tileSize != self._tileSize or mapWidth != self._mapWidth or
             mapHeight != self._mapHeight)):
 

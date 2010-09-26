@@ -17,8 +17,8 @@
       <inst strip="0" x="0" y="0"/>
     </object>
     <object path="Kickle_Pack/Objects/Popsicle.xml">
-      <inst strip="0" x="7" y="6"/>
       <inst strip="0" x="7" y="5"/>
+      <inst strip="0" x="7" y="6"/>
       <inst strip="0" x="8" y="5"/>
       <inst strip="0" x="6" y="5"/>
     </object>

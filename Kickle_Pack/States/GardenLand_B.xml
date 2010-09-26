@@ -47,8 +47,8 @@
       <inst strip="0" x="3" y="6"/>
     </object>
     <object path="Kickle_Pack/Objects/Slime.xml">
-      <inst strip="0" x="4" y="9"/>
       <inst strip="0" x="10" y="9"/>
+      <inst strip="0" x="4" y="9"/>
     </object>
   </objects>
   <music>

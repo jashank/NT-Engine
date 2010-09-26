@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+from os.path import basename
 import sys
 from PyQt4 import QtCore, QtGui
 import commbutton, extras, filesys, objbar, tilebar, tilemap
@@ -11,8 +12,6 @@ class MainWindow(QtGui.QMainWindow):
         """Sets up components of application."""
         QtGui.QMainWindow.__init__(self, parent)
 
-        self.setWindowTitle('NT State Editor')
-
         winWidth = 1024
         winHeight = 768
 
@@ -20,6 +19,9 @@ class MainWindow(QtGui.QMainWindow):
         screenCenterX = (screen.width() - winWidth) / 2
         screenCenterY = (screen.height() - winHeight) / 2
         self.setGeometry(screenCenterX, screenCenterY, winWidth, winHeight)
+
+        self._currentFile = ''
+        self._windowTitleBase = ''
 
         self._packPrompt()
         self._createComponents()
@@ -31,6 +33,23 @@ class MainWindow(QtGui.QMainWindow):
         mainWidget.setMouseTracking(True)
         self.setCentralWidget(mainWidget)
 
+    def closeEvent(self, closeEvent):
+        """Overridden to prompt user for confirmation before closing."""
+        msgBox = QtGui.QMessageBox()
+        msgBox.setWindowTitle('Exiting NT State Editor')
+        msgBox.setText('You have a State open.')
+        msgBox.setInformativeText('Do you want to save your changes?')
+        msgBox.setStandardButtons(QtGui.QMessageBox.Save |
+            QtGui.QMessageBox.Discard | QtGui.QMessageBox.Cancel)
+        msgBox.setDefaultButton(QtGui.QMessageBox.Save)
+
+        buttonPress = msgBox.exec_()
+        if buttonPress == QtGui.QMessageBox.Cancel:
+            closeEvent.ignore()
+            return
+        elif buttonPress == QtGui.QMessageBox.Save:
+            self._save()
+
     def _packPrompt(self):
         """Opens dialog for user to select Pack they will be working on.
 
@@ -39,10 +58,15 @@ class MainWindow(QtGui.QMainWindow):
         """
         self._workingPack = QtGui.QFileDialog.getExistingDirectory(self,
             'Choose Pack to work with')
+
         # Set path to a string because QString is annoying
         self._workingPack = str(self._workingPack)
         if self._workingPack == '':
             raise Exception, "No Pack selected."
+
+        self.setWindowTitle('NT State Editor -- Working in ' +
+            basename(self._workingPack))
+        self._windowTitleBase = str(self.windowTitle())
 
     def _createComponents(self):
         """Creates components application will hold."""
@@ -119,14 +143,16 @@ class MainWindow(QtGui.QMainWindow):
             self._extras.exec_)
 
         # Actions
+        QtCore.QObject.connect(self._newAction, QtCore.SIGNAL('triggered()'),
+            self._new)
         QtCore.QObject.connect(self._saveAction, QtCore.SIGNAL('triggered()'),
-            lambda wp=self._workingPack, tm=self._tileMap, ex=self._extras:
-                filesys.save(wp, tm, ex))
-
+            self._save)
+        QtCore.QObject.connect(self._saveAsAction,
+            QtCore.SIGNAL('triggered()'), self._saveAs)
         QtCore.QObject.connect(self._loadAction, QtCore.SIGNAL('triggered()'),
-            lambda wp=self._workingPack, tm=self._tileMap, ob=self._objBar,
-                   tb=self._tileBar, ex=self._extras:
-                        filesys.load(wp, tm, ob, tb, ex))
+            self._open)
+        QtCore.QObject.connect(self._quitAction, QtCore.SIGNAL('triggered()'),
+            self.close)
 
     def _layoutComponents(self):
         """Layout components onto a grid."""
@@ -150,6 +176,67 @@ class MainWindow(QtGui.QMainWindow):
 
         # Extras Area
         self._layout.addWidget(self._extrasButton, 3, 3)
+
+    def _new(self):
+        """Prompts user for confirmation when they select new."""
+        msgBox = QtGui.QMessageBox()
+        msgBox.setWindowTitle('Create new State')
+        msgBox.setText('You have a State open.')
+        msgBox.setInformativeText('Do you want to save your changes?')
+        msgBox.setStandardButtons(QtGui.QMessageBox.Save |
+            QtGui.QMessageBox.Discard | QtGui.QMessageBox.Cancel)
+        msgBox.setDefaultButton(QtGui.QMessageBox.Save)
+
+        buttonPress = msgBox.exec_()
+        if buttonPress == QtGui.QMessageBox.Cancel:
+            return
+        elif buttonPress == QtGui.QMessageBox.Save:
+            self._save()
+
+        self._tileMap.clearPlacements()
+        self._setMapDims.setDims(0, 0, 0)
+        self._objBar.clear()
+        self._tileBar.clear()
+        self._extras.clearAll()
+        self._currentFile = ''
+        self.setWindowTitle(self._windowTitleBase)
+
+    def _save(self):
+        """If user working on existing file, saves over it.
+
+        Otherwise, a file dialog is brought up.
+
+        """
+        if self._currentFile == '':
+            filename = filesys.saveAs(self._workingPack, self._tileMap,
+                self._extras)
+            if filename:
+                self._currentFile = filename
+        else:
+            filename = filesys.save(self._workingPack, self._tileMap,
+                self._extras, self._currentFile)
+            if filename:
+                self._currentFile = filename
+
+        self.setWindowTitle(self._windowTitleBase + ' on ' + self._currentFile)
+
+    def _saveAs(self):
+        """Calls saveAs no matter what."""
+        filename = filesys.saveAs(self._workingPack, self._tileMap,
+            self._extras)
+        if filename:
+            self._currentFile = filename
+
+        self.setWindowTitle(self._windowTitleBase + ' on ' + self._currentFile)
+
+    def _open(self):
+        """Opens state file."""
+        filename = filesys.load(self._workingPack, self._tileMap,
+            self._setMapDims, self._objBar, self._tileBar, self._extras)
+        if filename:
+            self._currentFile = filename
+
+        self.setWindowTitle(self._windowTitleBase + ' on ' + self._currentFile)
 
 
 app = QtGui.QApplication(sys.argv)
