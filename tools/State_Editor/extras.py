@@ -49,7 +49,7 @@ class ExtrasTab(QtGui.QWidget):
         self._clear = QtGui.QPushButton()
         self._clear.setText('Clear')
         self._clear.connect(self._clear, QtCore.SIGNAL('clicked()'),
-            self._clearData)
+            self.clearData)
 
         self._add = QtGui.QPushButton()
         self._add.setText('Add')
@@ -67,7 +67,7 @@ class ExtrasTab(QtGui.QWidget):
         for row in range(1, self._numRows - 1):
             # 1st column holds QLabel path names
             pathLabel = self.layout().itemAtPosition(row, 1).widget()
-            path = pathLabel.text()
+            path = str(pathLabel.text())
             # 2nd column holds optional name user assigned
             nameField = self.layout().itemAtPosition(row, 2).widget()
             name = nameField.text()
@@ -106,12 +106,20 @@ class ExtrasTab(QtGui.QWidget):
         self.layout().addWidget(self._add, self._numRows, 1)
         self._numRows += 1
 
+    def clearData(self):
+        """Removes all fields currently loaded in."""
+        for row in range(1, self._numRows - 1):
+            self._removeRow(row)
+
+
     def _selectFiles(self):
         """Brings up file dialog to select and add files."""
         filenames = QtGui.QFileDialog.getOpenFileNames(self,
             self._fileDialogTitle, "", self._fileTypes)
 
         for path in filenames:
+            path = str(path)
+
             prevLoaded = False
             for row in range(1, self._numRows - 1):
                 # 1st column holds QLabel path names
@@ -141,11 +149,6 @@ class ExtrasTab(QtGui.QWidget):
             widget.setParent(None)
 
         self._numRows -= 1
-
-    def _clearData(self):
-        """Removes all fields currently loaded in."""
-        for row in range(1, self._numRows - 1):
-            self._removeRow(row)
 
 
 class Extras(QtGui.QDialog):
@@ -217,4 +220,9 @@ class Extras(QtGui.QDialog):
 
         """
         self._tabs.widget(2).addEntry(path, name)
+
+    def clearAll(self):
+        """Clears data from all tabs."""
+        for i in range(0, self._tabs.count()):
+            self._tabs.widget(i).clearData()
 

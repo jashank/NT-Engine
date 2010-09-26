@@ -48,10 +48,11 @@ class LoadTilesButton(QtGui.QPushButton):
     SIGNALS: 'selectedFile', filename -- emitted from 'selectFile'
 
     """
-    def __init__(self, parent = None):
-        """Button is named and when clicked, calls selectFile."""
+    def __init__(self, workingPack, parent = None):
+        """When initialized, directory to load from is set to working pack."""
         QtGui.QPushButton.__init__(self, parent)
 
+        self._workingPack = workingPack
         self.setText('Load Tiles')
 
         self.connect(self, QtCore.SIGNAL('clicked()'), self._selectFile)
@@ -63,8 +64,8 @@ class LoadTilesButton(QtGui.QPushButton):
             passing pathname of file along.
 
         """
-        filename = QtGui.QFileDialog.getOpenFileName(self,
-            'Select tile animation file', "", "*.xml")
+        filename = str(QtGui.QFileDialog.getOpenFileName(self,
+            'Select tile animation file', self._workingPack, "*.xml"))
 
         self.emit(QtCore.SIGNAL('selectedFile'), filename)
 

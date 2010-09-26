@@ -21,6 +21,7 @@ class MainWindow(QtGui.QMainWindow):
         screenCenterY = (screen.height() - winHeight) / 2
         self.setGeometry(screenCenterX, screenCenterY, winWidth, winHeight)
 
+        self._packPrompt()
         self._createComponents()
         self._connectComponents()
         self._layoutComponents()
@@ -30,18 +31,31 @@ class MainWindow(QtGui.QMainWindow):
         mainWidget.setMouseTracking(True)
         self.setCentralWidget(mainWidget)
 
+    def _packPrompt(self):
+        """Opens dialog for user to select Pack they will be working on.
+
+        User must select a pack.
+
+        """
+        self._workingPack = QtGui.QFileDialog.getExistingDirectory(self,
+            'Choose Pack to work with')
+        # Set path to a string because QString is annoying
+        self._workingPack = str(self._workingPack)
+        if self._workingPack == '':
+            raise Exception, "No Pack selected."
+
     def _createComponents(self):
         """Creates components application will hold."""
         # Object Bar
         self._objBar = objbar.ObjectBar()
         self._objView = QtGui.QGraphicsView(self._objBar)
-        self._loadObjects = objbar.LoadObjectsButton()
+        self._loadObjects = objbar.LoadObjectsButton(self._workingPack)
         self._clearObjects = commbutton.ClearButton()
 
         # Tile Bar
         self._tileBar = tilebar.TileBar()
         self._tileBarView = QtGui.QGraphicsView(self._tileBar)
-        self._loadTiles = tilebar.LoadTilesButton()
+        self._loadTiles = tilebar.LoadTilesButton(self._workingPack)
 
         # Tile/Object Map
         self._tileMap = tilemap.TileMap()
@@ -106,11 +120,13 @@ class MainWindow(QtGui.QMainWindow):
 
         # Actions
         QtCore.QObject.connect(self._saveAction, QtCore.SIGNAL('triggered()'),
-            lambda tm=self._tileMap, ex=self._extras: filesys.save(tm, ex))
+            lambda wp=self._workingPack, tm=self._tileMap, ex=self._extras:
+                filesys.save(wp, tm, ex))
 
         QtCore.QObject.connect(self._loadAction, QtCore.SIGNAL('triggered()'),
-            lambda tm=self._tileMap, ob=self._objBar, tb=self._tileBar,
-                   ex=self._extras: filesys.load(tm, ob, tb, ex))
+            lambda wp=self._workingPack, tm=self._tileMap, ob=self._objBar,
+                   tb=self._tileBar, ex=self._extras:
+                        filesys.load(wp, tm, ob, tb, ex))
 
     def _layoutComponents(self):
         """Layout components onto a grid."""

@@ -4,15 +4,17 @@
 from collections import defaultdict
 from xml.dom import minidom
 import xml.etree.ElementTree as ElementTree
+from fileop import relPathToPack
 from objbar import Object
 from tilebar import Tile
 
 
-def createTiles(size, path, mapWidth, mapHeight, tileMapping):
+def createTiles(workingPack, size, path, mapWidth, mapHeight, tileMapping):
     """Returns <tiles> element for NT State file.
 
-    Arguments: size -- size of a tile in pixels (i.e. 48 would be 48x48)
-               path -- path to animation file for tiles
+    Arguments: workingPack -- Path to pack user is working with
+               size -- size of a tile in pixels (i.e. 48 would be 48x48)
+               path -- path to animation file for tiles, can be None
                mapWidth -- width of map in tiles
                mapHeight -- height of map in tiles
                tileMapping -- dictionary containing (coord,Tile) pairs. A Tile
@@ -25,7 +27,13 @@ def createTiles(size, path, mapWidth, mapHeight, tileMapping):
     root = ElementTree.Element("tiles")
 
     sz = ElementTree.SubElement(root, "size", {'px':str(size)})
-    anim = ElementTree.SubElement(root, "animation", {'path':path})
+
+    # Won't necessarily be a path to tile animation file
+    relPath = ''
+    if path:
+        relPath = relPathToPack(workingPack, path)
+
+    anim = ElementTree.SubElement(root, "animation", {'path':relPath})
 
     layout = ElementTree.SubElement(root, "layout",
         {'width':str(mapWidth), 'height':str(mapHeight)})
@@ -49,10 +57,11 @@ def createTiles(size, path, mapWidth, mapHeight, tileMapping):
 
     return root
 
-def createObjects(objMapping):
+def createObjects(workingPack, objMapping):
     """Returns <objects> element for NT State file.
 
-    Arguments: objMapping -- dictionary containing (coord,list of Objects). An
+    Arguments: workingPack -  Path to pack user is working with
+               objMapping -- dictionary containing (coord,list of Objects). An
                    Object is defined in the objbar file, and a coord is a
                    coordinate on the map in the form of a string like '3,5'
                    or '23,2'
@@ -69,7 +78,8 @@ def createObjects(objMapping):
             invMapping[obj.getPath()].append([coord, str(obj.getAnimNum())])
 
     for objPath, instances in invMapping.iteritems():
-        objElem = ElementTree.Element('object', {'path':objPath})
+        relPath = relPathToPack(workingPack, objPath)
+        objElem = ElementTree.Element('object', {'path':relPath})
 
         for inst in instances:
             splitCoords = inst[0].split(',')
@@ -83,7 +93,7 @@ def createObjects(objMapping):
     return root
 
 
-def createPathName(pathNameDict, parentStr, subElemStr):
+def createPathName(workingPack, pathNameDict, parentStr, subElemStr):
     """Used for music, portals, and fonts part of State file.
 
     Since the other elements all have the same basic structure, just with
@@ -92,7 +102,9 @@ def createPathName(pathNameDict, parentStr, subElemStr):
     of the sub elements in the parent. For example one may call this function
     like... "createPathName(someDict, 'music', 'song')".
 
-    Arguments: pathNameDict -- dictionary of (path, name) for data.
+    Arguments:
+               workingPack -- path to Pack user is working on
+               pathNameDict -- dictionary of (path, name) for data.
                parentStr -- name of parent element
                subElemStr -- what sub elements will be named.
 
@@ -102,8 +114,9 @@ def createPathName(pathNameDict, parentStr, subElemStr):
     root = ElementTree.Element(parentStr)
 
     for path, name in pathNameDict.iteritems():
+        relPath = relPathToPack(workingPack, path)
         subElem = ElementTree.Element(subElemStr,
-            {'path':path, 'name':name})
+            {'path':relPath, 'name':name})
         root.append(subElem)
 
     return root

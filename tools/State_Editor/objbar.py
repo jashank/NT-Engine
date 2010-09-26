@@ -47,9 +47,10 @@ class LoadObjectsButton(QtGui.QPushButton):
     SIGNALS: 'selectedFiles', filenames -- emitted from 'selectFiles'
 
     """
-    def __init__(self, parent = None):
-        """Button is named and when clicked, calls selectFiles."""
+    def __init__(self, workingPack, parent = None):
+        """When initialized, direcotry to load from is set to working pack."""
         QtGui.QPushButton.__init__(self, parent)
+        self._workingPack = workingPack
 
         self.setText('Load Object(s)')
 
@@ -59,11 +60,11 @@ class LoadObjectsButton(QtGui.QPushButton):
         """Opens dialog for user to select object file(s) to load.
 
         SIGNALS: 'selectedFiles', filenames -- emitted when file(s) is selected,
-            passing along paths to all files selected.
+            passing along paths to all files selected. Is a QStringList.
 
         """
         filenames = QtGui.QFileDialog.getOpenFileNames(self,
-            'Select Object file(s)', "", "*.xml")
+            'Select Object file(s)', self._workingPack, "*.xml")
 
         self.emit(QtCore.SIGNAL('selectedFiles'), filenames)
 
@@ -119,6 +120,7 @@ class ObjectBar(bar.Bar):
     def loadObjects(self, filepaths):
         """Loads Objects from a QStringList of paths to object files."""
         for path in filepaths:
+            path = str(path)
             if path not in self._objDict:
                 self.loadObject(path)
 
@@ -143,7 +145,7 @@ class ObjectBar(bar.Bar):
 
         absAnimPath = ''
         if objIsAnimated:
-            absAnimPath = subInPath(str(filepath), relAnimPath)
+            absAnimPath = subInPath(filepath, relAnimPath)
         else:
             absAnimPath = 'mod_rep.xml'
 
@@ -164,7 +166,7 @@ class ObjectBar(bar.Bar):
 
             sheetImg = None
             if objIsAnimated:
-                sheetImg = QtGui.QImage(subInPath(str(filepath), sheetPath))
+                sheetImg = QtGui.QImage(subInPath(filepath, sheetPath))
             else:
                 sheetImg = QtGui.QImage(sheetPath)
 

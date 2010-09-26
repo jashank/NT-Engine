@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
-from os import sep
-from os.path import exists
+from os.path import basename, exists, relpath, sep
 from string import join, split
 
 def subInPath(origPath, subPath):
@@ -37,4 +36,17 @@ def subInPath(origPath, subPath):
         raise Exception, "Path subbed in not found."
     return newPath
 
+def relPathToPack(workingPack, path):
+    """Returns path relative to pack being worked on.
+
+    Arguments: workingPack -- Path to Pack being worked on
+               path -- should be part of workingPack
+
+    Returns: Example: relPathPack("/home/mypack",
+                          "/home/mypack/thisdir/foo.xml") would return
+                      "mypack/thisdir/foo.xml"
+
+    """
+    pack = basename(workingPack)
+    return(pack + sep + relpath(path, workingPack))
 
