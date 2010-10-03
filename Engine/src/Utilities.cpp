@@ -9,7 +9,7 @@
 
 std::string ToLowerCase( std::string str ) {
   int len = str.length();
-  for ( unsigned int i = 0; i < len; ++i ) {
+  for ( int i = 0; i < len; ++i ) {
     if ( str[i] >= 0x41 && str[i] <= 0x5A ) {
       str[i] = str[i] + 0x20;
     }
