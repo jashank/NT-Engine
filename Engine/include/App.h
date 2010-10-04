@@ -114,7 +114,7 @@ class App {
     int width,
     int height,
     int framerate,
-	std::string filePath // Temporary
+  std::string filePath // Temporary
   );
 
   /// Restricts copy constructor and assignment.
@@ -124,8 +124,8 @@ class App {
   static App *m_instance; //Single instance of App
 
   float m_time; //Total time since app was first created.
-  float	m_deltaTime; //Time in seconds spent on last frame render
-  float	m_fps; //Frames per Second
+  float m_deltaTime; //Time in seconds spent on last frame render
+  float m_fps; //Frames per Second
   KeyManager m_keyManager; //Keeps track of how long registered keys are held
 
   //Resource Managers
@@ -136,8 +136,8 @@ class App {
   ResourceManager< AnimData > m_anims;
 
   sf::Color m_clearColor; //Color to clear the screen to
-  sf::Event	m_event; //holds the most current event
-  sf::RenderWindow	m_window; //SFML's window
+  sf::Event m_event; //holds the most current event
+  sf::RenderWindow  m_window; //SFML's window
 
   // TEMPORARY
   bool m_nextStateSet;

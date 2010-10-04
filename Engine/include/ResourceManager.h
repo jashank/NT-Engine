@@ -82,7 +82,7 @@ private:
   //@}
 
   loader_t m_loader; /** ResourceManager's ResourceLoader. */
-  map_t	m_resources; /** Map containing 'file path/resource' pairs. */
+  map_t m_resources; /** Map containing 'file path/resource' pairs. */
 };
 
 #include "ResourceManager.hpp"

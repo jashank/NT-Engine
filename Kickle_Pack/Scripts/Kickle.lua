@@ -18,7 +18,7 @@ Kickle.godMode = false
 function Kickle.HandleCollision( self, other )
   local otherType = other:GetType()
   -- Things that kill Kickle
-	if ( otherType == "Slime" or otherType == "Penguin" or 
+        if ( otherType == "Slime" or otherType == "Penguin" or 
        otherType == "IceBlock" ) then
     if Kickle.state ~= DYING then
       Kickle.state = DYING
@@ -45,7 +45,7 @@ end
 
 function Kickle.FaceUp( self )
   if ( Kickle.state ~= DYING ) then
-	  self:SetDir( Util.UP )
+          self:SetDir( Util.UP )
     Util.SetAndPlay( self, Util.UP + Kickle.state )
   end
 end
@@ -124,34 +124,34 @@ end
 
 
 function Kickle.PerformPillar( self )
-	if( Kickle.state == STANDING ) then
-		local tileX, tileY = Util.GetTileObjectFaces( self )
+        if( Kickle.state == STANDING ) then
+                local tileX, tileY = Util.GetTileObjectFaces( self )
 
-		if ( State.TileIsCrossable( tileX, tileY ) and
-			   not State.ObjectBlockingTile( tileX, tileY ) ) then
-			Kickle.state = PILLAR
+                if ( State.TileIsCrossable( tileX, tileY ) and
+                           not State.ObjectBlockingTile( tileX, tileY ) ) then
+                        Kickle.state = PILLAR
       Util.SetAndPlay( self, self:GetDir() + Kickle.state )
-			local pillar = State.CreateObject(
-				"Kickle_Pack/Objects/Pillar.xml", tileX, tileY )
+                        local pillar = State.CreateObject(
+                                "Kickle_Pack/Objects/Pillar.xml", tileX, tileY )
 
-		elseif ( State.ObjectBlockingTile( tileX, tileY ) ) then
-			local objOnTile = State.GetObjectOnTile( tileX, tileY )
-			if( objOnTile:GetType() == "Pillar" ) then
-				Kickle.state = PILLAR
+                elseif ( State.ObjectBlockingTile( tileX, tileY ) ) then
+                        local objOnTile = State.GetObjectOnTile( tileX, tileY )
+                        if( objOnTile:GetType() == "Pillar" ) then
+                                Kickle.state = PILLAR
         self:SetReverseAnim( true )
         Util.SetAndPlay( self, self:GetDir() + Kickle.state )
         objOnTile:GetTable().Lower( objOnTile )
-			end
-		end
-	end
+                        end
+                end
+        end
 end
 
 
 function Kickle.PerformAttack( self )
-	if ( Kickle.state == STANDING ) then
-		local tileX, tileY = Util.GetTileObjectFaces( self )
+        if ( Kickle.state == STANDING ) then
+                local tileX, tileY = Util.GetTileObjectFaces( self )
     local kickleDir = self:GetDir()
-		local objOnTile = State.GetObjectOnTile( tileX, tileY )
+                local objOnTile = State.GetObjectOnTile( tileX, tileY )
 
     if objOnTile then
       objType = objOnTile:GetType()
@@ -177,16 +177,16 @@ function Kickle.PerformAttack( self )
       end
     end
 
-		if (( State.TileIsCrossable( tileX, tileY ) or
+                if (( State.TileIsCrossable( tileX, tileY ) or
           State.GetTileInfo( tileX, tileY ) == "water" ) and
           not State.ObjectBlockingTile( tileX, tileY ) ) then
-			local iceBreath = State.CreateObject(
-				"Kickle_Pack/Objects/IceBreath.xml", tileX, tileY )
-			local iceBreathDir = self:GetDir()
-			iceBreath:SetDir( iceBreathDir )
-			Util.SetAndPlay( iceBreath, iceBreathDir )
-		end
-	end
+                        local iceBreath = State.CreateObject(
+                                "Kickle_Pack/Objects/IceBreath.xml", tileX, tileY )
+                        local iceBreathDir = self:GetDir()
+                        iceBreath:SetDir( iceBreathDir )
+                        Util.SetAndPlay( iceBreath, iceBreathDir )
+                end
+        end
 end
 
 

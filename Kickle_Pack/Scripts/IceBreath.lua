@@ -5,7 +5,7 @@ Util = require ("ObjectUtilities")
 
 local IceBreath = {}
 
-function IceBreath.AI( self )	
+function IceBreath.AI( self )   
   local facingTileX, facingTileY = Util.GetTileObjectFaces( self )
   local tileType = State.GetTileInfo( facingTileX, facingTileY )
   local otherObj = State.GetObjectOnTile( facingTileX, facingTileY )
@@ -23,7 +23,7 @@ end
 
 function IceBreath.HandleCollision( self, other )
   local otherType = other:GetType()
-	if ( otherType == "Slime" ) then
+        if ( otherType == "Slime" ) then
     IceBlock = State.CreateObject(
                  "Kickle_Pack/Objects/IceBlock.xml",
                  other:GetTile()
@@ -32,7 +32,7 @@ function IceBreath.HandleCollision( self, other )
     IceBlock:GetTable().slimeSpawnY = other:GetTable().spawnPointY
     State.DestroyObject( other )
     State.DestroyObject( self )
-	end
+        end
 end
 
 return IceBreath

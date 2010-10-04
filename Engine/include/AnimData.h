@@ -104,7 +104,7 @@ private:
     bool isLooped; /** True if animation loops back on itself. */ 
     std::vector<float> frameTimes; /** Only stores 1 time if no unique times. */
     int numFrames; /** Number of frames in animation. */
-    nt::core::IntRect	frameRect; /** (x,y)-first frame (w,h)-frame sizes */
+    nt::core::IntRect frameRect; /** (x,y)-first frame (w,h)-frame sizes */
     sf::Image *image; /** Image that animation is on. */
     std::string name; /** Name assigned to animation in animation file. */
   };

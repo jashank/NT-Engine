@@ -41,7 +41,7 @@ class TileManager {
   /**
    * Renders tiles on screen.
    */
-	void Render();
+  void Render();
 
   /**
    * @return Dimensions of tiles in this State (since tiles are square, only

@@ -29,17 +29,17 @@ int main( int argc, char *argv[] ) {
     }
   }
 
-	std::auto_ptr< App > Game(
+  std::auto_ptr< App > Game(
     App::CreateApp(
       "Kickle!",
       Config::GetScreenWidth(),
       Config::GetScreenHeight(),
       Config::GetFPS(),
-	  levelPath
+    levelPath
     )
   );
 
-	Game->Run();
+  Game->Run();
 
-	return 0;
+  return 0;
 }

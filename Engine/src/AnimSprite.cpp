@@ -20,10 +20,10 @@ AnimSprite::AnimSprite()
 
 void AnimSprite::Update() {
   if( m_playing ) {
-	  m_frameTimeLeft -= App::GetApp()->GetDeltaTime();
-	  if( m_frameTimeLeft <= 0.0f ) {
-		  NextFrame();
-	  }
+    m_frameTimeLeft -= App::GetApp()->GetDeltaTime();
+    if( m_frameTimeLeft <= 0.0f ) {
+      NextFrame();
+    }
   }
   m_setToReverse = false;
 }
@@ -35,12 +35,12 @@ const AnimData *AnimSprite::GetAnimData() const {
 
 
 int AnimSprite::GetFrame() const {
-	return m_frameNum;
+  return m_frameNum;
 }
 
 
 int AnimSprite::GetAnimation() const {
-	return m_animNum;
+  return m_animNum;
 }
 
 
@@ -63,18 +63,18 @@ void AnimSprite::Play() {
 
 
 void AnimSprite::Pause() {
-	m_playing = false;
+  m_playing = false;
 }
 
 
 void AnimSprite::Restart() {
-	Stop();
+  Stop();
   Play(); 
 }
 
 
 void AnimSprite::Stop() {
-	Pause();
+  Pause();
   if( !m_reversed ) {
     SetFrame( 0 );
   }
@@ -92,7 +92,7 @@ void AnimSprite::SetReverse( bool reversed ) {
 
 
 void AnimSprite::SetFrame( int frameNum ) {
-	m_frameNum = frameNum;
+  m_frameNum = frameNum;
   
   nt::core::IntRect frameRect = 
     m_animData->GetFrameRect( m_animNum, m_frameNum );
@@ -125,7 +125,7 @@ void AnimSprite::SetAnimation( int animIndex ) {
 
 
 void AnimSprite::SetAnimData( const AnimData *animData ) {
-	m_animData = animData;
+  m_animData = animData;
   m_frameTimeLeft = m_animData->GetFrameTime( m_animNum, m_frameNum );
 
   sf::Image *sheet = m_animData->GetImage( m_animNum );
@@ -147,27 +147,27 @@ Private Methods
 void AnimSprite::NextFrame() {
   int frameNum = m_frameNum;
   if( !m_reversed ) {
-	  ++frameNum;
-	  if( frameNum >= m_animData->GetNumFrames( m_animNum ) ) {
-		  if( m_animData->IsLooped( m_animNum ) ) {
-			  frameNum = 0;
-		  }
-		  else {
+    ++frameNum;
+    if( frameNum >= m_animData->GetNumFrames( m_animNum ) ) {
+      if( m_animData->IsLooped( m_animNum ) ) {
+        frameNum = 0;
+      }
+      else {
         --frameNum;
-			  Pause();
-		  }
-	  }
+        Pause();
+      }
+    }
   }
   else {
-	  --frameNum;
-	  if( frameNum == 0 ) {
-		  if( m_animData->IsLooped( m_animNum ) ) {
-			  frameNum = m_animData->GetNumFrames( m_animNum )-1;
-		  }
-		  else {
-			  Pause();
-		  }
-	  }
+    --frameNum;
+    if( frameNum == 0 ) {
+      if( m_animData->IsLooped( m_animNum ) ) {
+        frameNum = m_animData->GetNumFrames( m_animNum )-1;
+      }
+      else {
+        Pause();
+      }
+    }
   }
   SetFrame( frameNum );
   m_frameTimeLeft = m_animData->GetFrameTime( m_animNum, m_frameNum );

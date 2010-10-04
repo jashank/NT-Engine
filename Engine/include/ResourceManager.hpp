@@ -26,7 +26,7 @@ resource_t* ResourceLoader< resource_t >::Load( const std::string &filePath ) {
 
 
 template< typename resource_t, typename loader_t >
-ResourceManager< resource_t, loader_t >::~ResourceManager()	{
+ResourceManager< resource_t, loader_t >::~ResourceManager() {
   this->Clear();
 }
 

@@ -14,12 +14,12 @@ extern "C" {
 // Specialize Load for sf::Music
 template<>
 sf::Music* ResourceLoader< sf::Music >::Load( const std::string &filepath ) {
-	std::auto_ptr< sf::Music > resource( new sf::Music() );
-	if( !resource->OpenFromFile( filepath ) ) {
+  std::auto_ptr< sf::Music > resource( new sf::Music() );
+  if( !resource->OpenFromFile( filepath ) ) {
     LogErr( "Song in" + filepath + "failed to load." );
     return NULL;
-	}
-	return resource.release();
+  }
+  return resource.release();
 }
 
 /************************************************
@@ -75,32 +75,32 @@ App* App::CreateApp(
   int framerate,
   std::string filePath
 ) {
-	if(  m_instance == 0 ) {
-		m_instance = new App( title, width, height, framerate, filePath );
-	}
-	else {
-		LogErr( "Attempt to call CreateApp when App already exiss." );
-	}
+  if(  m_instance == 0 ) {
+    m_instance = new App( title, width, height, framerate, filePath );
+  }
+  else {
+    LogErr( "Attempt to call CreateApp when App already exiss." );
+  }
 
-	return m_instance;
+  return m_instance;
 }
 
 
 void App::DestroyApp()
 {
-	SAFEDELETE( m_instance );
+  SAFEDELETE( m_instance );
 }
 
 
 void App::Draw( const sf::Drawable &object ) {
-	m_window.Draw( object );
+  m_window.Draw( object );
 }
 
 
 App* App::GetApp() {
-	if( m_instance != 0 ) {
-		return m_instance;
-	}
+  if( m_instance != 0 ) {
+    return m_instance;
+  }
   LogErr( "Illegal call to App::GetApp(). App does not yet exist." );
   return NULL;
 }
@@ -117,7 +117,7 @@ float App::GetTime() const {
 
 
 float App::GetDeltaTime() const {
-	return m_deltaTime;
+  return m_deltaTime;
 }
 
 
@@ -137,7 +137,7 @@ const sf::Input* App::GetInput() const {
 
 
 sf::Image* App::LoadImage( const std::string &filename ) {
-	return m_images.Load( filename );
+  return m_images.Load( filename );
 }
 
 
@@ -147,17 +147,17 @@ sf::Font* App::LoadFont( const std::string &filename ) {
 
 
 sf::SoundBuffer* App::LoadSound( const std::string &filename ) {
-	return m_sounds.Load( filename );
+  return m_sounds.Load( filename );
 }
 
 
 sf::Music* App::LoadMusic( const std::string &filename ) {
-	return m_music.Load( filename );
+  return m_music.Load( filename );
 }
 
 
 AnimData* App::LoadAnim( const std::string &filename ) {
-	return m_anims.Load( filename );
+  return m_anims.Load( filename );
 }
 
 void App::RegisterKey( sf::Key::Code key ) {
@@ -170,23 +170,23 @@ void App::Run() {
   m_currentState = new State();
   m_currentState->LoadFromFile( m_filePath );
 
-	//Game Loop
-	while ( m_window.IsOpened() ) {
+  //Game Loop
+  while ( m_window.IsOpened() ) {
     m_keyManager.Update();
     m_currentState->HandleEvents();
 
-	  while ( m_window.GetEvent( m_event )) {
-			if ( m_event.Type == sf::Event::Closed ) {
-				m_window.Close();
-			}
-		}
+    while ( m_window.GetEvent( m_event )) {
+      if ( m_event.Type == sf::Event::Closed ) {
+        m_window.Close();
+      }
+    }
 
-		m_currentState->Update();
+    m_currentState->Update();
 
     // TEMPORARY
-		if ( m_nextStateSet ) {
-		  m_nextStateSet = false;
-		  SAFEDELETE( m_currentState );
+    if ( m_nextStateSet ) {
+      m_nextStateSet = false;
+      SAFEDELETE( m_currentState );
 
       m_images.Clear();
       m_fonts.Clear();
@@ -194,21 +194,21 @@ void App::Run() {
       m_music.Clear();
       m_anims.Clear();
 
-		  m_currentState = new State();
-		  m_currentState->LoadFromFile( m_nextStatePath );
-		}
+      m_currentState = new State();
+      m_currentState->LoadFromFile( m_nextStatePath );
+    }
 
-		m_window.Clear( m_clearColor );
+    m_window.Clear( m_clearColor );
 
-		//Render and Display
-		m_currentState->Render();
-		m_window.Display();
+    //Render and Display
+    m_currentState->Render();
+    m_window.Display();
 
-		//Get the time it took to render the last frame
-		m_deltaTime = m_window.GetFrameTime();
+    //Get the time it took to render the last frame
+    m_deltaTime = m_window.GetFrameTime();
     m_time += m_deltaTime;
-		m_fps = 1.0f/m_deltaTime;
-	}
+    m_fps = 1.0f/m_deltaTime;
+  }
 }
 
 

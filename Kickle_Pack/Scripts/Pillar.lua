@@ -21,9 +21,9 @@ end
 
 function Pillar.HandleCollision( self, other )
   local otherType = other:GetType()
-	if ( otherType == "Slime" or otherType == "DreamBag" ) then
-		State.DestroyObject( self )
-	end
+        if ( otherType == "Slime" or otherType == "DreamBag" ) then
+                State.DestroyObject( self )
+        end
 end
 
 

@@ -49,8 +49,8 @@ function IceBlock.AI( self )
     end
   end
 
-	if IceBlock.moving then
-		if tileType == "water" or tileType == "" then
+        if IceBlock.moving then
+                if tileType == "water" or tileType == "" then
       IceBlock.destroyed = true
       if tileType == "water" then
         local tileType, tileName =
@@ -91,8 +91,8 @@ end
 
 function IceBlock.HandleCollision( self, other )
   local otherType = other:GetType()
-	if otherType == "IceBreath" then
-		State.DestroyObject( other )
+        if otherType == "IceBreath" then
+                State.DestroyObject( other )
     self:ResetTimer() -- Refreezes IceBlock
 
   elseif otherType == "Slime" then

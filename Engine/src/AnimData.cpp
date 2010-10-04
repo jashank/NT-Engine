@@ -100,7 +100,7 @@ int AnimData::GetFrameHeight( int animIndex ) const {
 
 
 int AnimData::GetNumAnims() const {
-	return m_anims.size();
+  return m_anims.size();
 }
 
 
