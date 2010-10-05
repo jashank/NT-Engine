@@ -41,5 +41,7 @@ int main( int argc, char *argv[] ) {
 
   Game->Run();
 
+  // Make sure to clear all resources from nt::rsrc here
+
   return 0;
 }
