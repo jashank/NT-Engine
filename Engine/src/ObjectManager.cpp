@@ -14,9 +14,6 @@
 #include "Utilities.h"
 #include "Vector.h"
 
-// Temporary until ObjectManager is namespaced
-#undef GetObject
-
 /*******************************************
  Data Members
 *******************************************/
@@ -267,7 +264,7 @@ int ObjectManager::LuaGetObject( lua_State *L ) {
   }
   std::string type = lua_tostring( L, -1 );
 
-  Lunar<Object>::push( L, Inst().GetObject( type ));
+  Lunar<Object>::push( L, Inst().FindObject( type ));
   return 1;
 }
 
@@ -404,7 +401,7 @@ void ObjectManager::RemoveObject( Object *obj ) {
 }
 
 
-Object* ObjectManager::GetObject( const std::string &type ) const {
+Object* ObjectManager::FindObject( const std::string &type ) const {
   std::pair<MapItrConst, MapItrConst> objects =
     m_objTypes.equal_range( type ); 
   if ( objects.first != objects.second ) {

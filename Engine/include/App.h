@@ -14,9 +14,6 @@ extern "C" {
 #include "KeyManager.h"
 #include "ResourceManager.h"
 
-// Temporary until namespaced
-#undef LoadImage 
-
 class State;
 class AnimData;
 
@@ -76,7 +73,7 @@ class App {
 
   /// Returns an Image given a filename, insuring that no
   /// duplicate Image is loaded into memory
-  sf::Image* LoadImage( const std::string &filename );
+  sf::Image* LoadImg( const std::string &filename );
 
   /// Returns a Font given a filename, insuring that no
   /// duplicate Font is loaded into memory.

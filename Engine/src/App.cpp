@@ -136,7 +136,7 @@ const sf::Input* App::GetInput() const {
 }
 
 
-sf::Image* App::LoadImage( const std::string &filename ) {
+sf::Image* App::LoadImg( const std::string &filename ) {
   return m_images.Load( filename );
 }
 

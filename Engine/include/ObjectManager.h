@@ -111,7 +111,7 @@ class ObjectManager {
    * @return Object with 'objType' as its type. If no Object is found, returns
    * NULL. If more than one is found, returns first found.
    */ 
-  Object* GetObject( const std::string &objType ) const;
+  Object* FindObject( const std::string &objType ) const;
 
   /**
    * @param x x tile coordinate.
