@@ -54,3 +54,4 @@ namespace rsrc {
 } // namespace nt
 
 #endif // RESOURCELIB_H
+
