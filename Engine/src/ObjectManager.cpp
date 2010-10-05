@@ -14,6 +14,9 @@
 #include "Utilities.h"
 #include "Vector.h"
 
+// Temporary until ObjectManager is namespaced
+#undef GetObject
+
 /*******************************************
  Data Members
 *******************************************/

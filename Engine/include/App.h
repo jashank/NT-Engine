@@ -14,7 +14,8 @@ extern "C" {
 #include "KeyManager.h"
 #include "ResourceManager.h"
 
-#undef LoadImage // Undefines LoadImage macro from WinUser
+// Temporary until namespaced
+#undef LoadImage 
 
 class State;
 class AnimData;
