@@ -55,11 +55,6 @@ class State {
   TileManager& GetTileManager();
 
   /**
-   * @return ObjectManager held by State.
-   */
-  ObjectManager& GetObjectManager();
-
-  /**
    * Registers Lua functions to State API for access in scripts.
    * @param L lua state that functions will be registered in.
    */

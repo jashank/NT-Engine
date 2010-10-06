@@ -133,11 +133,6 @@ TileManager& State::GetTileManager() {
 }
 
 
-ObjectManager& State::GetObjectManager() {
-  return m_objectManager;
-}
-
-
 /*************************************
  * Lua Functions
  * ***********************************/
