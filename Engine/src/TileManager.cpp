@@ -11,6 +11,7 @@ extern "C" {
 #include "AnimData.h"
 #include "AnimSprite.h"
 #include "App.h"
+#include "ResourceLib.h"
 #include "State.h"
 #include "tinyxml.h"
 
@@ -232,8 +233,7 @@ int TileManager::LuaSetTile( lua_State *L ) {
 Private Methods
 ************************************/
 bool TileManager::LoadTileAnims( const std::string &animPath ) {
-  static App *app = App::GetApp();
-  AnimData *tileAnims = app->LoadAnim( animPath );
+  AnimData *tileAnims = nt::rsrc::LoadAnim( animPath );
 
   if ( tileAnims ) {
     m_numTileTypes = tileAnims->GetNumAnims();

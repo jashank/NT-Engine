@@ -25,7 +25,7 @@ class lua_State;
 class State {
  public:
   State() {}
-  ~State() {}
+  ~State();
 
   /**
    * Loads State from file at file path.

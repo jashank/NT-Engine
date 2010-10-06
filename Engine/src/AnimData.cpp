@@ -2,8 +2,8 @@
 
 #include <sstream>
 
-#include "App.h"
 #include "Rect.h"
+#include "ResourceLib.h"
 #include "tinyxml.h"
 #include "Utilities.h"
 #include "Vector.h"
@@ -15,13 +15,12 @@ bool AnimData::LoadFromFile( const std::string &filepath ) {
   TiXmlDocument doc ( filepath.c_str() );
 
   if ( doc.LoadFile() ) {
-    static App *app = App::GetApp();
     TiXmlHandle handleDoc( &doc );
 
     TiXmlElement *root = handleDoc.FirstChildElement( "animations" ).Element();
     TiXmlElement *sheet = root->FirstChildElement( "sheet" );
     do {
-      sf::Image *loadedSheet = app->LoadImg( sheet->Attribute( "path" ));
+      sf::Image *loadedSheet = nt::rsrc::LoadImg( sheet->Attribute( "path" ));
       if ( loadedSheet ) {
         // A strip
         TiXmlElement *elem = sheet->FirstChildElement();

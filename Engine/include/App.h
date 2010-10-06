@@ -12,24 +12,14 @@ extern "C" {
 
 #include "AnimData.h"
 #include "KeyManager.h"
-#include "ResourceManager.h"
 
 class State;
 class AnimData;
 
 /**
- * Template specialization to handle sf::Music's OpenFromFile() instead of
- * the typical LoadFromFile().
- * @param filepath path to file to load.
- * @return Pointer to sf::Music that was loaded, NULL if unable to load.
- */
-template<>
-sf::Music* ResourceLoader<sf::Music>::Load( const std::string& filepath );
-
-/**
- * Singleton that Controls application. Initializes SFML, ResourceManagers, 
+ * Singleton that Controls application. Initializes SFML,  
  * and StateManager. Provides access to time tracking, FPS info, 
- * event polling, and resource loading.
+ * event polling.
  */
 class App {
  public:
@@ -71,26 +61,6 @@ class App {
   /// Returns input in app.
   const sf::Input* GetInput() const;
 
-  /// Returns an Image given a filename, insuring that no
-  /// duplicate Image is loaded into memory
-  sf::Image* LoadImg( const std::string &filename );
-
-  /// Returns a Font given a filename, insuring that no
-  /// duplicate Font is loaded into memory.
-  sf::Font* LoadFont( const std::string &font );
-
-  /// Returns a Sound given a filename, insuring that no
-  /// duplicate Sound is loaded into memory
-  sf::SoundBuffer* LoadSound( const std::string &filename );
-
-  /// Returns a Music given a filename, insuring that no
-  /// duplicate Music is loaded into memory
-  sf::Music* LoadMusic( const std::string &filename );
-
-  /// Returns an AnimData given a filename, insuring that no
-  /// duplicate AnimData is loaded into memory
-  AnimData* LoadAnim( const std::string &filename );
-
   /// Contains the main game loop
   void Run();
 
@@ -125,13 +95,6 @@ class App {
   float m_deltaTime; //Time in seconds spent on last frame render
   float m_fps; //Frames per Second
   KeyManager m_keyManager; //Keeps track of how long registered keys are held
-
-  //Resource Managers
-  ResourceManager< sf::Image > m_images;
-  ResourceManager< sf::Font > m_fonts;
-  ResourceManager< sf::SoundBuffer > m_sounds;
-  ResourceManager< sf::Music > m_music;
-  ResourceManager< AnimData > m_anims;
 
   sf::Color m_clearColor; //Color to clear the screen to
   sf::Event m_event; //holds the most current event

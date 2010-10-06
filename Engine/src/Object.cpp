@@ -10,6 +10,7 @@ extern "C" {
 #include <SFML/Graphics/Color.hpp>
 
 #include "App.h"
+#include "ResourceLib.h"
 #include "State.h"
 #include "TileManager.h"
 #include "tinyxml.h"
@@ -526,7 +527,7 @@ int Object::LuaSetTextFont( lua_State *L ) {
     LogLuaErr( "String not passed to SetTextFont for Object: " + m_type );
     return 0;
   }
-  sf::Font *font =  App::GetApp()->LoadFont( lua_tostring( L, -1 ));
+  sf::Font *font =  nt::rsrc::LoadFont( lua_tostring( L, -1 ));
 
   if ( font ) {
     m_text.SetFont( *font );

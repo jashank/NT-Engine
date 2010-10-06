@@ -1,6 +1,6 @@
 #include "MusicManager.h"
 
-#include "App.h"
+#include "ResourceLib.h"
 #include "tinyxml.h"
 #include "Utilities.h"
 
@@ -69,7 +69,7 @@ void MusicManager::Update() {
 Private Methods
 ******************************/
 bool MusicManager::AddMusic( const std::string &filePath ) {
-  sf::Music *music = App::GetApp()->LoadMusic( filePath );
+  sf::Music *music = nt::rsrc::LoadMusic( filePath );
   if ( music ) {
     m_playlist.push_back( music );
   } else {

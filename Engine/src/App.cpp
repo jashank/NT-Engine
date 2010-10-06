@@ -11,17 +11,6 @@ extern "C" {
 #include "TileManager.h"
 #include "Utilities.h"
 
-// Specialize Load for sf::Music
-template<>
-sf::Music* ResourceLoader< sf::Music >::Load( const std::string &filepath ) {
-  std::auto_ptr< sf::Music > resource( new sf::Music() );
-  if( !resource->OpenFromFile( filepath ) ) {
-    LogErr( "Song in" + filepath + "failed to load." );
-    return NULL;
-  }
-  return resource.release();
-}
-
 /************************************************
 Data Members
 ************************************************/
@@ -136,30 +125,6 @@ const sf::Input* App::GetInput() const {
 }
 
 
-sf::Image* App::LoadImg( const std::string &filename ) {
-  return m_images.Load( filename );
-}
-
-
-sf::Font* App::LoadFont( const std::string &filename ) {
-  return m_fonts.Load( filename );
-}
-
-
-sf::SoundBuffer* App::LoadSound( const std::string &filename ) {
-  return m_sounds.Load( filename );
-}
-
-
-sf::Music* App::LoadMusic( const std::string &filename ) {
-  return m_music.Load( filename );
-}
-
-
-AnimData* App::LoadAnim( const std::string &filename ) {
-  return m_anims.Load( filename );
-}
-
 void App::RegisterKey( sf::Key::Code key ) {
   m_keyManager.RegisterKey( key );
 }
@@ -187,13 +152,6 @@ void App::Run() {
     if ( m_nextStateSet ) {
       m_nextStateSet = false;
       SAFEDELETE( m_currentState );
-
-      m_images.Clear();
-      m_fonts.Clear();
-      m_sounds.Clear();
-      m_music.Clear();
-      m_anims.Clear();
-
       m_currentState = new State();
       m_currentState->LoadFromFile( m_nextStatePath );
     }

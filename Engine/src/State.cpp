@@ -7,6 +7,7 @@ extern "C" {
 }
 
 #include "App.h"
+#include "ResourceLib.h"
 #include "tinyxml.h"
 #include "Utilities.h"
 
@@ -22,6 +23,13 @@ const luaL_Reg State::LuaFuncs[] = {
   { NULL, NULL }
 };
 
+
+/******************************************
+ * Destructor
+ *****************************************/
+State::~State() {
+  nt::rsrc::ClearAll();
+}
 
 /*******************************************
  Public Member Functions
@@ -79,7 +87,7 @@ bool State::LoadFromFile( const std::string &filePath ) {
           do {
             const char *path = port->Attribute( "path" );
             if ( path ) {
-              App::GetApp()->LoadFont( path );
+              nt::rsrc::LoadFont( path );
             } else {
               LogErr( "Name or path not specified for font in State: " + filePath );
             }

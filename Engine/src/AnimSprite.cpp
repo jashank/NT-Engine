@@ -3,6 +3,7 @@
 #include <SFML/Graphics/Rect.hpp>
 
 #include "App.h"
+#include "ResourceLib.h"
 
 /************************************************
 Public Methods
@@ -45,9 +46,7 @@ int AnimSprite::GetAnimation() const {
 
 
 void AnimSprite::LoadAnimData( const std::string &filepath ) {
-  App* app = App::GetApp();
-
-  AnimData *anim = app->LoadAnim( filepath.c_str() );
+  AnimData *anim = nt::rsrc::LoadAnim( filepath.c_str() );
   if ( anim ) {
     SetAnimData( anim );
   } else {

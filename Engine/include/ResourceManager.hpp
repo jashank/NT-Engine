@@ -14,6 +14,19 @@ void ResourceLoader< resource_t >::operator()(
 }
 
 
+// Specialize load for sf::Music because it uses OpenFromFile rather than
+// LoadFromFile in SFML.
+template<>
+sf::Music* ResourceLoader< sf::Music >::Load( const std::string &filepath ) {
+  std::auto_ptr< sf::Music > resource( new sf::Music() );
+  if( !resource->OpenFromFile( filepath ) ) {
+    LogErr( "Song in" + filepath + "failed to load." );
+    return NULL;
+  }
+  return resource.release();
+}
+
+
 template< typename resource_t >
 resource_t* ResourceLoader< resource_t >::Load( const std::string &filePath ) {
   std::auto_ptr<resource_t> resource( new resource_t );
