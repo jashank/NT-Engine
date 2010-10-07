@@ -12,7 +12,6 @@ extern "C" {
 #include "App.h"
 #include "ResourceLib.h"
 #include "State.h"
-#include "TileManager.h"
 #include "tinyxml.h"
 
 /**********************************

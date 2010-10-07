@@ -148,6 +148,7 @@ class ObjectManager {
    */ 
   bool TileOnMap( int x, int y ) const;
 
+
   /**
    * Needed by Lua functions because they are required to be static.
    * @return Current instance of ObjectManager in current State.
