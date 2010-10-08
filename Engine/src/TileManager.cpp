@@ -34,11 +34,13 @@ TileManager::TileManager()
    m_width( 0 ),
    m_height( 0 ),
    m_numTiles( 0 ),
-   m_tileDim( 0 ) {}
+   m_tileDim( 0 ),
+   m_layout( NULL ) {}
 
 
 TileManager::~TileManager() {
   SAFEDELETEA( m_tileSprites );
+  SAFEDELETE( m_layout );
 }
 
 /***************************************
@@ -79,14 +81,14 @@ void TileManager::Render() {
   if ( m_tileSprites ) {
     static App* app = App::GetApp();
 
-    int tile = 0;
     static float x = 0.f;
     static float y = 0.f;
+    int tile = -1;
+
     for ( int i = 0; i < m_width; ++i ) {
       for ( int j = 0; j < m_height; ++j ) {
-        tile = m_layout[i][j];
-        // Should there be protection against someone putting in tile 
-        // ID too large? -- TODO
+
+        tile = *( m_layout->Get( i, j ));
         if ( tile != BLANK_TILE_ID ) {
           x = static_cast<float>( i ) * m_tileDim;
           y = static_cast<float>( j ) * m_tileDim;
@@ -116,7 +118,7 @@ int TileManager::GetMapHeight() const {
 
 bool TileManager::TileIsCrossable( int x, int y )  const {
   if ( TileOnMap( x, y )) { 
-    ConstTileInfoIter iter = m_tileDataId.find( m_layout[x][y] );
+    ConstTileInfoIter iter = m_tileDataId.find( *( m_layout->Get( x, y )));
     if ( iter != m_tileDataId.end() ) {
       return ( iter->second->cid == CROSSABLE );
     }
@@ -274,10 +276,12 @@ bool TileManager::LoadTileLayout( const TiXmlElement *layout ) {
   layout->Attribute( "width", &m_width );
   layout->Attribute( "height", &m_height );
 
-  m_layout.resize( m_width );
-  for ( int i = 0; i < m_width; ++i ) {
-    m_layout[i].assign( m_height, BLANK_TILE_ID );
-  }
+  m_layout = new nt::core::Matrix2D<int>( m_width, m_height );
+  nt::core::Matrix2D<int>::iterator itr = m_layout->begin();
+  while ( itr != m_layout->end() ) {
+    *itr = BLANK_TILE_ID;
+    ++itr;
+  }  
 
   m_numTiles = m_width * m_height;
 
@@ -290,7 +294,7 @@ bool TileManager::LoadTileLayout( const TiXmlElement *layout ) {
     int currentTile = -1;
 
     while ( tileMapStream >> currentTile && row < m_height ) {
-      m_layout[column][row] = currentTile;
+      *( m_layout->Get( column, row )) = currentTile;
       ++column;
       if ( column >= m_width ) {
         column = 0;
@@ -342,7 +346,7 @@ void TileManager::SetTile( int x, int y, const std::string &tileName ) {
     std::map<std::string, Tile>::iterator tileDataItr
      = m_tileDataName.find( tileName );
     if ( tileDataItr != m_tileDataName.end() ) {
-      m_layout[x][y] = tileDataItr->second.id;
+      *( m_layout->Get( x, y )) = tileDataItr->second.id;
     }
   }
 }
@@ -350,7 +354,7 @@ void TileManager::SetTile( int x, int y, const std::string &tileName ) {
 
 const Tile* TileManager::GetTile( int x, int y ) const {
   if ( TileOnMap( x, y )) { 
-    int id = m_layout[x][y];
+    int id = *( m_layout->Get( x, y ));
     ConstTileInfoIter tile = m_tileDataId.find( id );
     if( tile != m_tileDataId.end() ) {
       return tile->second;
@@ -362,7 +366,7 @@ const Tile* TileManager::GetTile( int x, int y ) const {
 
 void TileManager::SetCollision( int x, int y, int collisionId ) {
   if ( TileOnMap( x, y )) {
-    m_tileDataId[m_layout[x][y]]->cid = collisionId;
+    m_tileDataId[*( m_layout->Get( x, y ))]->cid = collisionId;
   }
 }
 

@@ -49,6 +49,9 @@ class State {
    */
   void Render();
 
+  // TEMP
+  ObjectManager& GetObjectManager() { return m_objectManager; }
+
   /**
    * @return TileManager held by State.
    */

@@ -10,6 +10,7 @@ extern "C" {
   #include "lauxlib.h"
 }
 
+#include "Matrix2D.h"
 #include "Tile.h"
 
 class AnimSprite;
@@ -214,10 +215,10 @@ class TileManager {
   std::map<int, Tile*> m_tileDataId;
 
   /**
-   * 2D matrix representing layout of tiles on 2D grid. 
+   * Represents layout of tiles on 2D grid. 
    * Accessed via typical (x,y).
    */
-  std::vector<std::vector<int> > m_layout;
+  nt::core::Matrix2D<int> *m_layout;
 };
 
 #endif // TILEMANAGER_H

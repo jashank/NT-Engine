@@ -3,12 +3,15 @@
 
 #include <vector>
 
+#include "Utilities.h"
+
 namespace nt {
 namespace core {
 
 /**
  * Simple 2D matrix with basic indicing and iteration operations.
  * Index via (column,row) for more convenient (x,y) access. Starts at (0,0).
+ * The iteration of the matrix is by row.
  * Does not do index checking.
  */
 template < typename T >
@@ -22,15 +25,23 @@ class Matrix2D {
   }
 
   ~Matrix2D() {
-    delete[] m_mat;
+    SAFEDELETEA( m_mat );
   }
 
   /**
    * Returns pointer to element located at (col, row). 
    * Does not check if indice is valid.
    */
-  T *operator() ( unsigned int col, unsigned int row ) {
-    return m_mat[(m_col * row) + col];
+  T *operator()( unsigned int col, unsigned int row ) {
+    return &(m_mat[(m_cols * row) + col]);
+  }
+
+  /**
+   * Returns same thing as (). Made to ease syntax when dealing with a
+   * pointer to a Matrix2D.
+   */
+  T *Get( unsigned int col, unsigned int row ) {
+    return (*this)(col, row);
   }
 
   /**
@@ -65,5 +76,5 @@ class Matrix2D {
 } // namespace core
 } // namespace nt
 
-#undef // MATRIX2D_H
+#endif // MATRIX2D_H
 
