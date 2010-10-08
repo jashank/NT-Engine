@@ -45,6 +45,20 @@ class Matrix2D {
   }
 
   /**
+   * Returns number of columns in matrix.
+   */
+  unsigned int Columns() {
+    return m_cols;
+  }
+
+  /**
+   * Returns number of rows in matrix.
+   */
+  unsigned int Rows() {
+    return m_rows;
+  }
+
+  /**
    * Returns (0,0) element of matrix.
    */
   iterator begin() {

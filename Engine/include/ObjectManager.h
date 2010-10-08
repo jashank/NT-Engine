@@ -11,6 +11,8 @@ extern "C" {
   #include "lauxlib.h"
 }
 
+#include "Matrix2D.h"
+
 class TiXmlElement;
 class Object;
 
@@ -21,7 +23,7 @@ class Object;
  */
 class ObjectManager {
  public:
-  ObjectManager() {} 
+  ObjectManager(); 
   ~ObjectManager();
 
   /**
@@ -83,6 +85,7 @@ class ObjectManager {
   //@}
 
  private:
+  typedef std::list<Object*> ObjectList;
   typedef std::list<Object*>::iterator ListItr;
   typedef std::list<Object*>::const_iterator ListItrConst;
   typedef std::multimap<std::string, Object*>::iterator MapItr;
@@ -141,6 +144,7 @@ class ObjectManager {
    */
   ListItr AdjustGridCoord( int x, int y, ListItr objItr );
 
+
   /**
    * @param x x tile coordinate.
    * @param y y tile coordinate. 
@@ -167,10 +171,9 @@ class ObjectManager {
   std::multimap<std::string, Object*> m_objTypes; 
 
   /**
-   * 3D matrix representation of the Objects and their positions.
-   * (x-tile, y-tile, objects on tile).
+   * 2D Matrix that holds list of Objects at each position.
    */
-  std::vector<std::vector<std::list<Object*> > > m_objGrid;
+  nt::core::Matrix2D<ObjectList> *m_objGrid; 
 
   /**
    * Holds Objects that were sent to be destroyed on the last update.

@@ -7,6 +7,7 @@
 
 #include "App.h"
 #include "Config.h"
+#include "MapLib.h"
 #include "Object.h"
 #include "State.h"
 #include "TileManager.h"
@@ -31,15 +32,12 @@ const luaL_Reg ObjectManager::LuaFuncs[] = {
 /********************************
 Constructor and Destructor
 ********************************/
+ObjectManager::ObjectManager()
+  :m_objGrid( NULL ) {}
+
+
 ObjectManager::~ObjectManager() {
-  for ( unsigned int x = 0; x < m_objGrid.size(); ++x ) {
-    for ( unsigned int y = 0; y < m_objGrid[x].size(); ++y ) {
-      for ( ListItr obj = m_objGrid[x][y].begin();
-            obj != m_objGrid[x][y].end(); ++obj ) {
-        SAFEDELETE( *obj );
-      }
-    }
-  }
+  SAFEDELETE( m_objGrid );
 }
 
 /*******************************
@@ -49,10 +47,9 @@ bool ObjectManager::LoadData( const TiXmlElement *dataRoot ) {
   State *state = App::GetApp()->GetCurrentState();
   // State guaranteed to be loaded and TileManager guaranteed to be loaded
   // before ObjectManager
-  m_objGrid.resize( state->GetTileManager().GetMapWidth());
-  for ( unsigned int i = 0; i < m_objGrid.size(); ++i ) {
-    m_objGrid[i].resize( state->GetTileManager().GetMapHeight());
-  }
+  int width = state->GetTileManager().GetMapWidth();
+  int height = state->GetTileManager().GetMapHeight();
+  m_objGrid = new nt::core::Matrix2D<ObjectList>( width, height );
 
   const TiXmlElement *objType = dataRoot->FirstChildElement( "object" );
   if ( objType ) {
@@ -89,76 +86,92 @@ bool ObjectManager::LoadData( const TiXmlElement *dataRoot ) {
     return false;
   }
   
-  for ( unsigned int x = 0; x < m_objGrid.size(); ++x ) {
-    for ( unsigned int y = 0; y < m_objGrid[x].size(); ++y ) {
-      for ( ListItr obj = m_objGrid[x][y].begin();
-            obj != m_objGrid[x][y].end(); ) {
-        ObjectAttorney::Init( *obj );
-        obj = AdjustGridCoord( x, y, obj );
-      }
+  int x = 0;
+  int y = 0;
+  nt::core::Matrix2D<ObjectList>::iterator objList = m_objGrid->begin();
+  while ( objList != m_objGrid->end() ) {
+    for ( ListItr obj = objList->begin(); obj != objList->end(); ) {
+      ObjectAttorney::Init( *obj );
+      obj = AdjustGridCoord( x, y, obj );
     }
+    nt::map::IncPoint( x, y, width, height );
+    ++objList;
   }
+
   return true;
 }
 
 
 void ObjectManager::HandleEvents() {
-  for ( unsigned int x = 0; x < m_objGrid.size(); ++x ) {
-    for ( unsigned int y = 0; y < m_objGrid[x].size(); ++y ) {
-      for ( ListItr obj = m_objGrid[x][y].begin();
-            obj != m_objGrid[x][y].end(); ) {
-        ObjectAttorney::HandleEvents( *obj );
-        obj = AdjustGridCoord( x, y, obj );
-      }
+  int x = 0;
+  int y = 0;
+  int width = m_objGrid->Columns();
+  int height = m_objGrid->Rows();
+
+  nt::core::Matrix2D<ObjectList>::iterator objList = m_objGrid->begin();
+  while ( objList != m_objGrid->end() ) {
+    for ( ListItr obj = objList->begin(); obj != objList->end(); ) {
+      ObjectAttorney::HandleEvents( *obj );
+      obj = AdjustGridCoord( x, y, obj );
     }
+    nt::map::IncPoint( x, y, width, height );
+    ++objList;
   }
 }
 
 
 void ObjectManager::Update() {
+  int x = 0;
+  int y = 0;
+  int width = m_objGrid->Columns();
+  int height = m_objGrid->Rows();
+
   // Size used in inner loop because DetectCollision could potentially move
   // elements to the end of the list. Don't need to worry about
   // iterating past end because it is guaranteed that no objects
   // will be removed in UpdateCollision
-  for ( unsigned int x = 0; x < m_objGrid.size(); ++x ) {
-    for ( unsigned int y = 0; y < m_objGrid[x].size(); ++y ) {
-      ListItr obj = m_objGrid[x][y].begin();
-      for ( unsigned int i = 0; i < m_objGrid[x][y].size(); ++i ) {
-        Object* const otherObj = DetectCollision( *obj );
-        if ( otherObj ) {
-          ObjectAttorney::UpdateCollision( *obj, otherObj );
-          obj = AdjustGridCoord( x, y, obj );
-        } else {
-          ++obj;
-        }
-      }
-    }
-  }
+  nt::core::Matrix2D<ObjectList>::iterator objList = m_objGrid->begin();
+  while ( objList != m_objGrid->end() ) {
+    unsigned int initSize = objList->size();
+    ListItr obj = objList->begin();
 
-  for ( unsigned int x = 0; x < m_objGrid.size(); ++x ) {
-    for ( unsigned int y = 0; y < m_objGrid[x].size(); ++y ) {
-      for ( ListItr obj = m_objGrid[x][y].begin();
-            obj != m_objGrid[x][y].end(); ) {
-        ObjectAttorney::UpdateAI( *obj );
+    for ( unsigned int i = 0; i < initSize; ++i ) {
+      Object *const otherObj = DetectCollision( *obj );
+      if ( otherObj ) {
+        ObjectAttorney::UpdateCollision( *obj, otherObj );
         obj = AdjustGridCoord( x, y, obj );
+      } else {
+        ++obj;
       }
     }
+
+    nt::map::IncPoint( x, y, width, height );
+    ++objList;
   }
 
-  for ( unsigned int x = 0; x < m_objGrid.size(); ++x ) {
-    for ( unsigned int y = 0; y < m_objGrid[x].size(); ++y ) {
-      for ( ListItr obj = m_objGrid[x][y].begin();
-            obj != m_objGrid[x][y].end(); ++obj ) {
-        ObjectAttorney::UpdateRendering( *obj );
-      }
+  objList = m_objGrid->begin();
+  while ( objList != m_objGrid->end() ) {
+    for ( ListItr obj = objList->begin(); obj != objList->end(); ) {
+      ObjectAttorney::UpdateAI( *obj );
+      obj = AdjustGridCoord( x, y, obj );
     }
+    nt::map::IncPoint( x, y, width, height );
+    ++objList;
+  }
+
+  objList = m_objGrid->begin();
+  while ( objList != m_objGrid->end() ) {
+    for ( ListItr obj = objList->begin(); obj != objList->end(); ++obj ) {
+      ObjectAttorney::UpdateRendering( *obj );
+    }
+    ++objList;
   }
 
   for ( unsigned int i = 0; i < m_toBeDestroyed.size(); i++ ) {
     Object *delObj = m_toBeDestroyed[i];
     
     nt::core::IntVec coords = ObjectAttorney::GetTile( delObj );
-    m_objGrid[coords.x][coords.y].remove( delObj );
+    m_objGrid->Get(coords.x, coords.y)->remove( delObj );
         
     std::string type = ObjectAttorney::GetType( delObj ); 
     std::pair<MapItr, MapItr> objects = m_objTypes.equal_range( type );
@@ -179,14 +192,13 @@ void ObjectManager::Update() {
 void ObjectManager::Render() const {
   std::priority_queue< std::pair<float, Object*> > renderOrder;
 
-  for ( unsigned int x = 0; x < m_objGrid.size(); ++x ) {
-    for ( unsigned int y = 0; y < m_objGrid[x].size(); ++y ) {
-      for ( ListItrConst obj = m_objGrid[x][y].begin();
-            obj != m_objGrid[x][y].end(); ++obj ) {
-        renderOrder.push(
-          std::make_pair( -( (*obj)->GetPosition().y ), *obj ) );
-      }
+  nt::core::Matrix2D<ObjectList>::iterator objList = m_objGrid->begin();
+  while ( objList != m_objGrid->end() ) {
+    for ( ListItr obj = objList->begin(); obj != objList->end(); ++obj ) {
+      renderOrder.push(
+        std::make_pair( -( (*obj)->GetPosition().y ), *obj ) );
     }
+    ++objList;
   }
 
   while ( !renderOrder.empty() ) {
@@ -199,8 +211,8 @@ void ObjectManager::Render() const {
 
 
 bool ObjectManager::ObjectBlockingTile( int x, int y ) const {
-  for( ListItrConst obj = m_objGrid[x][y].begin();  
-        obj != m_objGrid[x][y].end(); ++obj ) {
+  ObjectList *list = m_objGrid->Get( x, y );
+  for( ListItr obj = list->begin(); obj != list->end(); ++obj ) { 
     if ( ObjectAttorney::BlockingTile( *obj )) {
       return true;
     }
@@ -389,7 +401,7 @@ void ObjectManager::AddObject( Object *obj ) {
     ObjectAttorney::GetType( obj ), obj )); 
   
   nt::core::IntVec coords = ObjectAttorney::GetTile( obj );
-  m_objGrid[coords.x][coords.y].push_back( obj );
+  m_objGrid->Get( coords.x, coords.y )->push_back( obj );
 }
 
 
@@ -412,41 +424,40 @@ Object* ObjectManager::FindObject( const std::string &type ) const {
 
 
 Object* ObjectManager::ObjectOnTile( int x, int y ) const {
-  if ( !m_objGrid[x][y].empty()) {
-    return m_objGrid[x][y].front();
+  ObjectList *list = m_objGrid->Get( x, y );
+  if ( !list->empty()) {
+    return list->front();
   }
   return NULL;
 }
 
 
 Object* ObjectManager::DetectCollision( Object *obj ) {
-  for ( unsigned int x = 0; x < m_objGrid.size(); ++x ) {
-    for ( unsigned int y = 0; y < m_objGrid[x].size(); ++y ) {
-      for ( ListItr otherObj = m_objGrid[x][y].begin();
-            otherObj != m_objGrid[x][y].end(); ++otherObj ) {
-        if ( *otherObj != obj && std::find( 
-               m_toBeDestroyed.begin(), m_toBeDestroyed.end(), *otherObj ) ==
-               m_toBeDestroyed.end()) {
-          bool collidingWithObj = 
-            ObjectAttorney::IsCollidingWith( obj, *otherObj );
-          bool intersects = 
-            ObjectAttorney::GetRect( obj ).Intersects( 
-              ObjectAttorney::GetRect( *otherObj ));
-          if ( !collidingWithObj && intersects ) {
-            // So next collision check will return a different object colliding
-            // with 'object' if there is one
-            m_objGrid[x][y].splice( 
-              m_objGrid[x][y].end(), 
-              m_objGrid[x][y], 
-              otherObj 
-            );
-            return m_objGrid[x][y].back();
-          } else if ( collidingWithObj && !intersects ) {
-            ObjectAttorney::RemoveFromCollidingWith( obj, *otherObj );
-          }
+  nt::core::Matrix2D<ObjectList>::iterator objList = m_objGrid->begin();
+
+  while ( objList != m_objGrid->end() ) {
+    for ( ListItr colObj = objList->begin(); colObj != objList->end(); 
+          ++colObj ) {
+
+      if ( *colObj != obj && std::find( 
+           m_toBeDestroyed.begin(), m_toBeDestroyed.end(), *colObj ) ==
+           m_toBeDestroyed.end()) {
+        bool collidingWithObj = ObjectAttorney::IsCollidingWith( obj, *colObj );
+        bool intersects = ObjectAttorney::GetRect( obj ).Intersects( 
+            ObjectAttorney::GetRect( *colObj ));
+
+        if ( !collidingWithObj && intersects ) {
+          // So next collision check will return a different object colliding
+          // with 'object' if there is one
+          objList->splice( objList->end(), *objList, colObj );
+          return objList->back();
+
+        } else if ( collidingWithObj && !intersects ) {
+          ObjectAttorney::RemoveFromCollidingWith( obj, *colObj );
         }
       }
     }
+    ++objList;
   }
   return NULL;
 }
@@ -461,8 +472,10 @@ ObjectManager::ListItr ObjectManager::AdjustGridCoord(
   Object* const obj = *objItr;
   nt::core::IntVec coords = ObjectAttorney::GetTile( obj );
   if ( x != coords.x || y != coords.y  ) {
-    objItr = m_objGrid[x][y].erase( objItr );
-    m_objGrid[coords.x][coords.y].push_back( obj );
+    ObjectList *oldTile = m_objGrid->Get( x, y );
+    ObjectList *newTile = m_objGrid->Get( coords.x, coords.y );
+    objItr = oldTile->erase( objItr );
+    newTile->push_back( obj );
     return objItr;
   }
   return ++objItr;
