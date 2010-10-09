@@ -155,13 +155,6 @@ class ObjectManager {
   void IncPoint( int &x, int &y, int width, int height );
 
   /**
-   * @param x x tile coordinate.
-   * @param y y tile coordinate. 
-   * @return True if tile coordinate passed exists on current tile map.
-   */ 
-  bool TileOnMap( int x, int y ) const;
-
-  /**
    * Needed by Lua functions because they are required to be static.
    * @return Current instance of ObjectManager in current State.
    */

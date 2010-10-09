@@ -44,35 +44,12 @@ class TileManager {
   void Render();
 
   /**
-   * @return Dimensions of tiles in this State (since tiles are square, only
-   * necessary to return one integer).
-   */
-  int GetTileDim() const;
-
-  /**
-   * @return Width (in tiles) of tile map.
-   */
-  int GetMapWidth() const;
-
-  /**
-   * @return Height (in tiles) of tile map.
-   */
-  int GetMapHeight() const;
-
-  /**
    * Checks to make sure coordinate passed is valid.
    * @param x x tile coordinate to check.
    * @param y y tile coordinate to check.
    * @return True if tile at (x,y) can be crossed.
    */
   bool TileIsCrossable( int x, int y ) const;
-
-  /**
-   * @param x x tile coordinate to check.
-   * @param y y tile coordinate to check.
-   * @return True if tile exists on map at (x, y).
-   */
-  bool TileOnMap( int x, int y ) const;
 
   /**
    * Registers Lua functions to the State API for access in scripts.
@@ -182,26 +159,10 @@ class TileManager {
   int m_numTileTypes;
 
   /**
-   * Number of tiles on x-axis.
-   */
-  int m_width; 
-
-  /**
-   * Number of tiles on y-axis.
-   */
-  int m_height; 
-
-  /**
    * Number of tiles in TileManager (which is equivalent to the 
    * number of tiles in the current State's tile map).
    */
   int m_numTiles;
-
-  /**
-   * Tile dimensions (in pixels). Only a single value since tiles must be
-   * perfect squares. Ex: a value of 48 would indicate 48x48 tiles.
-   */
-  int m_tileDim;
 
   /**
    * 'Name of tile/Tile' pairs. 

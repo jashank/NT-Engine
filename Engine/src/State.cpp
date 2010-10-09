@@ -7,6 +7,7 @@ extern "C" {
 }
 
 #include "App.h"
+#include "MapLib.h"
 #include "ResourceLib.h"
 #include "tinyxml.h"
 #include "Utilities.h"
@@ -40,59 +41,53 @@ bool State::LoadFromFile( const std::string &filePath ) {
   if ( doc.LoadFile() ) {
     TiXmlElement *root = doc.FirstChildElement( "state" );
     if ( root ) {
-      TiXmlElement *elem = root->FirstChildElement( "tiles" );
-      if ( elem ) {
-        if ( !m_tileManager.LoadData( elem )) {
-          LogErr( "Problem loading tiles in state file " + filePath );
-          return false;
-        }
+
+      TiXmlElement *elem = root->FirstChildElement( "map" );
+      nt::map::LoadData( elem );
+
+      elem = root->FirstChildElement( "tiles" );
+      if ( !m_tileManager.LoadData( elem )) {
+        LogErr( "Problem loading tiles in state file " + filePath );
+        return false;
       }
 
       elem = root->FirstChildElement( "objects" );
-      if ( elem ) {
-        if ( !m_objectManager.LoadData( elem )) {
-          LogErr( "Problem loading Objects in state file " + filePath );
-          return false;
-        }
+      if ( !m_objectManager.LoadData( elem )) {
+        LogErr( "Problem loading Objects in state file " + filePath );
+        return false;
       }
 
       elem = root->FirstChildElement( "music" );
-      if ( elem ) {
-        if ( !m_musicManager.LoadData( elem )) {
-          LogErr( "Problem loading music in state file " + filePath );
-          return false;
-        }
+      if ( !m_musicManager.LoadData( elem )) {
+        LogErr( "Problem loading music in state file " + filePath );
+        return false;
       }
 
       elem = root->FirstChildElement( "portals" );
-      if ( elem ) {
-        const TiXmlElement *port = elem->FirstChildElement( "port" );
-        if ( port ) {
-          do {
-            const char *name = port->Attribute( "name" );
-            const char *portPath = port->Attribute( "path" );
-            if ( name && portPath ) {
-              m_portals.insert( std::make_pair( name, portPath ));
-            } else {
-              LogErr( "Name or path not specified for port in State: " + filePath );
-            }
-          } while ( (port = port->NextSiblingElement( "port" )) );
-        }
+      const TiXmlElement *port = elem->FirstChildElement( "port" );
+      if ( port ) {
+        do {
+          const char *name = port->Attribute( "name" );
+          const char *portPath = port->Attribute( "path" );
+          if ( name && portPath ) {
+            m_portals.insert( std::make_pair( name, portPath ));
+          } else {
+            LogErr( "Name or path not specified for port in State: " + filePath );
+          }
+        } while ( (port = port->NextSiblingElement( "port" )) );
       }
 
       elem = root->FirstChildElement( "fonts" );
-      if ( elem ) {
-        const TiXmlElement *port = elem->FirstChildElement( "font" );
-        if ( port ) {
-          do {
-            const char *path = port->Attribute( "path" );
-            if ( path ) {
-              nt::rsrc::LoadFont( path );
-            } else {
-              LogErr( "Name or path not specified for font in State: " + filePath );
-            }
-          } while ( (port = port->NextSiblingElement( "font" )) );
-        }
+      const TiXmlElement *font = elem->FirstChildElement( "font" );
+      if ( font ) {
+        do {
+          const char *path = font->Attribute( "path" );
+          if ( path ) {
+            nt::rsrc::LoadFont( path );
+          } else {
+            LogErr( "Name or path not specified for font in State: " + filePath );
+          }
+        } while ( (font = font->NextSiblingElement( "font" )) );
       }
 
     } else {

@@ -7,10 +7,9 @@
 
 #include "App.h"
 #include "Config.h"
-#include "MapLib.h"
 #include "Object.h"
+#include "MapLib.h"
 #include "State.h"
-#include "TileManager.h"
 #include "tinyxml.h"
 #include "Utilities.h"
 #include "Vector.h"
@@ -44,11 +43,10 @@ ObjectManager::~ObjectManager() {
 Public Methods
 *******************************/
 bool ObjectManager::LoadData( const TiXmlElement *dataRoot ) {
-  State *state = App::GetApp()->GetCurrentState();
   // State guaranteed to be loaded and TileManager guaranteed to be loaded
   // before ObjectManager
-  int width = state->GetTileManager().GetMapWidth();
-  int height = state->GetTileManager().GetMapHeight();
+  int width = nt::map::GetWidth();
+  int height = nt::map::GetHeight();
   m_objGrid = new nt::core::Matrix2D<ObjectList>( width, height );
 
   const TiXmlElement *objType = dataRoot->FirstChildElement( "object" );
@@ -65,7 +63,7 @@ bool ObjectManager::LoadData( const TiXmlElement *dataRoot ) {
             instance->QueryIntAttribute( "x", &x );
             instance->QueryIntAttribute( "y", &y );
             instance->QueryIntAttribute( "strip", &strip );
-            if ( TileOnMap( x, y ) && strip >= 0 ) {
+            if ( nt::map::InRange( x, y ) && strip >= 0 ) {
               AddObject( ObjectAttorney::Create( path, x, y, strip ));
             } else {
               LogErr( "Tile location or strip negative for Object in state file." );
@@ -149,6 +147,7 @@ void ObjectManager::Update() {
     ++objList;
   }
 
+  x = y = 0;
   objList = m_objGrid->begin();
   while ( objList != m_objGrid->end() ) {
     for ( ListItr obj = objList->begin(); obj != objList->end(); ) {
@@ -159,6 +158,7 @@ void ObjectManager::Update() {
     ++objList;
   }
 
+  x = y = 0;
   objList = m_objGrid->begin();
   while ( objList != m_objGrid->end() ) {
     for ( ListItr obj = objList->begin(); obj != objList->end(); ++obj ) {
@@ -319,10 +319,8 @@ int ObjectManager::LuaGetNearestObject( lua_State *L ) {
   int tileX = lua_tointeger( L, -2 );
   int tileY = lua_tointeger( L, -1 );
 
-  int distanceX = 
-    App::GetApp()->GetCurrentState()->GetTileManager().GetMapWidth();
-  int distanceY = 
-    App::GetApp()->GetCurrentState()->GetTileManager().GetMapHeight();
+  int distanceX = nt::map::GetWidth();
+  int distanceY = nt::map::GetHeight();
 
   Object *nearestObj = NULL;
 
@@ -361,7 +359,7 @@ int ObjectManager::LuaGetObjectOnTile( lua_State *L ) {
   }
   int tileY = lua_tointeger( L, -1 );
 
-  if ( Inst().TileOnMap( tileX, tileY )) {
+  if ( nt::map::InRange( tileX, tileY )) {
     Lunar<Object>::push( L, Inst().ObjectOnTile( tileX, tileY ));
     return 1;
   } else {
@@ -384,7 +382,7 @@ int ObjectManager::LuaObjectBlockingTile( lua_State *L ) {
   }
   int tileY = lua_tointeger( L, -1 );
 
-  if ( Inst().TileOnMap( tileX, tileY )) {
+  if ( nt::map::InRange( tileX, tileY )) {
     lua_pushboolean( L, Inst().ObjectBlockingTile( tileX, tileY ));
     return 1;
   } else {
@@ -493,11 +491,6 @@ void ObjectManager::IncPoint( int &x, int &y, int width, int height ) {
     x = -1;
     y = -1;
   }
-}
-
-
-bool ObjectManager::TileOnMap( int x, int y ) const {
-  return App::GetApp()->GetCurrentState()->GetTileManager().TileOnMap( x, y );
 }
 
 
