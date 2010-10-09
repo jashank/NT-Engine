@@ -94,7 +94,7 @@ bool ObjectManager::LoadData( const TiXmlElement *dataRoot ) {
       ObjectAttorney::Init( *obj );
       obj = AdjustGridCoord( x, y, obj );
     }
-    nt::map::IncPoint( x, y, width, height );
+    IncPoint( x, y, width, height );
     ++objList;
   }
 
@@ -114,7 +114,7 @@ void ObjectManager::HandleEvents() {
       ObjectAttorney::HandleEvents( *obj );
       obj = AdjustGridCoord( x, y, obj );
     }
-    nt::map::IncPoint( x, y, width, height );
+    IncPoint( x, y, width, height );
     ++objList;
   }
 }
@@ -145,7 +145,7 @@ void ObjectManager::Update() {
       }
     }
 
-    nt::map::IncPoint( x, y, width, height );
+    IncPoint( x, y, width, height );
     ++objList;
   }
 
@@ -155,7 +155,7 @@ void ObjectManager::Update() {
       ObjectAttorney::UpdateAI( *obj );
       obj = AdjustGridCoord( x, y, obj );
     }
-    nt::map::IncPoint( x, y, width, height );
+    IncPoint( x, y, width, height );
     ++objList;
   }
 
@@ -480,6 +480,20 @@ ObjectManager::ListItr ObjectManager::AdjustGridCoord(
   }
   return ++objItr;
 } 
+
+
+void ObjectManager::IncPoint( int &x, int &y, int width, int height ) {
+  ++x;
+  if ( x >= width ) {
+    x = 0;
+    ++y;
+  }
+
+  if ( y >= height ) {
+    x = -1;
+    y = -1;
+  }
+}
 
 
 bool ObjectManager::TileOnMap( int x, int y ) const {

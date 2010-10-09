@@ -33,8 +33,9 @@ def save(workingPack, tilemap, extras, filename):
         tilesPath = tile.getAnimPath()
         break
 
+    mapElem = xmlout.createMapDims(size, mapWidth, mapHeight)
     tileElem = xmlout.createTiles(
-        workingPack, size, tilesPath, mapWidth, mapHeight, tiles)
+        workingPack, tilesPath, tiles, mapWidth, mapHeight)
     objectElem = xmlout.createObjects(workingPack, objects)
 
     musicDict, portalsDict, fontsDict = extras.currentState()
@@ -42,8 +43,8 @@ def save(workingPack, tilemap, extras, filename):
     portalElem = xmlout.createPathName(workingPack, portalsDict, 'portals', 'port')
     fontElem = xmlout.createPathName(workingPack, fontsDict, 'fonts', 'font')
 
-    stateElem = xmlout.createState(tileElem, objectElem, musicElem, portalElem,
-        fontElem)
+    stateElem = xmlout.createState(mapElem, tileElem, objectElem, musicElem,
+        portalElem, fontElem)
 
     xmlout.createStateFile(stateElem, filename)
     return filename
@@ -92,6 +93,16 @@ def load(workingPack, tilemap, dimsButton, objbar, tilebar, extras):
     objbar.clear()
     # tile bar is automatically cleared when loaded
 
+    # Get map dimensions
+    mapInfo = root.find('map')
+    size = int(mapInfo.find('tilesize').get('px'))
+
+    dims = mapInfo.find('dims')
+    mapWidth = int(dims.get('width'))
+    mapHeight = int(dims.get('height'))
+
+    dimsButton.setDims(size, mapWidth, mapHeight)
+
     # Load Tiles
     tiles = root.find('tiles')
 
@@ -101,11 +112,6 @@ def load(workingPack, tilemap, dimsButton, objbar, tilebar, extras):
         tilebar.loadTiles(animPath)
 
     layout = tiles.find('layout')
-
-    size = int(tiles.find('size').get('px'))
-    mapWidth = int(layout.get('width'))
-    mapHeight = int(layout.get('height'))
-    dimsButton.setDims(size, mapWidth, mapHeight)
 
     if layout.text:
         # strip because there is whitespace on the ends

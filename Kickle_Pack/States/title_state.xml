@@ -1,16 +1,19 @@
 <?xml version="1.0" ?>
 <state>
+  <map>
+    <tilesize px="48"/>
+    <dims height="15" width="15"/>
+  </map>
   <tiles>
-    <size px="48"/>
     <animation path=""/>
-    <layout height="15" width="15"/>
+    <layout/>
   </tiles>
   <objects>
-    <object path="Kickle_Pack/Objects/TitlePlayButton.xml">
-      <inst strip="0" x="5" y="7"/>
-    </object>
     <object path="Kickle_Pack/Objects/TitleImage.xml">
       <inst strip="0" x="0" y="0"/>
+    </object>
+    <object path="Kickle_Pack/Objects/TitlePlayButton.xml">
+      <inst strip="0" x="5" y="7"/>
     </object>
   </objects>
   <music/>

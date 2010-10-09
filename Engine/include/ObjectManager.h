@@ -144,6 +144,15 @@ class ObjectManager {
    */
   ListItr AdjustGridCoord( int x, int y, ListItr objItr );
 
+  /**
+   * Increments point passed, given a width and a height.
+   *
+   * First increments x. If x is still less then then the width, then returns.
+   * If x has greater than or equal to the width, then x is set to 0 and y is
+   * incremented. If both breach width and height, respectively, then both are
+   * set to -1.
+   */
+  void IncPoint( int &x, int &y, int width, int height );
 
   /**
    * @param x x tile coordinate.
@@ -151,7 +160,6 @@ class ObjectManager {
    * @return True if tile coordinate passed exists on current tile map.
    */ 
   bool TileOnMap( int x, int y ) const;
-
 
   /**
    * Needed by Lua functions because they are required to be static.
