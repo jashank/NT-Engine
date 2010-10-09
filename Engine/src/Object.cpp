@@ -12,8 +12,7 @@ extern "C" {
 #include "App.h"
 #include "MapLib.h"
 #include "ResourceLib.h"
-#include "TileManager.h"
-#include "State.h"
+#include "StateComm.h"
 #include "tinyxml.h"
 
 /**********************************
@@ -71,8 +70,6 @@ Object::Object( lua_State *L )
    m_distance( 0.0f ),
    m_speed( 0.0f ),
    m_id( LUA_NOREF ) {
-  m_state = App::GetApp()->GetCurrentState();
-
   if( !lua_isstring( L, -1 ) ) {
     luaL_error( L, "Invalid argument for Object." );
     LogErr( "State not passed to Object." );
@@ -98,8 +95,6 @@ Object::~Object() {
 /***********************************************
  * Private
  **********************************************/
-State* Object::m_state = NULL;
-
 Object::Object(
   const std::string &filepath,
   int tileX,
@@ -115,8 +110,6 @@ Object::Object(
    m_speed( 0.0f ),
    m_id( LUA_NOREF ),
    m_coords( tileX, tileY ) {
-  m_state = App::GetApp()->GetCurrentState();
-
   if( !LoadObjectData( filepath ) ) {
     LogErr( "Object XML file " + filepath + " didn't load correctly." );
   }
@@ -195,6 +188,7 @@ void Object::UpdateRendering() {
 /********************
  * Lua API
  ********************/
+#include <iostream>
 int Object::LuaMove( lua_State *L ) {
   if( !m_moving ) {
     nt::core::IntVec nextCoords = m_coords;
@@ -220,14 +214,8 @@ int Object::LuaMove( lua_State *L ) {
     }
 
     // Need to check if tile is on map because of no clip.
-    if ( nt::map::InRange( nextCoords.x, nextCoords.y )) {
-      if (( m_noClip ) ||
-          ( m_state->GetTileManager().TileIsCrossable( 
-              nextCoords.x, nextCoords.y  ) &&
-            !m_state->GetObjectManager().ObjectBlockingTile( 
-              nextCoords.x, nextCoords.y ))) {
-        m_moving = true;
-      }
+    if ( m_noClip || nt::state::TileIsOpen( nextCoords.x, nextCoords.y )) {
+      m_moving = true;
     }
     lua_pushboolean( L, m_moving );
     return 1;

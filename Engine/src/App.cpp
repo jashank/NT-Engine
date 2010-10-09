@@ -133,7 +133,7 @@ void App::RegisterKey( sf::Key::Code key ) {
 void App::Run() {
   // TEMPORARY
   m_currentState = new State();
-  m_currentState->LoadFromFile( m_filePath );
+  m_currentState->Init( m_filePath );
 
   //Game Loop
   while ( m_window.IsOpened() ) {
@@ -153,7 +153,7 @@ void App::Run() {
       m_nextStateSet = false;
       SAFEDELETE( m_currentState );
       m_currentState = new State();
-      m_currentState->LoadFromFile( m_nextStatePath );
+      m_currentState->Init( m_nextStatePath );
     }
 
     m_window.Clear( m_clearColor );

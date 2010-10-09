@@ -16,8 +16,6 @@
 #include "TimedString.h"
 #include "Vector.h"
 
-class State;
-
 /**
  * Objects are heavily customizable via their associated lua script and xml 
  * file. They make up everything that has behavior in the app. They are 
@@ -316,11 +314,6 @@ class Object : public AnimSprite {
    * String that Object can manipulate from its script. This is rendered.
    */
   nt::core::TimedString m_text; 
-
-  /**
-   * Pointer to application's current state.
-   */
-  static State *m_state; 
 
   /**
    * Objects this Object is colliding with.

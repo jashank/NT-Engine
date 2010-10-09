@@ -10,6 +10,7 @@ extern "C" {
 
 #include "ObjectManager.h"
 #include "MusicManager.h"
+#include "StateComm.h"
 #include "TileManager.h"
 
 class lua_State;
@@ -28,11 +29,10 @@ class State {
   ~State();
 
   /**
-   * Loads State from file at file path.
-   * @param filePath path to file to load.
-   * @return True if file loads successfully (no syntax errors in file).
+   * Initializes State via loading in State file at file path and setting up
+   * communication interface among parts of State.
    */
-  bool LoadFromFile( const std::string &filePath );
+  bool Init( const std::string &filePath );
 
   /**
    * Handles events for anything that handles events in the State.
@@ -83,6 +83,8 @@ class State {
   //@}
 
  private:
+  friend bool nt::state::SetStateComm( State *state );
+
   //@{
   /**
    * Restrict copy constructor and assignment.
@@ -90,6 +92,13 @@ class State {
   State( const State &state );
   State& operator=( const State &state );
   //@}
+
+  /**
+   * Loads State from file at file path.
+   * @param filePath path to file to load.
+   * @return True if file loads successfully (no syntax errors in file).
+   */
+  bool LoadFromFile( const std::string &filePath );
 
   /**
    * Method names for State API to associate with methods in State class. For
