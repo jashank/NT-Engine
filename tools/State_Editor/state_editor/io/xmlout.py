@@ -8,39 +8,25 @@ from state_editor.io.fileop import relPathToPack
 from state_editor.features.objbar import Object
 from state_editor.features.tilebar import Tile
 
-def createMapDims(size, mapWidth, mapHeight):
-    """Returns <map> element for NT State file.
 
-    Arguments: size -- size of a tile in pixels (i.e. 48 would be 48x48)
-               mapWidth -- width of map in tiles
-               mapHeight -- height of map in tiles
-
-    Returns: An Element instance from ElementTree for <map>
-
-    """
-    root = ElementTree.Element("map")
-
-    sz = ElementTree.SubElement(root, "tilesize", {'px':str(size)})
-    dims = ElementTree.SubElement(root, "dims",
-        {'width':str(mapWidth), 'height':str(mapHeight)})
-
-    return root
-
-def createTiles(workingPack, path, tileMapping, mapWidth, mapHeight):
+def createTiles(workingPack, size, path, mapWidth, mapHeight, tileMapping):
     """Returns <tiles> element for NT State file.
 
     Arguments: workingPack -- Path to pack user is working with
+               size -- size of a tile in pixels (i.e. 48 would be 48x48)
                path -- path to animation file for tiles, can be None
+               mapWidth -- width of map in tiles
+               mapHeight -- height of map in tiles
                tileMapping -- dictionary containing (coord,Tile) pairs. A Tile
                    is defined in the tilebar file, and a coord is a coordinate
                    on the map in the form of a string like '3,5' or '23,2'
-               mapWidth -- width of map in tiles
-               mapHeight -- height of map in tiles
 
     Returns: An Element instance from ElementTree for <tiles>
 
     """
     root = ElementTree.Element("tiles")
+
+    sz = ElementTree.SubElement(root, "size", {'px':str(size)})
 
     # Won't necessarily be a path to tile animation file
     relPath = ''
@@ -49,7 +35,8 @@ def createTiles(workingPack, path, tileMapping, mapWidth, mapHeight):
 
     anim = ElementTree.SubElement(root, "animation", {'path':relPath})
 
-    layout = ElementTree.SubElement(root, "layout")
+    layout = ElementTree.SubElement(root, "layout",
+        {'width':str(mapWidth), 'height':str(mapHeight)})
     layoutText = []
     hasTiles = False
 
@@ -134,11 +121,10 @@ def createPathName(workingPack, pathNameDict, parentStr, subElemStr):
 
     return root
 
-def createState(mapElem, tileElem, objElem, musicElem, portalElem, fontElem):
+def createState(tileElem, objElem, musicElem, portalElem, fontElem):
     """Returns <state> element for NT state file.
 
     Arguments: Note that all arguments are of the type Element from ElementTree
-               mapElem -- <map> Element
                tileElem -- <tiles> Element
                objElem -- <objects> Element
                musicElem -- <music> Element
@@ -148,7 +134,6 @@ def createState(mapElem, tileElem, objElem, musicElem, portalElem, fontElem):
     Returns: Element instance of ElementTree for <state>.
     """
     root = ElementTree.Element('state')
-    root.append(mapElem)
     root.append(tileElem)
     root.append(objElem)
     root.append(musicElem)

@@ -31,6 +31,27 @@ void EndStateComm();
  */
 bool TileIsOpen( int x, int y );
 
+/**
+ * Returns size of a tile (in pixels). Only a single number because all tiles
+ * are perfect squares. 0 if no tile manager.
+ */
+int GetTileSize();
+
+/**
+ * Returns width of map (in tiles). 0 if no tile manager.
+ */
+int GetMapWidth();
+
+/**
+ * Returns height of map (in tiles). 0 if no tile manager.
+ */
+int GetMapHeight(); 
+
+/**
+ * Returns whether tile coordinate passed is in range of map.
+ */
+int InRange( int x, int y );
+
 } // namespace state
 } // namespace nt
 

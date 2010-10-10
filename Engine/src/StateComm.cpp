@@ -1,6 +1,5 @@
 #include "StateComm.h"
 
-#include "MapLib.h"
 #include "ObjectManager.h"
 #include "State.h"
 #include "TileManager.h"
@@ -32,7 +31,7 @@ void EndStateComm() {
 
 bool TileIsOpen( int x, int y ) {
   if ( objMan && tileMan ) {
-    if ( nt::map::InRange( x, y )) {
+    if ( InRange( x, y )) {
       return ( !objMan->ObjectBlockingTile( x, y ) && 
                 tileMan->TileIsCrossable( x, y ));
     }
@@ -40,6 +39,38 @@ bool TileIsOpen( int x, int y ) {
   return false;
 }
 
+
+int GetTileSize() {
+  if ( tileMan ) {
+    return tileMan->GetTileDim();
+  }
+  return 0;
+}
+
+
+int GetMapWidth() {
+  if ( tileMan ) {
+    return tileMan->GetMapWidth();
+  }
+  return 0;
+}
+
+
+int GetMapHeight() {
+  if ( tileMan ) {
+    return tileMan->GetMapHeight();
+  }
+  return 0;
+}
+
+
+int InRange( int x, int y ) {
+  if ( tileMan ) {
+    return ( x >= 0 && x < tileMan->GetMapWidth() &&
+             y >= 0 && y < tileMan->GetMapHeight());
+  }
+  return false;
+}
 
 } // namespace state
 } // namespace nt

@@ -10,7 +10,6 @@ extern "C" {
 #include <SFML/Graphics/Color.hpp>
 
 #include "App.h"
-#include "MapLib.h"
 #include "ResourceLib.h"
 #include "StateComm.h"
 #include "tinyxml.h"
@@ -118,7 +117,7 @@ Object::Object(
 
   //Calculate the float positions given tileX and tileY
   //Taking into account tile size, and max tiles across/down
-  int tileDim = nt::map::GetTileSize();
+  int tileDim = nt::state::GetTileSize();
 
   float x = static_cast<float>( tileDim * tileX );
   float y = static_cast<float>( tileDim * tileY ); 
@@ -408,7 +407,7 @@ int Object::LuaSetDir( lua_State *L ) {
     m_direction = dir;
   } else {
     if ( dir == GetOppositeDir( m_direction )) {
-      m_distance = nt::map::GetTileSize() - m_distance;
+      m_distance = nt::state::GetTileSize() - m_distance;
       m_direction = dir;
     } else {
       LogLuaErr( "Direction passed to SetDir will unalign Object: " + m_type );
@@ -697,7 +696,7 @@ void Object::InitLua() {
 
 
 void Object::MovementUpdate() {
-  int tileSize = nt::map::GetTileSize();
+  int tileSize = nt::state::GetTileSize();
 
   int halfTile = tileSize / 2;
   float prevDist = m_distance;
@@ -753,7 +752,7 @@ void Object::MovementUpdate() {
 void Object::Realign() {
   static float diff = 0.0f;
   //Calculate the amount of distance to move back
-  diff = m_distance - nt::map::GetTileSize();
+  diff = m_distance - nt::state::GetTileSize();
 
   if ( diff > 0.f ) {
     //Find the correct direction to move back

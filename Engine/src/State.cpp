@@ -7,7 +7,6 @@ extern "C" {
 }
 
 #include "App.h"
-#include "MapLib.h"
 #include "ResourceLib.h"
 #include "tinyxml.h"
 #include "Utilities.h"
@@ -135,20 +134,20 @@ bool State::LoadFromFile( const std::string &filePath ) {
     TiXmlElement *root = doc.FirstChildElement( "state" );
     if ( root ) {
 
-      TiXmlElement *elem = root->FirstChildElement( "map" );
-      nt::map::LoadData( elem );
-
-      elem = root->FirstChildElement( "tiles" );
+      TiXmlElement *elem = root->FirstChildElement( "tiles" );
       if ( !m_tileManager.LoadData( elem )) {
         LogErr( "Problem loading tiles in state file " + filePath );
         return false;
       }
 
+      // Set state comm for this load for ObjectManager to know map dimensions
+      nt::state::SetStateComm( this );
       elem = root->FirstChildElement( "objects" );
       if ( !m_objectManager.LoadData( elem )) {
         LogErr( "Problem loading Objects in state file " + filePath );
         return false;
       }
+      nt::state::EndStateComm();
 
       elem = root->FirstChildElement( "music" );
       if ( !m_musicManager.LoadData( elem )) {

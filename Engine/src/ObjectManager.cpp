@@ -8,8 +8,8 @@
 #include "App.h"
 #include "Config.h"
 #include "Object.h"
-#include "MapLib.h"
 #include "State.h"
+#include "StateComm.h"
 #include "tinyxml.h"
 #include "Utilities.h"
 #include "Vector.h"
@@ -45,8 +45,8 @@ Public Methods
 bool ObjectManager::LoadData( const TiXmlElement *dataRoot ) {
   // State guaranteed to be loaded and TileManager guaranteed to be loaded
   // before ObjectManager
-  int width = nt::map::GetWidth();
-  int height = nt::map::GetHeight();
+  int width = nt::state::GetMapWidth();
+  int height = nt::state::GetMapHeight();
   m_objGrid = new nt::core::Matrix2D<ObjectList>( width, height );
 
   const TiXmlElement *objType = dataRoot->FirstChildElement( "object" );
@@ -63,7 +63,7 @@ bool ObjectManager::LoadData( const TiXmlElement *dataRoot ) {
             instance->QueryIntAttribute( "x", &x );
             instance->QueryIntAttribute( "y", &y );
             instance->QueryIntAttribute( "strip", &strip );
-            if ( nt::map::InRange( x, y ) && strip >= 0 ) {
+            if ( nt::state::InRange( x, y ) && strip >= 0 ) {
               AddObject( ObjectAttorney::Create( path, x, y, strip ));
             } else {
               LogErr( "Tile location or strip negative for Object in state file." );
@@ -319,8 +319,8 @@ int ObjectManager::LuaGetNearestObject( lua_State *L ) {
   int tileX = lua_tointeger( L, -2 );
   int tileY = lua_tointeger( L, -1 );
 
-  int distanceX = nt::map::GetWidth();
-  int distanceY = nt::map::GetHeight();
+  int distanceX = nt::state::GetMapWidth();
+  int distanceY = nt::state::GetMapHeight();
 
   Object *nearestObj = NULL;
 
@@ -359,7 +359,7 @@ int ObjectManager::LuaGetObjectOnTile( lua_State *L ) {
   }
   int tileY = lua_tointeger( L, -1 );
 
-  if ( nt::map::InRange( tileX, tileY )) {
+  if ( nt::state::InRange( tileX, tileY )) {
     Lunar<Object>::push( L, Inst().ObjectOnTile( tileX, tileY ));
     return 1;
   } else {
@@ -382,7 +382,7 @@ int ObjectManager::LuaObjectBlockingTile( lua_State *L ) {
   }
   int tileY = lua_tointeger( L, -1 );
 
-  if ( nt::map::InRange( tileX, tileY )) {
+  if ( nt::state::InRange( tileX, tileY )) {
     lua_pushboolean( L, Inst().ObjectBlockingTile( tileX, tileY ));
     return 1;
   } else {
