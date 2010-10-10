@@ -6,7 +6,6 @@
 #include <cstdlib>
 
 #include "App.h"
-#include "Config.h"
 #include "Object.h"
 #include "State.h"
 #include "StateComm.h"
