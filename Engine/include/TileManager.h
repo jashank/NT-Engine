@@ -74,12 +74,6 @@ class TileManager {
    */
   bool TileOnMap( int x, int y ) const;
 
-  /**
-   * Registers Lua functions to the State API for access in scripts.
-   * @param L lua state that functions will be registered in.
-   */
-  static void RegisterLuaFuncs( lua_State *L );
-
   //@{
   /**
    * Lua functions. See the State API for how these functions manipulate the
@@ -158,18 +152,6 @@ class TileManager {
    * else is not crossable. 
    */
   void SetCollision( int x, int y, int collisionId );
-
-  /**
-   * Needed by Lua functions because they are required to be static.
-   * @return Instance of TileManager in current State.
-   */
-  static TileManager& Inst();
-
-  /**
-   * Method names for State API to associate with methods in TileManager. 
-   * For example, "GetTileInfo" is LuaGetTileInfo.
-   */
-  static const luaL_Reg LuaFuncs[];
 
   /**
    * Array of animated sprites for the different tiles.

@@ -4,24 +4,16 @@
 #include <string>
 #include <map>
 
-extern "C" {
-  #include "lauxlib.h"
-}
-
 #include "ObjectManager.h"
 #include "MusicManager.h"
 #include "StateComm.h"
 #include "TileManager.h"
 
-class lua_State;
-
 /**
  * A highly customizable construct representing a single "scene" in the
  * application. Each State has an XML file where the user specifies tile
  * information (layout, size, etc.), Objects that will be in the State upon
- * State creation, music to use, and portals to other States. Also provides
- * an API for manipulating the State from lua scripts. See the State Guide for
- * more information.
+ * State creation, music to use, and portals to other States. 
  */
 class State {
  public:
@@ -48,20 +40,6 @@ class State {
    * Renders everything that needs to be rendered in the State.
    */
   void Render();
-
-  // TEMP
-  ObjectManager& GetObjectManager() { return m_objectManager; }
-
-  /**
-   * @return TileManager held by State.
-   */
-  TileManager& GetTileManager();
-
-  /**
-   * Registers Lua functions to State API for access in scripts.
-   * @param L lua state that functions will be registered in.
-   */
-  static void RegisterLuaFuncs( lua_State *L );
 
   //@{
   /**
@@ -99,12 +77,6 @@ class State {
    * @return True if file loads successfully (no syntax errors in file).
    */
   bool LoadFromFile( const std::string &filePath );
-
-  /**
-   * Method names for State API to associate with methods in State class. For
-   * example, "Portal" is matched with LuaPortal.
-   */
-  static const luaL_Reg LuaFuncs[]; 
 
   /** Manages all Objects in this State. */
   ObjectManager m_objectManager; /** Manages all Objects in this State. */

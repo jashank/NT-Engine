@@ -11,19 +11,6 @@ extern "C" {
 #include "tinyxml.h"
 #include "Utilities.h"
 
-/*******************************************
- Data Members
-*******************************************/
-const luaL_Reg State::LuaFuncs[] = {
-  { "LoadPath", LuaLoadPath },
-  { "Reset", LuaReset },
-  { "Portal", LuaPortal },
-  { "GetName", LuaGetName },
-  { "LogErr", LuaLogErr },
-  { NULL, NULL }
-};
-
-
 /******************************************
  * Destructor
  *****************************************/
@@ -71,11 +58,6 @@ TileManager& State::GetTileManager() {
 /*************************************
  * Lua Functions
  * ***********************************/
-void State::RegisterLuaFuncs( lua_State *L  ) {
-  luaL_register( L, "State", LuaFuncs );
-}
-
-
 int State::LuaLoadPath( lua_State *L ) {
   if ( !lua_isstring( L, -1 )) {
     LogLuaErr( "String not passed to LoadPath" );

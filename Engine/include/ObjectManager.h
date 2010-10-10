@@ -55,12 +55,6 @@ class ObjectManager {
    */
   bool ObjectBlockingTile( int x, int y ) const;
 
-  /**
-   * Registers Lua functions to the State API for access in scripts.
-   * @param L lua state that functions will be registered in.
-   */
-  static void RegisterLuaFuncs( lua_State *L );
-
   //@{
   /**
    * Lua functions. See the State API for how these functions manipulate the
@@ -153,18 +147,6 @@ class ObjectManager {
    * set to -1.
    */
   void IncPoint( int &x, int &y, int width, int height );
-
-  /**
-   * Needed by Lua functions because they are required to be static.
-   * @return Current instance of ObjectManager in current State.
-   */
-  static ObjectManager& Inst();
-
-  /**
-   * Method names for State API to associate with methods in ObjectManager
-   * class. For example, "GetObject" is matched with LuaGetObject.
-   */ 
-  static const luaL_Reg LuaFuncs[]; 
 
   /**
    * Key is Object's type. Holds all Objects in the current State of that type.

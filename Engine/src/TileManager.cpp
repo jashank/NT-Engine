@@ -16,16 +16,6 @@ extern "C" {
 #include "tinyxml.h"
 
 /******************************
-Constant Members
-******************************/
-const luaL_reg TileManager::LuaFuncs[] = {
-  { "GetTileInfo", LuaGetTileInfo },
-  { "TileIsCrossable", LuaTileIsCrossable },
-  { "SetTile", LuaSetTile },
-  { NULL, NULL }
-};
-
-/******************************
 Constructors and Destructors.
 ******************************/
 TileManager::TileManager()
@@ -129,11 +119,6 @@ bool TileManager::TileIsCrossable( int x, int y )  const {
 
 bool TileManager::TileOnMap( int x, int y ) const {
   return ( x >= 0 && x < m_width && y >= 0 && y < m_height );
-}
-
-
-void TileManager::RegisterLuaFuncs( lua_State *L ) {
-  luaL_register( L, "State", LuaFuncs );
 }
 
 /********************************
@@ -368,10 +353,5 @@ void TileManager::SetCollision( int x, int y, int collisionId ) {
   if ( TileOnMap( x, y )) {
     m_tileDataId[*( m_layout->Get( x, y ))]->cid = collisionId;
   }
-}
-
-
-TileManager& TileManager::Inst() {
-  return App::GetApp()->GetCurrentState()->GetTileManager();
 }
 

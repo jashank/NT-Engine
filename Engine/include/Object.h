@@ -35,6 +35,11 @@ class Object : public AnimSprite {
 
   ~Object();
 
+  /**
+   * Registers the Object class to Lua.
+   */
+  static void LuaRegister( lua_State *L );
+
   static const char className[]; /** Stores name of class. Needed by Lunar. */
 
   /**

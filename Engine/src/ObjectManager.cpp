@@ -13,20 +13,6 @@
 #include "Utilities.h"
 #include "Vector.h"
 
-/*******************************************
- Data Members
-*******************************************/
-const luaL_Reg ObjectManager::LuaFuncs[] = {
-  { "CreateObject", LuaCreateObject },
-  { "DestroyObject", LuaDestroyObject },
-  { "GetObject", LuaGetObject },
-  { "GetObjects", LuaGetObjects },
-  { "GetNearestObject", LuaGetNearestObject },
-  { "GetObjectOnTile", LuaGetObjectOnTile },
-  { "ObjectBlockingTile", LuaObjectBlockingTile },
-  { NULL, NULL }
-};
-
 /********************************
 Constructor and Destructor
 ********************************/
@@ -217,12 +203,6 @@ bool ObjectManager::ObjectBlockingTile( int x, int y ) const {
     }
   }
   return false;
-}
-
-
-void ObjectManager::RegisterLuaFuncs( lua_State *L ) {
-  luaL_register( L, "State", LuaFuncs );
-  Lunar<Object>::Register( L );
 }
 
 /***************************************
@@ -490,11 +470,6 @@ void ObjectManager::IncPoint( int &x, int &y, int width, int height ) {
     x = -1;
     y = -1;
   }
-}
-
-
-ObjectManager& ObjectManager::Inst() {
-  return App::GetApp()->GetCurrentState()->GetObjectManager();
 }
 
 

@@ -16,7 +16,8 @@ class StateMachine {
   ~StateMachine();
 
   /**
-   * Sets up StateMachine with State located at path passed. Returns true if
+   * Sets up StateMachine with State located at path passed, and creates lua
+   * state for interaction between user and application. Returns true if
    * State loaded in successfully, false otherwise.
    */
   bool Setup( const std::string &filePath ); 
@@ -67,6 +68,9 @@ class StateMachine {
   //@}
 
  private:
+  static const luaL_Reg m_luaFuncs[];
+
+  static lua_State *m_luaState = NULL;
   static State *m_runningState = NULL;
 };
 

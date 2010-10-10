@@ -91,6 +91,12 @@ Object::~Object() {
   }
 }
 
+
+void Object::LuaRegister( lua_State *L ) {
+  Lunar<Object>::Register( L );
+}
+
+
 /***********************************************
  * Private
  **********************************************/
