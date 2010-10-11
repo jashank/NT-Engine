@@ -1,6 +1,8 @@
 #include "Window.h"
 
 #include <SFML/Graphics/RenderWindow.hpp>
+#include <SFML/Window/Event.hpp>
+#include <SFML/Window/Input.hpp>
 #include <SFML/Window/VideoMode.hpp>
 
 
@@ -13,7 +15,7 @@ namespace {
 namespace nt {
 namespace window {
 
-  void CreateWindow( 
+  void Create( 
     std::string &title, 
     int width, 
     int height, 
@@ -24,7 +26,7 @@ namespace window {
   }
 
 
-  void DestroyWindow() {
+  void Destroy() {
     delete window;
   }
 
@@ -56,8 +58,6 @@ namespace window {
     return window->GetInput();
   }
 
-
 } // namespace window
 } // namespace nt
-
 

@@ -8,13 +8,13 @@
 * written in XML and Lua. 
 */
 
-#include <memory>
 #include "Utilities.h"
 #include <string>
 #include <sys/stat.h> // Used to check if input file exists.
 
-#include "App.h"
 #include "Config.h"
+#include "StateMachine.h"
+#include "Window.h"
 
 
 int main( int argc, char *argv[] ) {
@@ -29,17 +29,22 @@ int main( int argc, char *argv[] ) {
     }
   }
 
-  std::auto_ptr< App > Game(
-    App::CreateApp(
-      "Kickle!",
-      Config::GetScreenWidth(),
-      Config::GetScreenHeight(),
-      Config::GetFPS(),
-    levelPath
-    )
+  nt::window::Create(
+    "Kickle!",
+    Config::GetScreenWidth(),
+    Config::GetScreenHeight(),
+    Config::GetFPS()
   );
+  nt::window::Refresh();
 
-  Game->Run();
+  StateMachine mach;
+  mach.Setup( levelPath );
 
+  while ( nt::window::IsOpen() ) {
+    mach.Step();
+    nt::window::Refresh();
+  }
+
+  nt::window::Destroy();
   return 0;
 }

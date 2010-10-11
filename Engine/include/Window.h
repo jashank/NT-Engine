@@ -6,6 +6,7 @@
 namespace sf {
   class Drawable;
   class Event;
+  class Input;
 }
 
 
@@ -24,7 +25,7 @@ namespace window {
    * @param height height of window in pixels.
    * @param maxFps maximum frame rate of window
    */
-  void CreateWindow( 
+  void Create( 
     std::string &title, 
     int width, 
     int height, 
@@ -34,7 +35,7 @@ namespace window {
   /**
    * Destroys window that has been created.
    */
-  void DestroyWindow();
+  void Destroy();
 
   /**
    * Clears graphical contents of window for another rendering.
