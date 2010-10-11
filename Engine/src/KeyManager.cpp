@@ -3,7 +3,9 @@
 #include <algorithm>
 #include <cctype>
 
-#include "App.h"
+#include <SFML/Window/Input.hpp>
+
+#include "Window.h"
 
 /******************************
 Constant Members
@@ -48,8 +50,8 @@ const std::string KeyManager::m_extraKeys[] = {
 /*************************
 Constructor
 *************************/
-KeyManager::KeyManager()
- : m_input( NULL ) {}
+KeyManager::KeyManager( sf::Input *input )
+ : m_input( &nt::window::GetInput() ) {}
 
 /*************************
 Public Methods
@@ -98,11 +100,6 @@ Key KeyManager::GetKey( sf::Key::Code key ) const {
     }
   }
   return Key();
-}
-
-
-void KeyManager::Init( const sf::Input &input ) {
-  m_input = &input;
 }
 
 

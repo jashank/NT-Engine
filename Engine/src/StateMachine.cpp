@@ -1,5 +1,7 @@
 #include "StateMachine.h"
 
+#include <SFML/Window/Event.hpp>
+
 extern "C" {
   #include "lua.h"
   #include "lualib.h"
@@ -7,6 +9,7 @@ extern "C" {
 
 #include "Object.h" // To register Objects to Lua
 #include "State.h"
+#include "Window.h"
 #include "Utilities.h"
 
 /*********************************
@@ -60,6 +63,19 @@ bool StateMachine::Setup( const std::string &filePath ) {
 }
 
 
-void StateMachine::Run() {
+// Should a goal be to move all nt::window stuff out of StateMachine?
+void StateMachine::Step() {
+  m_runningState->HandleEvents();
 
+  static sf::Event closeTest;
+  while ( nt::window::GetEvent( closeTest ) ) {
+    if ( closeTest.Type == sf::Event::Closed ) {
+      nt::window::Close();
+    }
+  }
+
+  m_runningState->Update();
+  m_runningState->Render();
+
+  nt::window::Refresh();
 }

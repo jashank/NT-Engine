@@ -33,6 +33,11 @@ namespace window {
   );
 
   /**
+   * Closes window that has been created.
+   */
+  void Close();
+
+  /**
    * Destroys window that has been created.
    */
   void Destroy();
@@ -62,6 +67,11 @@ namespace window {
    * Retrieves SFML input manager from window.
    */
   const sf::Input &GetInput();
+
+  /**
+   * Returns time elapsed since last frame.
+   */
+  float GetFrameTime();
 
 } // namespace window
 } // namespace nt

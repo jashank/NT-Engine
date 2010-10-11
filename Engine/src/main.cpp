@@ -42,7 +42,6 @@ int main( int argc, char *argv[] ) {
 
   while ( nt::window::IsOpen() ) {
     mach.Step();
-    nt::window::Refresh();
   }
 
   nt::window::Destroy();

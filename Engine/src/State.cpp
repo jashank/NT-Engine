@@ -32,6 +32,7 @@ bool State::Init( const std::string &filePath ) {
 
 
 void State::HandleEvents() {
+  m_keyManager.Update();
   m_objectManager.HandleEvents();
 }
 

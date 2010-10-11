@@ -24,10 +24,9 @@ class StateMachine {
   bool Setup( const std::string &filePath ); 
 
   /**
-   * Runs StateMachine with State currently loaded in. The machine will run
-   * until the user exits the application window or exits via Lua.
+   * "Steps" the machine, running it through a single game loop iteration.
    */
-  void Run();
+  void Step();
 
   //@{
   /**
@@ -69,9 +68,13 @@ class StateMachine {
   //@}
 
  private:
+  /* Names of functions when called in Lua. */
   static const luaL_Reg m_luaFuncs[];
 
+  /* Lua state to create interaction between Lua and engine. */
   static lua_State *m_luaState = NULL;
+
+  /* State currently being run by machine. */
   static State *m_runningState = NULL;
 };
 

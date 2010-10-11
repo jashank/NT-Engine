@@ -5,6 +5,7 @@
 #include <SFML/Window/Input.hpp>
 #include <SFML/Window/VideoMode.hpp>
 
+#include "Utilities.h"
 
 // Holds actual window
 namespace {
@@ -23,11 +24,17 @@ namespace window {
   ) {
     window = new Window( sf::VideoMode( width, height ), title );
     window.SetFramerateLimit( framerate );
+    window.UseVerticalSync( true );
+  }
+
+
+  void Close() {
+    window->Close();
   }
 
 
   void Destroy() {
-    delete window;
+    SAFEDELETE( window );
   }
 
 
@@ -56,6 +63,11 @@ namespace window {
 
   const sf::Input &GetInput() {
     return window->GetInput();
+  }
+
+  
+  float GetFrameTime() {
+    return window->GetFrameTime();
   }
 
 } // namespace window

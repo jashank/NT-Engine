@@ -1,10 +1,12 @@
 #include "StateComm.h"
 
+#include "KeyManager.h"
 #include "ObjectManager.h"
 #include "State.h"
 #include "TileManager.h"
 
 namespace {
+  KeyManager *keyMan = NULL;
   ObjectManager *objMan = NULL;
   TileManager *tileMan = NULL;
 }
@@ -15,6 +17,7 @@ namespace state {
 
 bool SetStateComm( State *state ) {
   if ( !objMan && !tileMan ) {
+    keyMan = &state->m_keyManager;
     objMan = &state->m_objectManager;
     tileMan = &state->m_tileManager;
     return true;
@@ -24,6 +27,7 @@ bool SetStateComm( State *state ) {
 
 
 void EndStateComm() {
+  keyMan = NULL;
   objMan = NULL;
   tileMan = NULL;
 }

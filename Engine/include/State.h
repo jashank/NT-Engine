@@ -4,6 +4,9 @@
 #include <string>
 #include <map>
 
+#include <SFML/System/Clock.hpp>
+
+#include "KeyManager.h"
 #include "ObjectManager.h"
 #include "MusicManager.h"
 #include "StateComm.h"
@@ -78,8 +81,11 @@ class State {
    */
   bool LoadFromFile( const std::string &filePath );
 
+  /** Manages keys registered for monitoring in this State.*/
+  KeyManager m_keyManager; 
+
   /** Manages all Objects in this State. */
-  ObjectManager m_objectManager; /** Manages all Objects in this State. */
+  ObjectManager m_objectManager;
 
   /** Manages all music in this State. */
   MusicManager m_musicManager; 

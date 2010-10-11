@@ -4,9 +4,6 @@
 #include <string>
 #include <vector>
 
-#include <SFML/Window/Event.hpp>
-#include <SFML/Window/Input.hpp>
-
 #include "Key.h"
 
 /**
@@ -16,13 +13,6 @@
 class KeyManager {
  public:
   KeyManager();
-
-  /**
-   * Initializes KeyManager with SFML input monitor.
-   * @param input SFML input monitor that keeps track of key state.
-   */  
-  void Init( const sf::Input &input );
-
 
   /**
    * Takes string representation of key (ex: "up" == up arrow key), and puts
