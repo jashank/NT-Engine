@@ -9,6 +9,7 @@ class State;
  * Starts off running first State loaded in and provides a Lua interface
  * for the user to control the current State and how the StateMachine will
  * progress (swith to new State, add things to current State, etc.).
+ * Assumes window has already been created.
  */
 class StateMachine {
  public:
