@@ -40,8 +40,9 @@ class KeyManager {
   /**
    * Refreshes data on all keys monitored (whether they have been pressed and
    * if so, how long they have been pressed).
+   * @param currentTime Current time relative to when State started.
    */
-  void Update();
+  void Update( float currentTime );
 
  private:
   //@{

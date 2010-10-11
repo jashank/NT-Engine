@@ -55,7 +55,7 @@ class InputHandler {
    */
   void ScanMouse( 
     const boost::function1<void, std::string&> &func, 
-    const nt::core::Rect<float> &mouseArea 
+    const nt::core::FloatRect &mouseArea 
   );
   //@}
 

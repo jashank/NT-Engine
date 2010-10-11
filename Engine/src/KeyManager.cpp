@@ -91,6 +91,11 @@ bool KeyManager::InterpretKey( std::string keyString, sf::Key::Code &keyResult )
 }
 
 
+bool KeyManager::IsKeyDown( sf::Key::Code kCode ) {
+  return m_input->IsKeyDown( kCode );
+}
+
+
 Key KeyManager::GetKey( sf::Key::Code key ) const {
   if( m_input ) {
     for( int i = 0; i < static_cast<int>(m_keys.size()); ++i ) {
@@ -113,14 +118,14 @@ void KeyManager::RegisterKey( sf::Key::Code key ) {
 }
 
 
-void KeyManager::Update() {
-  float deltatime = App::GetApp()->GetDeltaTime();
+void KeyManager::Update( float currentTime ) {
   for( int i = 0; i < static_cast<int>(m_keys.size()); ++i ) {
     if( m_input->IsKeyDown( m_keys[i].key )) {
-      m_keys[i].elapsedTime += deltatime;
+      timeDiff = currentTime - m_keys[i].elapsedTime;
+      m_keys[i].elapsedTime += timeDiff;
 
       if( m_keys[i].startTime == 0.0f ) {
-        m_keys[i].startTime = App::GetApp()->GetTime();
+        m_keys[i].startTime = currentTime;
       }
     }
     else {

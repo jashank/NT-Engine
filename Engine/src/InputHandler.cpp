@@ -2,9 +2,7 @@
 
 #include <algorithm>
 
-#include "App.h"
 #include "KeyManager.h"
-#include "Rect.h"
 #include "tinyxml.h"
 #include "Utilities.h"
 
@@ -42,8 +40,6 @@ bool InputHandler::LoadInputList( const TiXmlElement *inputRoot ) {
 
 
 void InputHandler::ScanKeys( const funcType &func ) {
-  static App* app = App::GetApp();
-  
   // Any keys held down from the previous state that have been released and
   // pressed again should be removed from the prevKeys vector.
   for ( unsigned int i = 0; i < m_prevKeys.size(); ++i ) {
@@ -82,7 +78,7 @@ void InputHandler::ScanKeys( const funcType &func ) {
 
 void InputHandler::ScanMouse( 
   const funcType &func, 
-  const nt::core::Rect<float> &mouseArea 
+  const nt::core::FloatRect &mouseArea 
 ) {
   if ( !m_mouseRegistry.empty() ) {
     std::string eventString = "";

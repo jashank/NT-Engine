@@ -6,7 +6,6 @@ extern "C" {
   #include "lualib.h"
 }
 
-#include "App.h"
 #include "ResourceLib.h"
 #include "tinyxml.h"
 #include "Utilities.h"
@@ -27,12 +26,14 @@ bool State::Init( const std::string &filePath ) {
     return false;
   }
   nt::state::SetStateComm( this );
+
+  m_clock.Reset();
   return true;
 }
 
 
 void State::HandleEvents() {
-  m_keyManager.Update();
+  m_keyManager.Update( m_clock.GetElapsedTime() );
   m_objectManager.HandleEvents();
 }
 
