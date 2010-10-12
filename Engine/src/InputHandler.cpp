@@ -2,7 +2,6 @@
 
 #include <algorithm>
 
-#include "KeyManager.h"
 #include "tinyxml.h"
 #include "Utilities.h"
 
@@ -29,8 +28,6 @@ bool InputHandler::LoadInputList( const TiXmlElement *inputRoot ) {
         }
       }
     } while ( (input = input->NextSiblingElement( "input" )) );
-
-    KeysDownToPrevKeys();
   } else {
     LogErr( "No <input> element specified in input list. Thus, not needed." );
     return false;
@@ -40,37 +37,12 @@ bool InputHandler::LoadInputList( const TiXmlElement *inputRoot ) {
 
 
 void InputHandler::ScanKeys( const funcType &func ) {
-  // Any keys held down from the previous state that have been released and
-  // pressed again should be removed from the prevKeys vector.
-  for ( unsigned int i = 0; i < m_prevKeys.size(); ++i ) {
-    if ( !app->GetInput()->IsKeyDown( m_prevKeys[i] )) {
-      m_prevKeys.erase( m_prevKeys.begin() + i );
-    }
-  }
-
   for ( keyRegItr itr = m_keyRegistry.begin(); itr != m_keyRegistry.end();
         ++itr ) {
-    sf::Key::Code code = (*itr).second.key;
-    if( app->GetInput()->IsKeyDown( code ) &&
-        std::find( m_prevKeys.begin(), m_prevKeys.end(), code ) ==
-          m_prevKeys.end()) {
-      Key key = app->GetKey( (*itr).second.key );
-
-      //Check if key has been held down long enough
-      if( key.elapsedTime >= (*itr).second.elapsedTime ) {
-        if( (*itr).second.startTime == key.startTime ) {
-          continue; // skip because key has already been pressed
-        }
-
-        std::string funcName = (*itr).first;
-        func( funcName );
-
-        //If the key isn't supposed to be repeated
-        if( (*itr).second.startTime != -1 ) {
-          // Make sure key won't be handled again until key is re-pressed
-          (*itr).second.startTime = key.startTime;
-        }
-      }
+    itr->second.Update();
+    if ( itr->second.IsActivated() ) {
+      std::string funcName = itr->first;
+      func( funcName );
     }
   }
 }
@@ -113,46 +85,34 @@ void InputHandler::ScanMouse(
 /***************************
  * Private
  **************************/
-void InputHandler::KeysDownToPrevKeys() {
-  for ( constKeyRegItr itr = m_keyRegistry.begin(); itr != m_keyRegistry.end();
-        ++itr ) {
-    sf::Key::Code code = (*itr).second.key;
-    if ( App::GetApp()->GetInput()->IsKeyDown( code )) {
-        m_prevKeys.push_back( code );
-    }
-  }
-}
-
-
-bool InputHandler::LoadKey( const TiXmlElement *input, const char *keyString ) {
-  sf::Key::Code k;
+bool InputHandler::LoadKey( 
+  const TiXmlElement *input, 
+  const char *keyString 
+) {
   std::string keyName = keyString;
-  if ( KeyManager::InterpretKey( keyName, k )) {
-    App::GetApp()->RegisterKey( k );
-    Key key( k );
 
-    const char *repeat = input->Attribute( "repeat" );
-    if ( repeat ) {
-      key.startTime = ( ToLowerCase( repeat ) == "true" ) ? -1.0f : 0.0f;
-    } else {
-      LogErr( "Repeat attribute not given in <input>." );
-      return false;
-    }
-
-    input->QueryFloatAttribute( "delay", &key.elapsedTime );
-
-    const char *func = input->Attribute( "function" );
-    if ( func ) {
-      m_keyRegistry.insert( std::make_pair( func, key ));
-    } else {
-      LogErr( "No function named for input to act upon in <input>" );
-      return false;
-    }
-
+  bool repeat = false;
+  const char *repeatStr = input->Attribute( "repeat" );
+  if ( repeatStr ) {
+    repeat = ( ToLowerCase( repeatStr ) == "true" );
   } else {
-    LogErr( "Key specified in <input> not valid " + keyName );
+    LogErr( "Repeat attribute not given in <input>." );
     return false;
   }
+
+  float delay = 0.0;
+  input->QueryFloatAttribute( "delay", &delay );
+
+  TimedKey key( keyName, repeat, delay )
+
+  const char *func = input->Attribute( "function" );
+  if ( func ) {
+    m_keyRegistry.insert( std::make_pair( func, key ));
+  } else {
+    LogErr( "No function named for input to act upon in <input>" );
+    return false;
+  }
+
   return true;
 }
 

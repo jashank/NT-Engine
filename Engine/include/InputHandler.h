@@ -8,7 +8,7 @@
 
 #include <boost/function/function1.hpp>
 
-#include "Key.h"
+#include "TimedKey.h"
 #include "Rect.h"
 
 class TiXmlElement;
@@ -60,8 +60,8 @@ class InputHandler {
   //@}
 
  private:
-  typedef std::map<std::string, Key>::iterator keyRegItr;
-  typedef std::map<std::string, Key>::const_iterator constKeyRegItr;
+  typedef std::map<std::string, TimedKey>::iterator keyRegItr;
+  typedef std::map<std::string, TimedKey>::const_iterator constKeyRegItr;
   typedef std::map<std::string, std::string>::iterator msRegItr;
   typedef std::map<std::string, std::string>::const_iterator constMsRegItr;
   typedef boost::function1<void, std::string&> funcType;
@@ -73,12 +73,6 @@ class InputHandler {
   InputHandler( const InputHandler &handler );
   InputHandler& operator=( const InputHandler &handler );
   //@}
-
-  /**
-   * Iterates through key registry, checking if any key is held down. If it
-   * is, the key code is added to m_prevKeys.
-   */
-  void KeysDownToPrevKeys(); 
 
   /**
    * Loads key information found at input element into registry.
@@ -112,7 +106,7 @@ class InputHandler {
   /**
    * Keys registered for this handler, storing function-name/key pairs. 
    */
-  std::map<std::string, Key> m_keyRegistry; 
+  std::map<std::string, TimedKey> m_keyRegistry; 
 
   /**
    * Keys held down in previous state. Used to disallow input from being
