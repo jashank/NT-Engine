@@ -128,7 +128,7 @@ void TimedKey::Update() {
 }
 
 
-bool TimedKey::IsActivated() {
+bool TimedKey::IsActivated() const {
   return m_activated;
 }
     

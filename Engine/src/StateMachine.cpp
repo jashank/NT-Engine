@@ -77,3 +77,99 @@ void StateMachine::Step() {
   m_runningState->Update();
   m_runningState->Render();
 }
+
+/****************************
+ * Lua Functions
+ ***************************/
+int StateMachine::LuaLoadPath( lua_State *L ) {
+  if ( !lua_isstring( L, -1 )) {
+    LogLuaErr( "String not passed to LoadPath" );
+    return 0;
+  }
+  SAFEDELETE( m_runningState );
+  m_runningState = new State;
+  m_runningState->Init( lua_tostring( L, -1 ));
+  return 0;
+}
+
+
+int StateMachine::LuaReset( lua_State *L ) {
+  path = m_runningState->GetPath();
+  SAFEDELETE( m_runningState );
+  m_runningState = new State;
+  m_runningState->Init( path ); 
+  return 0;
+}
+
+
+int StateMachine::LuaPortal( lua_State *L ) {
+  if ( !lua_isstring( L, -1 )) {
+    LogLuaErr( "String not passed to Portal." );
+    return 0;
+  }
+  std::string path = m_runningState->GetPortalPath( lua_tostring( -1 ));
+  if ( path != "" ) {
+    SAFEDELETE( m_runningState );
+    m_runningState = new State;
+    m_runningState->Init( path );
+  } else {
+    LogLuaErr( "No path associated with portal name passed to Portal." );
+  }
+  return 0;
+}
+
+
+int StateMachine::LuaLogErr( lua_State *L ) {
+  if ( !lua_isstring( L, -1 )) {
+    LogLuaErr( "String not passed to LuaLogErr." );
+    return 0;
+  }
+  LogLuaErr( lua_tostring( L, -1 ));
+  return 0;
+}
+ 
+
+int StateMachine::LuaGetName( lua_State *L ) {
+  return m_runningState->LuaGetName( L );
+}  
+
+int StateMachine::LuaCreateObject( lua_State *L ) {
+  return m_runningState->LuaCreateObject( L );
+}
+
+int StateMachine::LuaDestroyObject( lua_State *L ) {
+  return m_runningState->LuaDestroyObject( L );
+}
+
+int StateMachine::LuaGetObject( lua_State *L ) {
+  return m_runningState->LuaGetObject( L );
+}
+
+int StateMachine::LuaGetObjects( lua_State *L ) {
+  return m_runningState->LuaGetObjects( L );
+}
+
+int StateMachine::LuaGetNearestObject( lua_State *L ) {
+  return m_runningState->LuaGetNearestObject( L );
+}
+
+int StateMachine::LuaGetObjectOnTile( lua_State *L ) {
+  return m_runningState->LuaGetObjectOnTile( L );
+}
+
+int StateMachine::LuaObjectBlockingTile( lua_State *L ) {
+  return m_runningState->LuaObjectBlockingTile( L );
+}
+
+int StateMachine::LuaGetTileInfo( lua_State *L ) {
+  return m_runningState->LuaGetTileInfo( L );
+}
+
+int StateMachine::LuaTileIsCrossable( lua_State *L ) {
+  return m_runningState->LuaTileIsCrossable( L );
+}
+
+int StateMachine::LuaSetTile( lua_State *L ) {
+  return m_runningState->LuaSetTile( L );
+}
+

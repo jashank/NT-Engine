@@ -137,8 +137,8 @@ int TileManager::LuaGetTileInfo( lua_State *L ) {
   }
   int tileY = lua_tointeger( L, -1 );
 
-  if ( Inst().TileOnMap( tileX, tileY )) {
-    const Tile *tile = Inst().GetTile( tileX, tileY );
+  if ( TileOnMap( tileX, tileY )) {
+    const Tile *tile = GetTile( tileX, tileY );
     if ( tile ) {
       lua_pushstring( L, tile->type.c_str() );
       lua_pushstring( L, tile->name.c_str() );
@@ -169,8 +169,8 @@ int TileManager::LuaTileIsCrossable( lua_State *L ) {
   }
   int tileY = lua_tointeger( L, -1 );
  
-  if ( Inst().TileOnMap( tileX, tileY )) {
-    lua_pushboolean( L, Inst().TileIsCrossable( tileX, tileY ));
+  if ( TileOnMap( tileX, tileY )) {
+    lua_pushboolean( L, TileIsCrossable( tileX, tileY ));
     return 1;
   } else {
     LogLuaErr( "Tile location not on map passed to TileIsCrossable" );
@@ -204,12 +204,12 @@ int TileManager::LuaSetTile( lua_State *L ) {
   }
   int collisionID = lua_tointeger( L, -1 );
   
-  Inst().SetTile( tileX, tileY, tileName );
-  Inst().SetCollision( tileX, tileY, collisionID );
+  SetTile( tileX, tileY, tileName );
+  SetCollision( tileX, tileY, collisionID );
 
-  if ( Inst().TileOnMap( tileX, tileY )) {
-    Inst().SetTile( tileX, tileY, tileName );
-    Inst().SetCollision( tileX, tileY, collisionID );
+  if ( TileOnMap( tileX, tileY )) {
+    SetTile( tileX, tileY, tileName );
+    SetCollision( tileX, tileY, collisionID );
   } else {
     LogLuaErr( "Tile location not on map passed to SetTile" );
   }

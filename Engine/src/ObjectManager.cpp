@@ -5,9 +5,7 @@
 
 #include <cstdlib>
 
-#include "App.h"
 #include "Object.h"
-#include "State.h"
 #include "StateComm.h"
 #include "tinyxml.h"
 #include "Utilities.h"
@@ -224,7 +222,7 @@ int ObjectManager::LuaCreateObject( lua_State *L ) {
 
   if ( tileX >= 0 && tileY >= 0 ) {
     Object *newObject = ObjectAttorney::Create( path, tileX, tileY, 0 );
-    Inst().AddObject( newObject );
+    AddObject( newObject );
     ObjectAttorney::Init( newObject );
     Lunar<Object>::push( L, newObject );
     return 1;
@@ -239,7 +237,7 @@ int ObjectManager::LuaDestroyObject( lua_State *L ) {
   Object *objToDestroy = Lunar<Object>::check(L, 1);
   if ( objToDestroy ) {
     lua_remove( L, 1 );
-    Inst().RemoveObject( objToDestroy );
+    RemoveObject( objToDestroy );
     return 0;
   } else {
     LogLuaErr( "No Object passed to DestroyObject." );
@@ -255,7 +253,7 @@ int ObjectManager::LuaGetObject( lua_State *L ) {
   }
   std::string type = lua_tostring( L, -1 );
 
-  Lunar<Object>::push( L, Inst().FindObject( type ));
+  Lunar<Object>::push( L, FindObject( type ));
   return 1;
 }
 
@@ -272,7 +270,7 @@ int ObjectManager::LuaGetObjects( lua_State *L ) {
   int index = 1; // Lua table indices start at 1
 
   std::pair<MapItrConst, MapItrConst> objects =
-    Inst().m_objTypes.equal_range( type );
+    m_objTypes.equal_range( type );
   for ( MapItrConst obj = objects.first; obj != objects.second; ++obj ) {
     if ( (*obj).second ) {
       Lunar<Object>::push( L, (*obj).second );
@@ -304,7 +302,7 @@ int ObjectManager::LuaGetNearestObject( lua_State *L ) {
   Object *nearestObj = NULL;
 
   std::pair<MapItrConst, MapItrConst> keyRange =  
-    Inst().m_objTypes.equal_range( type );
+    m_objTypes.equal_range( type );
   
   for ( MapItrConst itr = keyRange.first; itr != keyRange.second; ++itr ) {
     Object *obj = (*itr).second;
@@ -339,7 +337,7 @@ int ObjectManager::LuaGetObjectOnTile( lua_State *L ) {
   int tileY = lua_tointeger( L, -1 );
 
   if ( nt::state::InRange( tileX, tileY )) {
-    Lunar<Object>::push( L, Inst().ObjectOnTile( tileX, tileY ));
+    Lunar<Object>::push( L, ObjectOnTile( tileX, tileY ));
     return 1;
   } else {
     LogLuaErr( "Negative tile passed to GetObjectOnTile" );
@@ -362,7 +360,7 @@ int ObjectManager::LuaObjectBlockingTile( lua_State *L ) {
   int tileY = lua_tointeger( L, -1 );
 
   if ( nt::state::InRange( tileX, tileY )) {
-    lua_pushboolean( L, Inst().ObjectBlockingTile( tileX, tileY ));
+    lua_pushboolean( L, ObjectBlockingTile( tileX, tileY ));
     return 1;
   } else {
     LogLuaErr( "Negative tile passed to ObjectBlockingTile" );

@@ -51,65 +51,74 @@ void State::Render() {
 }
 
 
-TileManager& State::GetTileManager() {
-  return m_tileManager;
+std::string State::GetPath() const {
+  return m_path;
 }
 
+
+std::string State::GetPortalPath( std::string &port ) const {
+  std::map<std::string, std::string>::const_iterator pair =
+    m_portals.find( port );
+
+  if ( pair != m_portals.end() ) {
+    return port->second;
+  } else {
+    return "";
+  }
+}
 
 /*************************************
  * Lua Functions
  * ***********************************/
-int State::LuaLoadPath( lua_State *L ) {
-  if ( !lua_isstring( L, -1 )) {
-    LogLuaErr( "String not passed to LoadPath" );
-    return 0;
-  }
-  App::GetApp()->SetNextState( lua_tostring( L, -1 ));
-  return 0;
-}
-
-
-int State::LuaReset( lua_State *L ) {
-  App::GetApp()->SetNextState( App::GetApp()->GetCurrentState()->m_path );
-  return 0;
-}
-
-
-int State::LuaPortal( lua_State *L ) {
-  State *currentState = App::GetApp()->GetCurrentState();
-
-  if ( !lua_isstring( L, -1 )) {
-    LogLuaErr( "String not passed to Portal" );
-    return 0;
-  }
-  std::map<std::string, std::string>::const_iterator port =
-    currentState->m_portals.find( lua_tostring( L, -1 ));
-  if ( port != currentState->m_portals.end() ) {
-    App::GetApp()->SetNextState( port->second );
-  }
-  return 0;
-}
-
-
 int State::LuaGetName( lua_State *L ) {
-  lua_pushstring( L, App::GetApp()->GetCurrentState()->m_name.c_str() );
+  lua_pushstring( L, m_name.c_str() );
   return 1;
 }
 
 
-int State::LuaLogErr( lua_State *L ) {
-  if ( !lua_isstring( L, -1 )) {
-    LogLuaErr( "String not passed to LuaLogLuaErr" );
-    return 0;
-  }
-  LogLuaErr( lua_tostring( L, -1 ));
-  return 0;
+int State::LuaCreateObject( lua_State *L ) {
+  return m_objectManager->LuaCreateObject( L );
+}
+
+int State::LuaDestroyObject( lua_State *L ) {
+  return m_objectManager->LuaDestroyObject( L );
+}
+
+int State::LuaGetObject( lua_State *L ) {
+  return m_objectManager->LuaGetObject( L );
+}
+
+int State::LuaGetObjects( lua_State *L ) {
+  return m_objectManager->LuaGetObjects( L );
+}
+
+int State::LuaGetNearestObject( lua_State *L ) {
+  return m_objectManager->LuaGetNearestObject( L );
+}
+
+int State::LuaGetObjectOnTile( lua_State *L ) {
+  return m_objectManager->LuaGetObjectOnTile( L );
+}
+
+int State::LuaObjectBlockingTile( lua_State *L ) {
+  return m_objectManager->LuaObjectBlockingTile( L );
+}
+
+int State::LuaGetTileInfo( lua_State *L ) {
+  return m_tileManager->LuaGetTileInfo( L );
+}
+
+int State::LuaTileIsCrossable( lua_State *L ) {
+  return m_tileManager->LuaTileIsCrossable( L );
+}
+
+int State::LuaSetTile( lua_State *L ) {
+  return m_tileManager->LuaSetTile( L );
 }
 
 /**********************************
  * Private Member Functions
  *********************************/
-
 bool State::LoadFromFile( const std::string &filePath ) {
   TiXmlDocument doc( filePath.c_str() );
 

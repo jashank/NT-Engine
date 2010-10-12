@@ -76,17 +76,15 @@ class TileManager {
 
   //@{
   /**
-   * Lua functions. See the State API for how these functions manipulate the
-   * current state.
-   * @param L lua state Object is in. Note that there is only one state in
-   * application at any time.
-   * @return Number of arguments pushed on the lua stack.
+   * Lua-related functions. See State API documentaions for details. Note that
+   * these all return the number of arguments that the caller should
+   * return to Lua.
    */
-  static int LuaGetTileInfo( lua_State *L );
+  int LuaGetTileInfo( lua_State *L );
 
-  static int LuaTileIsCrossable( lua_State *L );
+  int LuaTileIsCrossable( lua_State *L );
 
-  static int LuaSetTile( lua_State *L );
+  int LuaSetTile( lua_State *L );
   //@}
 
  private:

@@ -57,25 +57,23 @@ class ObjectManager {
 
   //@{
   /**
-   * Lua functions. See the State API for how these functions manipulate the
-   * current state.
-   * @param L lua state Object is in. Note that there is only one state in
-   * application at any time.
-   * @return Number of arguments pushed on the lua stack.
+   * Lua-related functions. See State API documentaions for details. Note that
+   * these all return the number of arguments that the caller should
+   * return to Lua.
    */
-  static int LuaCreateObject( lua_State *L );
+  int LuaCreateObject( lua_State *L );
 
-  static int LuaDestroyObject( lua_State *L );
+  int LuaDestroyObject( lua_State *L );
 
-  static int LuaGetObject( lua_State *L );
+  int LuaGetObject( lua_State *L );
 
-  static int LuaGetObjects( lua_State *L );
+  int LuaGetObjects( lua_State *L );
 
-  static int LuaGetNearestObject( lua_State *L );
+  int LuaGetNearestObject( lua_State *L );
 
-  static int LuaGetObjectOnTile( lua_State *L );
+  int LuaGetObjectOnTile( lua_State *L );
 
-  static int LuaObjectBlockingTile( lua_State *L );
+  int LuaObjectBlockingTile( lua_State *L );
   //@}
 
  private:

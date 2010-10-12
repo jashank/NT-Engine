@@ -43,23 +43,44 @@ class State {
    */
   void Render();
 
+  /**
+   * Returns file path of State file loaded into this State.
+   */
+  std::string GetPath() const;
+
+  /**
+   * Returns file path associated with a portal name set.
+   * If no path associated returns empty string.
+   */
+  std::string GetPortalPath( std::string &port ) const;
+
   //@{
   /**
-   * Lua functions. See the State API for how these functions manipulate the
-   * current state.
-   * @param L lua state Object is in. Note that there is only one state in
-   * application at any time.
-   * @return Number of arguments pushed on the lua stack.
+   * Lua-related functions. See State API documentation for details. Note that
+   * these all return the number of arguments that the caller should
+   * return to Lua.
    */
-  static int LuaLoadPath( lua_State *L );
+  int LuaGetName( lua_State *L ) const;
 
-  static int LuaReset( lua_State *L );
+  int LuaCreateObject( lua_State *L );
 
-  static int LuaPortal( lua_State *L );
+  int LuaDestroyObject( lua_State *L );
 
-  static int LuaGetName( lua_State *L );
+  int LuaGetObject( lua_State *L );
 
-  static int LuaLogErr( lua_State *L );
+  int LuaGetObjects( lua_State *L );
+
+  int LuaGetNearestObject( lua_State *L );
+
+  int LuaGetObjectOnTile( lua_State *L );
+
+  int LuaObjectBlockingTile( lua_State *L );
+
+  int LuaGetTileInfo( lua_State *L );
+
+  int LuaTileIsCrossable( lua_State *L );
+
+  int LuaSetTile( lua_State *L );
   //@}
 
  private:

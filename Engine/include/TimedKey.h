@@ -35,7 +35,7 @@ class TimedKey {
   /**
    * Returns true if key was activated in the last Update.
    */
-  bool IsActivated();
+  bool IsActivated() const;
 
  private:
   typedef sf::Key::Code sfk;
