@@ -33,7 +33,6 @@ bool State::Init( const std::string &filePath ) {
 
 
 void State::HandleEvents() {
-  m_keyManager.Update( m_clock.GetElapsedTime() );
   m_objectManager.HandleEvents();
 }
 

@@ -16,7 +16,6 @@
 #include "StateMachine.h"
 #include "Window.h"
 
-
 int main( int argc, char *argv[] ) {
   ClearLog();
   Config::Load();
@@ -42,6 +41,7 @@ int main( int argc, char *argv[] ) {
 
   while ( nt::window::IsOpen() ) {
     mach.Step();
+    nt::window::Refresh();
   }
 
   nt::window::Destroy();

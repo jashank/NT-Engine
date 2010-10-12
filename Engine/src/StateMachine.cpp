@@ -76,6 +76,4 @@ void StateMachine::Step() {
 
   m_runningState->Update();
   m_runningState->Render();
-
-  nt::window::Refresh();
 }
