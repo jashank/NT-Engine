@@ -12,10 +12,10 @@ extern "C" {
 #include "Window.h"
 #include "Utilities.h"
 
-/*********************************
- * Lua State API
- ********************************/
-const luaL_Reg State::m_luaFuncs[] = {
+/*****************
+ * Static Members
+ ****************/
+const luaL_Reg StateMachine::m_luaFuncs[] = {
   { "LoadPath", LuaLoadPath },
   { "Reset", LuaReset },
   { "Portal", LuaPortal },
@@ -34,11 +34,13 @@ const luaL_Reg State::m_luaFuncs[] = {
   { NULL, NULL }
 };
 
+lua_State *StateMachine::m_luaState = NULL;
+State *StateMachine::m_runningState = NULL;
 
 /*******************************
  * Constructors and Destructors
  ******************************/
-~StateMachine::StateMachine() {
+StateMachine::~StateMachine() {
   SAFEDELETE( m_runningState );
 } 
 
@@ -55,7 +57,7 @@ bool StateMachine::Setup( const std::string &filePath ) {
   Object::LuaRegister( m_luaState );
 
   m_runningState = new State();
-  if ( !m_runningState->Init( filePath )) {
+  if ( !m_runningState->Init( filePath, m_luaState )) {
     SAFEDELETE( m_runningState );
     return false;
   }
@@ -88,16 +90,16 @@ int StateMachine::LuaLoadPath( lua_State *L ) {
   }
   SAFEDELETE( m_runningState );
   m_runningState = new State;
-  m_runningState->Init( lua_tostring( L, -1 ));
+  m_runningState->Init( lua_tostring( L, -1 ), m_luaState );
   return 0;
 }
 
 
 int StateMachine::LuaReset( lua_State *L ) {
-  path = m_runningState->GetPath();
+  std::string path = m_runningState->GetPath();
   SAFEDELETE( m_runningState );
   m_runningState = new State;
-  m_runningState->Init( path ); 
+  m_runningState->Init( path, m_luaState ); 
   return 0;
 }
 
@@ -107,11 +109,12 @@ int StateMachine::LuaPortal( lua_State *L ) {
     LogLuaErr( "String not passed to Portal." );
     return 0;
   }
-  std::string path = m_runningState->GetPortalPath( lua_tostring( -1 ));
+  std::string port = lua_tostring( L, -1 );
+  std::string path = m_runningState->GetPortalPath( port );
   if ( path != "" ) {
     SAFEDELETE( m_runningState );
     m_runningState = new State;
-    m_runningState->Init( path );
+    m_runningState->Init( path, m_luaState );
   } else {
     LogLuaErr( "No path associated with portal name passed to Portal." );
   }

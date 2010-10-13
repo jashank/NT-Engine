@@ -30,9 +30,10 @@ class ObjectManager {
    * Loads Objects in from <objects> element of State XML file.
    * @param dataRoot parent element of objects set for creation upon
    * initialization of state.
+   * @param L lua state for Objects to use
    * @return True if load was successful (no syntax errors).
    */
-  bool LoadData( const TiXmlElement *dataRoot );
+  bool LoadData( const TiXmlElement *dataRoot, lua_State *L );
 
   /**
    * Calls HandleEvents on every Object on screen.

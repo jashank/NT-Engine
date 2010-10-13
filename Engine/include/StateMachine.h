@@ -3,6 +3,11 @@
 
 #include <string>
 
+extern "C" {
+  #include "lauxlib.h"
+}
+
+class lua_State;
 class State;
 
 /**
@@ -72,10 +77,10 @@ class StateMachine {
   static const luaL_Reg m_luaFuncs[];
 
   /* Lua state to create interaction between Lua and engine. */
-  static lua_State *m_luaState = NULL;
+  static lua_State *m_luaState;
 
   /* State currently being run by machine. */
-  static State *m_runningState = NULL;
+  static State *m_runningState;
 };
 
 #endif // STATEMACHINE_H

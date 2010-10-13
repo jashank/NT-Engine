@@ -1,6 +1,7 @@
 #include "TimedKey.h"
 
 #include "boost/assign.hpp"
+#include <SFML/Window/Input.hpp>
 
 #include "Utilities.h"
 #include "Window.h"
@@ -8,96 +9,98 @@
 /***************************
  * Initialize Extra Keys
  **************************/
-KeyMap TimedKey::m_extraKeys =
+TimedKey::KeyMap TimedKey::m_extraKeys =
   boost::assign::map_list_of
-  ("escape", sfk Escape),
-  ("lcontrol", sfk LControl),
-  ("lshift", sfk LShift),
-  ("lalt", sfk LAlt),
-  ("lsystem", sfk LSystem), // OS Specific
-  ("rcontrol", sfk RControl),
-  ("rshift", sfk RShift),
-  ("ralt", sfk RAlt),
-  ("rsystem", sfk RSystem),
-  ("menu", sfk Menu),
-  ("lbracket", sfk LBracket),
-  ("rbracket", sfk RBracket),
-  ("semicolon", sfk SemiColon),
-  ("comma", sfk Comma),
-  ("period", sfk Period),
-  ("quote", sfk Quote),
-  ("slash", sfk Slash),
-  ("backslash", sfk BackSlash),
-  ("tilde", sfk Tilde),
-  ("equal", sfk Equal),
-  ("dash", sfk Dash),
-  ("space", sfk Space),
-  ("return", sfk Return),
-  ("back", sfk Back),
-  ("tab", sfk Tab),
-  ("pageup", sfk PageUp),
-  ("pagedown", sfk PageDown),
-  ("end", sfk End),
-  ("home", sfk Home),
-  ("insert", sfk Insert),
-  ("delete", sfk Delete),
-  ("add", sfk Add),
-  ("subtract", sfk Subtract),
-  ("multiply", sfk Multiply),
-  ("divide", sfk Divide),
-  ("left", sfk Left),
-  ("right", sfk Right),
-  ("up", sfk Up),
-  ("down", sfk Down),
-  ("numpad0", sfk Numpad0),
-  ("numpad1", sfk Numpad1),
-  ("numpad2", sfk Numpad2),
-  ("numpad3", sfk Numpad3),
-  ("numpad4", sfk Numpad4),
-  ("numpad5", sfk Numpad5),
-  ("numpad6", sfk Numpad6),
-  ("numpad7", sfk Numpad7),
-  ("numpad8", sfk Numpad8),
-  ("numpad9", sfk Numpad9),
-  ("f1", sfk F1),
-  ("f2", sfk F2),
-  ("f3", sfk F3),
-  ("f4", sfk F4),
-  ("f5", sfk F5),
-  ("f6", sfk F6),
-  ("f7", sfk F7),
-  ("f8", sfk F8),
-  ("f9", sfk F9),
-  ("f10", sfk F10),
-  ("f11", sfk F11),
-  ("f12", sfk F12),
-  ("f13", sfk F13),
-  ("f14", sfk F14),
-  ("f15", sfk F15),
-  ("pause", sfk Pause);
+  ("escape", sf::Key::Escape)
+  ("lcontrol", sf::Key::LControl)
+  ("lshift", sf::Key::LShift)
+  ("lalt", sf::Key::LAlt)
+  ("lsystem", sf::Key::LSystem) // OS Specific
+  ("rcontrol", sf::Key::RControl)
+  ("rshift", sf::Key::RShift)
+  ("ralt", sf::Key::RAlt)
+  ("rsystem", sf::Key::RSystem)
+  ("menu", sf::Key::Menu)
+  ("lbracket", sf::Key::LBracket)
+  ("rbracket", sf::Key::RBracket)
+  ("semicolon", sf::Key::SemiColon)
+  ("comma", sf::Key::Comma)
+  ("period", sf::Key::Period)
+  ("quote", sf::Key::Quote)
+  ("slash", sf::Key::Slash)
+  ("backslash", sf::Key::BackSlash)
+  ("tilde", sf::Key::Tilde)
+  ("equal", sf::Key::Equal)
+  ("dash", sf::Key::Dash)
+  ("space", sf::Key::Space)
+  ("return", sf::Key::Return)
+  ("back", sf::Key::Back)
+  ("tab", sf::Key::Tab)
+  ("pageup", sf::Key::PageUp)
+  ("pagedown", sf::Key::PageDown)
+  ("end", sf::Key::End)
+  ("home", sf::Key::Home)
+  ("insert", sf::Key::Insert)
+  ("delete", sf::Key::Delete)
+  ("add", sf::Key::Add)
+  ("subtract", sf::Key::Subtract)
+  ("multiply", sf::Key::Multiply)
+  ("divide", sf::Key::Divide)
+  ("left", sf::Key::Left)
+  ("right", sf::Key::Right)
+  ("up", sf::Key::Up)
+  ("down", sf::Key::Down)
+  ("numpad0", sf::Key::Numpad0)
+  ("numpad1", sf::Key::Numpad1)
+  ("numpad2", sf::Key::Numpad2)
+  ("numpad3", sf::Key::Numpad3)
+  ("numpad4", sf::Key::Numpad4)
+  ("numpad5", sf::Key::Numpad5)
+  ("numpad6", sf::Key::Numpad6)
+  ("numpad7", sf::Key::Numpad7)
+  ("numpad8", sf::Key::Numpad8)
+  ("numpad9", sf::Key::Numpad9)
+  ("f1", sf::Key::F1)
+  ("f2", sf::Key::F2)
+  ("f3", sf::Key::F3)
+  ("f4", sf::Key::F4)
+  ("f5", sf::Key::F5)
+  ("f6", sf::Key::F6)
+  ("f7", sf::Key::F7)
+  ("f8", sf::Key::F8)
+  ("f9", sf::Key::F9)
+  ("f10", sf::Key::F10)
+  ("f11", sf::Key::F11)
+  ("f12", sf::Key::F12)
+  ("f13", sf::Key::F13)
+  ("f14", sf::Key::F14)
+  ("f15", sf::Key::F15)
+  ("pause", sf::Key::Pause);
 
 /*******************************
  * Constructors and Destructors
  ******************************/
 TimedKey::TimedKey( std::string &keyString, bool repeat, float delay )
   :m_activated( false ), 
-   m_noRepActiv( false ),
+   m_noRepeatActiv( false ),
    m_pressed( false ),
-   m_m_repeat( repeat ), 
+   m_repeat( repeat ), 
    m_delay( delay ) {
-  std::string lwrKey = ToLowerCase( str );
+  std::string lwrKey = ToLowerCase( keyString );
 
   // Single character keys can easily be casted
   if ( lwrKey.size() == 1 ) {
     m_kCode = static_cast<sf::Key::Code>( keyString[0] );
 
-  } else if (( KeyMap::iterator code = m_extraKeys.find( lwrKey )) !=
-               m_extraKeys.end()) {
-    m_kCode = *code;
-
   } else {
-    // No key found so associate with Count, which doesn't match any key
-    m_kCode = sfk Count;
+    KeyMap::iterator keyPair = m_extraKeys.find( lwrKey );
+    
+    if ( keyPair != m_extraKeys.end() ) {
+      m_kCode = keyPair->second;
+    } else {
+      // No key found so associate with Count, which doesn't match any key
+      m_kCode = sf::Key::Count;
+    }
   }
 }
 

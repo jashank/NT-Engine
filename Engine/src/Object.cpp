@@ -9,10 +9,11 @@ extern "C" {
 }
 #include <SFML/Graphics/Color.hpp>
 
-#include "App.h"
+#include "AnimData.h"
 #include "ResourceLib.h"
 #include "StateComm.h"
 #include "tinyxml.h"
+#include "Window.h"
 
 /**********************************
  * Public
@@ -68,7 +69,8 @@ Object::Object( lua_State *L )
    m_direction( UP ),
    m_distance( 0.0f ),
    m_speed( 0.0f ),
-   m_id( LUA_NOREF ) {
+   m_id( LUA_NOREF ),
+   m_L( NULL ) {
   if( !lua_isstring( L, -1 ) ) {
     luaL_error( L, "Invalid argument for Object." );
     LogErr( "State not passed to Object." );
@@ -85,9 +87,8 @@ Object::Object( lua_State *L )
 
 
 Object::~Object() {
-  lua_State *L = App::GetApp()->GetLuaState();
-  if ( L ) {
-    luaL_unref( L, LUA_REGISTRYINDEX, m_id );
+  if ( m_L ) {
+    luaL_unref( m_L, LUA_REGISTRYINDEX, m_id );
   }
 }
 
@@ -104,7 +105,8 @@ Object::Object(
   const std::string &filepath,
   int tileX,
   int tileY,
-  int strip
+  int strip,
+  lua_State *L
 )
  : m_moving( false ),
    m_blockingTile( false ),
@@ -114,6 +116,7 @@ Object::Object(
    m_distance( 0.0f ),
    m_speed( 0.0f ),
    m_id( LUA_NOREF ),
+   m_L( L ),
    m_coords( tileX, tileY ) {
   if( !LoadObjectData( filepath ) ) {
     LogErr( "Object XML file " + filepath + " didn't load correctly." );
@@ -163,15 +166,14 @@ void Object::UpdateCollision( Object* const collisionObj ) {
   m_collidingWith.push_back( collisionObj );
 
   if ( m_id != LUA_NOREF ) {
-    lua_State *L = App::GetApp()->GetLuaState();
-    lua_rawgeti( L, LUA_REGISTRYINDEX, m_id );
-    lua_getfield( L, -1, "HandleCollision" );
-    if ( lua_isfunction( L, -1 ) ) {
-      Lunar<Object>::push( L, this );
-      Lunar<Object>::push( L, collisionObj );
-      lua_call( L, 2, 0 );
+    lua_rawgeti( m_L, LUA_REGISTRYINDEX, m_id );
+    lua_getfield( m_L, -1, "HandleCollision" );
+    if ( lua_isfunction( m_L, -1 ) ) {
+      Lunar<Object>::push( m_L, this );
+      Lunar<Object>::push( m_L, collisionObj );
+      lua_call( m_L, 2, 0 );
     }
-    lua_settop( L, 0 );
+    lua_settop( m_L, 0 );
   }
 }
 
@@ -693,10 +695,9 @@ bool Object::LoadObjectData( const std::string &filepath ) {
 
 
 void Object::InitLua() {
-  lua_State *L = App::GetApp()->GetLuaState();
-  luaL_dofile( L, m_luaScript.c_str() );
-  if ( lua_istable( L, -1 )) {
-    m_id = luaL_ref( L, LUA_REGISTRYINDEX );
+  luaL_dofile( m_L, m_luaScript.c_str() );
+  if ( lua_istable( m_L, -1 )) {
+    m_id = luaL_ref( m_L, LUA_REGISTRYINDEX );
   } 
 }
 
@@ -706,7 +707,7 @@ void Object::MovementUpdate() {
 
   int halfTile = tileSize / 2;
   float prevDist = m_distance;
-  float distThisFrame = m_speed * App::GetApp()->GetDeltaTime();
+  float distThisFrame = m_speed * nt::window::GetFrameTime();
   m_distance += distThisFrame;
   
   bool nextTile = ( prevDist < halfTile && m_distance >= halfTile );
@@ -797,14 +798,13 @@ void Object::Realign() {
 
 void Object::CallScriptFunc( std::string funcName ) {
   if ( m_id != LUA_NOREF ) {
-    lua_State *L = App::GetApp()->GetLuaState();
-    lua_rawgeti( L, LUA_REGISTRYINDEX, m_id );
-    lua_getfield( L, -1, funcName.c_str() );
-    if( lua_isfunction( L, -1 ) ) {
-      Lunar<Object>::push( L, this );
-      lua_call( L, 1, 0 );
+    lua_rawgeti( m_L, LUA_REGISTRYINDEX, m_id );
+    lua_getfield( m_L, -1, funcName.c_str() );
+    if( lua_isfunction( m_L, -1 ) ) {
+      Lunar<Object>::push( m_L, this );
+      lua_call( m_L, 1, 0 );
     }
-    lua_settop( L, 0 );
+    lua_settop( m_L, 0 );
   }
 }
 

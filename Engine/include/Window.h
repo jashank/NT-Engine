@@ -59,9 +59,10 @@ namespace window {
   bool IsOpen();
 
   /**
-   * Pops most recent SFML event off of event stack.
+   * Pops most recent SFML event off of event stack and puts it in
+   * event passed. Returns true if there are still events on stack.
    */
-  const sf::Event &GetEvent();
+  bool GetEvent( sf::Event &event );
 
   /**
    * Retrieves SFML input manager from window.

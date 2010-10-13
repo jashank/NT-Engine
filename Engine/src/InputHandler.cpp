@@ -2,8 +2,11 @@
 
 #include <algorithm>
 
+#include <SFML/Window/Input.hpp>
+
 #include "tinyxml.h"
 #include "Utilities.h"
+#include "Window.h"
 
 /*********************************
  * Constructors and Destructors
@@ -55,7 +58,7 @@ void InputHandler::ScanMouse(
   if ( !m_mouseRegistry.empty() ) {
     std::string eventString = "";
 
-    const sf::Input *input = App::GetApp()->GetInput();
+    const sf::Input *input = &nt::window::GetInput();
     int x = input->GetMouseX();
     int y = input->GetMouseY();
     bool mouseDown = input->IsMouseButtonDown( sf::Mouse::Left );
@@ -103,7 +106,7 @@ bool InputHandler::LoadKey(
   float delay = 0.0;
   input->QueryFloatAttribute( "delay", &delay );
 
-  TimedKey key( keyName, repeat, delay )
+  TimedKey key( keyName, repeat, delay );
 
   const char *func = input->Attribute( "function" );
   if ( func ) {

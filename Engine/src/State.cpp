@@ -21,8 +21,8 @@ State::~State() {
 /*******************************************
  Public Member Functions
 *******************************************/
-bool State::Init( const std::string &filePath ) {
-  if ( !LoadFromFile( filePath )) {
+bool State::Init( const std::string &filePath, lua_State *L ) {
+  if ( !LoadFromFile( filePath, L )) {
     return false;
   }
   nt::state::SetStateComm( this );
@@ -61,7 +61,7 @@ std::string State::GetPortalPath( std::string &port ) const {
     m_portals.find( port );
 
   if ( pair != m_portals.end() ) {
-    return port->second;
+    return pair->second;
   } else {
     return "";
   }
@@ -70,56 +70,56 @@ std::string State::GetPortalPath( std::string &port ) const {
 /*************************************
  * Lua Functions
  * ***********************************/
-int State::LuaGetName( lua_State *L ) {
+int State::LuaGetName( lua_State *L ) const {
   lua_pushstring( L, m_name.c_str() );
   return 1;
 }
 
 
 int State::LuaCreateObject( lua_State *L ) {
-  return m_objectManager->LuaCreateObject( L );
+  return m_objectManager.LuaCreateObject( L );
 }
 
 int State::LuaDestroyObject( lua_State *L ) {
-  return m_objectManager->LuaDestroyObject( L );
+  return m_objectManager.LuaDestroyObject( L );
 }
 
 int State::LuaGetObject( lua_State *L ) {
-  return m_objectManager->LuaGetObject( L );
+  return m_objectManager.LuaGetObject( L );
 }
 
 int State::LuaGetObjects( lua_State *L ) {
-  return m_objectManager->LuaGetObjects( L );
+  return m_objectManager.LuaGetObjects( L );
 }
 
 int State::LuaGetNearestObject( lua_State *L ) {
-  return m_objectManager->LuaGetNearestObject( L );
+  return m_objectManager.LuaGetNearestObject( L );
 }
 
 int State::LuaGetObjectOnTile( lua_State *L ) {
-  return m_objectManager->LuaGetObjectOnTile( L );
+  return m_objectManager.LuaGetObjectOnTile( L );
 }
 
 int State::LuaObjectBlockingTile( lua_State *L ) {
-  return m_objectManager->LuaObjectBlockingTile( L );
+  return m_objectManager.LuaObjectBlockingTile( L );
 }
 
 int State::LuaGetTileInfo( lua_State *L ) {
-  return m_tileManager->LuaGetTileInfo( L );
+  return m_tileManager.LuaGetTileInfo( L );
 }
 
 int State::LuaTileIsCrossable( lua_State *L ) {
-  return m_tileManager->LuaTileIsCrossable( L );
+  return m_tileManager.LuaTileIsCrossable( L );
 }
 
 int State::LuaSetTile( lua_State *L ) {
-  return m_tileManager->LuaSetTile( L );
+  return m_tileManager.LuaSetTile( L );
 }
 
 /**********************************
  * Private Member Functions
  *********************************/
-bool State::LoadFromFile( const std::string &filePath ) {
+bool State::LoadFromFile( const std::string &filePath, lua_State *L ) {
   TiXmlDocument doc( filePath.c_str() );
 
   if ( doc.LoadFile() ) {
@@ -135,7 +135,7 @@ bool State::LoadFromFile( const std::string &filePath ) {
       // Set state comm for this load for ObjectManager to know map dimensions
       nt::state::SetStateComm( this );
       elem = root->FirstChildElement( "objects" );
-      if ( !m_objectManager.LoadData( elem )) {
+      if ( !m_objectManager.LoadData( elem, L )) {
         LogErr( "Problem loading Objects in state file " + filePath );
         return false;
       }

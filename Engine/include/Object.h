@@ -10,7 +10,6 @@
 
 #include "AnimSprite.h"
 #include "InputHandler.h"
-#include "Key.h"
 #include "Lunar.h"
 #include "Rect.h"
 #include "TimedString.h"
@@ -53,7 +52,6 @@ class Object : public AnimSprite {
    * Objects can only travel in 2 dimensions.
    */
   enum Dir { UP, DOWN, LEFT, RIGHT };
-  typedef std::pair< Key, std::string > KeyEntry;
   friend class ObjectAttorney;
 
   /**
@@ -62,8 +60,15 @@ class Object : public AnimSprite {
    * @param tileX x tile coordinate Object will start on.
    * @param tileY y tile coordinate Object will start on.
    * @param strip animation strip Object will begin with.
+   * @param L lua state that Object uses for default functions in script
    */
-  Object( const std::string &filepath, int tileX, int tileY, int strip );
+  Object( 
+    const std::string &filepath, 
+    int tileX, 
+    int tileY, 
+    int strip,
+    lua_State *L
+   );
 
   //@{
   /**
@@ -301,6 +306,11 @@ class Object : public AnimSprite {
   int m_id; 
 
   /**
+   * Pointer to lua state to use for predefined script functions.
+   */
+  lua_State *m_L;
+
+  /**
    * (x,y) coordinates of Object on tile map.
    */
   nt::core::IntVec m_coords; 
@@ -359,14 +369,17 @@ class ObjectAttorney {
    * @param y y coordinate of tile that Object starts on
    * @param strip animation corresponding to clip on sprite sheet that
    *              Object will use as its first animation 
+   * @param L lua state for Object to use for predefined script functions
    * @return pointer to the dynamically allocated Object
    */
   static Object* Create( 
     const std::string &filepath, 
     int x, 
     int y, 
-    int strip ) 
-  { return new Object( filepath, x, y, strip ); }
+    int strip,
+    lua_State *L
+  ) 
+  { return new Object( filepath, x, y, strip, L ); }
 
   /**
    * Calls Object's Init function.

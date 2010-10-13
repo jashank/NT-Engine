@@ -25,8 +25,10 @@ class State {
   /**
    * Initializes State via loading in State file at file path and setting up
    * communication interface among parts of State.
+   * @param filePath path to the State file to load in
+   * @param L lua state being used for application
    */
-  bool Init( const std::string &filePath );
+  bool Init( const std::string &filePath, lua_State *L );
 
   /**
    * Handles events for anything that handles events in the State.
@@ -97,9 +99,10 @@ class State {
   /**
    * Loads State from file at file path.
    * @param filePath path to file to load.
+   * @param L lua state to attach to members that require it
    * @return True if file loads successfully (no syntax errors in file).
    */
-  bool LoadFromFile( const std::string &filePath );
+  bool LoadFromFile( const std::string &filePath, lua_State *L );
 
   /** Manages all Objects in this State. */
   ObjectManager m_objectManager;

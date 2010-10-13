@@ -10,6 +10,7 @@
 #include "tinyxml.h"
 #include "Utilities.h"
 #include "Vector.h"
+#include "Window.h"
 
 /********************************
 Constructor and Destructor
@@ -25,7 +26,7 @@ ObjectManager::~ObjectManager() {
 /*******************************
 Public Methods
 *******************************/
-bool ObjectManager::LoadData( const TiXmlElement *dataRoot ) {
+bool ObjectManager::LoadData( const TiXmlElement *dataRoot, lua_State *L ) {
   // State guaranteed to be loaded and TileManager guaranteed to be loaded
   // before ObjectManager
   int width = nt::state::GetMapWidth();
@@ -47,7 +48,7 @@ bool ObjectManager::LoadData( const TiXmlElement *dataRoot ) {
             instance->QueryIntAttribute( "y", &y );
             instance->QueryIntAttribute( "strip", &strip );
             if ( nt::state::InRange( x, y ) && strip >= 0 ) {
-              AddObject( ObjectAttorney::Create( path, x, y, strip ));
+              AddObject( ObjectAttorney::Create( path, x, y, strip, L ));
             } else {
               LogErr( "Tile location or strip negative for Object in state file." );
               return false;
@@ -186,8 +187,8 @@ void ObjectManager::Render() const {
 
   while ( !renderOrder.empty() ) {
     const Object *obj = renderOrder.top().second;
-    App::GetApp()->Draw( *obj );
-    App::GetApp()->Draw( ObjectAttorney::GetText( obj ));
+    nt::window::Draw( *obj );
+    nt::window::Draw( ObjectAttorney::GetText( obj ));
     renderOrder.pop();
   }
 }
@@ -221,7 +222,7 @@ int ObjectManager::LuaCreateObject( lua_State *L ) {
   int tileY = lua_tointeger( L, -1 );
 
   if ( tileX >= 0 && tileY >= 0 ) {
-    Object *newObject = ObjectAttorney::Create( path, tileX, tileY, 0 );
+    Object *newObject = ObjectAttorney::Create( path, tileX, tileY, 0, L );
     AddObject( newObject );
     ObjectAttorney::Init( newObject );
     Lunar<Object>::push( L, newObject );

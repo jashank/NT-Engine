@@ -38,11 +38,10 @@ class TimedKey {
   bool IsActivated() const;
 
  private:
-  typedef sf::Key::Code sfk;
-  typedef std::map<std::string, sfk> KeyMap;
+  typedef std::map<std::string, sf::Key::Code> KeyMap;
 
   /** Mapping of key strings that can't simply be casted to an sf Key Code. */
-  static const KeyMap m_extraKeys;
+  static KeyMap m_extraKeys;
 
   /** True if key is activated. */
   bool m_activated;
@@ -66,7 +65,7 @@ class TimedKey {
   sf::Clock m_clock;
 
   /** SFML key code this key is associated with. */
-  sfk m_kCode;
+  sf::Key::Code m_kCode;
 };
 
 #endif // TIMEDKEY_H

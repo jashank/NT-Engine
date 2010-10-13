@@ -2,8 +2,9 @@
 
 #include <SFML/Graphics/Rect.hpp>
 
-#include "App.h"
+#include "AnimData.h"
 #include "ResourceLib.h"
+#include "Window.h"
 
 /************************************************
 Public Methods
@@ -21,7 +22,7 @@ AnimSprite::AnimSprite()
 
 void AnimSprite::Update() {
   if( m_playing ) {
-    m_frameTimeLeft -= App::GetApp()->GetDeltaTime();
+    m_frameTimeLeft -= nt::window::GetFrameTime();
     if( m_frameTimeLeft <= 0.0f ) {
       NextFrame();
     }

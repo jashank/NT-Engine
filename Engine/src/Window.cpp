@@ -1,7 +1,6 @@
 #include "Window.h"
 
 #include <SFML/Graphics/RenderWindow.hpp>
-#include <SFML/Window/Event.hpp>
 #include <SFML/Window/Input.hpp>
 #include <SFML/Window/VideoMode.hpp>
 
@@ -22,9 +21,9 @@ namespace window {
     int height, 
     int maxFps
   ) {
-    window = new Window( sf::VideoMode( width, height ), title );
-    window.SetFramerateLimit( framerate );
-    window.UseVerticalSync( true );
+    window = new sf::RenderWindow( sf::VideoMode( width, height ), title );
+    window->SetFramerateLimit( maxFps );
+    window->UseVerticalSync( true );
   }
 
 
@@ -54,10 +53,8 @@ namespace window {
   }
 
 
-  const sf::Event &GetEvent() {
-    static sf::Event event;
-    window->GetEvent( event );
-    return event;
+  bool GetEvent( sf::Event &event ) {
+    return window->GetEvent( event );
   }
 
 

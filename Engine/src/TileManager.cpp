@@ -10,10 +10,10 @@ extern "C" {
 
 #include "AnimData.h"
 #include "AnimSprite.h"
-#include "App.h"
 #include "ResourceLib.h"
 #include "State.h"
 #include "tinyxml.h"
+#include "Window.h"
 
 /******************************
 Constructors and Destructors.
@@ -69,8 +69,6 @@ void TileManager::Update() {
 
 void TileManager::Render() {
   if ( m_tileSprites ) {
-    static App* app = App::GetApp();
-
     static float x = 0.f;
     static float y = 0.f;
     int tile = -1;
@@ -83,7 +81,7 @@ void TileManager::Render() {
           x = static_cast<float>( i ) * m_tileDim;
           y = static_cast<float>( j ) * m_tileDim;
           m_tileSprites[tile].SetPosition( x, y );
-          app->Draw( m_tileSprites[tile] );
+          nt::window::Draw( m_tileSprites[tile] );
         }
       }
     }
