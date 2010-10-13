@@ -44,9 +44,14 @@ namespace window {
 
   /**
    * Clears graphical contents of window for another rendering.
-   * TODO IS THIS SEPARATE FROM DISPLAY()???
+   * Should be called every frame.
    */
-  void Refresh(); 
+  void Clear();
+
+  /**
+   * Displays contents drawn on window. Should be called every frame.
+   */
+  void Display();
 
   /**
    * Draws any SFML Drawable object to the window.

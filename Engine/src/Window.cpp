@@ -6,9 +6,9 @@
 
 #include "Utilities.h"
 
-// Holds actual window
+// Holds actual win
 namespace {
-  sf::RenderWindow *window = NULL;
+  sf::RenderWindow *win = NULL;
 } 
 
 
@@ -21,50 +21,51 @@ namespace window {
     int height, 
     int maxFps
   ) {
-    window = new sf::RenderWindow( sf::VideoMode( width, height ), title );
-    window->SetFramerateLimit( maxFps );
-    window->UseVerticalSync( true );
+    win = new sf::RenderWindow( sf::VideoMode( width, height ), title );
+    win->SetFramerateLimit( maxFps );
+    win->UseVerticalSync( true );
   }
 
 
   void Close() {
-    window->Close();
+    win->Close();
   }
 
 
   void Destroy() {
-    SAFEDELETE( window );
+    SAFEDELETE( win );
   }
 
-
-  void Refresh() {
-    window->Clear();
-    window->Display();
+  void Clear() {
+    win->Clear();
   }
 
+  void Display() {
+    win->Display();
+  }
 
   void Draw( const sf::Drawable &object ) {
-    window->Draw( object );
+    win->Draw( object );
   }
 
 
   bool IsOpen() {
-    return window->IsOpened();
+    return win->IsOpened();
   }
 
 
   bool GetEvent( sf::Event &event ) {
-    return window->GetEvent( event );
+    return win->GetEvent( event );
   }
 
 
   const sf::Input &GetInput() {
-    return window->GetInput();
+    return win->GetInput();
   }
 
   
   float GetFrameTime() {
-    return window->GetFrameTime();
+    return win->GetFrameTime();
   }
 
 } // namespace window

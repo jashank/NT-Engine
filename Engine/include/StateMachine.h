@@ -81,6 +81,17 @@ class StateMachine {
 
   /* State currently being run by machine. */
   static State *m_runningState;
+
+  /* Whether another state has been set to change to for next Step. */
+  static bool m_nextStateSet;
+
+  /* File path to next state. */
+  static std::string m_nextStatePath;
+
+  /**
+   * Changes to State set in m_nextStatePath.
+   */
+  void NextState();
 };
 
 #endif // STATEMACHINE_H

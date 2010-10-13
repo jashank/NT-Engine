@@ -34,14 +34,18 @@ const luaL_Reg StateMachine::m_luaFuncs[] = {
   { NULL, NULL }
 };
 
+bool StateMachine::m_nextStateSet = false;
 lua_State *StateMachine::m_luaState = NULL;
 State *StateMachine::m_runningState = NULL;
+std::string StateMachine::m_nextStatePath = "";
 
 /*******************************
  * Constructors and Destructors
  ******************************/
 StateMachine::~StateMachine() {
   SAFEDELETE( m_runningState );
+  lua_close( m_luaState );
+  m_luaState = NULL;
 } 
 
 /*******************************
@@ -77,6 +81,12 @@ void StateMachine::Step() {
   }
 
   m_runningState->Update();
+
+  if ( m_nextStateSet ) {
+    NextState();
+    m_nextStateSet = false;
+  }
+
   m_runningState->Render();
 }
 
@@ -88,18 +98,15 @@ int StateMachine::LuaLoadPath( lua_State *L ) {
     LogLuaErr( "String not passed to LoadPath" );
     return 0;
   }
-  SAFEDELETE( m_runningState );
-  m_runningState = new State;
-  m_runningState->Init( lua_tostring( L, -1 ), m_luaState );
+  m_nextStateSet = true;
+  m_nextStatePath = lua_tostring( L, -1 );
   return 0;
 }
 
 
 int StateMachine::LuaReset( lua_State *L ) {
-  std::string path = m_runningState->GetPath();
-  SAFEDELETE( m_runningState );
-  m_runningState = new State;
-  m_runningState->Init( path, m_luaState ); 
+  m_nextStateSet = true;
+  m_nextStatePath = m_runningState->GetPath();
   return 0;
 }
 
@@ -112,9 +119,8 @@ int StateMachine::LuaPortal( lua_State *L ) {
   std::string port = lua_tostring( L, -1 );
   std::string path = m_runningState->GetPortalPath( port );
   if ( path != "" ) {
-    SAFEDELETE( m_runningState );
-    m_runningState = new State;
-    m_runningState->Init( path, m_luaState );
+    m_nextStateSet = true;
+    m_nextStatePath = path;
   } else {
     LogLuaErr( "No path associated with portal name passed to Portal." );
   }
@@ -176,3 +182,12 @@ int StateMachine::LuaSetTile( lua_State *L ) {
   return m_runningState->LuaSetTile( L );
 }
 
+
+/***************************
+ * Private Member Functions
+ **************************/
+void StateMachine::NextState() {
+  SAFEDELETE( m_runningState );
+  m_runningState = new State();
+  m_runningState->Init( m_nextStatePath, m_luaState );
+}

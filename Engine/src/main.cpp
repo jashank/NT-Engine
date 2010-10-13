@@ -28,20 +28,20 @@ int main( int argc, char *argv[] ) {
     }
   }
 
+  std::string title = "Kickle!";
   nt::window::Create(
-    "Kickle!",
+    title,
     Config::GetScreenWidth(),
     Config::GetScreenHeight(),
     Config::GetFPS()
   );
-  nt::window::Refresh();
-
   StateMachine mach;
   mach.Setup( levelPath );
 
   while ( nt::window::IsOpen() ) {
+    nt::window::Clear();
     mach.Step();
-    nt::window::Refresh();
+    nt::window::Display();
   }
 
   nt::window::Destroy();
