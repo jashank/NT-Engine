@@ -37,6 +37,11 @@ class TimedKey {
    */
   bool IsActivated() const;
 
+  /**
+   * Returns whether key is currently held down.
+   */
+  bool IsDown() const;
+
  private:
   typedef std::map<std::string, sf::Key::Code> KeyMap;
 

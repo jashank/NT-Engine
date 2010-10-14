@@ -38,6 +38,16 @@ bool InputHandler::LoadInputList( const TiXmlElement *inputRoot ) {
 
 
 void InputHandler::Update() {
+  // Move any keys that were held down when loaded in to key registry if they
+  // have been released
+  for ( keyRegItr itr = m_prevKeys.begin(); itr != m_prevKeys.end(); ) {
+    keyRegItr checkDown = itr++;
+    if ( !checkDown->second.IsDown() ) {
+      m_keyRegistry.insert( *checkDown );
+      m_prevKeys.erase( checkDown );
+    }
+  }
+       
   for ( keyRegItr itr = m_keyRegistry.begin(); itr != m_keyRegistry.end();
         ++itr ) {
     itr->second.Update();
@@ -115,7 +125,14 @@ bool InputHandler::LoadKey(
 
   const char *func = input->Attribute( "function" );
   if ( func ) {
-    m_keyRegistry.insert( std::make_pair( func, key ));
+    std::pair<std::string, TimedKey> pair = std::make_pair( func, key );
+
+    if ( !key.IsDown() ) {
+      m_keyRegistry.insert( pair );
+    } else {
+      m_prevKeys.insert( pair );
+    }
+
   } else {
     LogErr( "No function named for input to act upon in <input>" );
     return false;

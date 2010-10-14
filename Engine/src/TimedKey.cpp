@@ -136,3 +136,7 @@ bool TimedKey::IsActivated() const {
 }
     
 
+bool TimedKey::IsDown() const {
+  return nt::window::GetInput().IsKeyDown( m_kCode );
+}
+

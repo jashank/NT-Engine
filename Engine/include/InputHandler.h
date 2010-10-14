@@ -24,7 +24,9 @@ class InputHandler {
 
   /**
    * Loads <input_list> root passed, storing function-name/key 
-   * pairs and mouse-event/function-name pairs in registry.
+   * pairs and mouse-event/function-name pairs in registry. Keys initially
+   * held down on loading will not be updated until after they have been 
+   * released.
    * @param inputRoot root element of the <input_list>.
    * @return True if load was successful (no syntax errors in file).
    */
@@ -71,6 +73,8 @@ class InputHandler {
 
   /**
    * Loads key information found at input element into registry.
+   * Any loaded keys currently held down will be marked, and won't be updated
+   * until after they have been released.
    * @param input element at which information for key is found.
    * @param keyString name of key found in input element.
    * @return Whether load succeeded (no parsing problems).
@@ -104,10 +108,9 @@ class InputHandler {
   std::map<std::string, TimedKey> m_keyRegistry; 
 
   /**
-   * Keys held down in previous state. Used to disallow input from being
-   * handled twice when a state change occurs.
+   * Keys already held down when key data was loaded in.
    */
-  std::vector<sf::Key::Code> m_prevKeys; 
+  std::map<std::string, TimedKey> m_prevKeys; 
 };
 
 #endif // INPUT_HANDLER_H
