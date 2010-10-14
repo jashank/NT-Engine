@@ -1,7 +1,5 @@
 #include "InputHandler.h"
 
-#include <algorithm>
-
 #include <SFML/Window/Input.hpp>
 
 #include "tinyxml.h"
@@ -39,10 +37,17 @@ bool InputHandler::LoadInputList( const TiXmlElement *inputRoot ) {
 }
 
 
-void InputHandler::ScanKeys( const funcType &func ) {
+void InputHandler::Update() {
   for ( keyRegItr itr = m_keyRegistry.begin(); itr != m_keyRegistry.end();
         ++itr ) {
     itr->second.Update();
+  }
+}
+
+
+void InputHandler::ScanKeys( const funcType &func ) const {
+  for ( constKeyRegItr itr = m_keyRegistry.begin(); 
+        itr != m_keyRegistry.end(); ++itr ) {
     if ( itr->second.IsActivated() ) {
       std::string funcName = itr->first;
       func( funcName );

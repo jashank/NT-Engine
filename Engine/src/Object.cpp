@@ -154,6 +154,7 @@ void Object::Init() {
 
 
 void Object::HandleEvents() {
+  m_input.Update();
   if ( !m_moving ) {
     m_input.ScanKeys( m_ptrCallScriptFunc );
     m_input.ScanMouse( m_ptrCallScriptFunc, m_collisionRect );

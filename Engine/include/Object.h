@@ -15,6 +15,8 @@
 #include "TimedString.h"
 #include "Vector.h"
 
+class lua_State;
+
 /**
  * Objects are heavily customizable via their associated lua script and xml 
  * file. They make up everything that has behavior in the app. They are 

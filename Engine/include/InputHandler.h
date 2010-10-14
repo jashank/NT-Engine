@@ -30,26 +30,22 @@ class InputHandler {
    */
   bool LoadInputList( const TiXmlElement *inputRoot );
 
-  //@{
-  /** 
-   * The following functions scan input and compare it to the InputHandler's 
-   * registry to check if there are any matches. If so, a callback occurs on
-   * the function passed, binding the function name in the registry to it.
-   * This is used for finding the lua function name associated with a key or
-   * mouse event and passing it to an Object's function.
-   */ 
-
   /**
-   * Scan input for keys down.
-   * @param func the callback function (actually a function pointer). Actual
-   * function must take a single string argument (the lua function name).
+   * Updates all TimedKeys stored.
    */
-  void ScanKeys( const boost::function1<void, std::string&> &func );
+  void Update();
 
   /**
-   * Scans input for mouse events.
-   * @param func the callback function (actually a function pointer). Actual 
-   * function must take a signel string argument (the lua function name).
+   * Calls functions associated with any activated keys registered.
+   * @param func the callback function to pass function name associated
+   * with key to.
+   */
+  void ScanKeys( const boost::function1<void, std::string&> &func ) const;
+
+  /**
+   * Calls functions associated with any current mouse events registered.
+   * @param func the callback function to pass function name associated with
+   * mouse event to.
    * @param mouseArea area to check to see if mouse event occured in that area.
    * Area is relative to top left corner of screen.
    */
@@ -57,7 +53,6 @@ class InputHandler {
     const boost::function1<void, std::string&> &func, 
     const nt::core::FloatRect &mouseArea 
   );
-  //@}
 
  private:
   typedef std::map<std::string, TimedKey>::iterator keyRegItr;
