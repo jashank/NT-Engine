@@ -22,8 +22,9 @@ class AnimSprite : public sf::Sprite {
 
   /**
    * Goes to next frame in sprite's animation sequence if it is time to do so.
+   * @param dt delta time value - amount of time to step forward
    */
-  void Update();
+  void Update( float dt );
 
   /**
    * @return AnimData for this sprite's animations.

@@ -37,8 +37,9 @@ class State {
 
   /**
    * Updates everything that needs regular updating in the State.
+   * @param dt delta time - amount of time to step forward
    */
-  void Update();
+  void Update( float dt );
 
   /**
    * Renders everything that needs to be rendered in the State.

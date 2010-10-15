@@ -4,7 +4,6 @@
 
 #include "AnimData.h"
 #include "ResourceLib.h"
-#include "Window.h"
 
 /************************************************
 Public Methods
@@ -20,9 +19,9 @@ AnimSprite::AnimSprite()
 }
 
 
-void AnimSprite::Update() {
+void AnimSprite::Update( float dt ) {
   if( m_playing ) {
-    m_frameTimeLeft -= nt::window::GetFrameTime();
+    m_frameTimeLeft -= dt;
     if( m_frameTimeLeft <= 0.0f ) {
       NextFrame();
     }

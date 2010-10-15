@@ -30,8 +30,9 @@ class StateMachine {
 
   /**
    * "Steps" the machine, running it through a single update.
+   * @param dt delta time - amount of time to step forward
    */
-  void Step();
+  void Step( float dt );
 
   /**
    * Draws everything in StateMachine to the window.

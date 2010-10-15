@@ -19,7 +19,7 @@ namespace window {
     std::string &title, 
     int width, 
     int height, 
-    int maxFps
+    float maxFps
   ) {
     win = new sf::RenderWindow( sf::VideoMode( width, height ), title );
     win->SetFramerateLimit( maxFps );
@@ -61,11 +61,6 @@ namespace window {
 
   const sf::Input &GetInput() {
     return win->GetInput();
-  }
-
-  
-  float GetFrameTime() {
-    return win->GetFrameTime();
   }
 
 } // namespace window

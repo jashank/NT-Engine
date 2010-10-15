@@ -70,7 +70,7 @@ bool StateMachine::Setup( const std::string &filePath ) {
 
 
 // Should a goal be to move all nt::window stuff out of StateMachine?
-void StateMachine::Step() {
+void StateMachine::Step( float dt ) {
   m_runningState->HandleEvents();
 
   static sf::Event closeTest;
@@ -80,7 +80,7 @@ void StateMachine::Step() {
     }
   }
 
-  m_runningState->Update();
+  m_runningState->Update( dt );
 
   if ( m_nextStateSet ) {
     NextState();

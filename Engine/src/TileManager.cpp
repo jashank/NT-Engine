@@ -60,9 +60,9 @@ bool TileManager::LoadData( const TiXmlElement *dataRoot ) {
 }
 
 
-void TileManager::Update() {
+void TileManager::Update( float dt ) {
   for( int i = 0; i < m_numTileTypes; ++i ) {
-    m_tileSprites[i].Update();
+    m_tileSprites[i].Update( dt );
   }
 }
 

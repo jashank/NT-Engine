@@ -102,7 +102,7 @@ void ObjectManager::HandleEvents() {
 }
 
 
-void ObjectManager::Update() {
+void ObjectManager::Update( float dt ) {
   int x = 0;
   int y = 0;
   int width = m_objGrid->Columns();
@@ -135,7 +135,7 @@ void ObjectManager::Update() {
   objList = m_objGrid->begin();
   while ( objList != m_objGrid->end() ) {
     for ( ListItr obj = objList->begin(); obj != objList->end(); ) {
-      ObjectAttorney::UpdateAI( *obj );
+      ObjectAttorney::UpdateAI( *obj, dt );
       obj = AdjustGridCoord( x, y, obj );
     }
     IncPoint( x, y, width, height );
@@ -146,7 +146,7 @@ void ObjectManager::Update() {
   objList = m_objGrid->begin();
   while ( objList != m_objGrid->end() ) {
     for ( ListItr obj = objList->begin(); obj != objList->end(); ++obj ) {
-      ObjectAttorney::UpdateRendering( *obj );
+      ObjectAttorney::UpdateRendering( *obj, dt );
     }
     ++objList;
   }

@@ -42,8 +42,9 @@ class ObjectManager {
 
   /**
    * Calls Update functions on every Object on screen. 
+   * @param dt delta time - amount of time to step forward
    */
-  void Update();
+  void Update( float dt );
   
   /**
    * Renders every Object on screen.

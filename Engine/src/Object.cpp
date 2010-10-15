@@ -13,7 +13,6 @@ extern "C" {
 #include "ResourceLib.h"
 #include "StateComm.h"
 #include "tinyxml.h"
-#include "Window.h"
 
 /**********************************
  * Public
@@ -179,17 +178,17 @@ void Object::UpdateCollision( Object* const collisionObj ) {
 }
 
 
-void Object::UpdateAI() {
+void Object::UpdateAI( float dt ) {
   if( m_moving ) {
-    MovementUpdate();
+    MovementUpdate( dt );
   } else {
     CallScriptFunc( "AI" );
   }
 }
 
 
-void Object::UpdateRendering() {
-  AnimSprite::Update();
+void Object::UpdateRendering( float dt ) {
+  AnimSprite::Update( dt );
   m_text.UpdatePrint();
 }
 
@@ -703,12 +702,12 @@ void Object::InitLua() {
 }
 
 
-void Object::MovementUpdate() {
+void Object::MovementUpdate( float dt ) {
   int tileSize = nt::state::GetTileSize();
 
   int halfTile = tileSize / 2;
   float prevDist = m_distance;
-  float distThisFrame = m_speed * nt::window::GetFrameTime();
+  float distThisFrame = m_speed * dt;
   m_distance += distThisFrame;
   
   bool nextTile = ( prevDist < halfTile && m_distance >= halfTile );

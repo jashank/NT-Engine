@@ -8,12 +8,16 @@
 * written in XML and Lua. 
 */
 
-#include "Utilities.h"
+#include <algorithm>
 #include <string>
 #include <sys/stat.h> // Used to check if input file exists.
+#include <unistd.h>
+
+#include <SFML/System/Clock.hpp>
 
 #include "Config.h"
 #include "StateMachine.h"
+#include "Utilities.h"
 #include "Window.h"
 
 int main( int argc, char *argv[] ) {
@@ -35,14 +39,32 @@ int main( int argc, char *argv[] ) {
     Config::GetScreenHeight(),
     Config::GetFPS()
   );
+
   StateMachine mach;
   mach.Setup( levelPath );
 
+  float fixdt = 1.0/Config::GetFPS();
+
+  sf::Clock timer;
+  timer.Reset();
+
   while ( nt::window::IsOpen() ) {
     nt::window::Clear();
-    mach.Step();
+
+    float frameTime = timer.GetElapsedTime();
+    timer.Reset();
+    while ( frameTime > 0.0 ) {
+      float dt = std::min( frameTime, fixdt );  
+      mach.Step( dt );
+      frameTime -= dt;
+    }
+
     mach.Render();
     nt::window::Display();
+    frameTime = timer.GetElapsedTime();
+    if ( frameTime < fixdt ) {
+      usleep( (fixdt - frameTime) * (1000000));
+    }
   }
 
   nt::window::Destroy();

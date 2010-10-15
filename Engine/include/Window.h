@@ -29,7 +29,7 @@ namespace window {
     std::string &title, 
     int width, 
     int height, 
-    int maxFps
+    float maxFps
   );
 
   /**
@@ -73,11 +73,6 @@ namespace window {
    * Retrieves SFML input manager from window.
    */
   const sf::Input &GetInput();
-
-  /**
-   * Returns time elapsed since last frame.
-   */
-  float GetFrameTime();
 
 } // namespace window
 } // namespace nt

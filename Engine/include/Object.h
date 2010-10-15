@@ -107,13 +107,16 @@ class Object : public AnimSprite {
    * If the Object isn't moving, calls Object's 'AI' function in its 
    * lua script (if defined) passing self as argument. Otherwise, updates
    * movement for Object.
+   * @param dt delta time - amount of time to step forward
    */
-  void UpdateAI();
+  void UpdateAI( float dt );
 
   /**
-   * Updates Object's sprite animation (if applicable).
+   * Updates Object's sprite animation (if applicable). 
+   * Does NOT render sprite.
+   * @param dt delta time - amount of time to step forward
    */
-  void UpdateRendering();
+  void UpdateRendering( float dt );
 
   //@{
   /**
@@ -227,8 +230,9 @@ class Object : public AnimSprite {
   /**
    * Updates movement of Object given its direction, speed, etc. Assumes that
    * Object is currently moving.
+   * @param dt delta time - amount of time to step forward.
    */
-  void MovementUpdate();
+  void MovementUpdate( float dt );
 
   /**
    * Realigns object if it has traveled past the center of the next tile it
@@ -408,16 +412,18 @@ class ObjectAttorney {
   /**
    * Calls Object's UpdateAI function.
    * @param obj object to call UpdateAI on
+   * @param dt delta time - amount of time to step forward
    */
-  static void UpdateAI( Object *obj ) 
-  { obj->UpdateAI(); }
+  static void UpdateAI( Object *obj, float dt ) 
+  { obj->UpdateAI( dt ); }
 
   /**
    * Calls Object's UpdateRendering function.
    * @param obj object to call UpdateRendering on
+   * @param dt delta time - amount of time to step forward
    */
-  static void UpdateRendering( Object *obj ) 
-  { obj->UpdateRendering(); }
+  static void UpdateRendering( Object *obj, float dt ) 
+  { obj->UpdateRendering( dt ); }
 
   /**
    * Returns tile coordinates of Object.

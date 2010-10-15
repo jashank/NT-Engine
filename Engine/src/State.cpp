@@ -37,9 +37,9 @@ void State::HandleEvents() {
 }
 
 
-void State::Update() {
-  m_tileManager.Update();
-  m_objectManager.Update();
+void State::Update( float dt ) {
+  m_tileManager.Update( dt );
+  m_objectManager.Update( dt );
   m_musicManager.Update();
 }
 

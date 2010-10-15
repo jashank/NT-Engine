@@ -25,7 +25,7 @@
   /**
    * @return Application's FPS.
    */
-  static int GetFPS();
+  static float GetFPS();
 
 private:
   //@{
@@ -38,7 +38,7 @@ private:
 
   static int m_screenWidth;
   static int m_screenHeight;
-  static int m_FPS;
+  static float m_FPS;
 };
 
 #endif // CONFIG_H

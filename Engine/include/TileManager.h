@@ -35,8 +35,9 @@ class TileManager {
 
   /**
    * Updates animations for tiles on screen.
+   * @param dt delta time - amount of time to step forward
    */
-  void Update();
+  void Update( float dt );
 
   /**
    * Renders tiles on screen.
