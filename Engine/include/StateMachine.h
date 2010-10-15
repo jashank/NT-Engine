@@ -29,9 +29,14 @@ class StateMachine {
   bool Setup( const std::string &filePath ); 
 
   /**
-   * "Steps" the machine, running it through a single game loop iteration.
+   * "Steps" the machine, running it through a single update.
    */
   void Step();
+
+  /**
+   * Draws everything in StateMachine to the window.
+   */
+  void Render();
 
   //@{
   /**

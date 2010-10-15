@@ -41,6 +41,7 @@ int main( int argc, char *argv[] ) {
   while ( nt::window::IsOpen() ) {
     nt::window::Clear();
     mach.Step();
+    mach.Render();
     nt::window::Display();
   }
 

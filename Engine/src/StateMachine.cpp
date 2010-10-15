@@ -86,7 +86,10 @@ void StateMachine::Step() {
     NextState();
     m_nextStateSet = false;
   }
+}
 
+
+void StateMachine::Render() {
   m_runningState->Render();
 }
 
