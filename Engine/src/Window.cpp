@@ -22,8 +22,6 @@ namespace window {
     float maxFps
   ) {
     win = new sf::RenderWindow( sf::VideoMode( width, height ), title );
-    win->SetFramerateLimit( maxFps );
-    win->UseVerticalSync( true );
   }
 
 

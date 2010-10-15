@@ -61,10 +61,11 @@ int main( int argc, char *argv[] ) {
 
     mach.Render();
     nt::window::Display();
+
     frameTime = timer.GetElapsedTime();
     if ( frameTime < fixdt ) {
       usleep( (fixdt - frameTime) * (1000000));
-    }
+    } 
   }
 
   nt::window::Destroy();
