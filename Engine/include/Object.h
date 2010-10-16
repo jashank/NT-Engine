@@ -27,7 +27,7 @@ class lua_State;
  *
  * See the Object Guide for more information.
  */
-class Object : public AnimSprite {
+class Object {
  public:
   /**
    * Lunar requires Object constructor that just takes pointer to lua_State. 
@@ -126,8 +126,6 @@ class Object : public AnimSprite {
    * application at any time.
    * @return Number of arguments pushed on the lua stack.
    */
-  int LuaMove( lua_State *L );
-
   int LuaGetAnim( lua_State *L );
 
   int LuaSetAnim( lua_State *L );
@@ -145,6 +143,10 @@ class Object : public AnimSprite {
   int LuaGetFrame( lua_State *L );
 
   int LuaIsAnimating( lua_State *L );
+
+  int LuaSetAlpha( lua_State *L );
+
+  int LuaMove( lua_State *L );
 
   int LuaIsMoving( lua_State *L );
 
@@ -262,6 +264,9 @@ class Object : public AnimSprite {
   /***********************
    Private Data Members
   ***********************/
+  /** Sprite representation of Object. */
+  AnimSprite m_sprite;
+
   /**
    * If true, keep moving in m_direction.
    */
@@ -424,6 +429,15 @@ class ObjectAttorney {
    */
   static void UpdateRendering( Object *obj, float dt ) 
   { obj->UpdateRendering( dt ); }
+
+
+  /**
+   * Returns the Object's sprite.
+   * @param obj object whose sprite is to be retrieved.
+   * @return Object's sprite.
+   */
+  static const AnimSprite &GetSprite( const Object *obj )
+  { return obj->m_sprite; }
 
   /**
    * Returns tile coordinates of Object.

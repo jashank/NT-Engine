@@ -5,6 +5,7 @@
 
 #include <cstdlib>
 
+#include "AnimSprite.h"
 #include "Object.h"
 #include "StateComm.h"
 #include "tinyxml.h"
@@ -179,15 +180,15 @@ void ObjectManager::Render() const {
   nt::core::Matrix2D<ObjectList>::iterator objList = m_objGrid->begin();
   while ( objList != m_objGrid->end() ) {
     for ( ListItr obj = objList->begin(); obj != objList->end(); ++obj ) {
-      renderOrder.push(
-        std::make_pair( -( (*obj)->GetPosition().y ), *obj ) );
+      renderOrder.push( std::make_pair( 
+        -( ObjectAttorney::GetSprite( *obj ).GetPosition().y ), *obj ));
     }
     ++objList;
   }
 
   while ( !renderOrder.empty() ) {
     const Object *obj = renderOrder.top().second;
-    nt::window::Draw( *obj );
+    nt::window::Draw( ObjectAttorney::GetSprite( obj ) );
     nt::window::Draw( ObjectAttorney::GetText( obj ));
     renderOrder.pop();
   }

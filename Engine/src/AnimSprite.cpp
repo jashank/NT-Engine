@@ -1,6 +1,7 @@
 #include "AnimSprite.h"
 
 #include <SFML/Graphics/Rect.hpp>
+#include <SFML/Graphics/Color.hpp>
 
 #include "AnimData.h"
 #include "ResourceLib.h"
@@ -133,11 +134,14 @@ void AnimSprite::SetAnimData( const AnimData *animData ) {
   }
 }
 
-/************************************************
-Protected Methods
-************************************************/
+
 bool AnimSprite::IsAnimating() {
   return m_playing;
+}
+
+
+void AnimSprite::SetAlpha( unsigned int alpha ) {
+  SetColor( sf::Color( 255, 255, 255, alpha ));
 }
 
 /************************************************

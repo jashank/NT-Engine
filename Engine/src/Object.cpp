@@ -7,7 +7,6 @@
 extern "C" {
   #include "lualib.h"
 }
-#include <SFML/Graphics/Color.hpp>
 
 #include "AnimData.h"
 #include "ResourceLib.h"
@@ -20,7 +19,6 @@ extern "C" {
 const char Object::className[] = "Object";
 
 Lunar<Object>::RegType Object::methods[] = {
-  { "Move", &Object::LuaMove },
   { "GetAnim", &Object::LuaGetAnim },
   { "SetAnim", &Object::LuaSetAnim },
   { "PlayAnim", &Object::LuaPlayAnim },
@@ -30,6 +28,8 @@ Lunar<Object>::RegType Object::methods[] = {
   { "SetReverseAnim", &Object::LuaSetReverseAnim },
   { "GetFrame", &Object::LuaGetFrame },
   { "IsAnimating", &Object::LuaIsAnimating },
+  { "SetAlpha", &Object::LuaSetAlpha },
+  { "Move", &Object::LuaMove },
   { "IsMoving", &Object::LuaIsMoving },
   { "OnCollisionCourse", &Object::LuaOnCollisionCourse },
   { "SetNotColliding", &Object::LuaSetNotColliding },
@@ -121,7 +121,7 @@ Object::Object(
     LogErr( "Object XML file " + filepath + " didn't load correctly." );
   }
 
-  SetAnimation( strip );
+  m_sprite.SetAnimation( strip );
 
   //Calculate the float positions given tileX and tileY
   //Taking into account tile size, and max tiles across/down
@@ -130,14 +130,15 @@ Object::Object(
   float x = static_cast<float>( tileDim * tileX );
   float y = static_cast<float>( tileDim * tileY ); 
 
-  if( GetAnimData() ) {
-    int height = GetAnimData()->GetFrameHeight( GetAnimation() );
+  if( m_sprite.GetAnimData() ) {
+    int startingAnim = m_sprite.GetAnimation();
+    int height = m_sprite.GetAnimData()->GetFrameHeight( startingAnim );
     if ( height > tileDim ) {
       //Take into account the sprites that are taller than a normal tile
-      y -= GetAnimData()->GetFrameHeight( GetAnimation() ) % tileDim;
+      y -= m_sprite.GetAnimData()->GetFrameHeight( startingAnim ) % tileDim;
     }
   }
-  SetPosition( x, y );
+  m_sprite.SetPosition( x, y );
 
   if( !LoadCollisionData( filepath ) ) {
     LogErr( "Object XML file " + filepath + " didn't load correctly." );
@@ -188,14 +189,90 @@ void Object::UpdateAI( float dt ) {
 
 
 void Object::UpdateRendering( float dt ) {
-  AnimSprite::Update( dt );
+  m_sprite.Update( dt );
   m_text.UpdatePrint();
 }
 
 /********************
  * Lua API
  ********************/
-#include <iostream>
+int Object::LuaGetAnim( lua_State *L ) {
+  lua_pushinteger( L, m_sprite.GetAnimation());
+  return 1;
+}
+
+
+int Object::LuaSetAnim( lua_State *L ) {
+  if ( !lua_isnumber( L, -1 )) {
+    LogLuaErr( "Didn't pass number to SetAnimation in Object: " + m_type );
+    return 0;
+  }
+  m_sprite.SetAnimation( lua_tointeger( L, -1 ));
+  return 0;
+}
+
+
+int Object::LuaPlayAnim( lua_State *L ) {
+  m_sprite.Play();
+  return 0;
+}
+
+
+int Object::LuaStopAnim( lua_State *L ) {
+  m_sprite.Stop();
+  return 0;
+}
+
+
+int Object::LuaPauseAnim( lua_State *L ) {
+  m_sprite.Pause();
+  return 0;
+}
+
+
+int Object::LuaRestartAnim( lua_State *L ) {
+  m_sprite.Restart();
+  return 0;
+}
+
+
+int Object::LuaSetReverseAnim( lua_State *L ) {
+  if ( lua_gettop( L ) == 0 ) {
+    LogLuaErr( "Didn't pass anything to SetReverseAnim in Object: " + m_type );
+    return 0;
+  }
+  m_sprite.SetReverse( lua_toboolean( L, -1 ));
+  return 0;
+}
+
+
+int Object::LuaGetFrame( lua_State *L ) {
+  lua_pushinteger( L, m_sprite.GetFrame());
+  return 1;
+}
+
+
+int Object::LuaIsAnimating( lua_State *L ) {
+  lua_pushboolean( L, m_sprite.IsAnimating() );
+  return 1;
+}
+
+
+int Object::LuaSetAlpha( lua_State *L ) {
+  if ( !lua_isnumber( L, -1 )) {
+    LogLuaErr( "Number not passed to SetAlpha in Object: " + m_type );
+    return 0;
+  }
+  int alpha = lua_tointeger( L, -1 );
+  if ( alpha >= 0 ) {
+    m_sprite.SetAlpha( static_cast<unsigned int>( alpha ));
+  } else {
+    LogLuaErr( "Passed negative integer to SetAlpha in Object: " + m_type );
+  }
+  return 0;
+}
+
+
 int Object::LuaMove( lua_State *L ) {
   if( !m_moving ) {
     nt::core::IntVec nextCoords = m_coords;
@@ -228,68 +305,6 @@ int Object::LuaMove( lua_State *L ) {
     return 1;
   }
   lua_pushboolean( L, true );
-  return 1;
-}
-
-
-int Object::LuaGetAnim( lua_State *L ) {
-  lua_pushinteger( L, GetAnimation());
-  return 1;
-}
-
-
-int Object::LuaSetAnim( lua_State *L ) {
-  if ( !lua_isnumber( L, -1 )) {
-    LogLuaErr( "Didn't pass number to SetAnimation in Object: " + m_type );
-    return 0;
-  }
-  SetAnimation( lua_tointeger( L, -1 ));
-  return 0;
-}
-
-
-int Object::LuaPlayAnim( lua_State *L ) {
-  Play();
-  return 0;
-}
-
-
-int Object::LuaStopAnim( lua_State *L ) {
-  Stop();
-  return 0;
-}
-
-
-int Object::LuaPauseAnim( lua_State *L ) {
-  Pause();
-  return 0;
-}
-
-
-int Object::LuaRestartAnim( lua_State *L ) {
-  Restart();
-  return 0;
-}
-
-
-int Object::LuaSetReverseAnim( lua_State *L ) {
-  if ( lua_gettop( L ) == 0 ) {
-    LogLuaErr( "Didn't pass anything to SetReverseAnim in Object: " + m_type );
-    return 0;
-  }
-  SetReverse( lua_toboolean( L, -1 ));
-  return 0;
-}
-
-
-int Object::LuaGetFrame( lua_State *L ) {
-  lua_pushinteger( L, GetFrame());
-  return 1;
-}
-
-
-int Object::LuaIsAnimating( lua_State *L ) {
-  lua_pushboolean( L, IsAnimating() );
   return 1;
 }
 
@@ -507,7 +522,7 @@ int Object::LuaSetText( lua_State *L ) {
     return 0;
   } 
   m_text.BufferText( lua_tostring( L, -1 ));
-  m_text.SetPosition( GetPosition().x, GetPosition().y );
+  m_text.SetPosition( m_sprite.GetPosition().x, m_sprite.GetPosition().y );
   return 0;
 }
 
@@ -589,7 +604,9 @@ int Object::LuaSetTextPos( lua_State *L ) {
   float offsetX = lua_tonumber( L, -2 );
   float offsetY = lua_tonumber( L, -1 );
 
-  m_text.SetPosition( GetPosition().x + offsetX, GetPosition().y + offsetY );
+  float posX = m_sprite.GetPosition().x;
+  float posY = m_sprite.GetPosition().y;
+  m_text.SetPosition( posX + offsetX, posY + offsetY );
   return 0;
 }
 
@@ -617,10 +634,10 @@ bool Object::LoadCollisionData( const std::string &filepath ) {
   TiXmlElement *rect = root->FirstChildElement( "rect" );
   if ( rect ) {
     rect->QueryFloatAttribute( "x", &m_collisionRect.topLeft.x );
-    m_collisionRect.topLeft.x += GetPosition().x;
+    m_collisionRect.topLeft.x += m_sprite.GetPosition().x;
 
     rect->QueryFloatAttribute( "y", &m_collisionRect.topLeft.y );
-    m_collisionRect.topLeft.y += GetPosition().y;
+    m_collisionRect.topLeft.y += m_sprite.GetPosition().y;
     
     float width = 0;
     float height = 0;
@@ -662,7 +679,7 @@ bool Object::LoadObjectData( const std::string &filepath ) {
   TiXmlElement *animation = root->FirstChildElement( "animation" );
   const char *animPath = animation->Attribute( "path" );
   if ( strcmp( animPath, "" ) != 0 ) {
-    LoadAnimData( animPath );
+    m_sprite.LoadAnimData( animPath );
   }
 
   TiXmlElement *script = root->FirstChildElement( "script" );
@@ -714,7 +731,7 @@ void Object::MovementUpdate( float dt ) {
 
   switch( m_direction ) {
     case UP: {
-      Move( 0.0f, -distThisFrame );
+      m_sprite.Move( 0.0f, -distThisFrame );
       m_collisionRect.Offset( 0.0f, -distThisFrame );
       if ( nextTile ) {
         --m_coords.y;
@@ -722,7 +739,7 @@ void Object::MovementUpdate( float dt ) {
       break;
     }
     case DOWN: {
-      Move( 0.0f, distThisFrame );
+      m_sprite.Move( 0.0f, distThisFrame );
       m_collisionRect.Offset( 0.0f, distThisFrame );
       if ( nextTile ) {
         ++m_coords.y;
@@ -730,7 +747,7 @@ void Object::MovementUpdate( float dt ) {
       break;
     }
     case LEFT: {
-      Move( -distThisFrame, 0.0f );
+      m_sprite.Move( -distThisFrame, 0.0f );
       m_collisionRect.Offset( -distThisFrame, 0.0f );
       if ( nextTile ) {
         --m_coords.x;
@@ -738,7 +755,7 @@ void Object::MovementUpdate( float dt ) {
       break;
     }
     case RIGHT: {
-      Move( distThisFrame, 0.0f );
+      m_sprite.Move( distThisFrame, 0.0f );
       m_collisionRect.Offset( distThisFrame, 0.0f );
       if ( nextTile ) {
         ++m_coords.x;
@@ -765,22 +782,22 @@ void Object::Realign() {
     //Find the correct direction to move back
     switch( m_direction ) {
       case UP: {
-        Move( 0.0f, diff );
+        m_sprite.Move( 0.0f, diff );
         m_collisionRect.Offset( 0.0f, diff );
         break;
       }
       case DOWN: {
-        Move( 0.0f, -diff );
+        m_sprite.Move( 0.0f, -diff );
         m_collisionRect.Offset( 0.0f, -diff );
         break;
       }
       case LEFT: {
-        Move( diff, 0.0f );
+        m_sprite.Move( diff, 0.0f );
         m_collisionRect.Offset( diff, 0.0f );
         break;
       }
       case RIGHT: {
-        Move( -diff, 0.0f );
+        m_sprite.Move( -diff, 0.0f );
         m_collisionRect.Offset( -diff, 0.0f );
         break;
       }
@@ -788,7 +805,9 @@ void Object::Realign() {
     }
   }
 
-  SetPosition( round( GetPosition().x ), round( GetPosition().y ) );
+  float posX = m_sprite.GetPosition().x;
+  float posY = m_sprite.GetPosition().y;
+  m_sprite.SetPosition( round( posX ), round( posY ) );
   m_collisionRect.topLeft.x = round( m_collisionRect.topLeft.x );
   m_collisionRect.topLeft.y = round( m_collisionRect.topLeft.y );
   m_collisionRect.bottomRight.x = round( m_collisionRect.bottomRight.x );

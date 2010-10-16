@@ -1,4 +1,4 @@
-#ifndef ANIMSPITE_H
+#ifndef ANIMSPRITE_H
 #define ANIMSPRITE_H
 
 #include <string>
@@ -97,11 +97,15 @@ class AnimSprite : public sf::Sprite {
    */
   void SetAnimData( const AnimData *animData );
   
- protected:
   /**
    * @return whether sprite's animation is playing.
    */
   bool IsAnimating();
+
+  /**
+   * Sets sprite's alpha channel to argument passed.
+   */
+  void SetAlpha( unsigned int alpha );
 
  private:
   //@{
