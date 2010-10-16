@@ -23,13 +23,11 @@ namespace window {
    * @param title displayed at top of window.
    * @param width width of window in pixels.
    * @param height height of window in pixels.
-   * @param maxFps maximum frame rate of window
    */
   void Create( 
     std::string &title, 
     int width, 
-    int height, 
-    float maxFps
+    int height 
   );
 
   /**

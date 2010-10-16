@@ -18,8 +18,7 @@ namespace window {
   void Create( 
     std::string &title, 
     int width, 
-    int height, 
-    float maxFps
+    int height 
   ) {
     win = new sf::RenderWindow( sf::VideoMode( width, height ), title );
   }
