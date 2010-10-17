@@ -23,7 +23,7 @@ class InputHandler {
   ~InputHandler() {}
 
   /**
-   * Loads <input_list> root passed, storing function-name/key 
+   * Loads <input_list> root passed, storing function-name/Key pairs
    * pairs and mouse-event/function-name pairs in registry. Keys initially
    * held down on loading will not be updated until after they have been 
    * released.
@@ -57,8 +57,8 @@ class InputHandler {
   );
 
  private:
-  typedef std::map<std::string, TimedKey>::iterator keyRegItr;
-  typedef std::map<std::string, TimedKey>::const_iterator constKeyRegItr;
+  typedef std::multimap<std::string, TimedKey>::iterator keyRegItr;
+  typedef std::multimap<std::string, TimedKey>::const_iterator constKeyRegItr;
   typedef std::map<std::string, std::string>::iterator msRegItr;
   typedef std::map<std::string, std::string>::const_iterator constMsRegItr;
   typedef boost::function1<void, std::string&> funcType;
@@ -103,14 +103,14 @@ class InputHandler {
   std::map<std::string, std::string> m_mouseRegistry;
 
   /**
-   * Keys registered for this handler, storing function-name/key pairs. 
+   * Keys registered for this handler, storing function name/TimedKey pairs.
    */
-  std::map<std::string, TimedKey> m_keyRegistry; 
+  std::multimap<std::string, TimedKey> m_keyRegistry; 
 
   /**
    * Keys already held down when key data was loaded in.
    */
-  std::map<std::string, TimedKey> m_prevKeys; 
+  std::multimap<std::string, TimedKey> m_prevKeys; 
 };
 
 #endif // INPUT_HANDLER_H

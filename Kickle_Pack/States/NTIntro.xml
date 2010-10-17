@@ -1,0 +1,16 @@
+<?xml version="1.0" ?>
+<state>
+  <tiles>
+    <size px="48"/>
+    <animation path=""/>
+    <layout height="15" width="15"/>
+  </tiles>
+  <objects>
+    <object path="Kickle_Pack/Objects/NTIntroManager.xml">
+      <inst strip="0" x="0" y="0"/>
+    </object>
+  </objects>
+  <music/>
+  <portals/>
+  <fonts/>
+</state>
