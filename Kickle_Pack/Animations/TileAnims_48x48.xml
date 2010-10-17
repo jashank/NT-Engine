@@ -9,12 +9,12 @@
         <flow num_frames="1" />
       </strip>
 
-      <strip type="ice" name="ice_center" id="1" cid="0">
+      <strip type="color" name="pink" id="1" cid="0">
         <clip x="48" y="0" width="48" height="48" />
         <flow num_frames="1" />
       </strip>
 
-      <strip type="junk" name="boulder" id="2" cid="1">
+      <strip type="ice" name="ice_center" id="2" cid="0">
         <clip x="96" y="0" width="48" height="48" />
         <flow num_frames="1" />
       </strip>

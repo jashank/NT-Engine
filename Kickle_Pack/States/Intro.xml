@@ -1,0 +1,18 @@
+<?xml version="1.0" ?>
+<state>
+  <tiles>
+    <size px="48"/>
+    <animation path="Kickle_Pack/Animations/TileAnims_48x48.xml"/>
+    <layout height="15" width="15">
+      1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+    </layout>
+  </tiles>
+  <objects>
+    <object path="Kickle_Pack/Objects/IntroManager.xml">
+      <inst strip="0" x="0" y="0"/>
+    </object>
+  </objects>
+  <music/>
+  <portals/>
+  <fonts/>
+</state>

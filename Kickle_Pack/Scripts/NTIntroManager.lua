@@ -13,13 +13,13 @@ end
 
 --Skips to the game intro
 function NTIntroMngr.Skip( self )
-  State.LoadPath("Kickle_Pack/States/title_state.xml")
+  State.LoadPath("Kickle_Pack/States/Intro.xml")
 end
 
 
 -- Increases the logo's alpha value, stopping once it is 100% opaque
 -- Returns true once the logo has reached 100% opacity
-function IncLogoAlpha()
+function NTIntroMngr.IncLogoAlpha()
   NTIntroMngr.alpha = NTIntroMngr.alpha + 5
   if ( NTIntroMngr.alpha <= 255 ) then
     logo = State.GetObject( "NTLogo" )
@@ -32,7 +32,7 @@ end
 
 -- Decreases the logo's alpha value, stopping once it is 100% transparent
 -- Returns true once the logo has reached 100% transparency
-function DecLogoAlpha()
+function NTIntroMngr.DecLogoAlpha()
   NTIntroMngr.alpha = NTIntroMngr.alpha - 5
   if ( NTIntroMngr.alpha >= 0 ) then
     logo = State.GetObject("NTLogo")
@@ -54,7 +54,7 @@ function NTIntroMngr.AI( self )
 
   if ( self:GetElapsedTime() > 0.05 ) then
     if NTIntroMngr.incalpha then
-      local opaque = IncLogoAlpha()
+      local opaque = NTIntroMngr.IncLogoAlpha()
       if opaque then
         NTIntroMngr.freezeLogo = true
         NTIntroMngr.incalpha = false
@@ -62,7 +62,7 @@ function NTIntroMngr.AI( self )
       end
 
     else
-      local trans = DecLogoAlpha()
+      local trans = NTIntroMngr.DecLogoAlpha()
       if trans then
         NTIntroMngr.Skip()
       end
