@@ -7,6 +7,7 @@ local Spring = {}
 function Spring.Init( self )
   local dir = self:GetAnim()
   self:SetDir( Util.GetOppositeDir( dir ))
+  self:StopAnim()
 end
 
 function Spring.HandleCollision( self, other )

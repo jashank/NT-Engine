@@ -122,6 +122,7 @@ Object::Object(
   }
 
   m_sprite.SetAnimation( strip );
+  m_sprite.Play();
 
   //Calculate the float positions given tileX and tileY
   //Taking into account tile size, and max tiles across/down

@@ -26,7 +26,7 @@ function IntroKickle.AI( self )
     Util.SetAndPlay( self, 13 )
     IntroKickle.setTimer = true
   else
-    if self:GetElapsedTime() > 0.4 then
+    if self:GetElapsedTime() > 0.65 then
       State.LoadPath( "Kickle_Pack/States/MainMenu.xml" )
     end
   end
