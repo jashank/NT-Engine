@@ -12,7 +12,9 @@
       <inst strip="0" x="0" y="0"/>
     </object>
   </objects>
-  <music/>
+  <music>
+    <song name="" path="Kickle_Pack/Sound/KickleTheme.ogg"/>
+  </music>
   <portals/>
   <fonts/>
 </state>

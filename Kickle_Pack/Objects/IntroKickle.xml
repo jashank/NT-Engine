@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<object>
+  <animation path="Kickle_Pack/Animations/KickleAnim_48x60.xml" />
+  <script path="Kickle_Pack/Scripts/IntroKickle.lua" />
+  <speed pps="150" />
+</object>

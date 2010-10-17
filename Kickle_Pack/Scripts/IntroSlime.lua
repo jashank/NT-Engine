@@ -3,6 +3,7 @@ Util = require("ObjectUtilities")
 
 local IntroSlime = {}
 IntroSlime.sitting = false
+IntroSlime.moving = true
 
 
 function IntroSlime.Init( self )
@@ -19,10 +20,10 @@ function IntroSlime.AI( self )
     local leftX, leftY = 6, 8
 
     local x, y = self:GetTile()
-    local leftSlime = State.GetObjectOnTile( x - 1, y )
+    local leftSlime = State.GetObjectOnTile( x - 2, y )
     local rightSlime = State.GetObjectOnTile( x + 1, y )
 
-    if (( x == rightX and y == rightY ) or 
+    if (( x == rightX and y == rightY ) or
         ( x == midX and y == midY and leftSlime and rightSlime ) or
         ( x == leftX and y == leftY and rightSlime )) then
         self:SetDir( Util.DOWN )
@@ -33,5 +34,6 @@ function IntroSlime.AI( self )
     end
   end
 end
+
 
 return IntroSlime

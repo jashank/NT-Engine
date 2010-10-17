@@ -4,7 +4,8 @@ PowerRock.kicked = false
 
 function PowerRock.AI( self )
   if PowerRock.kicked then
-    for k,v in ipairs( State.GetObjects( "Slime" )) do
+    slimes = State.GetObjects( "Slime" )
+    for k,v in ipairs( slimes ) do
       IceBlock = State.CreateObject(
                    "Kickle_Pack/Objects/IceBlock.xml",
                    v:GetTile()
