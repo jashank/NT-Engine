@@ -3,34 +3,55 @@
 
 #include "Rect.h"
 
-namespace nt {
-namespace scene {
-
+/**
+ * Camera is useful (if not necessary) for States larger than the window
+ * size. It supplies various functions to do camera like things (speed
+ * adjustment, moving area of focus) and allows clients to know where its
+ * focus is on the State map.
+ */
 class Camera {
  public:
-  /// Constructor Empty.
-  Camera();
+  /**
+   * Move if needs to move.
+   * @param dt delta time - amount of time to step forward
+   */
+  void Update( float dt );
 
-  /// Destructor Empty.
-  ~Camera();
-  
-  /// Returns m_tileCulling
-  bool GetTileCulling();
-  /// Sets m_tileCulling to tileCulling
-  void SetTileCulling( bool tileCulling );
-  /// Gets m_objectCulling
-  bool GetObjectCulling();
-  /// Sets m_objectCulling to objectCulling
-  void SetObjectCulling( bool objectCulling );
+  /**
+   * Sets a tile destination for to move to.
+   */
+  void SetDestination( int x, int y );
 
-  nt::core::IntRect frame;
+  /**
+   * Sets speed (pixels per second) that camera moves.
+   */
+  void SetSpeed( float speed );
+
+  /**
+   * Increases camera's speed (pixels per second) by amount passed.
+   */
+  void SpeedUp( float speed );
+
+  /**
+   * Decreases camera's speed (pixels per second) by amount passed.
+   * Camera's speed cannot be < 0.
+   */
+  void SlowDown( float speed );
+
+  /**
+   * Returns rectangle containing Camera's current focus. x and y members
+   * are the top left tiles, while width and height are the width of its
+   * focus in tiles.
+   */
+  const nt::core::IntRect &GetFocus();
+
  private:
-  bool  m_tileCulling;
-  bool m_objectCulling;
-};
+  /** Speed in pixels per second at which the camera is traveling. */
+  float m_speed;
 
-} // namespace nt
-} // namespace scene
+  /** Holds tile coordinates of top left along with width/height of view. */
+  nt::core::IntRect m_view;
+};
 
 #endif // CAMERA_H
 
