@@ -111,13 +111,6 @@ class Object {
    */
   void UpdateAI( float dt );
 
-  /**
-   * Updates Object's sprite animation (if applicable). 
-   * Does NOT render sprite.
-   * @param dt delta time - amount of time to step forward
-   */
-  void UpdateRendering( float dt );
-
   //@{
   /**
    * Lua functions. See the Object API for how these functions interact with
@@ -421,15 +414,6 @@ class ObjectAttorney {
    */
   static void UpdateAI( Object *obj, float dt ) 
   { obj->UpdateAI( dt ); }
-
-  /**
-   * Calls Object's UpdateRendering function.
-   * @param obj object to call UpdateRendering on
-   * @param dt delta time - amount of time to step forward
-   */
-  static void UpdateRendering( Object *obj, float dt ) 
-  { obj->UpdateRendering( dt ); }
-
 
   /**
    * Returns the Object's sprite.

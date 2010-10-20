@@ -13,8 +13,9 @@ extern "C" {
 
 #include "Matrix2D.h"
 
-class TiXmlElement;
+class Camera;
 class Object;
+class TiXmlElement;
 
 /**
  * Holds and manages all Objects in the current state, updating them,
@@ -37,19 +38,22 @@ class ObjectManager {
 
   /**
    * Calls HandleEvents on every Object on screen.
+   * @param cam Camera currently viewing the State.
    */
-  void HandleEvents();
+  void HandleEvents( const Camera &cam );
 
   /**
    * Calls Update functions on every Object on screen. 
    * @param dt delta time - amount of time to step forward
+   * @param cam Camera currently viewing the State.
    */
-  void Update( float dt );
+  void Update( float dt, const Camera &cam );
   
   /**
    * Renders every Object on screen.
+   * @param cam Camera currently viewing the State.
    */
-  void Render() const;
+  void Render( const Camera &cam ) const;
 
   /**
    * @return Whether there is an Object on tile coordinate passed that is
@@ -139,14 +143,25 @@ class ObjectManager {
   ListItr AdjustGridCoord( int x, int y, ListItr objItr );
 
   /**
-   * Increments point passed, given a width and a height.
-   *
-   * First increments x. If x is still less then then the width, then returns.
-   * If x has greater than or equal to the width, then x is set to 0 and y is
-   * incremented. If both breach width and height, respectively, then both are
-   * set to -1.
+   * Calls Camera's GetAdjustedFocus given adjustment values, and inserts
+   * them into other arguments passed.
+   * @param cam Camera to call function on.
+   * @param xadj x-wise adjustment for Camera.
+   * @param yadj y-wise adjustment for Camera.
+   * @param tLx top left x tile coordinate.
+   * @param tLy top left y tile coordinate.
+   * @param bRx bottom right x tile coordinate.
+   * @param bRy bottom right y tile coordinate.
    */
-  void IncPoint( int &x, int &y, int width, int height );
+  void GetCamCoords( 
+    const Camera &cam, 
+    int xadj, 
+    int yadj, 
+    int &tLx, 
+    int &tLy, 
+    int &bRx, 
+    int &bRy
+  );
 
   /**
    * Key is Object's type. Holds all Objects in the current State of that type.

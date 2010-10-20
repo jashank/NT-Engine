@@ -10,7 +10,8 @@ class lua_State;
  * Camera is useful (if not necessary) for States larger than the window
  * size. It supplies various functions to do camera like things (speed
  * adjustment, moving area of focus) and allows clients to know where its
- * focus is on the State map.
+ * focus is on the State map. Any dimensions retrieved by Camera are
+ * guaranteed to be in range on the map.
  */
 class Camera {
  public:
@@ -36,7 +37,7 @@ class Camera {
    * @return Rectangle representation of Camera's current view with
    * adjustments made regarding arguments passed.
    */
-  nt::core::IntRect GetAdjustedFocus( int x, int y );
+  nt::core::IntRect GetAdjustedFocus( int x, int y ) const;
 
   //@{
   /**

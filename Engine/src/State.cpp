@@ -27,7 +27,6 @@ bool State::Init( const std::string &filePath, lua_State *L ) {
   }
   nt::state::SetStateComm( this );
 
-  m_clock.Reset();
   return true;
 }
 
@@ -38,16 +37,17 @@ void State::HandleEvents() {
 
 
 void State::Update( float dt ) {
-  m_tileManager.Update( dt );
-  m_objectManager.Update( dt );
+  m_camera.Update( dt );
+  m_tileManager.Update( dt, m_camera );
+  m_objectManager.Update( dt, m_camera );
   m_musicManager.Update();
 }
 
 
 void State::Render() {
   // The rendering order is important.
-  m_tileManager.Render();
-  m_objectManager.Render();
+  m_tileManager.Render( m_camera );
+  m_objectManager.Render( m_camera );
 }
 
 

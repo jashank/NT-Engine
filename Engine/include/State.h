@@ -125,9 +125,6 @@ class State {
   /** Manages all music in this State. */
   MusicManager m_musicManager; 
 
-  /** Clock to keep track of time spent. */
-  sf::Clock m_clock;
-
   /**
    * 'name/file path' pairs that represent portals. A portal is like a
    * nickname for the path to a State, allowing easy access to new States via 

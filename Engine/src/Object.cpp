@@ -186,13 +186,10 @@ void Object::UpdateAI( float dt ) {
   } else {
     CallScriptFunc( "AI" );
   }
-}
-
-
-void Object::UpdateRendering( float dt ) {
   m_sprite.Update( dt );
   m_text.UpdatePrint();
 }
+
 
 /********************
  * Lua API

@@ -6,7 +6,9 @@
 #include <cstdlib>
 
 #include "AnimSprite.h"
+#include "Camera.h"
 #include "Object.h"
+#include "Rect.h"
 #include "StateComm.h"
 #include "tinyxml.h"
 #include "Utilities.h"
@@ -69,87 +71,79 @@ bool ObjectManager::LoadData( const TiXmlElement *dataRoot, lua_State *L ) {
     return false;
   }
   
-  int x = 0;
-  int y = 0;
-  nt::core::Matrix2D<ObjectList>::iterator objList = m_objGrid->begin();
-  while ( objList != m_objGrid->end() ) {
-    for ( ListItr obj = objList->begin(); obj != objList->end(); ) {
-      ObjectAttorney::Init( *obj );
-      obj = AdjustGridCoord( x, y, obj );
+  int mapWidth = nt::state::GetMapWidth();
+  int mapHeight = nt::state::GetMapHeight();
+
+  for ( int x = 0; x < mapWidth; ++x ) {
+    for ( int y = 0; y < mapHeight; ++y ) {
+      nt::core::Matrix2D<ObjectList>::iterator objList =
+        ( *m_objGrid )( x, y );
+      for ( ListItr obj = objList->begin(); obj != objList->end(); ) {
+        ObjectAttorney::Init( *obj );
+        obj = AdjustGridCoord( x, y, obj );
+      }
     }
-    IncPoint( x, y, width, height );
-    ++objList;
   }
 
   return true;
 }
 
 
-void ObjectManager::HandleEvents() {
-  int x = 0;
-  int y = 0;
-  int width = m_objGrid->Columns();
-  int height = m_objGrid->Rows();
+void ObjectManager::HandleEvents( const Camera & cam ) {
+  int tLx, tLy, bRx, bRy;
+  GetCamCoords( cam, 1, 1, tLx, tLy, bRx, bRy );
 
-  nt::core::Matrix2D<ObjectList>::iterator objList = m_objGrid->begin();
-  while ( objList != m_objGrid->end() ) {
-    for ( ListItr obj = objList->begin(); obj != objList->end(); ) {
-      ObjectAttorney::HandleEvents( *obj );
-      obj = AdjustGridCoord( x, y, obj );
+  for ( int x = tLx; x <= bRx; ++x ) {
+    for ( int y = tLy; y <= bRy; ++y ) {
+      nt::core::Matrix2D<ObjectList>::iterator objList =
+        ( *m_objGrid )( x, y );
+      for ( ListItr obj = objList->begin(); obj != objList->end(); ) {
+        ObjectAttorney::HandleEvents( *obj );
+        obj = AdjustGridCoord( x, y, obj );
+      }
     }
-    IncPoint( x, y, width, height );
-    ++objList;
   }
 }
 
 
-void ObjectManager::Update( float dt ) {
-  int x = 0;
-  int y = 0;
-  int width = m_objGrid->Columns();
-  int height = m_objGrid->Rows();
+void ObjectManager::Update( float dt, const Camera &cam ) {
+  int tLx, tLy, bRx, bRy;
+  GetCamCoords( cam, 1, 1, tLx, tLy, bRx, bRy );
 
   // Size used in inner loop because DetectCollision could potentially move
   // elements to the end of the list. Don't need to worry about
   // iterating past end because it is guaranteed that no objects
   // will be removed in UpdateCollision
-  nt::core::Matrix2D<ObjectList>::iterator objList = m_objGrid->begin();
-  while ( objList != m_objGrid->end() ) {
-    unsigned int initSize = objList->size();
-    ListItr obj = objList->begin();
+  for ( int x = tLx; x <= bRx; ++x ) {
+    for ( int y = tLy; y <= bRy; ++y ) {
+      nt::core::Matrix2D<ObjectList>::iterator objList =
+        ( *m_objGrid )( x, y );
 
-    for ( unsigned int i = 0; i < initSize; ++i ) {
-      Object *const otherObj = DetectCollision( *obj );
-      if ( otherObj ) {
-        ObjectAttorney::UpdateCollision( *obj, otherObj );
-        obj = AdjustGridCoord( x, y, obj );
-      } else {
-        ++obj;
+      unsigned int initSize = objList->size();
+      ListItr obj = objList->begin();
+
+      for ( unsigned int i = 0; i < initSize; ++i ) {
+        Object *const otherObj = DetectCollision( *obj );
+        if ( otherObj ) {
+          ObjectAttorney::UpdateCollision( *obj, otherObj );
+          obj = AdjustGridCoord( x, y, obj );
+        } else {
+          ++obj;
+        }
       }
     }
-
-    IncPoint( x, y, width, height );
-    ++objList;
   }
 
-  x = y = 0;
-  objList = m_objGrid->begin();
-  while ( objList != m_objGrid->end() ) {
-    for ( ListItr obj = objList->begin(); obj != objList->end(); ) {
-      ObjectAttorney::UpdateAI( *obj, dt );
-      obj = AdjustGridCoord( x, y, obj );
-    }
-    IncPoint( x, y, width, height );
-    ++objList;
-  }
+  for ( int x = tLx; x < bRx; ++x ) {
+    for ( int y = tLy; y <= bRy; ++y ) {
+      nt::core::Matrix2D<ObjectList>::iterator objList =
+        ( *m_objGrid )( x, y );
 
-  x = y = 0;
-  objList = m_objGrid->begin();
-  while ( objList != m_objGrid->end() ) {
-    for ( ListItr obj = objList->begin(); obj != objList->end(); ++obj ) {
-      ObjectAttorney::UpdateRendering( *obj, dt );
+      for ( ListItr obj = objList->begin(); obj != objList->end(); ) {
+        ObjectAttorney::UpdateAI( *obj, dt );
+        obj = AdjustGridCoord( x, y, obj );
+      }
     }
-    ++objList;
   }
 
   for ( unsigned int i = 0; i < m_toBeDestroyed.size(); i++ ) {
@@ -174,16 +168,22 @@ void ObjectManager::Update( float dt ) {
 }
 
 
-void ObjectManager::Render() const {
+void ObjectManager::Render( const Camera &cam ) const {
+  int tLx, tLy, bRx, bRy;
+  GetCamCoords( cam, 1, 1, tLx, tLy, bRx, bRy );
+
   std::priority_queue< std::pair<float, Object*> > renderOrder;
 
-  nt::core::Matrix2D<ObjectList>::iterator objList = m_objGrid->begin();
-  while ( objList != m_objGrid->end() ) {
-    for ( ListItr obj = objList->begin(); obj != objList->end(); ++obj ) {
-      renderOrder.push( std::make_pair( 
-        -( ObjectAttorney::GetSprite( *obj ).GetPosition().y ), *obj ));
+  for ( int x = tLx; x < bRx; ++x ) {
+    for ( int y = tLy; y < bRy; ++y ) {
+      nt::core::Matrix2D<ObjectList>::iterator objList =
+        ( *m_objGrid )( x, y );
+
+      for ( ListItr obj = objList->begin(); obj != objList->end(); ++obj ) {
+        renderOrder.push( std::make_pair( 
+          -( ObjectAttorney::GetSprite( *obj ).GetPosition().y ), *obj ));
+      }
     }
-    ++objList;
   }
 
   while ( !renderOrder.empty() ) {
@@ -459,17 +459,19 @@ ObjectManager::ListItr ObjectManager::AdjustGridCoord(
 } 
 
 
-void ObjectManager::IncPoint( int &x, int &y, int width, int height ) {
-  ++x;
-  if ( x >= width ) {
-    x = 0;
-    ++y;
-  }
-
-  if ( y >= height ) {
-    x = -1;
-    y = -1;
-  }
+void ObjectManager::GetCamCoords( 
+  const Camera &cam, 
+  int xadj, 
+  int yadj, 
+  int &tLx, 
+  int &tLy, 
+  int &bRx, 
+  int &bRy
+) {
+  nt::core::IntRect view = cam.GetAdjustedFocus( xadj, yadj );
+  tLx = view.topLeft.x;
+  tLy = view.topLeft.y;
+  bRx = view.bottomRight.x;
+  bRy = view.bottomRight.y;
 }
-
 
