@@ -59,7 +59,7 @@ class ObjectManager {
 
   //@{
   /**
-   * Lua-related functions. See State API documentaions for details. Note that
+   * Lua-related functions. See State API documentation for details. Note that
    * these all return the number of arguments that the caller should
    * return to Lua.
    */

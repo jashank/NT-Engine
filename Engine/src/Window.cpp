@@ -1,12 +1,13 @@
 #include "Window.h"
 
+#include <SFML/Graphics/Rect.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Window/Input.hpp>
 #include <SFML/Window/VideoMode.hpp>
 
 #include "Utilities.h"
 
-// Holds actual win
+// Holds actual window
 namespace {
   sf::RenderWindow *win = NULL;
 } 
@@ -58,6 +59,11 @@ namespace window {
 
   const sf::Input &GetInput() {
     return win->GetInput();
+  }
+
+
+  void OffsetView( float x, float y ) {
+    win->GetDefaultView().Move( x, y );
   }
 
 } // namespace window

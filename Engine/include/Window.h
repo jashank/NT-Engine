@@ -72,6 +72,13 @@ namespace window {
    */
   const sf::Input &GetInput();
 
+  /**
+   * Offsets window's view, adjusting contents being looked at.
+   * @param x amount in pixels to adjust in x direction.
+   * @param y amount in pixels to adjust in y direction.
+   */
+  void OffsetView( float x, float y );
+
 } // namespace window
 } // namespace nt
 
