@@ -28,8 +28,7 @@ void Camera::Update( float dt ) {
       m_view.Offset( m_offset.x / tileSize, m_offset.y / tileSize );
       nt::window::OffsetView( m_offset.x, m_offset.y );
 
-      m_offset.x = 0;
-      m_offset.y = 0;
+      m_offset.x = m_offset.y = 0;
       m_moving = false;
       return;
     }
@@ -63,8 +62,8 @@ void Camera::Update( float dt ) {
 
     if ( viewOffX == 0.0 && viewOffY == 0.0 ) {
       m_moving = false;
-      m_offset.x = 0;
-      m_offset.y = 0;
+      m_offset.x = m_offset.y = 0;
+      m_distance.x = = m_distance.y = 0.0;
     } else {
       m_view.Offset( m_distance.x / tileSize, m_distance.y / tileSize );
       nt::window::OffsetView( viewOffX, viewOffY );
@@ -73,13 +72,37 @@ void Camera::Update( float dt ) {
 }
 
 
-const nt::core::IntRect &Camera::GetFocus() {
+nt::core::IntRect Camera::GetAdjustedFocus( int x, int y ) {
+  int topLeftX = m_view.topLeft.x - x;
+  int topLeftY = m_view.topLeft.y - y;
+  int bottomRightX = m_view.bottomRight.x + x;
+  int bottomRightY = m_view.bottomRight.y + y;
+
+  if ( topLeftX < 0 ) {
+    topLeftX = 0;
+  }
+  if ( topLeftY < 0 ) {
+    topLeftY = 0;
+  }
+
+  int farTileX = nt::state::GetMapWidth() - 1;
+  int farTileY = nt::state::GetMapHeight() - 1;
+
+  if ( bottomRightX > farTileX ) {
+    bottomRightX = farTileX;
+  }
+  if ( bottomRightY > farTileY ) {
+    bottomRightY = farTileY;
+  }
+
+  nt::core::IntRect modRect( topLeftX, topLeftY, bottomRightX, bottomRightY );
+  return modRect;
 }
 
 /*****************************
  * Lua Functions
  ****************************/
-int LuaOffset( lua_State *L ) {
+int Camera::LuaOffset( lua_State *L ) {
   if ( m_moving ) {
     return 0;
   }
@@ -104,7 +127,7 @@ int LuaOffset( lua_State *L ) {
 }
 
 
-int LuaSetCenter( lua_State *L ) {
+int Camera::LuaSetCenter( lua_State *L ) {
   if ( m_moving ) {
     return 0;
   }
@@ -131,6 +154,36 @@ int LuaSetCenter( lua_State *L ) {
   m_offset.y = diffY * tileSize;
 
   m_moving = true;
+  return 0;
+}
+
+
+int Camera::LuaSetSpeed( lua_State *L ) {
+  if ( !lua_isnumber( L, -1 )) {
+    LogLuaErr( "Number not passed to SetCamSpeed." );
+    return 0;
+  }
+  m_speed = lua_tonumber( L, -1 );
+  return 0;
+}
+
+
+int Camera::SpeedUp( lua_State *L ) {
+  if ( !lua_isnumber( L, -1 )) {
+    LogLuaErr( "Number not passed to SpeedUpCam." );
+    return 0;
+  }
+  m_speed += lua_tonumber( L, -1 );
+  return 0;
+}
+
+
+int Camera::SlowDown( lua_State *L ) {
+  if ( !lua_isnumber( L, -1 )) {
+    LogLuaErr( "Number not passed to SpeedUpCam." );
+    return 0;
+  }
+  m_speed -= lua_tonumber( L, -1 );
   return 0;
 }
 

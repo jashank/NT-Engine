@@ -76,6 +76,16 @@ class StateMachine {
   static int LuaTileIsCrossable( lua_State *L );
 
   static int LuaSetTile( lua_State *L );
+
+  static int LuaOffsetCam( lua_State *L );
+
+  static int LuaSetCamCenter( lua_State *L );
+
+  static int LuaSetCamSpeed( lua_State *L );
+
+  static int LuaSpeedUpCam( lua_State *L );
+
+  static int LuaSlowDownCam( lua_State *L );
   //@}
 
  private:

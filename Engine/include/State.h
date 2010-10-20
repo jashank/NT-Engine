@@ -6,6 +6,7 @@
 
 #include <SFML/System/Clock.hpp>
 
+#include "Camera.h"
 #include "ObjectManager.h"
 #include "MusicManager.h"
 #include "StateComm.h"
@@ -84,6 +85,16 @@ class State {
   int LuaTileIsCrossable( lua_State *L );
 
   int LuaSetTile( lua_State *L );
+
+  int LuaOffsetCam( lua_State *L );
+
+  int LuaSetCamCenter( lua_State *L );
+
+  int LuaSetCamSpeed( lua_State *L );
+
+  int LuaSpeedUpCam( lua_State *L );
+
+  int LuaSlowDownCam( lua_State *L );
   //@}
 
  private:
@@ -104,6 +115,9 @@ class State {
    * @return True if file loads successfully (no syntax errors in file).
    */
   bool LoadFromFile( const std::string &filePath, lua_State *L );
+
+  /** Camera that controls what is viewed in the State. */
+  Camera m_camera;
 
   /** Manages all Objects in this State. */
   ObjectManager m_objectManager;

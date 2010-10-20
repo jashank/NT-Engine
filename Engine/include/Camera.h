@@ -23,11 +23,20 @@ class Camera {
   void Update( float dt );
 
   /**
-   * Returns rectangle containing Camera's current focus. x and y members
-   * are the top left tiles, while width and height are the width of its
-   * focus in tiles.
+   * Returns a modified rectangle representation of the Camera's current
+   * view. Parameters passed allow client to "extend" the rectangle in
+   * both dimensions. So if the camera's leftmost tile was at 3, and its
+   * rightmost tile was at 12, and the client passed an argument of 2 to the
+   * x parameter, the rectangle returned would have a top left x of 1 and
+   * bottom right x of 14. However, the dimensions returned will stay in
+   * range of the state, so if the leftmost tile was 0, the returned
+   * rectangle's leftmost parameter would still be 0.
+   * @param x number of tiles to extend in -x and +x directions
+   * @param y number of tiles to extend in -y and +y directions
+   * @return Rectangle representation of Camera's current view with
+   * adjustments made regarding arguments passed.
    */
-  const nt::core::IntRect &GetFocus();
+  nt::core::IntRect GetAdjustedFocus( int x, int y );
 
   //@{
   /**

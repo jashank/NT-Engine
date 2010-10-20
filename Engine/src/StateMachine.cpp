@@ -31,6 +31,11 @@ const luaL_Reg StateMachine::m_luaFuncs[] = {
   { "GetTileInfo", LuaGetTileInfo },
   { "TileIsCrossable", LuaTileIsCrossable },
   { "SetTile", LuaSetTile },
+  { "OffsetCam", LuaOffsetCam },
+  { "SetCamCenter", LuaSetCamCenter },
+  { "SetCamSpeed", LuaSetCamSpeed },
+  { "SpeedUpCam", LuaSpeedUpCam },
+  { "SlowDownCam", LuaSlowDownCam },
   { NULL, NULL }
 };
 
@@ -185,6 +190,25 @@ int StateMachine::LuaSetTile( lua_State *L ) {
   return m_runningState->LuaSetTile( L );
 }
 
+int StateMachine::LuaOffsetCam( lua_State *L ) {
+  return m_runningState->LuaOffsetCam( L );
+}
+
+int StateMachine::LuaSetCamCenter( lua_State *L ) {
+  return m_runningState->LuaSetCamCenter( L );
+}
+
+int StateMachine::LuaSetCamSpeed( lua_State *L ) {
+  return m_runningState->LuaSetCamSpeed( L );
+}
+
+int StateMachine::LuaSpeedUpCam( lua_State *L ) {
+  return m_runningState->LuaSpeedUpCam( L );
+}
+
+int StateMachine::LuaSlowDownCam( lua_State *L ) {
+  return m_runningState->LuaSlowDownCam( L );
+}
 
 /***************************
  * Private Member Functions

@@ -116,6 +116,26 @@ int State::LuaSetTile( lua_State *L ) {
   return m_tileManager.LuaSetTile( L );
 }
 
+int State::LuaOffsetCam( lua_State *L ) {
+  return m_camera.LuaOffset( L );
+}
+
+int State::LuaSetCamCenter( lua_State *L ) {
+  return m_camera.LuaSetCenter( L );
+}
+
+int State::LuaSetCamSpeed( lua_State *L ) {
+  return m_camera.LuaSetSpeed( L );
+}
+
+int State::LuaSpeedUpCam( lua_State *L ) {
+  return m_camera.LuaSpeedUp( L );
+}
+
+int State::LuaSlowDownCam( lua_State *L ) {
+  return m_camera.LuaSlowDown( L );
+}
+
 /**********************************
  * Private Member Functions
  *********************************/
