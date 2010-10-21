@@ -25,7 +25,8 @@ class State {
 
   /**
    * Initializes State via loading in State file at file path and setting up
-   * communication interface among parts of State.
+   * communication interface among parts of State. Camera is initially set 
+   * to view the entire State, starting from top-left tile.
    * @param filePath path to the State file to load in
    * @param L lua state being used for application
    */
@@ -109,7 +110,7 @@ class State {
   //@}
 
   /**
-   * Loads State from file at file path.
+   * Loads State from file at file path, setting camera to view entire State.
    * @param filePath path to file to load.
    * @param L lua state to attach to members that require it
    * @return True if file loads successfully (no syntax errors in file).

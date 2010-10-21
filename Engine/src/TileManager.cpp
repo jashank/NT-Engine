@@ -82,8 +82,8 @@ void TileManager::Render( const Camera &cam ) {
     int tile = -1;
 
     // i,j used to get WHERE to blit on screen. x,y used to get WHAT to blit.
-    for ( int i = 0, x = tLx; i < m_width && x < bRx; ++i, ++x ) {
-      for ( int j = 0, y = tLy; j < m_height && y < bRy; ++j, ++y ) {
+    for ( int i = 0, x = tLx; i < m_width && x <= bRx; ++i, ++x ) {
+      for ( int j = 0, y = tLy; j < m_height && y <= bRy; ++j, ++y ) {
 
         tile = *( m_layout->Get( x, y ));
         if ( tile != BLANK_TILE_ID ) {

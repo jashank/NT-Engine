@@ -39,6 +39,16 @@ class Camera {
    */
   nt::core::IntRect GetAdjustedFocus( int x, int y ) const;
 
+  /**
+   * Spans camera to view number of tiles passed in each direction.
+   * For example, passing (5, 5) would have the camera view 5 tiles from 
+   * the current leftmost tile in the x direction and 5 tiles from the
+   * current topmost tile in the y direction.
+   * If span exceeds dimensions of State map then will automatically adjust
+   * to fit in maximum bounds.
+   */
+  void Span( int xSpan, int ySpan );
+
   //@{
   /**
    * Lua-related functions. See State API documentation for details. Note

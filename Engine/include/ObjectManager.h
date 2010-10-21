@@ -161,7 +161,7 @@ class ObjectManager {
     int &tLy, 
     int &bRx, 
     int &bRy
-  );
+  ) const;
 
   /**
    * Key is Object's type. Holds all Objects in the current State of that type.

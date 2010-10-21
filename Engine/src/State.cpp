@@ -32,7 +32,7 @@ bool State::Init( const std::string &filePath, lua_State *L ) {
 
 
 void State::HandleEvents() {
-  m_objectManager.HandleEvents();
+  m_objectManager.HandleEvents( m_camera );
 }
 
 
@@ -152,13 +152,21 @@ bool State::LoadFromFile( const std::string &filePath, lua_State *L ) {
         return false;
       }
 
-      // Set state comm for this load for ObjectManager to know map dimensions
+      // Set state comm temporarily for ObjectManager and Camera
+      // to know map dimensions
       nt::state::SetStateComm( this );
+
+      m_camera.Span(
+        m_tileManager.GetMapWidth() - 1,
+        m_tileManager.GetMapHeight() - 1
+      );
+
       elem = root->FirstChildElement( "objects" );
       if ( !m_objectManager.LoadData( elem, L )) {
         LogErr( "Problem loading Objects in state file " + filePath );
         return false;
       }
+
       nt::state::EndStateComm();
 
       elem = root->FirstChildElement( "music" );

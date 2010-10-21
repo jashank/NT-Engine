@@ -1,6 +1,6 @@
 #include "Camera.h"
 
-#include <cmath>
+#include <cstdlib>
 
 #include "StateComm.h"
 #include "Utilities.h"
@@ -63,7 +63,7 @@ void Camera::Update( float dt ) {
     if ( viewOffX == 0.0 && viewOffY == 0.0 ) {
       m_moving = false;
       m_offset.x = m_offset.y = 0;
-      m_distance.x = = m_distance.y = 0.0;
+      m_distance.x = m_distance.y = 0.0;
     } else {
       m_view.Offset( m_distance.x / tileSize, m_distance.y / tileSize );
       nt::window::OffsetView( viewOffX, viewOffY );
@@ -72,7 +72,7 @@ void Camera::Update( float dt ) {
 }
 
 
-nt::core::IntRect Camera::GetAdjustedFocus( int x, int y ) {
+nt::core::IntRect Camera::GetAdjustedFocus( int x, int y ) const {
   int topLeftX = m_view.topLeft.x - x;
   int topLeftY = m_view.topLeft.y - y;
   int bottomRightX = m_view.bottomRight.x + x;
@@ -97,6 +97,21 @@ nt::core::IntRect Camera::GetAdjustedFocus( int x, int y ) {
 
   nt::core::IntRect modRect( topLeftX, topLeftY, bottomRightX, bottomRightY );
   return modRect;
+}
+
+
+void Camera::Span( int xSpan, int ySpan ) {
+  m_view.Scale( xSpan, ySpan );
+
+  int farTileX = nt::state::GetMapWidth() - 1;
+  int farTileY = nt::state::GetMapHeight() - 1;
+
+  if ( m_view.bottomRight.x > farTileX ) {
+    m_view.bottomRight.x = farTileX;
+  }
+  if ( m_view.bottomRight.y > farTileY ) {
+    m_view.bottomRight.y = farTileY;
+  }
 }
 
 /*****************************
@@ -164,7 +179,7 @@ int Camera::LuaSetSpeed( lua_State *L ) {
 }
 
 
-int Camera::SpeedUp( lua_State *L ) {
+int Camera::LuaSpeedUp( lua_State *L ) {
   if ( !lua_isnumber( L, -1 )) {
     LogLuaErr( "Number not passed to SpeedUpCam." );
     return 0;
@@ -174,7 +189,7 @@ int Camera::SpeedUp( lua_State *L ) {
 }
 
 
-int Camera::SlowDown( lua_State *L ) {
+int Camera::LuaSlowDown( lua_State *L ) {
   if ( !lua_isnumber( L, -1 )) {
     LogLuaErr( "Number not passed to SpeedUpCam." );
     return 0;
