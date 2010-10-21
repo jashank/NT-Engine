@@ -118,9 +118,7 @@ int Camera::LuaOffset( lua_State *L ) {
   int xOff = lua_tointeger( L, -2 );
   int yOff = lua_tointeger( L, -1 );
 
-  int tileSize = nt::state::GetTileSize();
-  m_offset.x = xOff * tileSize;
-  m_offset.y = yOff * tileSize;
+  SetOffset( xOff, yOff );
 
   m_moving = true;
   return 0;
@@ -149,9 +147,7 @@ int Camera::LuaSetCenter( lua_State *L ) {
   int diffX = centerX - currCenterX;
   int diffY = centerY - currCenterY;
 
-  int tileSize = nt::state::GetTileSize();
-  m_offset.x = diffX * tileSize;
-  m_offset.y = diffY * tileSize;
+  SetOffset( diffX, diffY );
 
   m_moving = true;
   return 0;
@@ -187,4 +183,33 @@ int Camera::SlowDown( lua_State *L ) {
   return 0;
 }
 
+
+/***************************
+ * Private Member Functions
+ **************************/
+void Camera::SetOffset( int x, int y ) {
+  nt::core::IntRect destRect( m_view );
+  destRect.Offset( x, y );
+
+  int farTileX = nt::state::GetMapWidth() - 1;
+  int farTileY = nt::state::GetMapHeight() - 1;
+  int adjX = 0;
+  int adjY = 0;
+
+  if ( destRect.topLeft.x < 0 ) {
+    adjX = -m_view.topLeft.x;
+  } else if ( destRect.bottomRight.x > farTileX ) {
+    adjX = farTileX - m_view.bottomRight.x;
+  }
+
+  if ( destRect.topLeft.y < 0 ) {
+    adjY = -m_view.topLeft.y;
+  } else if ( destRect.bottomRight.y > farTileY ) {
+    adjY = farTileY - m_view.bottomRight.y;
+  }
+    
+  int tileSize = nt::state::GetTileSize();
+  m_offset.x = adjX * tileSize;
+  m_offset.y = adjY * tileSize;
+}
 

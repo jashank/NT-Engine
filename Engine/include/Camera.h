@@ -57,6 +57,16 @@ class Camera {
   //@}
 
  private:
+  /**
+   * This function should be used to set an offset for the camera when the
+   * user calls for it to be moved. It checks to make sure that the offset
+   * position will still be in bounds, and if it won't be, it adjusts
+   * the offset to move as far as possible while still being in bounds.
+   * @param x x-wise offset in tiles.
+   * @param y y-wise offset in tiles.
+   */
+  void SetOffset( int x, int y );
+
   /** Whether camera is moving to a new position. */
   bool m_moving;
 
