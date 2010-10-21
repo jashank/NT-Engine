@@ -38,7 +38,7 @@ void State::HandleEvents() {
 
 void State::Update( float dt ) {
   m_camera.Update( dt );
-  m_tileManager.Update( dt, m_camera );
+  m_tileManager.Update( dt );
   m_objectManager.Update( dt, m_camera );
   m_musicManager.Update();
 }

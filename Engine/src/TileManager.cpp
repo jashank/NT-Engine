@@ -10,6 +10,8 @@ extern "C" {
 
 #include "AnimData.h"
 #include "AnimSprite.h"
+#include "Camera.h"
+#include "Rect.h"
 #include "ResourceLib.h"
 #include "State.h"
 #include "tinyxml.h"
@@ -67,20 +69,27 @@ void TileManager::Update( float dt ) {
 }
 
 
-void TileManager::Render() {
+void TileManager::Render( const Camera &cam ) {
   if ( m_tileSprites ) {
-    static float x = 0.f;
-    static float y = 0.f;
+    nt::core::IntRect view = cam.GetAdjustedFocus( 1, 1 );
+    int tLx = view.topLeft.x;
+    int tLy = view.topLeft.y;
+    int bRx = view.bottomRight.x;
+    int bRy = view.bottomRight.y;
+
+    float screenX = 0.0;
+    float screenY = 0.0;
     int tile = -1;
 
-    for ( int i = 0; i < m_width; ++i ) {
-      for ( int j = 0; j < m_height; ++j ) {
+    // i,j used to get WHERE to blit on screen. x,y used to get WHAT to blit.
+    for ( int i = 0, x = tLx; i < m_width && x < bRx; ++i, ++x ) {
+      for ( int j = 0, y = tLy; j < m_height && y < bRy; ++j, ++y ) {
 
-        tile = *( m_layout->Get( i, j ));
+        tile = *( m_layout->Get( x, y ));
         if ( tile != BLANK_TILE_ID ) {
-          x = static_cast<float>( i ) * m_tileDim;
-          y = static_cast<float>( j ) * m_tileDim;
-          m_tileSprites[tile].SetPosition( x, y );
+          screenX = static_cast<float>( i ) * m_tileDim;
+          screenY = static_cast<float>( j ) * m_tileDim;
+          m_tileSprites[tile].SetPosition( screenX, screenY );
           nt::window::Draw( m_tileSprites[tile] );
         }
       }

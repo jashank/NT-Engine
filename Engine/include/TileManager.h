@@ -13,6 +13,7 @@ extern "C" {
 #include "Tile.h"
 
 class AnimSprite;
+class Camera;
 class TiXmlElement;
 
 /**
@@ -42,7 +43,7 @@ class TileManager {
   /**
    * Renders tiles on screen.
    */
-  void Render();
+  void Render( const Camera &cam );
 
   /**
    * @return Dimensions of tiles in this State (since tiles are square, only

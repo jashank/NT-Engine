@@ -77,7 +77,7 @@ bool ObjectManager::LoadData( const TiXmlElement *dataRoot, lua_State *L ) {
   for ( int x = 0; x < mapWidth; ++x ) {
     for ( int y = 0; y < mapHeight; ++y ) {
       nt::core::Matrix2D<ObjectList>::iterator objList =
-        ( *m_objGrid )( x, y );
+        *( m_objGrid->Get( x, y ));
       for ( ListItr obj = objList->begin(); obj != objList->end(); ) {
         ObjectAttorney::Init( *obj );
         obj = AdjustGridCoord( x, y, obj );
@@ -96,7 +96,7 @@ void ObjectManager::HandleEvents( const Camera & cam ) {
   for ( int x = tLx; x <= bRx; ++x ) {
     for ( int y = tLy; y <= bRy; ++y ) {
       nt::core::Matrix2D<ObjectList>::iterator objList =
-        ( *m_objGrid )( x, y );
+        *( m_objGrid->Get( x, y ));
       for ( ListItr obj = objList->begin(); obj != objList->end(); ) {
         ObjectAttorney::HandleEvents( *obj );
         obj = AdjustGridCoord( x, y, obj );
@@ -117,7 +117,7 @@ void ObjectManager::Update( float dt, const Camera &cam ) {
   for ( int x = tLx; x <= bRx; ++x ) {
     for ( int y = tLy; y <= bRy; ++y ) {
       nt::core::Matrix2D<ObjectList>::iterator objList =
-        ( *m_objGrid )( x, y );
+        *( m_objGrid->Get( x, y ));
 
       unsigned int initSize = objList->size();
       ListItr obj = objList->begin();
@@ -137,7 +137,7 @@ void ObjectManager::Update( float dt, const Camera &cam ) {
   for ( int x = tLx; x < bRx; ++x ) {
     for ( int y = tLy; y <= bRy; ++y ) {
       nt::core::Matrix2D<ObjectList>::iterator objList =
-        ( *m_objGrid )( x, y );
+        *( m_objGrid->Get( x, y ));
 
       for ( ListItr obj = objList->begin(); obj != objList->end(); ) {
         ObjectAttorney::UpdateAI( *obj, dt );
@@ -177,7 +177,7 @@ void ObjectManager::Render( const Camera &cam ) const {
   for ( int x = tLx; x < bRx; ++x ) {
     for ( int y = tLy; y < bRy; ++y ) {
       nt::core::Matrix2D<ObjectList>::iterator objList =
-        ( *m_objGrid )( x, y );
+        *( m_objGrid->Get( x, y ));
 
       for ( ListItr obj = objList->begin(); obj != objList->end(); ++obj ) {
         renderOrder.push( std::make_pair( 
