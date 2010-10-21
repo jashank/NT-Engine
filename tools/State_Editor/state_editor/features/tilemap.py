@@ -4,60 +4,6 @@
 from collections import defaultdict
 from PyQt4 import QtCore, QtGui
 
-class CameraForm(QtGui.QDialog):
-    """Window for entering camera information for State.
-
-    SIGNALS: 'gotDims', size, width, height -- emitted from 'okPress'
-
-    """
-    def __init__(self, parent = None):
-        """Sets up components (labels and input areas)."""
-        QtGui.QDialog.__init__(self, parent)
-
-        self.setModal(True)
-        self.setWindowTitle('Enter tile dimensions')
-
-        self._tileSize = QtGui.QLineEdit('0')
-        self._mapWidth = QtGui.QLineEdit('0')
-        self._mapHeight = QtGui.QLineEdit('0')
-
-        ok = QtGui.QPushButton()
-        ok.setText('OK')
-        ok.connect(ok, QtCore.SIGNAL('clicked()'), self._okPress)
-
-        layout = QtGui.QFormLayout()
-        layout.addRow('Size of a tile in pixels:', self._tileSize)
-        layout.addRow('Width of map in tiles:', self._mapWidth)
-        layout.addRow('Height of map in tiles:', self._mapHeight)
-        layout.addRow(ok)
-        self.setLayout(layout)
-
-    def setDims(self, tileSize, mapWidth, mapHeight):
-        """Used for non-GUI modification of tile map dimensions."""
-        self._tileSize.setText(str(tileSize))
-        self._mapWidth.setText(str(mapWidth))
-        self._mapHeight.setText(str(mapHeight))
-        self._okPress()
-
-    def _okPress(self):
-        """Emits 'gotDims', size, width, height when OK is pressed.
-
-        Note that this function tries to convert the text in the line edit
-        fields to integers, and an exception will be thrown if the text isn't
-        a valid integer.
-
-        Closes dialog window.
-
-        """
-        size = int(self._tileSize.text())
-        width = int(self._mapWidth.text())
-        height = int(self._mapHeight.text())
-
-        self.emit(QtCore.SIGNAL('gotDims'), size, width, height)
-        self.done(1)
-
-
-
 
 class MapDimsForm(QtGui.QDialog):
     """Window for entering dimensions for the tile map.
