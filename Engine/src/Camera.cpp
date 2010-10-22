@@ -1,7 +1,6 @@
 #include "Camera.h"
 
 #include <cstdlib>
-#include <iostream>
 
 #include "StateComm.h"
 #include "Utilities.h"
@@ -16,6 +15,10 @@ extern "C" {
  ******************************/
 Camera::Camera()
   :m_moving( false ), m_speed( -1.0 ) {}
+
+Camera::~Camera() { 
+  nt::window::ResetView();
+}
 
 /*****************************
  * Public Member Functions

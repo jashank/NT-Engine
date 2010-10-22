@@ -63,6 +63,5 @@ int main( int argc, char *argv[] ) {
     } 
   }
 
-  nt::window::Destroy();
   return 0;
 }

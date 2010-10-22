@@ -18,7 +18,7 @@ class Camera {
  public:
   Camera();
 
-  /** Destructor resets window view to how it was originally. */
+  /** Resets the window view. */
   ~Camera();
 
   /**

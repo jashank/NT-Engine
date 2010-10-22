@@ -5,6 +5,7 @@
 #include <SFML/Window/Input.hpp>
 #include <SFML/Window/VideoMode.hpp>
 
+#include "Config.h"
 #include "Utilities.h"
 
 // Holds actual window
@@ -66,8 +67,12 @@ namespace window {
     win->GetDefaultView().Move( x, y );
   }
 
+
   void ResetView() {
-    // do this
+    sf::FloatRect viewRect = win->GetDefaultView().GetRect();
+    int offX = -viewRect.Left;
+    int offY = -viewRect.Top;
+    OffsetView( offX, offY );
   }
 
 } // namespace window

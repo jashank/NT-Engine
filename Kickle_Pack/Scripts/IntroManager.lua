@@ -85,7 +85,7 @@ function IntroMngr.AI( self )
     local block = State.GetObject( "IntroBlock" )
     local x, y = block:GetTile()
     if y == 14 then
-      State.CreateObject( "Kickle_Pack/Objects/IntroKickle.xml", 7, 0 )
+      State.CreateObject( "Kickle_Pack/Objects/IntroKickle.xml", 8, 0 )
       IntroMngr.scene = IntroMngr.scene + 1
     end
   end

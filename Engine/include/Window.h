@@ -80,7 +80,7 @@ namespace window {
   void OffsetView( float x, float y );
 
   /**
-   * Resets window's view to how it was when app was first created.
+   * Resets the window's view to its starting position (0, 0).
    */
   void ResetView();
 

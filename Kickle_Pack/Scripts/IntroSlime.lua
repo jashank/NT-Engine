@@ -15,9 +15,9 @@ end
 
 function IntroSlime.AI( self )
   if not IntroSlime.sitting then
-    local rightX, rightY = 8, 8
-    local midX, midY = 7, 8
-    local leftX, leftY = 6, 8
+    local rightX, rightY = 9, 8
+    local midX, midY = 8, 8
+    local leftX, leftY = 7, 8
 
     local x, y = self:GetTile()
     local leftSlime = State.GetObjectOnTile( x - 2, y )
