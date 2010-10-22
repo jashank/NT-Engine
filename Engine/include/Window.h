@@ -79,6 +79,11 @@ namespace window {
    */
   void OffsetView( float x, float y );
 
+  /**
+   * Resets window's view to how it was when app was first created.
+   */
+  void ResetView();
+
 } // namespace window
 } // namespace nt
 

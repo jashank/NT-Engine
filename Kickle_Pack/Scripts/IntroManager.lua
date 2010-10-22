@@ -4,6 +4,8 @@ IntroMngr.scene = 0
 
 -- Resets timer. Many sequences in intro are timed.
 function IntroMngr.Init( self )
+  State.SpanCam( 15, 15 )
+  State.OffsetCam( 1, 1 )
   self:ResetTimer()
 end
 

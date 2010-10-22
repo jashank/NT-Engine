@@ -87,9 +87,11 @@ class State {
 
   int LuaSetTile( lua_State *L );
 
+  int LuaSpanCam( lua_State *L );
+
   int LuaOffsetCam( lua_State *L );
 
-  int LuaSetCamCenter( lua_State *L );
+  int LuaCenterCam( lua_State *L );
 
   int LuaSetCamSpeed( lua_State *L );
 

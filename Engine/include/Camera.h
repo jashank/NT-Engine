@@ -12,10 +12,14 @@ class lua_State;
  * adjustment, moving area of focus) and allows clients to know where its
  * focus is on the State map. Any dimensions retrieved by Camera are
  * guaranteed to be in range on the map.
+ * Camera's speed starts off as instantaneous.
  */
 class Camera {
  public:
   Camera();
+
+  /** Destructor resets window view to how it was originally. */
+  ~Camera();
 
   /**
    * Move if needs to move.
@@ -55,6 +59,8 @@ class Camera {
    * that these all return the number of arguments that the caller should
    * return to Lua.
    */
+  int LuaSpan( lua_State *L );
+
   int LuaOffset( lua_State *L );
 
   int LuaSetCenter( lua_State *L );

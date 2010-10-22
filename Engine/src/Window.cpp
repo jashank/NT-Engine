@@ -66,6 +66,10 @@ namespace window {
     win->GetDefaultView().Move( x, y );
   }
 
+  void ResetView() {
+    // do this
+  }
+
 } // namespace window
 } // namespace nt
 

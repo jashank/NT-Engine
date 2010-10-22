@@ -31,8 +31,9 @@ const luaL_Reg StateMachine::m_luaFuncs[] = {
   { "GetTileInfo", LuaGetTileInfo },
   { "TileIsCrossable", LuaTileIsCrossable },
   { "SetTile", LuaSetTile },
+  { "SpanCam", LuaSpanCam },
   { "OffsetCam", LuaOffsetCam },
-  { "SetCamCenter", LuaSetCamCenter },
+  { "CenterCam", LuaCenterCam },
   { "SetCamSpeed", LuaSetCamSpeed },
   { "SpeedUpCam", LuaSpeedUpCam },
   { "SlowDownCam", LuaSlowDownCam },
@@ -190,12 +191,16 @@ int StateMachine::LuaSetTile( lua_State *L ) {
   return m_runningState->LuaSetTile( L );
 }
 
+int StateMachine::LuaSpanCam( lua_State *L ) {
+  return m_runningState->LuaSpanCam( L );
+}
+
 int StateMachine::LuaOffsetCam( lua_State *L ) {
   return m_runningState->LuaOffsetCam( L );
 }
 
-int StateMachine::LuaSetCamCenter( lua_State *L ) {
-  return m_runningState->LuaSetCamCenter( L );
+int StateMachine::LuaCenterCam( lua_State *L ) {
+  return m_runningState->LuaCenterCam( L );
 }
 
 int StateMachine::LuaSetCamSpeed( lua_State *L ) {

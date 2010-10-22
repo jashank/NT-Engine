@@ -1,6 +1,7 @@
 #include "Camera.h"
 
 #include <cstdlib>
+#include <iostream>
 
 #include "StateComm.h"
 #include "Utilities.h"
@@ -14,7 +15,7 @@ extern "C" {
  * Constructors and Destructors
  ******************************/
 Camera::Camera()
-  :m_moving( false ), m_speed( 0.0 ) {}
+  :m_moving( false ), m_speed( -1.0 ) {}
 
 /*****************************
  * Public Member Functions
@@ -101,6 +102,10 @@ nt::core::IntRect Camera::GetAdjustedFocus( int x, int y ) const {
 
 
 void Camera::Span( int xSpan, int ySpan ) {
+  // Adjust span b/c tiles start at 0
+  xSpan -= 1;
+  ySpan -= 1;
+
   m_view.Scale( xSpan, ySpan );
 
   int farTileX = nt::state::GetMapWidth() - 1;
@@ -117,6 +122,26 @@ void Camera::Span( int xSpan, int ySpan ) {
 /*****************************
  * Lua Functions
  ****************************/
+int Camera::LuaSpan( lua_State *L ) {
+  if ( m_moving ) {
+    return 0;
+  }
+  if ( !lua_isnumber( L, -2 )) {
+    LogLuaErr( "Number not passed to width parameter in SpanCam." );
+    return 0;
+  }
+  if ( !lua_isnumber( L, -1 )) {
+    LogLuaErr( "Number not passed to height parameter in SpanCam." );
+    return 0;
+  }
+
+  int width = lua_tointeger( L, -2 );
+  int height = lua_tointeger( L, -1 );
+  Span( width, height );
+  return 0;
+}
+
+
 int Camera::LuaOffset( lua_State *L ) {
   if ( m_moving ) {
     return 0;
@@ -202,14 +227,15 @@ int Camera::LuaSlowDown( lua_State *L ) {
 /***************************
  * Private Member Functions
  **************************/
+#include <iostream>
 void Camera::SetOffset( int x, int y ) {
   nt::core::IntRect destRect( m_view );
   destRect.Offset( x, y );
 
   int farTileX = nt::state::GetMapWidth() - 1;
   int farTileY = nt::state::GetMapHeight() - 1;
-  int adjX = 0;
-  int adjY = 0;
+  int adjX = x;
+  int adjY = y;
 
   if ( destRect.topLeft.x < 0 ) {
     adjX = -m_view.topLeft.x;

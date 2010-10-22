@@ -77,9 +77,11 @@ class StateMachine {
 
   static int LuaSetTile( lua_State *L );
 
+  static int LuaSpanCam( lua_State *L );
+
   static int LuaOffsetCam( lua_State *L );
 
-  static int LuaSetCamCenter( lua_State *L );
+  static int LuaCenterCam( lua_State *L );
 
   static int LuaSetCamSpeed( lua_State *L );
 

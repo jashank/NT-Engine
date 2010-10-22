@@ -116,11 +116,15 @@ int State::LuaSetTile( lua_State *L ) {
   return m_tileManager.LuaSetTile( L );
 }
 
+int State::LuaSpanCam( lua_State *L ) {
+  return m_camera.LuaSpan( L );
+}
+
 int State::LuaOffsetCam( lua_State *L ) {
   return m_camera.LuaOffset( L );
 }
 
-int State::LuaSetCamCenter( lua_State *L ) {
+int State::LuaCenterCam( lua_State *L ) {
   return m_camera.LuaSetCenter( L );
 }
 
