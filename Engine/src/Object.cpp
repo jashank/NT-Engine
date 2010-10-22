@@ -717,6 +717,7 @@ void Object::InitLua() {
 }
 
 
+#include <iostream>
 void Object::MovementUpdate( float dt ) {
   int tileSize = nt::state::GetTileSize();
 
@@ -764,6 +765,7 @@ void Object::MovementUpdate( float dt ) {
     m_moving = false;
     Realign();
     m_distance = 0.0f;
+    CallScriptFunc( "AI" );
   }
 }
 

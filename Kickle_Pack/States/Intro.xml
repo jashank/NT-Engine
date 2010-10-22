@@ -9,7 +9,7 @@
   </tiles>
   <objects>
     <object path="Kickle_Pack/Objects/IntroManager.xml">
-      <inst strip="0" x="1" y="1"/>
+      <inst strip="0" x="0" y="1"/>
     </object>
   </objects>
   <music>
