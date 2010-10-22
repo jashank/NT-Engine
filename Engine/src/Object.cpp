@@ -720,12 +720,9 @@ void Object::InitLua() {
 void Object::MovementUpdate( float dt ) {
   int tileSize = nt::state::GetTileSize();
 
-  int halfTile = tileSize / 2;
-  float prevDist = m_distance;
   float distThisFrame = m_speed * dt;
   m_distance += distThisFrame;
-  
-  bool nextTile = ( prevDist < halfTile && m_distance >= halfTile );
+  bool nextTile = m_distance >= tileSize;
 
   switch( m_direction ) {
     case UP: {
@@ -763,7 +760,7 @@ void Object::MovementUpdate( float dt ) {
     default: {}
   }
 
-  if( m_distance >= tileSize ) {
+  if( nextTile ) {
     m_moving = false;
     Realign();
     m_distance = 0.0f;

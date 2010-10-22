@@ -22,7 +22,6 @@ function IntroMngr.EnterSlime( tileX, tileY )
   end
 
   local s = State.CreateObject( "Kickle_Pack/Objects/IntroSlime.xml", tileX, tileY )
-  s:BlockTile( true )
   return true
 end
 
