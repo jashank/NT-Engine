@@ -16,7 +16,7 @@ end
 -- they are on.
 function IntroMngr.EnterSlime( tileX, tileY )
   local slimeA = State.GetObjectOnTile( tileX, tileY )
-  local slimeB = State.GetObjectOnTile( tileX - 1, tileY )
+  local slimeB = State.GetObjectOnTile( tileX + 1, tileY )
   if slimeA or slimeB then
     return false
   end
@@ -57,7 +57,7 @@ function IntroMngr.AI( self )
   -- Enter slimes
   if (( IntroMngr.slimeCnt == 0 and self:GetElapsedTime() > 1 ) or 
         IntroMngr.slimeCnt > 0 and IntroMngr.slimeCnt < 3 ) then
-    local entered = IntroMngr.EnterSlime( 15, 8 )
+    local entered = IntroMngr.EnterSlime( 0, 8 )
     if entered then IntroMngr.slimeCnt = IntroMngr.slimeCnt + 1 end
     if IntroMngr.slimeCnt == 3 then
       IntroMngr.scene = IntroMngr.scene + 1

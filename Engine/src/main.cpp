@@ -40,16 +40,17 @@ int main( int argc, char *argv[] ) {
   StateMachine mach;
   mach.Setup( levelPath );
 
-  float fixeddt = 1.0 / Config::GetFPS();
+  const float dt = 1.0 / Config::GetFPS();
   float frameTime = 0.0;
+  double accumulator = 0.0;
+
   sf::Clock timer;
   timer.Reset();
 
   while ( nt::window::IsOpen() ) {
-    while ( frameTime > 0.0 ) {
-      float dt = std::min( frameTime, fixeddt );  
+    while ( accumulator >= dt ) {
       mach.Step( dt );
-      frameTime -= dt;
+      accumulator -= dt;
     }
 
     mach.Render();
@@ -57,9 +58,10 @@ int main( int argc, char *argv[] ) {
     nt::window::Clear();
 
     frameTime = timer.GetElapsedTime();
+    accumulator += frameTime;
     timer.Reset();
-    if ( frameTime < fixeddt ) {
-      sf::Sleep( fixeddt - frameTime );
+    if ( frameTime < dt ) {
+      sf::Sleep( dt - frameTime );
     } 
   }
 

@@ -11,18 +11,18 @@ function IntroSlime.Init( self )
   elseif #objs == 2 then
     IntroSlime.test = "B";
   else IntroSlime.test = "C"; end
-  self:SetDir( Util.LEFT )
-  Util.SetAndPlay( self, Util.LEFT )
+  self:SetDir( Util.RIGHT )
+  Util.SetAndPlay( self, Util.RIGHT )
   self:Move()
 end
 
 
 function IntroSlime.AI( self )
   if not IntroSlime.sitting then
-    local rightX = 7
+    local rightX = 9
 
     local x, y = self:GetTile()
-    if ( x == rightX or State.GetObjectOnTile( x - 1, y )) then
+    if ( x == rightX or State.GetObjectOnTile( x + 1, y )) then
       self:SetDir( Util.DOWN )
       Util.SetAndPlay( self, Util.DOWN )
       IntroSlime.sitting = true
