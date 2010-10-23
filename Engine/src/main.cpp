@@ -23,7 +23,7 @@ int main( int argc, char *argv[] ) {
   ClearLog();
   Config::Load();
 
-  std::string levelPath("Kickle_Pack/States/NTIntro.xml");
+  std::string levelPath("Kickle_Pack/States/GardenLand_A.xml");
   if ( argc == 2 ) {
     struct stat fileInfoBuffer;
     if ( stat( argv[1], &fileInfoBuffer ) == 0 ) { // If the file exists.

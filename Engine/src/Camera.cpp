@@ -104,6 +104,20 @@ nt::core::IntRect Camera::GetAdjustedFocus( int x, int y ) const {
 }
 
 
+nt::core::IntRect Camera::GetTileOverlap( 
+  const nt::core::FloatRect &rect
+) const {
+  int tileSize = nt::state::GetTileSize();
+
+  int left = ( rect.topLeft.x / tileSize ) + m_view.topLeft.x;
+  int right = ( rect.bottomRight.x / tileSize ) + m_view.topLeft.x;
+  int top = ( rect.topLeft.y / tileSize ) + m_view.topLeft.y;
+  int bottom = ( rect.bottomRight.y / tileSize ) + m_view.topLeft.y;
+
+  return nt::core::IntRect( left, top, right, bottom );
+}
+
+
 void Camera::Span( int xSpan, int ySpan ) {
   // Adjust span b/c tiles start at 0
   xSpan -= 1;

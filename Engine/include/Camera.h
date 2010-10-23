@@ -39,9 +39,17 @@ class Camera {
    * @param x number of tiles to extend in -x and +x directions
    * @param y number of tiles to extend in -y and +y directions
    * @return Rectangle representation of Camera's current view with
-   * adjustments made regarding arguments passed.
+   * adjustments made regarding arguments passed. Units in tiles.
    */
   nt::core::IntRect GetAdjustedFocus( int x, int y ) const;
+
+  /**
+   * Given a FloatRect containing points on the screen (in pixels), returns
+   * tiles on Camera that the rectangle covers.
+   * @return Rectangle representation of Camera's current view, units in
+   * tiles.
+   */
+  nt::core::IntRect GetTileOverlap( const nt::core::FloatRect &rect ) const;
 
   /**
    * Spans camera to view number of tiles passed in each direction.

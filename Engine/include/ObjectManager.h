@@ -125,10 +125,11 @@ class ObjectManager {
   /**
    * Checks to see if Object passed is colliding with any Objects. 
    * @param obj Object to check.
+   * @param cam Camera viewing the State.
    * @return If a collision is detected, returns Object that 'obj' collided
    * with. Returns NULL otherwise.
    */
-  Object* DetectCollision( Object *obj );
+  Object* DetectCollision( Object *obj, const Camera &cam );
 
   /**
    * Checks to see if Object at objItr is on coordinate passed. If not, 

@@ -123,7 +123,7 @@ void ObjectManager::Update( float dt, const Camera &cam ) {
       ListItr obj = objList->begin();
 
       for ( unsigned int i = 0; i < initSize; ++i ) {
-        Object *const otherObj = DetectCollision( *obj );
+        Object *const otherObj = DetectCollision( *obj, cam );
         if ( otherObj ) {
           ObjectAttorney::UpdateCollision( *obj, otherObj );
           obj = AdjustGridCoord( x, y, obj );
@@ -409,32 +409,43 @@ Object* ObjectManager::ObjectOnTile( int x, int y ) const {
 }
 
 
-Object* ObjectManager::DetectCollision( Object *obj ) {
-  nt::core::Matrix2D<ObjectList>::iterator objList = m_objGrid->begin();
+Object* ObjectManager::DetectCollision( 
+  Object *obj, 
+  const Camera &cam ) 
+{
+  nt::core::FloatRect objRect = ObjectAttorney::GetRect( obj );
+  nt::core::IntRect tileRange = cam.GetTileOverlap( objRect );
 
-  while ( objList != m_objGrid->end() ) {
-    for ( ListItr colObj = objList->begin(); colObj != objList->end(); 
-          ++colObj ) {
+  for ( int x = tileRange.topLeft.x; x <= tileRange.bottomRight.x; ++x ) {
+    for ( int y = tileRange.topLeft.y; y <= tileRange.bottomRight.y; ++y ) {
+      nt::core::Matrix2D<ObjectList>::iterator objList =
+        m_objGrid->Get( x, y );
 
-      if ( *colObj != obj && std::find( 
-           m_toBeDestroyed.begin(), m_toBeDestroyed.end(), *colObj ) ==
-           m_toBeDestroyed.end()) {
-        bool collidingWithObj = ObjectAttorney::IsCollidingWith( obj, *colObj );
-        bool intersects = ObjectAttorney::GetRect( obj ).Intersects( 
-            ObjectAttorney::GetRect( *colObj ));
+      for ( ListItr colObj = objList->begin(); colObj != objList->end(); 
+            ++colObj ) {
+        if ( *colObj != obj && std::find( 
+             m_toBeDestroyed.begin(), m_toBeDestroyed.end(), *colObj ) ==
+             m_toBeDestroyed.end()) {
 
-        if ( !collidingWithObj && intersects ) {
-          // So next collision check will return a different object colliding
-          // with 'object' if there is one
-          objList->splice( objList->end(), *objList, colObj );
-          return objList->back();
+          bool collidingWithObj = 
+            ObjectAttorney::IsCollidingWith( obj, *colObj );
 
-        } else if ( collidingWithObj && !intersects ) {
-          ObjectAttorney::RemoveFromCollidingWith( obj, *colObj );
+          bool intersects = ObjectAttorney::GetRect( obj ).Intersects( 
+              ObjectAttorney::GetRect( *colObj ));
+
+          if ( !collidingWithObj && intersects ) {
+            // So next collision check will return a different object colliding
+            // with 'object' if there is one
+            objList->splice( objList->end(), *objList, colObj );
+            return objList->back();
+
+          } else if ( collidingWithObj && !intersects ) {
+            ObjectAttorney::RemoveFromCollidingWith( obj, *colObj );
+          }
         }
       }
+      ++objList;
     }
-    ++objList;
   }
   return NULL;
 }
