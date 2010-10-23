@@ -181,9 +181,10 @@ void Object::UpdateCollision( Object* const collisionObj ) {
 
 
 void Object::UpdateAI( float dt ) {
-  if( m_moving ) {
+  if ( m_moving ) {
     MovementUpdate( dt );
-  } else {
+  } 
+  if ( !m_moving ) {
     CallScriptFunc( "AI" );
   }
   m_sprite.Update( dt );
@@ -717,7 +718,6 @@ void Object::InitLua() {
 }
 
 
-#include <iostream>
 void Object::MovementUpdate( float dt ) {
   int tileSize = nt::state::GetTileSize();
 
@@ -765,7 +765,6 @@ void Object::MovementUpdate( float dt ) {
     m_moving = false;
     Realign();
     m_distance = 0.0f;
-    CallScriptFunc( "AI" );
   }
 }
 
