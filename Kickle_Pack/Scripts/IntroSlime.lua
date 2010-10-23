@@ -22,7 +22,6 @@ function IntroSlime.AI( self )
     local rightX = 7
 
     local x, y = self:GetTile()
-    print (IntroSlime.test .. " " .. x .. " " .. y .. "\n");
     if ( x == rightX or State.GetObjectOnTile( x - 1, y )) then
       self:SetDir( Util.DOWN )
       Util.SetAndPlay( self, Util.DOWN )
@@ -33,29 +32,6 @@ function IntroSlime.AI( self )
   end
 end
 
---[[
-function IntroSlime.AI( self )
-  if not IntroSlime.sitting then
-    local rightX = 9
-    local midX = 8
-    local leftX = 7
-
-    local x, y = self:GetTile()
-    local leftSlime = State.GetObjectOnTile( x - 2, y )
-    local rightSlime = State.GetObjectOnTile( x + 1, y )
-
-    if (( x == rightX ) or
-        ( x == midX and leftSlime and rightSlime ) or
-        ( x == leftX and rightSlime )) then
-        self:SetDir( Util.DOWN )
-        Util.SetAndPlay( self, Util.DOWN )
-        IntroSlime.sitting = true
-    else
-      self:Move()
-    end
-  end
-end
---]]
 
 
 return IntroSlime

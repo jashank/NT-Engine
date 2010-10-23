@@ -720,10 +720,14 @@ void Object::InitLua() {
 
 void Object::MovementUpdate( float dt ) {
   int tileSize = nt::state::GetTileSize();
+  int halfTile = tileSize / 2;
+
+  // To tell if Object JUST crossed over the tile
+  float prevDist = m_distance;
 
   float distThisFrame = m_speed * dt;
   m_distance += distThisFrame;
-  bool nextTile = m_distance >= tileSize;
+  bool nextTile = ( prevDist < halfTile && m_distance >= halfTile );
 
   switch( m_direction ) {
     case UP: {
@@ -761,7 +765,8 @@ void Object::MovementUpdate( float dt ) {
     default: {}
   }
 
-  if( nextTile ) {
+
+  if( m_distance >= tileSize ) {
     m_moving = false;
     Realign();
     m_distance = 0.0f;
@@ -770,7 +775,7 @@ void Object::MovementUpdate( float dt ) {
 
 
 void Object::Realign() {
-  static float diff = 0.0f;
+  float diff = 0.0f;
   //Calculate the amount of distance to move back
   diff = m_distance - nt::state::GetTileSize();
 
