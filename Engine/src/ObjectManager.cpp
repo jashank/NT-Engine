@@ -74,7 +74,7 @@ bool ObjectManager::LoadData( const TiXmlElement *dataRoot, lua_State *L ) {
   int mapWidth = nt::state::GetMapWidth();
   int mapHeight = nt::state::GetMapHeight();
 
-  m_objGrid->SetRange( 0, 0, mapWidth, mapHeight );
+  m_objGrid->SetRange( 0, 0, mapWidth - 1, mapHeight - 1 );
   while ( Object *obj = m_objGrid->GetElem() ) {
     ObjectAttorney::Init( obj );
   }
@@ -385,7 +385,7 @@ void ObjectManager::UpdateCollisions( Object *obj, const Camera &cam ) {
 
   while ( Object *colObj = m_objGrid->GetElem() ) {
     if ( colObj != obj && std::find( 
-         m_toBeDestroyed.begin(), m_toBeDestroyed.end(), *colObj ) ==
+         m_toBeDestroyed.begin(), m_toBeDestroyed.end(), colObj ) ==
          m_toBeDestroyed.end()) {
 
       bool collidingWithObj = ObjectAttorney::IsCollidingWith( obj, colObj );

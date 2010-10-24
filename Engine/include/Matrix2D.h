@@ -42,6 +42,20 @@ class Matrix2D {
     return (*this)(col, row);
   }
   
+  /**
+   * Returns (0,0) element of matrix.
+   */
+  iterator begin() {
+    return &m_mat[0];
+  }
+
+  /**
+   * Returns one past last element of matrix.
+   */
+  iterator end() {
+    return &m_mat[m_cols * m_rows];
+  }
+
  private:
   //@{
   /**
