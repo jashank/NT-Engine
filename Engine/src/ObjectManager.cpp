@@ -89,7 +89,7 @@ void ObjectManager::HandleEvents( const Camera & cam ) {
 
   m_objGrid->SetRange( tLx, tLy, bRx, bRy );
   while ( Object *obj = m_objGrid->GetElem() ) {
-    ObjectAttorney::HandleEvents( *obj );
+    ObjectAttorney::HandleEvents( obj );
   }
 }
 
@@ -107,11 +107,17 @@ void ObjectManager::Update( float dt, const Camera &cam ) {
 
   m_objGrid->SetRange( tLx, tLy, bRx, bRy );
   while ( Object *obj = m_objGrid->GetElem() ) {
-    ObjectAttorney::UpdateAI( *obj, dt );
+    ObjectAttorney::UpdateAI( obj, dt );
   }
 
-  AdjustGridCoords( tLx, tLy, bRx, bRy );
+  // Make sure object's grid positions in matrix are correct
+  m_objGrid->SetRange( tLx, tLy, bRx, bRy );
+  while ( Object *obj = m_objGrid->GetElem() ) {
+    nt::core::IntVec tile = ObjectAttorney::GetTile( obj );
+    m_objGrid->MoveReturnedElem( tile.x, tile.y );
+  }
 
+  /*
   for ( unsigned int i = 0; i < m_toBeDestroyed.size(); i++ ) {
     Object *delObj = m_toBeDestroyed[i];
     
@@ -131,6 +137,7 @@ void ObjectManager::Update( float dt, const Camera &cam ) {
     SAFEDELETE( m_toBeDestroyed[i] );
   }
   m_toBeDestroyed.clear();
+  */
 }
 
 
@@ -140,16 +147,10 @@ void ObjectManager::Render( const Camera &cam ) const {
 
   std::priority_queue< std::pair<float, Object*> > renderOrder;
 
-  for ( int x = tLx; x <= bRx; ++x ) {
-    for ( int y = tLy; y <= bRy; ++y ) {
-      nt::core::Matrix2D<ObjectList>::iterator objList =
-        m_objGrid->Get( x, y );
-
-      for ( ListItr obj = objList->begin(); obj != objList->end(); ++obj ) {
-        renderOrder.push( std::make_pair( 
-          -( ObjectAttorney::GetSprite( *obj ).GetPosition().y ), *obj ));
-      }
-    }
+  m_objGrid->SetRange( tLx, tLy, bRx, bRy );
+  while ( Object *obj = m_objGrid->GetElem() ) {
+    renderOrder.push( std::make_pair( 
+      -( ObjectAttorney::GetSprite( obj ).GetPosition().y ), obj ));
   }
 
   while ( !renderOrder.empty() ) {
@@ -162,9 +163,9 @@ void ObjectManager::Render( const Camera &cam ) const {
 
 
 bool ObjectManager::ObjectBlockingTile( int x, int y ) const {
-  ObjectList *list = m_objGrid->Get( x, y );
-  for( ListItr obj = list->begin(); obj != list->end(); ++obj ) { 
-    if ( ObjectAttorney::BlockingTile( *obj )) {
+  m_objGrid->SetRange( x, y, x, y );
+  while ( Object *obj = m_objGrid->GetElem() ) {
+    if ( ObjectAttorney::BlockingTile( obj )) {
       return true;
     }
   }
@@ -344,7 +345,7 @@ void ObjectManager::AddObject( Object *obj ) {
     ObjectAttorney::GetType( obj ), obj )); 
   
   nt::core::IntVec coords = ObjectAttorney::GetTile( obj );
-  m_objGrid->Get( coords.x, coords.y )->push_back( obj );
+  m_objGrid->AddElem( obj, coords.x, coords.y );
 }
 
 
@@ -367,9 +368,9 @@ Object* ObjectManager::FindObject( const std::string &type ) const {
 
 
 Object* ObjectManager::ObjectOnTile( int x, int y ) const {
-  ObjectList *list = m_objGrid->Get( x, y );
-  if ( !list->empty()) {
-    return list->front();
+  m_objGrid->SetRange( x, y, x, y );
+  while ( Object *obj = m_objGrid->GetElem() ) {
+    return obj;
   }
   return NULL;
 }
@@ -396,28 +397,6 @@ void ObjectManager::UpdateCollisions( Object *obj, const Camera &cam ) {
         ObjectAttorney::HandleCollision( obj, colObj );
       } else if ( collidingWithObj && !intersects ) {
         ObjectAttorney::RemoveFromCollidingWith( obj, colObj );
-      }
-    }
-  }
-}
-
-
-void ObjectManager::AdjustGridCoords( int tLx, int tLy, int bRx, int bRy ) {
-  for ( int x = tLx; x <= bRx; ++x ) {
-    for ( int y = tLy; y <= bRy; ++y ) {
-      nt::core::Matrix2D<ObjectList>::iterator objList =
-        m_objGrid->Get( x, y );
-
-      for ( ListItr obj = objList->begin(); obj != objList->end(); ) {
-        nt::core::IntVec coords = ObjectAttorney::GetTile( *obj );
-        if ( x != coords.x || y != coords.y  ) {
-          Object *moveObject = *obj;
-          obj = objList->erase( obj );
-          ObjectList *newTile = m_objGrid->Get( coords.x, coords.y );
-          newTile->push_back( moveObject );
-        } else {
-          ++obj;
-        }
       }
     }
   }

@@ -101,7 +101,7 @@ class Object {
    * separated (unless user undoes this with SetNotColliding). 
    * @param collisionObj Object this Object collided with.
    */
-  void UpdateCollision( Object* collisionObj );
+  void HandleCollision( Object* collisionObj );
 
   /**
    * If the Object isn't moving, calls Object's 'AI' function in its 
@@ -404,8 +404,8 @@ class ObjectAttorney {
    * @param obj object to call HandleCollision on
    * @param collisionObj object that obj is colliding with
    */ 
-  static void UpdateCollision( Object *obj, Object* collisionObj ) 
-  { obj->UpdateCollision( collisionObj ); }
+  static void HandleCollision( Object *obj, Object* collisionObj ) 
+  { obj->HandleCollision( collisionObj ); }
 
   /**
    * Calls Object's UpdateAI function.

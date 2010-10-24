@@ -163,7 +163,7 @@ void Object::HandleEvents() {
 }
 
 
-void Object::UpdateCollision( Object* const collisionObj ) {
+void Object::HandleCollision( Object* const collisionObj ) {
   // collisionObj not NULL guaranteed by ObjectManager
   m_collidingWith.push_back( collisionObj );
 

@@ -21,17 +21,13 @@ class RangeMatrix3D {
   /**
    * Constructor creates 3 dimensional matrix bounded by first 2 dimensions.
    */
-  Matrix3D( int cols, int rows )
-    :m_cols( x ), m_rows( y ), m_elemItr( NULL ), m_saveItr( NULL ) {
+  RangeMatrix3D( int cols, int rows )
+    :m_cols( cols ), m_rows( rows ), m_elemItr( NULL ), m_saveElemItr( NULL ) {
     int size = cols * rows;
-    m_mat = new T[size];
-
-    for ( int i = 0; i < size; ++i ) {
-      m_mat[i] = std::list<T> list;
-    }
+    m_mat = new std::list<T>[size];
   }
 
-  ~Matrix3D() {
+  ~RangeMatrix3D() {
     SAFEDELETEA( m_mat );
   }
 
@@ -82,7 +78,7 @@ class RangeMatrix3D {
     for ( ; m_rangeItr.x <= m_range.bottomRight.x; ++m_rangeItr.x ) {
       for ( ; m_rangeItr.y <= m_range.bottomRight.y; ++m_rangeItr.y ) {
 
-        int i = (m_cols * m_rangeItr.x) + m_rangeItr.y;
+        int i = Index( m_rangeItr.x, m_rangeItr.y );
         if ( !m_elemItr ) {
           m_elemItr = m_mat[i].begin();
         }
@@ -98,31 +94,61 @@ class RangeMatrix3D {
   }
 
   /**
-   * Moves last element
-  void MoveElem( int x, int y ) {
+   * Adds an element at specified position in matrix.
+   */
+  void AddElem( T elem, int x, int y ) {
+    int i = Index( x, y );
+    m_mat[i].insert( elem );
+  }
+
+  /**
+   * Moves last element returned by GetElem to position specified.
+   */
+  void MoveReturnedElem( int x, int y ) {
+    if ( m_rangeItr.x != x && m_rangeItr.y != y ) {
+      --m_elemItr;
+      int newi = Index( x, y );
+      m_mat[newi].insert( *m_elemItr );
+
+      int oldi = Index( m_rangeItr.x, m_rangeItr.y );
+      m_elemItr = m_mat[oldi].erase( m_elemItr );
+    }
+  }
 
  private:
+  typedef typename std::list<T>::iterator ZItr;
+
   //@{
   /**
    * Restrict default constructor, copy constructor, and assignment.
    */
-  Matrix3D();
-  Matrix3D( const Matrix3D &mat );
-  Matrix3D& operator=( const Matrix3D &mat );
+  RangeMatrix3D();
+  RangeMatrix3D( const RangeMatrix3D &mat );
+  RangeMatrix3D& operator=( const RangeMatrix3D &mat );
   //@}
+
+  /**
+   * Returns coordinate's corresponding index into array.
+   */
+  int Index( int x, int y ) {
+    return (m_cols * x) + y;
+  }
 
   int m_cols; /** Columns in matrix. */
   int m_rows; /** Rows in matrix. */
-  T *m_mat /** Array representation of matrix. */
+  std::list<T> *m_mat; /** Array representation of matrix. */
 
   nt::core::IntRect m_range; /** Range currently being iterated over. */
   nt::core::IntVec m_rangeItr; /** Iterates over dimensions of range. */
-  T *m_elemItr; /** Iterates over elements of a dimension. */
+  ZItr m_elemItr; /** Iterates over elements of a dimension. */
 
   nt::core::IntRect m_saveRange; /** Where SavePlace() stores range. */
   nt::core::IntVec m_saveRangeItr; /** Where SavePlace() stores position. */
-  T *m_saveElemItr; /** Where SavePlace() stores element iterator. */
+  ZItr m_saveElemItr; /** Where SavePlace() stores element iterator. */
 };
+
+} // namespace core
+} // namespace nt
 
 #endif // MATRIX3D_H
 
