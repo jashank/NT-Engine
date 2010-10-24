@@ -1,8 +1,6 @@
 #ifndef MATRIX2D_H
 #define MATRIX2D_H
 
-#include <vector>
-
 #include "Utilities.h"
 
 namespace nt {
@@ -42,34 +40,6 @@ class Matrix2D {
    */
   T *Get( unsigned int col, unsigned int row ) {
     return (*this)(col, row);
-  }
-
-  /**
-   * Returns number of columns in matrix.
-   */
-  unsigned int Columns() {
-    return m_cols;
-  }
-
-  /**
-   * Returns number of rows in matrix.
-   */
-  unsigned int Rows() {
-    return m_rows;
-  }
-
-  /**
-   * Returns (0,0) element of matrix.
-   */
-  iterator begin() {
-    return &m_mat[0];
-  }
-
-  /**
-   * Returns one past last element of matrix.
-   */
-  iterator end() {
-    return &m_mat[m_cols * m_rows];
   }
   
  private:

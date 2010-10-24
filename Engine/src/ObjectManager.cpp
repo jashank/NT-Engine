@@ -78,9 +78,8 @@ bool ObjectManager::LoadData( const TiXmlElement *dataRoot, lua_State *L ) {
     for ( int y = 0; y < mapHeight; ++y ) {
       nt::core::Matrix2D<ObjectList>::iterator objList =
         m_objGrid->Get( x, y );
-      for ( ListItr obj = objList->begin(); obj != objList->end(); ) {
+      for ( ListItr obj = objList->begin(); obj != objList->end(); ++obj ) {
         ObjectAttorney::Init( *obj );
-        obj = AdjustGridCoord( x, y, obj );
       }
     }
   }
@@ -97,9 +96,8 @@ void ObjectManager::HandleEvents( const Camera & cam ) {
     for ( int y = tLy; y <= bRy; ++y ) {
       nt::core::Matrix2D<ObjectList>::iterator objList =
         m_objGrid->Get( x, y );
-      for ( ListItr obj = objList->begin(); obj != objList->end(); ) {
+      for ( ListItr obj = objList->begin(); obj != objList->end(); ++obj ) {
         ObjectAttorney::HandleEvents( *obj );
-        obj = AdjustGridCoord( x, y, obj );
       }
     }
   }
@@ -126,10 +124,8 @@ void ObjectManager::Update( float dt, const Camera &cam ) {
         Object *const otherObj = DetectCollision( *obj, cam );
         if ( otherObj ) {
           ObjectAttorney::UpdateCollision( *obj, otherObj );
-          obj = AdjustGridCoord( x, y, obj );
-        } else {
-          ++obj;
         }
+        ++obj;
       }
     }
   }
@@ -139,12 +135,13 @@ void ObjectManager::Update( float dt, const Camera &cam ) {
       nt::core::Matrix2D<ObjectList>::iterator objList =
         m_objGrid->Get( x, y );
 
-      for ( ListItr obj = objList->begin(); obj != objList->end(); ) {
+      for ( ListItr obj = objList->begin(); obj != objList->end(); ++obj) {
         ObjectAttorney::UpdateAI( *obj, dt );
-        obj = AdjustGridCoord( x, y, obj );
       }
     }
   }
+
+  AdjustGridCoords( tLx, tLy, bRx, bRy );
 
   for ( unsigned int i = 0; i < m_toBeDestroyed.size(); i++ ) {
     Object *delObj = m_toBeDestroyed[i];
@@ -451,23 +448,26 @@ Object* ObjectManager::DetectCollision(
 }
 
 
-ObjectManager::ListItr ObjectManager::AdjustGridCoord( 
-  int x, 
-  int y, 
-  ListItr objItr 
-) {
-  // GetTile guaranteed to return Vector with valid indices
-  Object* const obj = *objItr;
-  nt::core::IntVec coords = ObjectAttorney::GetTile( obj );
-  if ( x != coords.x || y != coords.y  ) {
-    ObjectList *oldTile = m_objGrid->Get( x, y );
-    ObjectList *newTile = m_objGrid->Get( coords.x, coords.y );
-    objItr = oldTile->erase( objItr );
-    newTile->push_back( obj );
-    return objItr;
+void ObjectManager::AdjustGridCoords( int tLx, int tLy, int bRx, int bRy ) {
+  for ( int x = tLx; x <= bRx; ++x ) {
+    for ( int y = tLy; y <= bRy; ++y ) {
+      nt::core::Matrix2D<ObjectList>::iterator objList =
+        m_objGrid->Get( x, y );
+
+      for ( ListItr obj = objList->begin(); obj != objList->end(); ) {
+        nt::core::IntVec coords = ObjectAttorney::GetTile( *obj );
+        if ( x != coords.x || y != coords.y  ) {
+          Object *moveObject = *obj;
+          obj = objList->erase( obj );
+          ObjectList *newTile = m_objGrid->Get( coords.x, coords.y );
+          newTile->push_back( moveObject );
+        } else {
+          ++obj;
+        }
+      }
+    }
   }
-  return ++objItr;
-} 
+}
 
 
 void ObjectManager::GetCamCoords( 

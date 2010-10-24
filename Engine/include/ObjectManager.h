@@ -132,16 +132,14 @@ class ObjectManager {
   Object* DetectCollision( Object *obj, const Camera &cam );
 
   /**
-   * Checks to see if Object at objItr is on coordinate passed. If not, 
-   * adjusts Object location accordingly in the object grid. Since function
-   * can modify list being iterated through and invalidate 'objItr', returns
-   * valid iterator to continue iterating with.
-   * @param x x tile coordinate to check.
-   * @param y y tile coordinate to check.
-   * @param objItr iterator to object to check.
-   * @return Validated iterator to continue using.
+   * Checks objects in range passed to ensure that their tile coordinate
+   * matches their spot in the matrix. If not, they are moved.
+   * @param tLx top left x tile coordinate
+   * @param tLy top left y tile coordinate
+   * @param bRx bottom right x tile coordinate
+   * @param bRy bottom right y tile coordinate
    */
-  ListItr AdjustGridCoord( int x, int y, ListItr objItr );
+  void AdjustGridCoords( int tLx, int tLy, int bRx, int bRy );
 
   /**
    * Calls Camera's GetAdjustedFocus given adjustment values, and inserts
