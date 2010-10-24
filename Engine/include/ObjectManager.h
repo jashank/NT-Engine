@@ -11,7 +11,7 @@ extern "C" {
   #include "lauxlib.h"
 }
 
-#include "Matrix2D.h"
+#include "RangeMatrix3D.h"
 
 class Camera;
 class Object;
@@ -83,9 +83,6 @@ class ObjectManager {
   //@}
 
  private:
-  typedef std::list<Object*> ObjectList;
-  typedef std::list<Object*>::iterator ListItr;
-  typedef std::list<Object*>::const_iterator ListItrConst;
   typedef std::multimap<std::string, Object*>::iterator MapItr;
   typedef std::multimap<std::string, Object*>::const_iterator MapItrConst;
 
@@ -123,13 +120,14 @@ class ObjectManager {
   Object* ObjectOnTile( int x, int y ) const;
 
   /**
-   * Checks to see if Object passed is colliding with any Objects. 
+   * Checks to see if Object passed is colliding with any Objects
+   * and updates it if so. Note that this function does call
+   * SetRange on the object grid so you may need to save your place
+   * beforehand.
    * @param obj Object to check.
    * @param cam Camera viewing the State.
-   * @return If a collision is detected, returns Object that 'obj' collided
-   * with. Returns NULL otherwise.
    */
-  Object* DetectCollision( Object *obj, const Camera &cam );
+  void UpdateCollisions( Object *obj, const Camera &cam );
 
   /**
    * Checks objects in range passed to ensure that their tile coordinate
@@ -168,9 +166,9 @@ class ObjectManager {
   std::multimap<std::string, Object*> m_objTypes; 
 
   /**
-   * 2D Matrix that holds list of Objects at each position.
+   * 3D Matrix that holds Objects at each position.
    */
-  nt::core::Matrix2D<ObjectList> *m_objGrid; 
+  nt::core::RangeMatrix3D<Object*> *m_objGrid;
 
   /**
    * Holds Objects that were sent to be destroyed on the last update.

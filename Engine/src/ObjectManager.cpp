@@ -34,7 +34,7 @@ bool ObjectManager::LoadData( const TiXmlElement *dataRoot, lua_State *L ) {
   // before ObjectManager
   int width = nt::state::GetMapWidth();
   int height = nt::state::GetMapHeight();
-  m_objGrid = new nt::core::Matrix2D<ObjectList>( width, height );
+  m_objGrid = new nt::core::RangeMatrix3D<Object*>( width, height );
 
   const TiXmlElement *objType = dataRoot->FirstChildElement( "object" );
   if ( objType ) {
@@ -74,14 +74,9 @@ bool ObjectManager::LoadData( const TiXmlElement *dataRoot, lua_State *L ) {
   int mapWidth = nt::state::GetMapWidth();
   int mapHeight = nt::state::GetMapHeight();
 
-  for ( int x = 0; x < mapWidth; ++x ) {
-    for ( int y = 0; y < mapHeight; ++y ) {
-      nt::core::Matrix2D<ObjectList>::iterator objList =
-        m_objGrid->Get( x, y );
-      for ( ListItr obj = objList->begin(); obj != objList->end(); ++obj ) {
-        ObjectAttorney::Init( *obj );
-      }
-    }
+  m_objGrid->SetRange( 0, 0, mapWidth, mapHeight );
+  while ( Object *obj = m_objGrid->GetElem() ) {
+    ObjectAttorney::Init( obj );
   }
 
   return true;
@@ -92,14 +87,9 @@ void ObjectManager::HandleEvents( const Camera & cam ) {
   int tLx, tLy, bRx, bRy;
   GetCamCoords( cam, 1, 1, tLx, tLy, bRx, bRy );
 
-  for ( int x = tLx; x <= bRx; ++x ) {
-    for ( int y = tLy; y <= bRy; ++y ) {
-      nt::core::Matrix2D<ObjectList>::iterator objList =
-        m_objGrid->Get( x, y );
-      for ( ListItr obj = objList->begin(); obj != objList->end(); ++obj ) {
-        ObjectAttorney::HandleEvents( *obj );
-      }
-    }
+  m_objGrid->SetRange( tLx, tLy, bRx, bRy );
+  while ( Object *obj = m_objGrid->GetElem() ) {
+    ObjectAttorney::HandleEvents( *obj );
   }
 }
 
@@ -108,37 +98,16 @@ void ObjectManager::Update( float dt, const Camera &cam ) {
   int tLx, tLy, bRx, bRy;
   GetCamCoords( cam, 1, 1, tLx, tLy, bRx, bRy );
 
-  // Size used in inner loop because DetectCollision could potentially move
-  // elements to the end of the list. Don't need to worry about
-  // iterating past end because it is guaranteed that no objects
-  // will be removed in UpdateCollision
-  for ( int x = tLx; x <= bRx; ++x ) {
-    for ( int y = tLy; y <= bRy; ++y ) {
-      nt::core::Matrix2D<ObjectList>::iterator objList =
-        m_objGrid->Get( x, y );
-
-      unsigned int initSize = objList->size();
-      ListItr obj = objList->begin();
-
-      for ( unsigned int i = 0; i < initSize; ++i ) {
-        Object *const otherObj = DetectCollision( *obj, cam );
-        if ( otherObj ) {
-          ObjectAttorney::UpdateCollision( *obj, otherObj );
-        }
-        ++obj;
-      }
-    }
+  m_objGrid->SetRange( tLx, tLy, bRx, bRy );
+  while ( Object *obj = m_objGrid->GetElem() ) {
+    m_objGrid->SavePlace();
+    UpdateCollisions( obj, cam );
+    m_objGrid->ToPlace();
   }
 
-  for ( int x = tLx; x <= bRx; ++x ) {
-    for ( int y = tLy; y <= bRy; ++y ) {
-      nt::core::Matrix2D<ObjectList>::iterator objList =
-        m_objGrid->Get( x, y );
-
-      for ( ListItr obj = objList->begin(); obj != objList->end(); ++obj) {
-        ObjectAttorney::UpdateAI( *obj, dt );
-      }
-    }
+  m_objGrid->SetRange( tLx, tLy, bRx, bRy );
+  while ( Object *obj = m_objGrid->GetElem() ) {
+    ObjectAttorney::UpdateAI( *obj, dt );
   }
 
   AdjustGridCoords( tLx, tLy, bRx, bRy );
@@ -406,45 +375,30 @@ Object* ObjectManager::ObjectOnTile( int x, int y ) const {
 }
 
 
-Object* ObjectManager::DetectCollision( 
-  Object *obj, 
-  const Camera &cam ) 
-{
+void ObjectManager::UpdateCollisions( Object *obj, const Camera &cam ) {
   nt::core::FloatRect objRect = ObjectAttorney::GetRect( obj );
   nt::core::IntRect tileRange = cam.GetTileOverlap( objRect );
 
-  for ( int x = tileRange.topLeft.x; x <= tileRange.bottomRight.x; ++x ) {
-    for ( int y = tileRange.topLeft.y; y <= tileRange.bottomRight.y; ++y ) {
-      nt::core::Matrix2D<ObjectList>::iterator objList =
-        m_objGrid->Get( x, y );
+  m_objGrid->SetRange( tileRange.topLeft.x, tileRange.topLeft.y,
+                       tileRange.bottomRight.x, tileRange.bottomRight.y );
 
-      for ( ListItr colObj = objList->begin(); colObj != objList->end(); 
-            ++colObj ) {
-        if ( *colObj != obj && std::find( 
-             m_toBeDestroyed.begin(), m_toBeDestroyed.end(), *colObj ) ==
-             m_toBeDestroyed.end()) {
+  while ( Object *colObj = m_objGrid->GetElem() ) {
+    if ( colObj != obj && std::find( 
+         m_toBeDestroyed.begin(), m_toBeDestroyed.end(), *colObj ) ==
+         m_toBeDestroyed.end()) {
 
-          bool collidingWithObj = 
-            ObjectAttorney::IsCollidingWith( obj, *colObj );
+      bool collidingWithObj = ObjectAttorney::IsCollidingWith( obj, colObj );
 
-          bool intersects = ObjectAttorney::GetRect( obj ).Intersects( 
-              ObjectAttorney::GetRect( *colObj ));
+      bool intersects = ObjectAttorney::GetRect( obj ).Intersects( 
+          ObjectAttorney::GetRect( colObj ));
 
-          if ( !collidingWithObj && intersects ) {
-            // So next collision check will return a different object colliding
-            // with 'object' if there is one
-            objList->splice( objList->end(), *objList, colObj );
-            return objList->back();
-
-          } else if ( collidingWithObj && !intersects ) {
-            ObjectAttorney::RemoveFromCollidingWith( obj, *colObj );
-          }
-        }
+      if ( !collidingWithObj && intersects ) {
+        ObjectAttorney::HandleCollision( obj, colObj );
+      } else if ( collidingWithObj && !intersects ) {
+        ObjectAttorney::RemoveFromCollidingWith( obj, colObj );
       }
-      ++objList;
     }
   }
-  return NULL;
 }
 
 

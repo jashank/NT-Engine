@@ -22,12 +22,12 @@ class RangeMatrix3D {
    * Constructor creates 3 dimensional matrix bounded by first 2 dimensions.
    */
   Matrix3D( int cols, int rows )
-    :m_cols( x ), m_rows( y ) {
+    :m_cols( x ), m_rows( y ), m_elemItr( NULL ), m_saveItr( NULL ) {
     int size = cols * rows;
     m_mat = new T[size];
 
     for ( int i = 0; i < size; ++i ) {
-      m_mat[i] = std::list<T> vec;
+      m_mat[i] = std::list<T> list;
     }
   }
 
@@ -42,38 +42,65 @@ class RangeMatrix3D {
    * iterations being made (i.e. GetElem will not continue to return elements
    * in a range specified in a previous call).
    */
-  void SetRange( int xMin, int xMax, int yMin, int yMax ) {
+  void SetRange( int xMin, int yMin, int xMax, int yMax ) {
     m_range.topLeft.x = xMin;
     m_range.topLeft.y = yMin;
     m_range.bottomRight.x = xMax;
     m_range.bottomRight.y = yMax;
 
-    m_itr.x = xMin;
-    m_itr.y = yMin;
-    m_itr.z = 0;
+    m_rangeItr.x = xMin;
+    m_rangeItr.y = yMin;
+    m_elemItr = NULL;
   }
 
   /**
-   * Returns next element in range last set (just at 0 if none set yet).
+   * Saves the current spot being iterated over. Useful for when you need
+   * to do a nested iteration which requires a new SetRange call.
+   */
+  void SavePlace() {
+    m_saveRange = m_range;
+    m_saveRangeItr = m_rangeItr;
+    m_saveElemItr = m_elemItr;
+  }
+
+  /**
+   * If SavePlace() was called previously, goes back to spot saved at.
+   * Note that moving any elements in between SavePlace and ToPlace may
+   * invalidate the iterator saved (depending on where things were moved.)
+   */
+  void ToPlace() {
+    m_range = m_saveRange;
+    m_rangeItr = m_saveRangeItr;
+    m_elemItr = m_saveElemItr;
+  }
+
+  /**
+   * Returns next element in range last set (just at 0,0 if none set yet).
    * Iterates by column. When no more elements exist, returns NULL.
    */
-  T *GetElem() {
-    for ( ; m_itr.x <= m_range.bottomRight.x; ++m_itr.x ) {
-      for ( ; m_itr.y <= m_range.bottomRight.y; ++m_itr.y ) {
+  T GetElem() {
+    for ( ; m_rangeItr.x <= m_range.bottomRight.x; ++m_rangeItr.x ) {
+      for ( ; m_rangeItr.y <= m_range.bottomRight.y; ++m_rangeItr.y ) {
 
-        int i = (m_cols * m_itr.x) + m_itr.y;
-        if ( m_itr.z < m_mat[i].size() ) {
-          return &(m_mat[i][m_itr.z++]);
+        int i = (m_cols * m_rangeItr.x) + m_rangeItr.y;
+        if ( !m_elemItr ) {
+          m_elemItr = m_mat[i].begin();
+        }
+
+        if ( m_elemItr != m_mat[i].end() ) {
+          return *m_elemItr++;
         } else {
-          m_itr.z = 0;
+          m_elemItr = NULL;
         }
       }
     }
     return NULL;
   }
 
-  // GET POSITION OF LAST ELEMENT RETURNED
-             
+  /**
+   * Moves last element
+  void MoveElem( int x, int y ) {
+
  private:
   //@{
   /**
@@ -86,10 +113,16 @@ class RangeMatrix3D {
 
   int m_cols; /** Columns in matrix. */
   int m_rows; /** Rows in matrix. */
-  T* m_mat /** Array representation of matrix. */
+  T *m_mat /** Array representation of matrix. */
 
   nt::core::IntRect m_range; /** Range currently being iterated over. */
-  nt::core::IntVec m_itr; /** Iterates over dimensions of range. */
+  nt::core::IntVec m_rangeItr; /** Iterates over dimensions of range. */
+  T *m_elemItr; /** Iterates over elements of a dimension. */
+
+  nt::core::IntRect m_saveRange; /** Where SavePlace() stores range. */
+  nt::core::IntVec m_saveRangeItr; /** Where SavePlace() stores position. */
+  T *m_saveElemItr; /** Where SavePlace() stores element iterator. */
 };
 
 #endif // MATRIX3D_H
+
