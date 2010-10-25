@@ -107,7 +107,10 @@ void ObjectManager::Update( float dt, const Camera &cam ) {
 
   m_objGrid->SetRange( tLx, tLy, bRx, bRy );
   while ( Object *obj = m_objGrid->GetElem() ) {
+    // UpdateAI could possibly access grid
+    m_objGrid->SavePlace();
     ObjectAttorney::UpdateAI( obj, dt );
+    m_objGrid->ToPlace();
   }
 
   // Make sure object's grid positions in matrix are correct
@@ -117,12 +120,12 @@ void ObjectManager::Update( float dt, const Camera &cam ) {
     m_objGrid->MoveReturnedElem( tile.x, tile.y );
   }
 
-  /*
-  for ( unsigned int i = 0; i < m_toBeDestroyed.size(); i++ ) {
+  // Delete all objects ready to be destroyed
+  for ( unsigned int i = 0; i < m_toBeDestroyed.size(); ++i ) {
     Object *delObj = m_toBeDestroyed[i];
     
     nt::core::IntVec coords = ObjectAttorney::GetTile( delObj );
-    m_objGrid->Get(coords.x, coords.y)->remove( delObj );
+    m_objGrid->RemoveElem( delObj, coords.x, coords.y );
         
     std::string type = ObjectAttorney::GetType( delObj ); 
     std::pair<MapItr, MapItr> objects = m_objTypes.equal_range( type );
@@ -137,7 +140,6 @@ void ObjectManager::Update( float dt, const Camera &cam ) {
     SAFEDELETE( m_toBeDestroyed[i] );
   }
   m_toBeDestroyed.clear();
-  */
 }
 
 

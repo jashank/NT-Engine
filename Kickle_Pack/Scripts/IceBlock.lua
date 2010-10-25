@@ -27,7 +27,7 @@ function IceBlock.AI( self )
   local facingX, facingY = Util.GetTileObjectFaces( self )
   local tileType = State.GetTileInfo( facingX, facingY )
   local obj = State.GetObjectOnTile( facingX, facingY )
-  local objType
+  local objType = ""
   if obj then
     objType = obj:GetType()
   end 
@@ -49,8 +49,8 @@ function IceBlock.AI( self )
     end
   end
 
-        if IceBlock.moving then
-                if tileType == "water" or tileType == "" then
+  if IceBlock.moving then
+    if tileType == "water" or tileType == "" then
       IceBlock.destroyed = true
       if tileType == "water" then
         local tileType, tileName =
@@ -62,7 +62,6 @@ function IceBlock.AI( self )
         self:SetNoClip( obj:GetType() == "Spring" )
       end
     end
-
     IceBlock.moving = self:Move()
   end
 

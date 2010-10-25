@@ -105,6 +105,15 @@ class RangeMatrix3D {
   }
 
   /**
+   * Removes element at specified position in matrix. If element isn't there
+   * then does nothing.
+   */
+  void RemoveElem( T elem, int x, int y ) {
+    int i = Index( x, y );
+    m_mat[i].remove( elem );
+  }
+
+  /**
    * Moves last element returned by GetElem to position specified.
    */
   void MoveReturnedElem( int x, int y ) {
