@@ -42,7 +42,7 @@ int main( int argc, char *argv[] ) {
 
   const float dt = 1.0 / Config::GetFPS();
   float frameTime = 0.0;
-  double accumulator = 0.0;
+  float accumulator = 0.0;
 
   sf::Clock timer;
   timer.Reset();
@@ -53,7 +53,9 @@ int main( int argc, char *argv[] ) {
       accumulator -= dt;
     }
 
-    mach.Render();
+    float alpha = accumulator / dt;
+
+    mach.Render( alpha );
     nt::window::Display();
     nt::window::Clear();
 

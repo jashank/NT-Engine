@@ -95,8 +95,8 @@ void StateMachine::Step( float dt ) {
 }
 
 
-void StateMachine::Render() {
-  m_runningState->Render();
+void StateMachine::Render( float alpha ) {
+  m_runningState->Render( alpha );
 }
 
 /****************************

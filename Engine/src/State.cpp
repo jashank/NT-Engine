@@ -44,10 +44,10 @@ void State::Update( float dt ) {
 }
 
 
-void State::Render() {
+void State::Render( float alpha ) {
   // The rendering order is important.
   m_tileManager.Render( m_camera );
-  m_objectManager.Render( m_camera );
+  m_objectManager.Render( alpha, m_camera );
 }
 
 

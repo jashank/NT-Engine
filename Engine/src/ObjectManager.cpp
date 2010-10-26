@@ -153,7 +153,7 @@ void ObjectManager::Update( float dt, const Camera &cam ) {
 }
 
 
-void ObjectManager::Render( const Camera &cam ) const {
+void ObjectManager::Render( float alpha, const Camera &cam ) const {
   int tLx, tLy, bRx, bRy;
   GetCamCoords( cam, 1, 1, tLx, tLy, bRx, bRy );
 
@@ -166,9 +166,15 @@ void ObjectManager::Render( const Camera &cam ) const {
   }
 
   while ( !renderOrder.empty() ) {
-    const Object *obj = renderOrder.top().second;
+    Object *obj = renderOrder.top().second;
+
+    // Interpolate the sprite's position for blending, then turn it back.
+    sf::Vector2f pos = ObjectAttorney::GetSpritePosition( obj );
+    ObjectAttorney::InterpolateSprite( obj, alpha );
     nt::window::Draw( ObjectAttorney::GetSprite( obj ) );
     nt::window::Draw( ObjectAttorney::GetText( obj ));
+    ObjectAttorney::SetSpritePosition( obj, pos );
+
     renderOrder.pop();
   }
 }

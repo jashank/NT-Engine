@@ -22,9 +22,20 @@ class AnimSprite : public sf::Sprite {
 
   /**
    * Goes to next frame in sprite's animation sequence if it is time to do so.
+   * This is also the time when the sprite retrieves its position for lastPos
+   * so move it after calling Update.
    * @param dt delta time value - amount of time to step forward
    */
   void Update( float dt );
+
+  /**
+   * Interpolates the sprite's position with its current position and its
+   * previous position. Note that this actually changes the sprite's
+   * position.
+   * @param alpha blending factor between previous frame and current frame.
+   * Should be from [0:1].
+   */
+  void Interpolate( float alpha );
 
   /**
    * @return AnimData for this sprite's animations.
@@ -128,6 +139,7 @@ class AnimSprite : public sf::Sprite {
   float m_frameTimeLeft; /** Time left for current frame to play. */
   int m_animNum; /** Number of animation sprite is currently on. */
   int m_frameNum; /** Number of frame sprite is currently on. */ 
+  sf::Vector2f m_lastPos; /** Last position that sprite was in on last update. */
 };
 
 #endif // ANIMSPRITE_H

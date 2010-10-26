@@ -434,6 +434,35 @@ class ObjectAttorney {
   { return obj->m_sprite; }
 
   /**
+   * Returns the Object's sprite position as an sf::Vector2f.
+   * @param obj object whose sprite position is to be retrieved.
+   * @return Object's sprite position.
+   */
+  static const sf::Vector2f &GetSpritePosition( const Object *obj ) {
+    return obj->m_sprite.GetPosition();
+  }
+
+  /**
+   * Sets the Object's sprite position to coordinates in vector.
+   * @param obj object whose sprite position is to be modified.
+   * @param vec vector with coordinates to set to sprite position.
+   */
+  static void SetSpritePosition( Object *obj, const sf::Vector2f &vec ) {
+    obj->m_sprite.SetPosition( vec );
+  }
+
+  /**
+   * Interpolates the Object's sprite position with its previous position.
+   * NOTE: This modifies the Object's sprite position.
+   * @param obj object whose sprite is to be interpolated.
+   * @param alpha blending factor between previous frame and current frame.
+   * Should be from [0:1].
+   */
+  static void InterpolateSprite( Object *obj, float alpha ) {
+    obj->m_sprite.Interpolate( alpha );
+  }
+
+  /**
    * Returns when Object was created. For example, if one passes the first
    * object created the function returns 1.
    * @param obj object to get information from.

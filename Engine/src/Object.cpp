@@ -185,14 +185,16 @@ void Object::HandleCollision( Object* const collisionObj ) {
 
 
 void Object::UpdateAI( float dt ) {
+  // Order matters
+  m_sprite.Update( dt );
+  m_text.UpdatePrint();
+
   if ( m_moving ) {
     MovementUpdate( dt );
   } 
   if ( !m_moving ) {
     CallScriptFunc( "AI" );
   }
-  m_sprite.Update( dt );
-  m_text.UpdatePrint();
 }
 
 

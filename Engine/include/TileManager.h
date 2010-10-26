@@ -42,6 +42,7 @@ class TileManager {
 
   /**
    * Renders tiles on screen.
+   * @param cam Camera currently viewing the State.
    */
   void Render( const Camera &cam );
 

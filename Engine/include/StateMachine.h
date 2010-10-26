@@ -36,8 +36,10 @@ class StateMachine {
 
   /**
    * Draws everything in StateMachine to the window.
+   * @param alpha blending factor between previous frame and current frame.
+   * Should be from [0:1].
    */
-  void Render();
+  void Render( float alpha );
 
   //@{
   /**

@@ -51,9 +51,11 @@ class ObjectManager {
   
   /**
    * Renders every Object on screen.
+   * @param alpha blending factor between previous frame and current frame.
+   * Should be from [0:1].
    * @param cam Camera currently viewing the State.
    */
-  void Render( const Camera &cam ) const;
+  void Render( float alpha, const Camera &cam ) const;
 
   /**
    * @return Whether there is an Object on tile coordinate passed that is

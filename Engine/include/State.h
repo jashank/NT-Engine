@@ -45,8 +45,10 @@ class State {
 
   /**
    * Renders everything that needs to be rendered in the State.
+   * @param alpha blending factor between previous frame and current frame.
+   * Should be from [0:1].
    */
-  void Render();
+  void Render( float alpha );
 
   /**
    * Returns file path of State file loaded into this State.

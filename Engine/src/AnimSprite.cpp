@@ -21,6 +21,8 @@ AnimSprite::AnimSprite()
 
 
 void AnimSprite::Update( float dt ) {
+  m_lastPos = GetPosition();
+
   if( m_playing ) {
     m_frameTimeLeft -= dt;
     if( m_frameTimeLeft <= 0.0f ) {
@@ -30,6 +32,19 @@ void AnimSprite::Update( float dt ) {
   m_setToReverse = false;
 }
 
+
+void AnimSprite::Interpolate( float alpha ) {
+  sf::Vector2f current;
+  current.x = GetPosition().x * alpha;
+  current.y = GetPosition().y * alpha;
+
+  sf::Vector2f last;
+  float diff = 1.0 - alpha;
+  last.x = m_lastPos.x * ( diff );
+  last.y = m_lastPos.y * ( diff );
+
+  SetPosition( current.x + last.x, current.y + last.y );
+}
 
 const AnimData *AnimSprite::GetAnimData() const {
   return m_animData;
