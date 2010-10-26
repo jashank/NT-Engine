@@ -27,7 +27,7 @@ class RangeMatrix3D {
     m_mat = new std::list<T>[size];
   }
 
-  virtual ~RangeMatrix3D() {
+  ~RangeMatrix3D() {
     SAFEDELETEA( m_mat );
   }
 
@@ -75,7 +75,7 @@ class RangeMatrix3D {
    * Returns next element in range last set (just at 0,0 if none set yet).
    * Iterates by column. When no more elements exist, returns NULL.
    */
-  virtual T GetElem() {
+  T GetElem() {
     // Counts loop iterations to keep iteration position correct
     int count = 0;
 
@@ -99,7 +99,7 @@ class RangeMatrix3D {
   /**
    * Adds an element at specified position in matrix.
    */
-  virtual void AddElem( T elem, int x, int y ) {
+  void AddElem( T elem, int x, int y ) {
     int i = Index( x, y );
     m_mat[i].push_back( elem );
   }

@@ -257,8 +257,18 @@ class Object {
   /***********************
    Private Data Members
   ***********************/
+  /**
+   * Number of total objects created thus far in application.
+   */
+  static int numCreated;
+
   /** Sprite representation of Object. */
   AnimSprite m_sprite;
+
+  /**
+   * Nth Object created in app. For example, if this is 1, then this was 1st.
+   */
+  int m_creationNum;
 
   /**
    * If true, keep moving in m_direction.
@@ -424,6 +434,15 @@ class ObjectAttorney {
   { return obj->m_sprite; }
 
   /**
+   * Returns when Object was created. For example, if one passes the first
+   * object created the function returns 1.
+   * @param obj object to get information from.
+   * @return When Object was created.
+   */
+  static int GetCreationNum( const Object *obj )
+  { return obj->m_creationNum; }
+
+  /**
    * Returns tile coordinates of Object.
    * @param obj obj to call GetTile on.
    * @return obj's tile coordinates.
@@ -464,8 +483,8 @@ class ObjectAttorney {
    */
   static bool IsCollidingWith(
     const Object *obj, 
-    const Object* other )
-  { return ( std::find( 
+    const Object *other )
+  { return ( std::find(
                obj->m_collidingWith.begin(), 
                obj->m_collidingWith.end(), 
                other 

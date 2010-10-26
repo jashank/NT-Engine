@@ -82,39 +82,9 @@ nt::core::IntRect Camera::GetAdjustedFocus( int x, int y ) const {
   int bottomRightX = m_view.bottomRight.x + x;
   int bottomRightY = m_view.bottomRight.y + y;
 
-  if ( topLeftX < 0 ) {
-    topLeftX = 0;
-  }
-  if ( topLeftY < 0 ) {
-    topLeftY = 0;
-  }
-
-  int farTileX = nt::state::GetMapWidth() - 1;
-  int farTileY = nt::state::GetMapHeight() - 1;
-
-  if ( bottomRightX > farTileX ) {
-    bottomRightX = farTileX;
-  }
-  if ( bottomRightY > farTileY ) {
-    bottomRightY = farTileY;
-  }
-
-  nt::core::IntRect modRect( topLeftX, topLeftY, bottomRightX, bottomRightY );
-  return modRect;
-}
-
-
-nt::core::IntRect Camera::GetTileOverlap( 
-  const nt::core::FloatRect &rect
-) const {
-  int tileSize = nt::state::GetTileSize();
-
-  int left = ( rect.topLeft.x / tileSize ) + m_view.topLeft.x;
-  int right = ( rect.bottomRight.x / tileSize ) + m_view.topLeft.x;
-  int top = ( rect.topLeft.y / tileSize ) + m_view.topLeft.y;
-  int bottom = ( rect.bottomRight.y / tileSize ) + m_view.topLeft.y;
-
-  return nt::core::IntRect( left, top, right, bottom );
+  nt::core::IntRect rect( topLeftX, topLeftY, bottomRightX, bottomRightY );
+  nt::state::CullTileRect( rect );
+  return rect;
 }
 
 
@@ -124,16 +94,7 @@ void Camera::Span( int xSpan, int ySpan ) {
   ySpan -= 1;
 
   m_view.Scale( xSpan, ySpan );
-
-  int farTileX = nt::state::GetMapWidth() - 1;
-  int farTileY = nt::state::GetMapHeight() - 1;
-
-  if ( m_view.bottomRight.x > farTileX ) {
-    m_view.bottomRight.x = farTileX;
-  }
-  if ( m_view.bottomRight.y > farTileY ) {
-    m_view.bottomRight.y = farTileY;
-  }
+  nt::state::CullTileRect( m_view );
 }
 
 /*****************************
@@ -244,7 +205,6 @@ int Camera::LuaSlowDown( lua_State *L ) {
 /***************************
  * Private Member Functions
  **************************/
-#include <iostream>
 void Camera::SetOffset( int x, int y ) {
   nt::core::IntRect destRect( m_view );
   destRect.Offset( x, y );

@@ -1,6 +1,8 @@
 #ifndef STATECOMM_H
 #define STATECOMM_H
 
+#include "Rect.h"
+
 class State;
 
 // Doesn't actually contain State class atm
@@ -51,6 +53,13 @@ int GetMapHeight();
  * Returns whether tile coordinate passed is in range of map.
  */
 int InRange( int x, int y );
+
+/**
+ * Culls a tile rect, checking if any of the ranges are out of bounds and
+ * putting them in bounds if so. The rect's points should be tile points on
+ * the map.
+ */
+void CullTileRect( nt::core::IntRect &rect );
 
 } // namespace state
 } // namespace nt

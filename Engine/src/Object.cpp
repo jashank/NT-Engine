@@ -1,8 +1,5 @@
 #include "Object.h"
 
-#include <cmath>
-#include <cstring>
-
 #include <boost/bind/bind.hpp>
 extern "C" {
   #include "lualib.h"
@@ -12,6 +9,8 @@ extern "C" {
 #include "ResourceLib.h"
 #include "StateComm.h"
 #include "tinyxml.h"
+
+int Object::numCreated = 0;
 
 /**********************************
  * Public
@@ -61,7 +60,8 @@ Lunar<Object>::RegType Object::methods[] = {
 
 
 Object::Object( lua_State *L )
- : m_moving( false ),
+ : m_creationNum( 0 ), 
+   m_moving( false ),
    m_blockingTile( false ),
    m_noClip( false ),
    m_ptrCallScriptFunc( boost::bind( &Object::CallScriptFunc, this, _1 )),
@@ -107,7 +107,9 @@ Object::Object(
   int strip,
   lua_State *L
 )
- : m_moving( false ),
+ : 
+   m_creationNum( 0 ),
+   m_moving( false ),
    m_blockingTile( false ),
    m_noClip( false ),
    m_ptrCallScriptFunc( boost::bind( &Object::CallScriptFunc, this, _1 )),
@@ -146,6 +148,8 @@ Object::Object(
   }
 
   InitLua();
+
+  m_creationNum = ++numCreated;
 }
 
 

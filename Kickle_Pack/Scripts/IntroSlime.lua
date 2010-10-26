@@ -6,11 +6,6 @@ IntroSlime.sitting = false
 
 function IntroSlime.Init( self )
   objs = State.GetObjects("IntroSlime")
-  if #objs == 1 then
-    IntroSlime.test = "A";
-  elseif #objs == 2 then
-    IntroSlime.test = "B";
-  else IntroSlime.test = "C"; end
   self:SetDir( Util.RIGHT )
   Util.SetAndPlay( self, Util.RIGHT )
   self:Move()
@@ -31,7 +26,5 @@ function IntroSlime.AI( self )
     end
   end
 end
-
-
 
 return IntroSlime

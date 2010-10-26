@@ -72,6 +72,26 @@ int InRange( int x, int y ) {
   return false;
 }
 
+
+void CullTileRect( nt::core::IntRect &rect ) {
+  if ( rect.topLeft.x < 0 ) {
+    rect.topLeft.x = 0;
+  }
+  if ( rect.topLeft.y < 0 ) {
+    rect.topLeft.y = 0;
+  }
+
+  int farTileX = GetMapWidth() - 1;
+  int farTileY = GetMapHeight() - 1;
+
+  if ( rect.bottomRight.x > farTileX ) {
+    rect.bottomRight.x = farTileX;
+  }
+  if ( rect.bottomRight.y > farTileY ) {
+    rect.bottomRight.y = farTileY;
+  }
+}
+
 } // namespace state
 } // namespace nt
 

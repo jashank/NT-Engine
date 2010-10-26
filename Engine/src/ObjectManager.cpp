@@ -1,5 +1,6 @@
 #include "ObjectManager.h"
 
+#include <functional>
 #include <queue>
 #include <utility>
 
@@ -105,12 +106,21 @@ void ObjectManager::Update( float dt, const Camera &cam ) {
     m_objGrid->ToPlace();
   }
 
+  // Update Objects by order of creation
+  std::priority_queue<
+    std::pair<int, Object*>, 
+    std::vector<std::pair<int, Object*> >,
+    std::greater<std::pair<int, Object*> > > creationOrder;
+
   m_objGrid->SetRange( tLx, tLy, bRx, bRy );
   while ( Object *obj = m_objGrid->GetElem() ) {
-    // UpdateAI could possibly access grid
-    m_objGrid->SavePlace();
+    creationOrder.push( std::make_pair( 
+      ObjectAttorney::GetCreationNum( obj ), obj ));
+  }
+  while ( !creationOrder.empty() ) {
+    Object *obj = creationOrder.top().second;
     ObjectAttorney::UpdateAI( obj, dt );
-    m_objGrid->ToPlace();
+    creationOrder.pop();
   }
 
   // Make sure object's grid positions in matrix are correct
@@ -379,8 +389,16 @@ Object* ObjectManager::ObjectOnTile( int x, int y ) const {
 
 
 void ObjectManager::UpdateCollisions( Object *obj, const Camera &cam ) {
+  int tileSize = nt::state::GetTileSize();
+
   nt::core::FloatRect objRect = ObjectAttorney::GetRect( obj );
-  nt::core::IntRect tileRange = cam.GetTileOverlap( objRect );
+
+  nt::core::IntRect tileRange;
+  tileRange.topLeft.x = objRect.topLeft.x / tileSize;
+  tileRange.bottomRight.x = objRect.bottomRight.x / tileSize;
+  tileRange.topLeft.y = objRect.topLeft.y / tileSize;
+  tileRange.bottomRight.y = objRect.bottomRight.y / tileSize;
+  nt::state::CullTileRect( tileRange );
 
   m_objGrid->SetRange( tileRange.topLeft.x, tileRange.topLeft.y,
                        tileRange.bottomRight.x, tileRange.bottomRight.y );
@@ -392,8 +410,7 @@ void ObjectManager::UpdateCollisions( Object *obj, const Camera &cam ) {
 
       bool collidingWithObj = ObjectAttorney::IsCollidingWith( obj, colObj );
 
-      bool intersects = ObjectAttorney::GetRect( obj ).Intersects( 
-          ObjectAttorney::GetRect( colObj ));
+      bool intersects = objRect.Intersects( ObjectAttorney::GetRect( colObj ));
 
       if ( !collidingWithObj && intersects ) {
         ObjectAttorney::HandleCollision( obj, colObj );
