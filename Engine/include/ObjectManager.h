@@ -11,7 +11,7 @@ extern "C" {
   #include "lauxlib.h"
 }
 
-#include "PriorityRangeMatrix3D.h"
+#include "RangeMatrix3D.h"
 
 class Camera;
 class Object;
