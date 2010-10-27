@@ -38,6 +38,13 @@ class AnimSprite : public sf::Sprite {
   void Interpolate( float alpha );
 
   /**
+   * If you know that the sprite has just been created and you want to set
+   * its position, call this function. Allows for correct interpolation
+   * on first creation.
+   */
+  void SetInitialPosition( float x, float y );
+
+  /**
    * @return AnimData for this sprite's animations.
    */
   const AnimData* GetAnimData() const;

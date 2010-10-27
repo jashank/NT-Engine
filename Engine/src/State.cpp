@@ -157,7 +157,7 @@ bool State::LoadFromFile( const std::string &filePath, lua_State *L ) {
       }
 
       // Set state comm temporarily for ObjectManager and Camera
-      // to know map dimensions
+      // to access TileManager
       nt::state::SetStateComm( this );
 
       m_camera.Span(
@@ -171,6 +171,7 @@ bool State::LoadFromFile( const std::string &filePath, lua_State *L ) {
         return false;
       }
 
+      // End temporary StateComm set
       nt::state::EndStateComm();
 
       elem = root->FirstChildElement( "music" );

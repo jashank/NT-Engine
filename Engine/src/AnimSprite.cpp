@@ -46,6 +46,14 @@ void AnimSprite::Interpolate( float alpha ) {
   SetPosition( current.x + last.x, current.y + last.y );
 }
 
+
+void AnimSprite::SetInitialPosition( float x, float y ) {
+  m_lastPos.x = x;
+  m_lastPos.y = y;
+  SetPosition( x, y );
+}
+
+
 const AnimData *AnimSprite::GetAnimData() const {
   return m_animData;
 }

@@ -30,7 +30,6 @@ Lunar<Object>::RegType Object::methods[] = {
   { "SetAlpha", &Object::LuaSetAlpha },
   { "Move", &Object::LuaMove },
   { "IsMoving", &Object::LuaIsMoving },
-  { "OnCollisionCourse", &Object::LuaOnCollisionCourse },
   { "SetNotColliding", &Object::LuaSetNotColliding },
   { "GetType", &Object::LuaGetType },
   { "GetTile", &Object::LuaGetTile },
@@ -141,7 +140,7 @@ Object::Object(
       y -= m_sprite.GetAnimData()->GetFrameHeight( startingAnim ) % tileDim;
     }
   }
-  m_sprite.SetPosition( x, y );
+  m_sprite.SetInitialPosition( x, y );
 
   if( !LoadCollisionData( filepath ) ) {
     LogErr( "Object XML file " + filepath + " didn't load correctly." );
@@ -191,8 +190,7 @@ void Object::UpdateAI( float dt ) {
 
   if ( m_moving ) {
     MovementUpdate( dt );
-  } 
-  if ( !m_moving ) {
+  } else {
     CallScriptFunc( "AI" );
   }
 }
@@ -317,73 +315,6 @@ int Object::LuaMove( lua_State *L ) {
 int Object::LuaIsMoving( lua_State *L ) {
   lua_pushboolean( L, m_moving );
   return 1;
-}
-
-
-int Object::LuaOnCollisionCourse( lua_State *L ) {
-  Object* const other = Lunar<Object>::check( L, 1 );
-  if ( other ) {
-    nt::core::FloatRect thisRect = m_collisionRect;
-    nt::core::FloatRect otherRect = other->m_collisionRect;
-
-    float distLR = otherRect.topLeft.x - thisRect.bottomRight.x;
-    float distRL = thisRect.topLeft.x - otherRect.bottomRight.x;
-    float distTB = otherRect.topLeft.y - thisRect.bottomRight.y;
-    float distBT = thisRect.topLeft.y - otherRect.bottomRight.y;
-
-    bool intersectingX = 
-      ( fabs( distRL ) < ( thisRect.GetWidth() + otherRect.GetWidth() ));
-    bool intersectingY = 
-      ( fabs( distBT ) < ( thisRect.GetHeight() + otherRect.GetHeight() ));
-    if ( intersectingX && intersectingY ) {
-      lua_pushboolean ( L, true );
-      return 1;
-    }
-    
-    nt::core::FloatVec velVec = GetVelocityVector() - other->GetVelocityVector();
-    float timeLR = 0.f;
-    float timeRL = 0.f;
-    float timeTB = 0.f;
-    float timeBT = 0.f;
-
-    // Can use direct comparison b/c unmoving velVec assigned to 0 exactly
-    if ( velVec.x != 0.f ) {
-      timeLR = distLR / velVec.x;
-      timeRL = -distRL / velVec.x;
-    } else if ( !intersectingX ) {
-      lua_pushboolean( L, false );
-      return 1;
-    }
-
-    if ( velVec.y != 0.f ) {
-      timeTB = distTB / velVec.y;
-      timeBT = -distBT / velVec.y;
-    } else if ( !intersectingY ) {
-      lua_pushboolean( L, false );
-      return 1;
-    }
-
-    float timeXMin = std::min( timeLR, timeRL );
-    float timeXMax = std::max( timeLR, timeRL );
-    float timeYMin = std::min( timeTB, timeBT );
-    float timeYMax = std::max( timeTB, timeBT );
-    if ( timeXMin == 0.f && timeXMax == 0.f && intersectingX ) {
-      timeXMin = timeYMin;
-      timeXMax = timeYMax;
-    }
-    if ( timeYMin == 0.f && timeYMax == 0.f && intersectingY ) {
-      timeYMin = timeXMin;
-      timeYMax = timeXMax;
-    }
-
-    bool willCollide = ( !( timeXMin > timeYMax ) && !( timeXMax < timeYMin )); 
-    lua_pushboolean( L, willCollide );
-    return 1;
-        
-  } else {
-    LogLuaErr( "No Object passed to OnCollisionCourse in Object: " + m_type );
-    return 0;
-  }
 }
 
 
