@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<object>
+  <animation path="Kickle_Pack/Animations/KickleAnim_48x60.xml" />
+  <script path="Kickle_Pack/Scripts/TitleKickle.lua" />
+  <speed pps="150" />
+  <rect x="15" y="32" width="18" height="20" />
+  <tile block="false" />
+  <input_list>
+    <input key="UP" repeat="true" delay="0" function="FaceUp"/>
+    <input key="DOWN" repeat="true" delay="0" function="FaceDown"/>
+    <input key="LEFT" repeat="true" delay="0" function="FaceLeft"/>
+    <input key="RIGHT" repeat="true" delay="0" function="FaceRight"/>
+
+    <input key="UP" repeat="true" delay="0.12" function="WalkUp"/>
+    <input key="DOWN" repeat="true" delay="0.12" function="WalkDown"/>
+    <input key="LEFT" repeat="true" delay="0.12" function="WalkLeft"/>
+    <input key="RIGHT" repeat="true" delay="0.12" function="WalkRight"/>
+
+    <input key="x" repeat="false" delay="0" function="PerformPillar"/>
+    <input key="z" repeat="false" delay="0" function="PerformAttack" />
+    <input key="return" repeat="false" delay="0" function="Play" />
+  </input_list>
+</object>
