@@ -81,14 +81,13 @@ void TileManager::Render( const Camera &cam ) {
     float screenY = 0.0;
     int tile = -1;
 
-    // i,j used to get WHERE to blit on screen. x,y used to get WHAT to blit.
-    for ( int i = 0, x = tLx; i < m_width && x <= bRx; ++i, ++x ) {
-      for ( int j = 0, y = tLy; j < m_height && y <= bRy; ++j, ++y ) {
+    for ( int x = tLx; x <= bRx; ++x ) {
+      for ( int y = tLy; y <= bRy; ++y ) {
 
         tile = *( m_layout->Get( x, y ));
         if ( tile != BLANK_TILE_ID ) {
-          screenX = static_cast<float>( i ) * m_tileDim;
-          screenY = static_cast<float>( j ) * m_tileDim;
+          screenX = static_cast<float>( x ) * m_tileDim;
+          screenY = static_cast<float>( y ) * m_tileDim;
           m_tileSprites[tile].SetPosition( screenX, screenY );
           nt::window::Draw( m_tileSprites[tile] );
         }

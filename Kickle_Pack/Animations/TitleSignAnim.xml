@@ -2,10 +2,10 @@
 
 <animations>
 
-  <sheet path="Kickle_Pack/Sheets/titleSign_577x293.png">
+  <sheet path="Kickle_Pack/Sheets/titleSign.png">
 
     <strip name="image">
-      <clip x="0" y="0" width="577" height="293" />
+      <clip x="0" y="0" width="385" height="130" />
       <flow num_frames="1"  />
     </strip>
 

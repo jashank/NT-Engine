@@ -143,7 +143,7 @@ class RangeMatrix3D {
    * Returns coordinate's corresponding index into array.
    */
   int Index( int x, int y ) {
-    return (m_cols * x) + y;
+    return (m_cols * y) + x;
   }
 
   int m_cols; /** Columns in matrix. */

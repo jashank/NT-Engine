@@ -123,8 +123,8 @@ void ObjectManager::Update( float dt, const Camera &cam ) {
     creationOrder.pop();
   }
 
-  // Make sure object's grid positions in matrix are correct
   m_objGrid->SetRange( tLx, tLy, bRx, bRy );
+  // Make sure object's grid positions in matrix are correct
   while ( Object *obj = m_objGrid->GetElem() ) {
     nt::core::IntVec tile = ObjectAttorney::GetTile( obj );
     m_objGrid->MoveReturnedElem( tile.x, tile.y );

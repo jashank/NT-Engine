@@ -1,4 +1,5 @@
 <?xml version="1.0"?>
 <object>
   <animation path="Kickle_Pack/Animations/TitleSignAnim.xml" />
+  <script path="Kickle_Pack/Scripts/TitleSign.lua" />
 </object>
