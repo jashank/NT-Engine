@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+
+<animations>
+
+  <sheet path="Kickle_Pack/Sheets/titleSign_577x293.png">
+
+    <strip name="image">
+      <clip x="0" y="0" width="577" height="293" />
+      <flow num_frames="1"  />
+    </strip>
+
+  </sheet>
+</animations>
