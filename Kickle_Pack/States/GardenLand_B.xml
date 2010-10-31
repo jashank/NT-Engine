@@ -16,10 +16,6 @@
     <object path="Kickle_Pack/Objects/StageManager.xml">
       <inst strip="0" x="0" y="0"/>
     </object>
-    <object path="Kickle_Pack/Objects/Popsicle.xml">
-      <inst strip="0" x="9" y="4"/>
-      <inst strip="0" x="5" y="4"/>
-    </object>
     <object path="Kickle_Pack/Objects/Kickle.xml">
       <inst strip="0" x="7" y="11"/>
     </object>

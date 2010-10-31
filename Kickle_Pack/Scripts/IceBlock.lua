@@ -69,7 +69,7 @@ function IceBlock.AI( self )
     State.DestroyObject( self )
     if IceBlock.slimeSpawnX == -1 and IceBlock.slimeSpawnY == -1 then
       local stateName = State.GetName()
-      if stateName == "GardenLand_E" then
+      if stateName == "GardenLand_C" then
         if IceBlock.startingY == 6 then
           IceBlock.slimeSpawnX = 6
           IceBlock.slimeSpawnY = 3
