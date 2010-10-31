@@ -1,10 +1,9 @@
 #include "ObjectManager.h"
 
-#include <functional>
-#include <queue>
-#include <utility>
-
 #include <cstdlib>
+
+#include <set>
+#include <utility>
 
 #include "AnimSprite.h"
 #include "Camera.h"
@@ -400,10 +399,10 @@ void ObjectManager::UpdateCollisions( Object *obj, const Camera &cam ) {
   nt::core::FloatRect objRect = ObjectAttorney::GetRect( obj );
 
   nt::core::IntRect tileRange;
-  tileRange.topLeft.x = objRect.topLeft.x / tileSize;
-  tileRange.bottomRight.x = objRect.bottomRight.x / tileSize;
-  tileRange.topLeft.y = objRect.topLeft.y / tileSize;
-  tileRange.bottomRight.y = objRect.bottomRight.y / tileSize;
+  tileRange.topLeft.x = ( objRect.topLeft.x / tileSize );
+  tileRange.bottomRight.x = ( objRect.bottomRight.x / tileSize );
+  tileRange.topLeft.y = ( objRect.topLeft.y / tileSize );
+  tileRange.bottomRight.y = ( objRect.bottomRight.y / tileSize );
   nt::state::CullTileRect( tileRange );
 
   m_objGrid->SetRange( tileRange.topLeft.x, tileRange.topLeft.y,
@@ -416,7 +415,10 @@ void ObjectManager::UpdateCollisions( Object *obj, const Camera &cam ) {
 
       bool collidingWithObj = ObjectAttorney::IsCollidingWith( obj, colObj );
 
-      bool intersects = objRect.Intersects( ObjectAttorney::GetRect( colObj ));
+      bool intersects = nt::core::Intersect<int>(
+        objRect,
+        ObjectAttorney::GetRect( colObj )
+      );
 
       if ( !collidingWithObj && intersects ) {
         ObjectAttorney::HandleCollision( obj, colObj );

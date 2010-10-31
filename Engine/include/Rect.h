@@ -81,19 +81,6 @@ struct Rect {
   }
   
   /**
-   * @param other Rect to test intersection against.
-   * @return True if Rect intersects with other. To intersect means that part
-   * of one rectangle crosses at least unit over the part of another rectangle.
-   * Exact overlapping is not considered an intersection.
-   */
-  bool Intersects( const Rect<T> &other ) const {
-    return ( topLeft.x < other.bottomRight.x &&
-             topLeft.y < other.bottomRight.y &&
-             bottomRight.x > other.topLeft.x &&
-             bottomRight.y > other.topLeft.y );
-  } 
-
-  /**
    * Moves Rect by values passed in x and y directions.
    * @param x amount to move in x direction.
    * @param y amount to move in y direction.
@@ -155,6 +142,21 @@ struct Rect {
 typedef Rect<int> IntRect;
 typedef Rect<float> FloatRect;
 //@}
+
+
+/**
+ * Returns true if two rectangles passed intersect. To intersect means that
+ * part of one rectangle crosses at least one unit over the part of another
+ * rectangle. Exact overlapping is not considered an intersection.
+ */
+template< typename T >
+bool Intersect( const Rect<T> &a, const Rect<T> &b ) const {
+  return ( a.topLeft.x < b.bottomRight.x &&
+           a.topLeft.y < b.bottomRight.y &&
+           a.bottomRight.x > b.topLeft.x &&
+           a.bottomRight.y > b.topLeft.y );
+}
+
 
 } // namespace core
 } // namespace nt

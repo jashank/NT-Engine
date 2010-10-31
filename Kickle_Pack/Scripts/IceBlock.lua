@@ -90,8 +90,8 @@ end
 
 function IceBlock.HandleCollision( self, other )
   local otherType = other:GetType()
-        if otherType == "IceBreath" then
-                State.DestroyObject( other )
+  if otherType == "IceBreath" then
+    State.DestroyObject( other )
     self:ResetTimer() -- Refreezes IceBlock
 
   elseif otherType == "Slime" then

@@ -360,7 +360,6 @@ class TileMap(QtGui.QGraphicsScene):
 
         objImg.setZValue(self._zValObj)
         self.addItem(objImg)
-        print "place: ", x, " ", y, "\n"
 
     def placeTile(self, pos, x, y):
         """Places tile at grid coordinate (x,y).
@@ -407,7 +406,6 @@ class TileMap(QtGui.QGraphicsScene):
 
             tile = images[0].getTile()
             self.removeItem(images[0])
-            print "remove: ", tile.x(), " ", tile.y(), "\n"
             point = self._coordToKey(tile.x(), tile.y())
 
             objs = self._objMapping.get(point)

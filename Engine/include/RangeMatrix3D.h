@@ -51,27 +51,6 @@ class RangeMatrix3D {
   }
 
   /**
-   * Saves the current spot being iterated over. Useful for when you need
-   * to do a nested iteration which requires a new SetRange call.
-   */
-  void SavePlace() {
-    m_saveRange = m_range;
-    m_saveRangeItr = m_rangeItr;
-    m_saveElemItr = m_elemItr;
-  }
-
-  /**
-   * If SavePlace() was called previously, goes back to spot saved at.
-   * Note that moving any elements in between SavePlace and ToPlace may
-   * invalidate the iterator saved (depending on where things were moved.)
-   */
-  void ToPlace() {
-    m_range = m_saveRange;
-    m_rangeItr = m_saveRangeItr;
-    m_elemItr = m_saveElemItr;
-  }
-
-  /**
    * Returns next element in range last set (just at 0,0 if none set yet).
    * Iterates by column. When no more elements exist, returns NULL.
    */
@@ -97,33 +76,54 @@ class RangeMatrix3D {
   }
 
   /**
-   * Adds an element at specified position in matrix.
+   * Adds an element to range of positions in 'range', inclusive.
    */
-  void AddElem( T elem, int x, int y ) {
-    int i = Index( x, y );
-    m_mat[i].push_back( elem );
+  void AddElem( T elem, const IntRect &range ) {
+    for ( int x = range.topLeft.x; x <= range.bottomRight.x; ++x ) {
+      for ( int y = range.topLeft.y; y <= range.bottomRight.y; ++y ) {
+        int i = Index( x, y );
+        m_mat[i].push_back( elem );
+      }
+    }
   }
 
   /**
-   * Removes element at specified position in matrix. If element isn't there
-   * then does nothing.
+   * Removes element from range of positions, inclusive. It is okay if
+   * element is not in one of the positions.
    */
-  void RemoveElem( T elem, int x, int y ) {
-    int i = Index( x, y );
-    m_mat[i].remove( elem );
+  void RemoveElem( T elem, const IntRect &range ) {
+    for ( int x = range.topLeft.x; x <= range.bottomRight.x; ++x ) {
+      for ( int y = range.topLeft.y; y <= range.bottomRight.y; ++y ) {
+        int i = Index( x, y );
+        m_mat[i].remove( elem );
+      }
+    }
   }
 
   /**
-   * Moves last element returned by GetElem to position specified.
+   * Moves element from positions in lastRange to positions in currRange.
    */
-  void MoveReturnedElem( int x, int y ) {
-    if ( m_rangeItr.x != x || m_rangeItr.y != y ) {
-      --m_elemItr;
-      int newi = Index( x, y );
-      m_mat[newi].push_back( *m_elemItr );
+  void MoveElem(
+    T elem,
+    const IntRect &lastRange,
+    const IntRect &currRange
+  ) {
+    for ( int x = lastRange.topLeft.x; x <= lastRange.bottomRight.x; ++x ) {
+      for ( int y = lastRange.topLeft.y; y <= lastRange.bottomRight.y; ++y ) {
+        if ( !currRange.Contains( x, y ) ) {
+          int i = Index( x, y );
+          m_mat[i].remove( elem );
+        }
+      }
+    }
 
-      int oldi = Index( m_rangeItr.x, m_rangeItr.y );
-      m_elemItr = m_mat[oldi].erase( m_elemItr );
+    for ( int x = currRange.topLeft.x; x <= currRange.bottomRight.x; ++x ) {
+      for ( int y = currRange.topLeft.y; y <= currRange.bottomRight.y; ++y ) {
+        if ( !lastRange.Contains( x, y ) ) {
+          int i = Index( x, y );
+          m_mat[i].push_back( elem );
+        }
+      }
     }
   }
 
@@ -153,10 +153,6 @@ class RangeMatrix3D {
   nt::core::IntRect m_range; /** Range currently being iterated over. */
   nt::core::IntVec m_rangeItr; /** Iterates over dimensions of range. */
   ZItr m_elemItr; /** Iterates over elements of a dimension. */
-
-  nt::core::IntRect m_saveRange; /** Where SavePlace() stores range. */
-  nt::core::IntVec m_saveRangeItr; /** Where SavePlace() stores position. */
-  ZItr m_saveElemItr; /** Where SavePlace() stores element iterator. */
 };
 
 } // namespace core
