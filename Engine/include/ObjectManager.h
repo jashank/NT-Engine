@@ -1,8 +1,8 @@
 #ifndef OBJECTMANAGER_H
 #define OBJECTMANAGER_H
 
-#include <list>
 #include <map>
+#include <set>
 #include <string>
 #include <vector>
 
@@ -85,8 +85,22 @@ class ObjectManager {
   //@}
 
  private:
+  /**
+   * Compares Objects by order of creation. Earlier creation means less than.
+   */
+  struct CreationCmp;
+
+  /**
+   * Compares Objects by the y position of their sprite. Higher y position
+   * (meaning the actual position coordinate is lower) means less than. If
+   * the positions are the same then compares by order of creation.
+   */
+  struct YPosCmp;
+
   typedef std::multimap<std::string, Object*>::iterator MapItr;
   typedef std::multimap<std::string, Object*>::const_iterator MapItrConst;
+  typedef std::set<Object*, CreationCmp>::iterator SetItr;
+  typedef std::set<Object*, YPosCmp>::iterator RenderSetItr;
 
   //@{
   /**
@@ -163,6 +177,13 @@ class ObjectManager {
   ) const;
 
   /**
+   * Fills set passed with all objects in range set on object grid.
+   * This means that you should call SetRange before calling this method.
+   */
+  template< Compare >
+  void FillSet( std::set<Object*, Compare> &set );
+
+  /**
    * Key is Object's type. Holds all Objects in the current State of that type.
    */
   std::multimap<std::string, Object*> m_objTypes; 
@@ -178,4 +199,13 @@ class ObjectManager {
   std::vector<Object*> m_toBeDestroyed;
 };
 
+
+template< Compare >
+void FillSet( std::set<Object*, Compare> &set ) {
+  while ( Object *obj = m_objGrid->GetElem() ) {
+    set.insert( objs );
+  }
+}
+
 #endif // OBJECT_MANAGER_H
+

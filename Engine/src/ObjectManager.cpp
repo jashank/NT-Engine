@@ -1,8 +1,5 @@
 #include "ObjectManager.h"
 
-#include <cstdlib>
-
-#include <set>
 #include <utility>
 
 #include "AnimSprite.h"
@@ -15,8 +12,34 @@
 #include "Vector.h"
 #include "Window.h"
 
+
+/*********************************
+ Comparison Functors
+*********************************/
+struct ObjectManager::CreationCmp {
+  bool operator( Object *a, Object *b ) {
+    return ObjectAttorney::GetCreationNum( a ) <
+           ObjectAttorney::GetCreationNum( b );
+  }
+};
+
+
+struct ObjectManager::YPosCmp {
+  bool operator( Object *a, Object *b ) {
+    int aPos = ObjectAttorney::GetSprite( a ).GetPosition().y;
+    int bPos = ObjectAttorney::GetSprite( b ).GetPosition().y;
+    if ( aPos != bPos ) {
+      return aPos < bPos;
+    }
+
+    int aNum = ObjectAttorney::GetCreationNum( a );
+    int bNum = ObjectAttorney::GetCreationNum( b );
+    return aNum < bNum;
+  }
+};
+
 /********************************
-Constructor and Destructor
+ Constructor and Destructor
 ********************************/
 ObjectManager::ObjectManager()
   :m_objGrid( NULL ) {}
@@ -75,8 +98,10 @@ bool ObjectManager::LoadData( const TiXmlElement *dataRoot, lua_State *L ) {
   int mapHeight = nt::state::GetMapHeight();
 
   m_objGrid->SetRange( 0, 0, mapWidth - 1, mapHeight - 1 );
-  while ( Object *obj = m_objGrid->GetElem() ) {
-    ObjectAttorney::Init( obj );
+  std::set<Object*, CreationCmp> set;
+  FillSet<CreationCmp>( set );
+  for ( SetItr obj = set.begin(); obj != set.end(); ++obj ) {
+    ObjectAttorney::Init( *obj );
   }
 
   return true;
@@ -88,8 +113,10 @@ void ObjectManager::HandleEvents( const Camera & cam ) {
   GetCamCoords( cam, 1, 1, tLx, tLy, bRx, bRy );
 
   m_objGrid->SetRange( tLx, tLy, bRx, bRy );
-  while ( Object *obj = m_objGrid->GetElem() ) {
-    ObjectAttorney::HandleEvents( obj );
+  std::set<Object*, CreationCmp> set;
+  FillSet<CreationCmp>( set );
+  for ( SetItr obj = set.begin(); obj != set.end(); ++obj ) {
+    ObjectAttorney::HandleEvents( *obj );
   }
 }
 
@@ -99,42 +126,28 @@ void ObjectManager::Update( float dt, const Camera &cam ) {
   GetCamCoords( cam, 1, 1, tLx, tLy, bRx, bRy );
 
   m_objGrid->SetRange( tLx, tLy, bRx, bRy );
-  while ( Object *obj = m_objGrid->GetElem() ) {
-    m_objGrid->SavePlace();
-    UpdateCollisions( obj, cam );
-    m_objGrid->ToPlace();
-  }
+  std::set<Object*, CreationCmp> set;
+  FillSet<CreationCmp>( set );
 
-  // Update Objects by order of creation
-  std::priority_queue<
-    std::pair<int, Object*>, 
-    std::vector<std::pair<int, Object*> >,
-    std::greater<std::pair<int, Object*> > > creationOrder;
-
-  m_objGrid->SetRange( tLx, tLy, bRx, bRy );
-  while ( Object *obj = m_objGrid->GetElem() ) {
-    creationOrder.push( std::make_pair( 
-      ObjectAttorney::GetCreationNum( obj ), obj ));
+  // Need to separate collision from logic
+  for ( SetItr obj = set.begin(); obj != m_objSet.end(); ++obj ) {
+    UpdateCollisions( *obj, cam );
   }
-  while ( !creationOrder.empty() ) {
-    Object *obj = creationOrder.top().second;
-    ObjectAttorney::UpdateAI( obj, dt );
-    creationOrder.pop();
-  }
-
-  m_objGrid->SetRange( tLx, tLy, bRx, bRy );
-  // Make sure object's grid positions in matrix are correct
-  while ( Object *obj = m_objGrid->GetElem() ) {
-    nt::core::IntVec tile = ObjectAttorney::GetTile( obj );
-    m_objGrid->MoveReturnedElem( tile.x, tile.y );
+  for ( SetItr obj = set.begin(); obj != m_objSet.end(); ++obj ) {
+    Object *object = *obj;
+    UpdateAI( object, dt );
+    const nt::core::IntRect &lastTiles =
+      ObjectAttorney::GetLastTiles( object );
+    const nt::core::IntRect &currTiles = ObjectAttorney::GetTiles( object );
+    m_objGrid->MoveElem( object, lastTiles, currTiles );
   }
 
   // Delete all objects ready to be destroyed
   for ( unsigned int i = 0; i < m_toBeDestroyed.size(); ++i ) {
     Object *delObj = m_toBeDestroyed[i];
     
-    nt::core::IntVec coords = ObjectAttorney::GetTile( delObj );
-    m_objGrid->RemoveElem( delObj, coords.x, coords.y );
+    const nt::core::IntRect &tiles = ObjectAttorney::GetTiles( *delObj );
+    m_objGrid->RemoveElem( delObj, tiles );
         
     std::string type = ObjectAttorney::GetType( delObj ); 
     std::pair<MapItr, MapItr> objects = m_objTypes.equal_range( type );
@@ -145,9 +158,9 @@ void ObjectManager::Update( float dt, const Camera &cam ) {
         ++obj;
       }
     }
-    
     SAFEDELETE( m_toBeDestroyed[i] );
   }
+
   m_toBeDestroyed.clear();
 }
 
@@ -156,25 +169,18 @@ void ObjectManager::Render( float alpha, const Camera &cam ) const {
   int tLx, tLy, bRx, bRy;
   GetCamCoords( cam, 1, 1, tLx, tLy, bRx, bRy );
 
-  std::priority_queue< std::pair<float, Object*> > renderOrder;
-
   m_objGrid->SetRange( tLx, tLy, bRx, bRy );
-  while ( Object *obj = m_objGrid->GetElem() ) {
-    renderOrder.push( std::make_pair( 
-      -( ObjectAttorney::GetSprite( obj ).GetPosition().y ), obj ));
-  }
+  std::std<Object*, YPosCmp> set;
+  FillSet<YPosCmp>( set );
 
-  while ( !renderOrder.empty() ) {
-    Object *obj = renderOrder.top().second;
-
+  for ( RenderSetItr obj = set.begin(); obj != set.end(); ++obj ) {
+    Object *object = obj;
     // Interpolate the sprite's position for blending, then turn it back.
-    sf::Vector2f pos = ObjectAttorney::GetSpritePosition( obj );
-    ObjectAttorney::InterpolateSprite( obj, alpha );
-    nt::window::Draw( ObjectAttorney::GetSprite( obj ) );
-    nt::window::Draw( ObjectAttorney::GetText( obj ));
-    ObjectAttorney::SetSpritePosition( obj, pos );
-
-    renderOrder.pop();
+    sf::Vector2f &pos = ObjectAttorney::GetSpritePosition( object );
+    ObjectAttorney::InterpolateSprite( object, alpha );
+    nt::window::Draw( ObjectAttorney::GetSprite( object ) );
+    nt::window::Draw( ObjectAttorney::GetText( object ));
+    ObjectAttorney::SetSpritePosition( object, pos );
   }
 }
 
@@ -182,7 +188,7 @@ void ObjectManager::Render( float alpha, const Camera &cam ) const {
 bool ObjectManager::ObjectBlockingTile( int x, int y ) const {
   m_objGrid->SetRange( x, y, x, y );
   while ( Object *obj = m_objGrid->GetElem() ) {
-    if ( ObjectAttorney::BlockingTile( obj )) {
+    if ( ObjectAttorney::BlockingTiles( obj )) {
       return true;
     }
   }
@@ -293,9 +299,25 @@ int ObjectManager::LuaGetNearestObject( lua_State *L ) {
   for ( MapItrConst itr = keyRange.first; itr != keyRange.second; ++itr ) {
     Object *obj = (*itr).second;
 
-    nt::core::IntVec coords = ObjectAttorney::GetTile( obj );
-    int distanceX2 = abs( coords.x - tileX );
-    int distanceY2 = abs( coords.y - tileY );
+    nt::core::IntRect &tiles = ObjectAttorney::GetTiles( obj );
+    if ( tiles.Contains( tileX, tileY )) {
+      Lunar<Object>::push( L, obj );
+      return 1;
+    }
+
+    int distanceX2 = 0;
+    if ( tileX < tiles.topLeft.x ) {
+      distanceX2 = tiles.topLeft.x - tileX;
+    } else if ( tileX > tiles.bottomRight.x ) { 
+      distanceX2 = tileX - tiles.bottomRight.x;
+    }
+
+    int distanceY2 = 0;
+    if ( tileY < tiles.topLeft.y ) {
+      distanceY2 = tiles.topLeft.y - tileY;
+    } else if ( tileY > tiles.bottomRight.y ) {
+      distanceY2 = tileY - tiles.topLeft.y;
+    }
 
     if (( distanceX2 + distanceY2 ) < ( distanceX + distanceY )) {
       distanceX = distanceX2;
@@ -361,8 +383,8 @@ void ObjectManager::AddObject( Object *obj ) {
   m_objTypes.insert( std::make_pair(
     ObjectAttorney::GetType( obj ), obj )); 
   
-  nt::core::IntVec coords = ObjectAttorney::GetTile( obj );
-  m_objGrid->AddElem( obj, coords.x, coords.y );
+  nt::core::IntRect &tiles = ObjectAttorney::GetTiles( obj );
+  m_objGrid->AddElem( obj, tiles );
 }
 
 
@@ -396,7 +418,7 @@ Object* ObjectManager::ObjectOnTile( int x, int y ) const {
 void ObjectManager::UpdateCollisions( Object *obj, const Camera &cam ) {
   int tileSize = nt::state::GetTileSize();
 
-  nt::core::FloatRect objRect = ObjectAttorney::GetRect( obj );
+  nt::core::FloatRect &objRect = ObjectAttorney::GetRect( obj );
 
   nt::core::IntRect tileRange;
   tileRange.topLeft.x = ( objRect.topLeft.x / tileSize );
@@ -407,8 +429,12 @@ void ObjectManager::UpdateCollisions( Object *obj, const Camera &cam ) {
 
   m_objGrid->SetRange( tileRange.topLeft.x, tileRange.topLeft.y,
                        tileRange.bottomRight.x, tileRange.bottomRight.y );
+  std::set<Object*, CreationCmp> set;
+  FillSet<CreationCmp>( set );
 
-  while ( Object *colObj = m_objGrid->GetElem() ) {
+  for ( SetItr itr = set.begin(); itr != set.end(); ++itr ) {
+    Object *colObj = *itr;
+
     if ( colObj != obj && std::find( 
          m_toBeDestroyed.begin(), m_toBeDestroyed.end(), colObj ) ==
          m_toBeDestroyed.end()) {
@@ -439,7 +465,7 @@ void ObjectManager::GetCamCoords(
   int &bRx, 
   int &bRy
 ) const {
-  nt::core::IntRect view = cam.GetAdjustedFocus( xadj, yadj );
+  nt::core::IntRect &view = cam.GetAdjustedFocus( xadj, yadj );
   tLx = view.topLeft.x;
   tLy = view.topLeft.y;
   bRx = view.bottomRight.x;
