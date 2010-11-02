@@ -55,13 +55,16 @@ void AnimSprite::SetInitialPosition( float x, float y ) {
 }
 
 
-const AnimData *AnimSprite::GetAnimData() const {
-  return m_animData;
+int AnimSprite::GetFrame() const {
+  return m_frameNum;
 }
 
 
-int AnimSprite::GetFrame() const {
-  return m_frameNum;
+int AnimSprite::GetFrameHeight() const {
+  if ( m_animData ) {
+    return m_animData->GetFrameHeight( m_animNum );
+  }
+  return 0;
 }
 
 

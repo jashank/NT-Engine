@@ -148,6 +148,8 @@ class Object {
 
   int LuaGetType( lua_State *L );
 
+  int LuaGetTile( lua_State *L );
+
   int LuaGetTileRange( lua_State *L );
 
   int LuaBlockTileRange( lua_State *L );

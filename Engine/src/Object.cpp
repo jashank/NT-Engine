@@ -7,7 +7,6 @@ extern "C" {
 
 #include <SFML/System/Vector2.hpp>
 
-#include "AnimData.h"
 #include "ResourceLib.h"
 #include "StateComm.h"
 #include "Utilities.h"
@@ -35,6 +34,7 @@ Lunar<Object>::RegType Object::methods[] = {
   { "IsMoving", &Object::LuaIsMoving },
   { "SetNotColliding", &Object::LuaSetNotColliding },
   { "GetType", &Object::LuaGetType },
+  { "GetTile", &Object::LuaGetTile },
   { "GetTileRange", &Object::LuaGetTileRange },
   { "BlockTileRange", &Object::LuaBlockTileRange },
   { "GetDir", &Object::LuaGetDir },
@@ -132,13 +132,10 @@ Object::Object(
   float x = static_cast<float>( tileDim * tileX );
   float y = static_cast<float>( tileDim * tileY ); 
 
-  if( const AnimData *anim = m_sprite.GetAnimData() ) {
-    int startingAnim = m_sprite.GetAnimation();
-    int height = anim->GetFrameHeight( startingAnim );
-    if ( height > tileDim ) {
-      //Take into account the sprites that are taller than a normal tile
-      y -= anim->GetFrameHeight( startingAnim ) % tileDim;
-    }
+  int height = m_sprite.GetFrameHeight();
+  if ( height > tileDim ) {
+    //Take into account the sprites that are taller than a normal tile
+    y -= height - tileDim;
   }
   m_sprite.SetInitialPosition( x, y );
   AdjustTileRange();
@@ -339,6 +336,24 @@ int Object::LuaSetNotColliding( lua_State *L ) {
 int Object::LuaGetType( lua_State *L ) {
   lua_pushstring( L, m_type.c_str() );
   return 1;
+}
+
+
+int Object::LuaGetTile( lua_State *L ) {
+  int tileSize = nt::state::GetTileSize();
+
+  int tileX = m_sprite.GetPosition().x / tileSize;
+
+  float y = m_sprite.GetPosition().y;
+  int height = m_sprite.GetFrameHeight();
+  if ( height > tileSize ) {
+    y += height - tileSize;
+  }
+  int tileY = y / tileSize;
+
+  lua_pushinteger( L, tileX );
+  lua_pushinteger( L, tileY );
+  return 2;
 }
 
 
@@ -749,15 +764,18 @@ void Object::Realign() {
 void Object::AdjustTileRange() {
   int tileSize = nt::state::GetTileSize();
 
-  m_tileRange.topLeft.x = m_sprite.GetPosition().x / tileSize;
-  m_tileRange.topLeft.y = m_sprite.GetPosition().y / tileSize;
+  float x = m_sprite.GetPosition().x;
+  float y = m_sprite.GetPosition().y;
+
+  m_tileRange.topLeft.x = x / tileSize;
+  m_tileRange.topLeft.y = y / tileSize;
 
   const sf::Vector2f &size = m_sprite.GetSize();
 
   m_tileRange.bottomRight.x =
-    ( m_tileRange.topLeft.x + size.x ) / tileSize;
+    ( x + size.x ) / tileSize;
   m_tileRange.bottomRight.y =
-    ( m_tileRange.topLeft.y + size.y ) / tileSize;
+    ( y + size.y ) / tileSize;
 }
 
 

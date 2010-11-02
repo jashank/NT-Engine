@@ -45,14 +45,15 @@ class AnimSprite : public sf::Sprite {
   void SetInitialPosition( float x, float y );
 
   /**
-   * @return AnimData for this sprite's animations.
-   */
-  const AnimData* GetAnimData() const;
-
-  /**
    * @return Number of current frame sprite is on.
    */
   int GetFrame() const;
+
+  /**
+   * Returns frame height of current frame sprite is on. If no animation
+   * data stored returns 0.
+   */
+  int GetFrameHeight() const;
 
   /**
    * @return Index where sprite's current animation is stored in its AnimData.

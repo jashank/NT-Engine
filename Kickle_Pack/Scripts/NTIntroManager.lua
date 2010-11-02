@@ -5,7 +5,7 @@ NTIntroMngr.freezeLogo = false
 
 -- Initializes intro manager to create the logo and set it to transparent
 function NTIntroMngr.Init( self )
-    logo = State.CreateObject( "Kickle_Pack/Objects/NTLogo.xml", 6, 6 )
+    logo = State.CreateObject( "Kickle_Pack/Objects/NTLogo.xml", 6, 7 )
     logo:SetAlpha(NTIntroMngr.alpha)
     self:ResetTimer()
 end

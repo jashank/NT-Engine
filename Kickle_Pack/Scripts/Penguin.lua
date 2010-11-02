@@ -13,7 +13,7 @@ function Penguin.AI( self )
     local timeFrozen = self:GetElapsedTime()
     if ( timeFrozen >= 5 ) then
       Penguin.frozen = false
-      self:BlockTile( false )
+      self:BlockTileRange( false )
     end
   end
 end
@@ -22,7 +22,7 @@ function Penguin.HandleCollision( self, other )
   local otherType = other:GetType()
   if otherType == "IceBreath" then
     Penguin.frozen = true
-    self:BlockTile( true )
+    self:BlockTileRange( true )
     -- Set animation to frozen
     self:ResetTimer()
     State.DestroyObject( other )

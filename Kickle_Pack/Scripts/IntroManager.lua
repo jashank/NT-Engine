@@ -35,7 +35,7 @@ function IntroMngr.SlimesSitting()
   end
 
   for k, v in ipairs( slimes ) do
-    v:BlockTile( false )
+    v:BlockTileRange( false )
   end
   return true
 end

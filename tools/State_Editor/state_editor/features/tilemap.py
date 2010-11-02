@@ -355,7 +355,7 @@ class TileMap(QtGui.QGraphicsScene):
         # Take object's height into account
         yPos = self._tileSize * y
         if objImg.pixmap().height() > self._tileSize:
-            yPos -= (objImg.pixmap().height() % self._tileSize)
+            yPos -= (objImg.pixmap().height() - self._tileSize)
         objImg.setPos(self._tileSize * x, yPos)
 
         objImg.setZValue(self._zValObj)
