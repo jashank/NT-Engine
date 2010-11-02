@@ -1,8 +1,6 @@
 #ifndef VECTOR_H
 #define VECTOR_H
 
-#include "Utilities.h"
-
 namespace nt {
 namespace core {
 
@@ -113,18 +111,6 @@ struct Vector {
     return Vector<T>(x / other.x, y / other.y, z / other.z );
   }
 
-
-  bool operator==( const Vector<T> &other ) const {
-    // Equals used for floats.
-    return ( Equals<T>( x, other.x ) && Equals<T>( y, other.y ) && 
-             Equals<T>( z, other.z ));
-  }
-
-  bool operator!=( const Vector<T> &other ) const {
-    return ( !Equals<T>( x, other.x ) || !Equals<T>( y, other.y ) ||
-             !Equals<T>( z, other.z ));
-  }
-
   T x; /** x-coordinate of Vector. */
   T y; /** y-coordinate of Vector. */
   T z; /** z-coordinate of Vector. */
@@ -138,6 +124,21 @@ typedef Vector<int> IntVec;
 typedef Vector<float> FloatVec;
 //@}
  
+
+/**
+ * Compare equality x, y and z.
+ */
+bool operator==( const IntVec &a, const IntVec &b ) {
+  return ( a.x == b.x && a.y == b.y && a.z == b.z );
+}
+
+/**
+ * Compare inequality of x, y and z.
+ */
+bool operator!=( const IntVec &a, const IntVec &b ) {
+  return !( a == b ); 
+}
+
 } // namespace core
 } // namespace nt
 

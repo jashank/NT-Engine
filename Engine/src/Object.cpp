@@ -5,6 +5,8 @@ extern "C" {
   #include "lualib.h"
 }
 
+#include <SFML/System/Vector2.hpp>
+
 #include "AnimData.h"
 #include "ResourceLib.h"
 #include "StateComm.h"
@@ -32,8 +34,8 @@ Lunar<Object>::RegType Object::methods[] = {
   { "IsMoving", &Object::LuaIsMoving },
   { "SetNotColliding", &Object::LuaSetNotColliding },
   { "GetType", &Object::LuaGetType },
-  { "GetTile", &Object::LuaGetTile },
-  { "BlockTile", &Object::LuaBlockTile },
+  { "GetTileRange", &Object::LuaGetTileRange },
+  { "BlockTileRange", &Object::LuaBlockTileRange },
   { "GetDir", &Object::LuaGetDir },
   { "SetDir", &Object::LuaSetDir },
   { "GetTable", &Object::LuaGetTable },
@@ -61,7 +63,7 @@ Lunar<Object>::RegType Object::methods[] = {
 Object::Object( lua_State *L )
  : m_creationNum( 0 ), 
    m_moving( false ),
-   m_blockingTile( false ),
+   m_blockingTiles( false ),
    m_noClip( false ),
    m_ptrCallScriptFunc( boost::bind( &Object::CallScriptFunc, this, _1 )),
    m_direction( UP ),
@@ -109,15 +111,14 @@ Object::Object(
  : 
    m_creationNum( 0 ),
    m_moving( false ),
-   m_blockingTile( false ),
+   m_blockingTiles( false ),
    m_noClip( false ),
    m_ptrCallScriptFunc( boost::bind( &Object::CallScriptFunc, this, _1 )),
    m_direction( UP ),
    m_distance( 0.0f ),
    m_speed( 0.0f ),
    m_id( LUA_NOREF ),
-   m_L( L ),
-   m_coords( tileX, tileY ) {
+   m_L( L ) {
   if( !LoadObjectData( filepath ) ) {
     LogErr( "Object XML file " + filepath + " didn't load correctly." );
   }
@@ -125,22 +126,22 @@ Object::Object(
   m_sprite.SetAnimation( strip );
   m_sprite.Play();
 
-  //Calculate the float positions given tileX and tileY
-  //Taking into account tile size, and max tiles across/down
   int tileDim = nt::state::GetTileSize();
 
   float x = static_cast<float>( tileDim * tileX );
   float y = static_cast<float>( tileDim * tileY ); 
 
-  if( m_sprite.GetAnimData() ) {
+  if( AnimData *anim = m_sprite.GetAnimData() ) {
     int startingAnim = m_sprite.GetAnimation();
-    int height = m_sprite.GetAnimData()->GetFrameHeight( startingAnim );
+    int height = anim->GetFrameHeight( startingAnim );
     if ( height > tileDim ) {
       //Take into account the sprites that are taller than a normal tile
-      y -= m_sprite.GetAnimData()->GetFrameHeight( startingAnim ) % tileDim;
+      y -= anim->GetFrameHeight( startingAnim ) % tileDim;
     }
   }
   m_sprite.SetInitialPosition( x, y );
+  AdjustTileRange();
+  m_lastTileRange = m_tileRange;
 
   if( !LoadCollisionData( filepath ) ) {
     LogErr( "Object XML file " + filepath + " didn't load correctly." );
@@ -278,23 +279,27 @@ int Object::LuaSetAlpha( lua_State *L ) {
 
 int Object::LuaMove( lua_State *L ) {
   if( !m_moving ) {
-    nt::core::IntVec nextCoords = m_coords;
+    nt::core::IntVec nextCoords;
 
     switch ( m_direction ) {
       case UP: {
-        --nextCoords.y;
+        nextCoords.x = m_tileRange.topLeft.x;
+        nextCoords.y = m_tileRange.topLeft.y - 1;
         break;
       }
       case DOWN: {
-        ++nextCoords.y;
+        nextCoords.x = m_tileRange.topLeft.x;
+        nextCoords.y = m_tileRange.topLeft.y + 1;
         break;
       }
       case LEFT: {
-        --nextCoords.x;
+        nextCoords.x = m_tileRange.topLeft.x - 1;
+        nextCoords.y = m_tileRange.topLeft.y;
         break;
       }
       case RIGHT: {
-        ++nextCoords.x;
+        nextCoords.x = m_tileRange.topLeft.x + 1;
+        nextCoords.y = m_tileRange.topLeft.y;
         break;
       }
       default: {}
@@ -336,15 +341,17 @@ int Object::LuaGetType( lua_State *L ) {
 }
 
 
-int Object::LuaGetTile( lua_State *L ) {
-  lua_pushinteger( L, m_coords.x );
-  lua_pushinteger( L, m_coords.y );
-  return 2;
+int Object::LuaGetTileRange( lua_State *L ) {
+  lua_pushinteger( L, m_tileRange.topLeft.x );
+  lua_pushinteger( L, m_tileRange.topLeft.y );
+  lua_pushinteger( L, m_tileRange.bottomRight.x );
+  lua_pushinteger( L, m_tileRange.bottomRight.y );
+  return 4;
 }
 
 
-int Object::LuaBlockTile( lua_State *L ) {
-  m_blockingTile = lua_toboolean( L, -1 );
+int Object::LuaBlockTileRange( lua_State *L ) {
+  m_blockingTiles = lua_toboolean( L, -1 );
   return 0;
 }
 
@@ -587,7 +594,7 @@ bool Object::LoadCollisionData( const std::string &filepath ) {
   if ( tile ) {
     const char *blockingTile = tile->Attribute( "block" );
     if ( blockingTile ) {
-      m_blockingTile = ( ToLowerCase( blockingTile ) == "true" );
+      m_blockingTiles = ( ToLowerCase( blockingTile ) == "true" );
     } else {
       LogErr( "No 'block' attribute specified for tile element in Object: " +
               filepath );
@@ -656,58 +663,41 @@ void Object::InitLua() {
 
 
 void Object::MovementUpdate( float dt ) {
-  int tileSize = nt::state::GetTileSize();
-  int halfTile = tileSize / 2;
-
-  // To tell if Object JUST crossed over the tile
-  float prevDist = m_distance;
-
   float distThisFrame = m_speed * dt;
   m_distance += distThisFrame;
-  bool nextTile = ( prevDist < halfTile && m_distance >= halfTile );
 
   switch( m_direction ) {
     case UP: {
       m_sprite.Move( 0.0f, -distThisFrame );
       m_collisionRect.Offset( 0.0f, -distThisFrame );
-      if ( nextTile ) {
-        --m_coords.y;
-      }
       break;
     }
     case DOWN: {
       m_sprite.Move( 0.0f, distThisFrame );
       m_collisionRect.Offset( 0.0f, distThisFrame );
-      if ( nextTile ) {
-        ++m_coords.y;
-      }
       break;
     }
     case LEFT: {
       m_sprite.Move( -distThisFrame, 0.0f );
       m_collisionRect.Offset( -distThisFrame, 0.0f );
-      if ( nextTile ) {
-        --m_coords.x;
-      }
       break;
     }
     case RIGHT: {
       m_sprite.Move( distThisFrame, 0.0f );
       m_collisionRect.Offset( distThisFrame, 0.0f );
-      if ( nextTile ) {
-        ++m_coords.x;
-      }
       break;
     }
     default: {}
   }
-
 
   if( m_distance >= tileSize ) {
     m_moving = false;
     Realign();
     m_distance = 0.0f;
   }
+
+  m_lastTileRange = m_tileRange;
+  AdjustTileRange();
 }
 
 
@@ -753,6 +743,21 @@ void Object::Realign() {
 }
 
 
+void Object::AdjustTileRange() {
+  int tileSize = nt::state::GetTileSize();
+
+  m_tileRange.topLeft.x = m_sprite.GetPosition().x / tileSize;
+  m_tileRange.topLeft.y = m_sprite.GetPosition().y / tileSize;
+
+  sf::Vector2f &size = m_sprite.GetSize();
+
+  m_tileRange.bottomRight.x =
+    ( m_tileRange.topLeft.x + size.x ) / tileSize;
+  m_tileRange.bottomRight.y =
+    ( m_tileRange.topLeft.y + size.y ) / tileSize;
+}
+
+
 void Object::CallScriptFunc( std::string funcName ) {
   if ( m_id != LUA_NOREF ) {
     lua_rawgeti( m_L, LUA_REGISTRYINDEX, m_id );
@@ -763,33 +768,6 @@ void Object::CallScriptFunc( std::string funcName ) {
     }
     lua_settop( m_L, 0 );
   }
-}
-
-
-nt::core::FloatVec Object::GetVelocityVector() {
-  nt::core::FloatVec velVec( 0.f, 0.f );
-  if ( m_moving ) {
-    switch ( m_direction ) {
-      case UP: {
-        velVec.y = -m_speed;
-        break;
-      }
-      case DOWN: {
-        velVec.y = m_speed;
-        break;
-      }
-      case LEFT: {
-        velVec.x = -m_speed;
-        break;
-      }
-      case RIGHT: {
-        velVec.x = m_speed;
-        break;
-      }
-      default:; // Object should have direction, just return 0 vel
-    }
-  }
-  return velVec;
 }
 
 

@@ -41,16 +41,6 @@ std::string GetFileName( std::string filePath );
 int RoundUp( float toRoundUp );
 
 /**
- * @return True if a and b are "equal" given a 0.0001 epsilon.
- */
-template< typename T >
-bool Equals( T a, T b ) {
-  // 0.0001 epsilon is close enough
-  return ( fabs( a - b ) < 0.0001 );
-}
-
-
-/**
  * @return True if a is greater than b.
  */
 template< typename T >

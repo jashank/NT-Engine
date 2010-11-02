@@ -108,20 +108,22 @@ class RangeMatrix3D {
     const IntRect &lastRange,
     const IntRect &currRange
   ) {
-    for ( int x = lastRange.topLeft.x; x <= lastRange.bottomRight.x; ++x ) {
-      for ( int y = lastRange.topLeft.y; y <= lastRange.bottomRight.y; ++y ) {
-        if ( !currRange.Contains( x, y ) ) {
-          int i = Index( x, y );
-          m_mat[i].remove( elem );
+    if ( lastRange != currRange ) {
+      for ( int x = lastRange.topLeft.x; x <= lastRange.bottomRight.x; ++x ) {
+        for ( int y = lastRange.topLeft.y; y <= lastRange.bottomRight.y; ++y ) {
+          if ( !currRange.Contains( x, y ) ) {
+            int i = Index( x, y );
+            m_mat[i].remove( elem );
+          }
         }
       }
-    }
 
-    for ( int x = currRange.topLeft.x; x <= currRange.bottomRight.x; ++x ) {
-      for ( int y = currRange.topLeft.y; y <= currRange.bottomRight.y; ++y ) {
-        if ( !lastRange.Contains( x, y ) ) {
-          int i = Index( x, y );
-          m_mat[i].push_back( elem );
+      for ( int x = currRange.topLeft.x; x <= currRange.bottomRight.x; ++x ) {
+        for ( int y = currRange.topLeft.y; y <= currRange.bottomRight.y; ++y ) {
+          if ( !lastRange.Contains( x, y ) ) {
+            int i = Index( x, y );
+            m_mat[i].push_back( elem );
+          }
         }
       }
     }

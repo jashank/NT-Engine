@@ -13,7 +13,6 @@
 #include "Lunar.h"
 #include "Rect.h"
 #include "TimedString.h"
-#include "Vector.h"
 
 class lua_State;
 
@@ -149,9 +148,9 @@ class Object {
 
   int LuaGetType( lua_State *L );
 
-  int LuaGetTile( lua_State *L );
+  int LuaGetTileRange( lua_State *L );
 
-  int LuaBlockTile( lua_State *L );
+  int LuaBlockTileRange( lua_State *L );
 
   int LuaGetDir( lua_State *L );
 
@@ -236,17 +235,17 @@ class Object {
   void Realign();
 
   /**
+   * Adjusts the range of tiles that the Object is currently on based on its
+   * sprite.
+   */
+  void AdjustTileRange();
+
+  /**
    * Calls function in Object's script, passing self as argument. If reference
    * to Object's table is nil, nothing happens.
    * @param funcName name of function in Object's script to call.
    */
   void CallScriptFunc( std::string funcName );
-
-  /**
-   * @return Object's x and y velocity in a 2D vector. Upward and leftward vel
-   * are negative, downward and rightward vel are positive.
-   */
-  nt::core::FloatVec GetVelocityVector();
 
   /**
    * @return Opposite direction Object is traveling.
@@ -276,9 +275,9 @@ class Object {
   bool m_moving; 
 
   /**
-   * If true, block other Objects from accessing this Object's tile.
+   * If true, block other Objects from accessing tiles Object is on.
    */
-  bool m_blockingTile;
+  bool m_blockingTiles;
 
   /**
    * If true, allow this Object to pass through objects blocking tiles and
@@ -325,9 +324,14 @@ class Object {
   lua_State *m_L;
 
   /**
-   * (x,y) coordinates of Object on tile map.
+   * Range of tiles that Object was on in the last update.
    */
-  nt::core::IntVec m_coords; 
+  nt::core::IntRect m_lastTileRange;
+
+  /**
+   * Range of tiles that Object is on.
+   */
+  nt::core::IntRect m_tileRange; 
   
   /**
    * Object's bounding box for collision.
@@ -472,12 +476,20 @@ class ObjectAttorney {
   { return obj->m_creationNum; }
 
   /**
-   * Returns tile coordinates of Object.
+   * Returns range of tiles that Object is on.
    * @param obj obj to call GetTile on.
    * @return obj's tile coordinates.
    */
-  static const nt::core::IntVec& GetTile( const Object *obj )
-  { return obj->m_coords; }
+  static const nt::core::IntRect& GetTileRange( const Object *obj )
+  { return obj->m_tileRange; }
+
+  /**
+   * Returns range of tiles that Object was on in last Update.
+   * @param obj obj to call GetTile on.
+   * @return obj's tile coordinates.
+   */
+  static const nt::core::IntRect& GetLastTileRange( const Object *obj )
+  { return obj->m_lastTileRange; }
   
   /**
    * Returns whether Object is blocking the tile it is on.

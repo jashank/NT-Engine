@@ -137,8 +137,9 @@ void ObjectManager::Update( float dt, const Camera &cam ) {
     Object *object = *obj;
     UpdateAI( object, dt );
     const nt::core::IntRect &lastTiles =
-      ObjectAttorney::GetLastTiles( object );
-    const nt::core::IntRect &currTiles = ObjectAttorney::GetTiles( object );
+      ObjectAttorney::GetLastTileRange( object );
+    const nt::core::IntRect &currTiles = 
+      ObjectAttorney::GetTileRange( object );
     m_objGrid->MoveElem( object, lastTiles, currTiles );
   }
 
@@ -146,7 +147,7 @@ void ObjectManager::Update( float dt, const Camera &cam ) {
   for ( unsigned int i = 0; i < m_toBeDestroyed.size(); ++i ) {
     Object *delObj = m_toBeDestroyed[i];
     
-    const nt::core::IntRect &tiles = ObjectAttorney::GetTiles( *delObj );
+    const nt::core::IntRect &tiles = ObjectAttorney::GetTileRange( *delObj );
     m_objGrid->RemoveElem( delObj, tiles );
         
     std::string type = ObjectAttorney::GetType( delObj ); 
@@ -299,7 +300,7 @@ int ObjectManager::LuaGetNearestObject( lua_State *L ) {
   for ( MapItrConst itr = keyRange.first; itr != keyRange.second; ++itr ) {
     Object *obj = (*itr).second;
 
-    nt::core::IntRect &tiles = ObjectAttorney::GetTiles( obj );
+    nt::core::IntRect &tiles = ObjectAttorney::GetTileRange( obj );
     if ( tiles.Contains( tileX, tileY )) {
       Lunar<Object>::push( L, obj );
       return 1;
@@ -383,7 +384,7 @@ void ObjectManager::AddObject( Object *obj ) {
   m_objTypes.insert( std::make_pair(
     ObjectAttorney::GetType( obj ), obj )); 
   
-  nt::core::IntRect &tiles = ObjectAttorney::GetTiles( obj );
+  nt::core::IntRect &tiles = ObjectAttorney::GetTileRange( obj );
   m_objGrid->AddElem( obj, tiles );
 }
 

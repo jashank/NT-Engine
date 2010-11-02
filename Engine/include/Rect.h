@@ -158,6 +158,22 @@ bool Intersect( const Rect<T> &a, const Rect<T> &b ) const {
 }
 
 
+/**
+ * Compare equality of top left and bottom right corners of rectangles.
+ */
+bool operator==( const IntVec &a, const IntVec &b ) {
+  return ( a.topLeft == b.topLeft && a.bottomRight == b.bottomRight );
+}
+
+
+/**
+ * Compare inequality of top left and bottom right corners of rectangles.
+ */
+bool operator!=( const IntVec &a, const IntVec &b ) {
+  return !( a == b );
+}
+
+
 } // namespace core
 } // namespace nt
 
