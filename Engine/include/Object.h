@@ -477,7 +477,6 @@ class ObjectAttorney {
 
   /**
    * Returns range of tiles that Object is on.
-   * @param obj obj to call GetTile on.
    * @return obj's tile coordinates.
    */
   static const nt::core::IntRect& GetTileRange( const Object *obj )
@@ -485,19 +484,18 @@ class ObjectAttorney {
 
   /**
    * Returns range of tiles that Object was on in last Update.
-   * @param obj obj to call GetTile on.
    * @return obj's tile coordinates.
    */
   static const nt::core::IntRect& GetLastTileRange( const Object *obj )
   { return obj->m_lastTileRange; }
   
   /**
-   * Returns whether Object is blocking the tile it is on.
+   * Returns whether Object is blocking the tiles it is on.
    * @param obj object to check
    * @return true if obj is blocking tile, false otherwise
    */
-  static int BlockingTile( const Object *obj )
-  { return obj->m_blockingTile; }
+  static int BlockingTileRange( const Object *obj )
+  { return obj->m_blockingTiles; }
  
   /**
    * Returns the Object's type (name of it's XML file with .xml cut off)

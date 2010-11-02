@@ -10,6 +10,7 @@ extern "C" {
 #include "AnimData.h"
 #include "ResourceLib.h"
 #include "StateComm.h"
+#include "Utilities.h"
 #include "tinyxml.h"
 
 int Object::numCreated = 0;
@@ -131,7 +132,7 @@ Object::Object(
   float x = static_cast<float>( tileDim * tileX );
   float y = static_cast<float>( tileDim * tileY ); 
 
-  if( AnimData *anim = m_sprite.GetAnimData() ) {
+  if( const AnimData *anim = m_sprite.GetAnimData() ) {
     int startingAnim = m_sprite.GetAnimation();
     int height = anim->GetFrameHeight( startingAnim );
     if ( height > tileDim ) {
@@ -663,6 +664,8 @@ void Object::InitLua() {
 
 
 void Object::MovementUpdate( float dt ) {
+  int tileSize = nt::state::GetTileSize();
+
   float distThisFrame = m_speed * dt;
   m_distance += distThisFrame;
 
@@ -749,7 +752,7 @@ void Object::AdjustTileRange() {
   m_tileRange.topLeft.x = m_sprite.GetPosition().x / tileSize;
   m_tileRange.topLeft.y = m_sprite.GetPosition().y / tileSize;
 
-  sf::Vector2f &size = m_sprite.GetSize();
+  const sf::Vector2f &size = m_sprite.GetSize();
 
   m_tileRange.bottomRight.x =
     ( m_tileRange.topLeft.x + size.x ) / tileSize;

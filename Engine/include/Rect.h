@@ -79,7 +79,19 @@ struct Rect {
              bottomRight.x >= x &&
              bottomRight.y >= y );
   }
-  
+
+  /**
+   * Returns true if two rectangles passed intersect. To intersect means that
+   * part of one rectangle crosses at least one unit over the part of another
+   * rectangle. Exact overlapping is not considered an intersection.
+   */
+  bool Intersects( const Rect<T> &other ) const {
+    return ( topLeft.x < other.bottomRight.x &&
+             topLeft.y < other.bottomRight.y &&
+             bottomRight.x > other.topLeft.x &&
+             bottomRight.y > other.topLeft.y );
+  }
+
   /**
    * Moves Rect by values passed in x and y directions.
    * @param x amount to move in x direction.
@@ -131,6 +143,22 @@ struct Rect {
     bottomRight.y = topLeft.y + y;
   }
 
+  /**
+   * Return true if topLeft and bottomRight are equal to other 
+   * Rect's members.
+   */
+  bool operator==( const Rect<T> &other ) const {
+    return ( topLeft == other.topLeft && bottomRight == other.bottomRight );
+  }
+
+  /**
+   * Return true if topLeft and bottomRight are not equal to other 
+   * Rect's members.
+   */
+  bool operator!=( const Rect<T> &other ) const {
+    return !( *this == other );
+  }
+
   Vector<T> topLeft;
   Vector<T> bottomRight;
 };
@@ -143,39 +171,8 @@ typedef Rect<int> IntRect;
 typedef Rect<float> FloatRect;
 //@}
 
-
-/**
- * Returns true if two rectangles passed intersect. To intersect means that
- * part of one rectangle crosses at least one unit over the part of another
- * rectangle. Exact overlapping is not considered an intersection.
- */
-template< typename T >
-bool Intersect( const Rect<T> &a, const Rect<T> &b ) const {
-  return ( a.topLeft.x < b.bottomRight.x &&
-           a.topLeft.y < b.bottomRight.y &&
-           a.bottomRight.x > b.topLeft.x &&
-           a.bottomRight.y > b.topLeft.y );
-}
-
-
-/**
- * Compare equality of top left and bottom right corners of rectangles.
- */
-bool operator==( const IntVec &a, const IntVec &b ) {
-  return ( a.topLeft == b.topLeft && a.bottomRight == b.bottomRight );
-}
-
-
-/**
- * Compare inequality of top left and bottom right corners of rectangles.
- */
-bool operator!=( const IntVec &a, const IntVec &b ) {
-  return !( a == b );
-}
-
-
-} // namespace core
-} // namespace nt
+} // core
+} // nt
 
 #endif // RECT_H
 

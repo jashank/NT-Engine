@@ -4,6 +4,7 @@
 #include <list>
 
 #include "Rect.h"
+#include "Utilities.h"
 
 namespace nt {
 namespace core {

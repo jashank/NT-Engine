@@ -111,6 +111,20 @@ struct Vector {
     return Vector<T>(x / other.x, y / other.y, z / other.z );
   }
 
+  /**
+   * Return true if x, y, and z are equal to other Vector's members.
+   */
+  bool operator==( const Vector<T> &other ) const {
+    return ( x == other.x && y == other.y && z == other.z );
+  }
+
+  /**
+   * Return true if x, y, or z are not equal to other Vector's members.
+   */
+  bool operator!=( const Vector<T> &other ) const {
+    return !( *this == other ); 
+  }
+
   T x; /** x-coordinate of Vector. */
   T y; /** y-coordinate of Vector. */
   T z; /** z-coordinate of Vector. */
@@ -124,20 +138,6 @@ typedef Vector<int> IntVec;
 typedef Vector<float> FloatVec;
 //@}
  
-
-/**
- * Compare equality x, y and z.
- */
-bool operator==( const IntVec &a, const IntVec &b ) {
-  return ( a.x == b.x && a.y == b.y && a.z == b.z );
-}
-
-/**
- * Compare inequality of x, y and z.
- */
-bool operator!=( const IntVec &a, const IntVec &b ) {
-  return !( a == b ); 
-}
 
 } // namespace core
 } // namespace nt

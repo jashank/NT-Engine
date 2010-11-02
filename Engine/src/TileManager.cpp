@@ -71,7 +71,7 @@ void TileManager::Update( float dt ) {
 
 void TileManager::Render( const Camera &cam ) {
   if ( m_tileSprites ) {
-    nt::core::IntRect &view = cam.GetAdjustedFocus( 1, 1 );
+    const nt::core::IntRect &view = cam.GetAdjustedFocus( 1, 1 );
     int tLx = view.topLeft.x;
     int tLy = view.topLeft.y;
     int bRx = view.bottomRight.x;

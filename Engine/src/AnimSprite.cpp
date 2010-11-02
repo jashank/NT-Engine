@@ -5,6 +5,7 @@
 
 #include "AnimData.h"
 #include "ResourceLib.h"
+#include "Utilities.h"
 
 /************************************************
 Public Methods
