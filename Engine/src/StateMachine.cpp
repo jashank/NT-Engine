@@ -26,6 +26,7 @@ const luaL_Reg StateMachine::m_luaFuncs[] = {
   { "GetObject", LuaGetObject },
   { "GetObjects", LuaGetObjects },
   { "GetNearestObject", LuaGetNearestObject },
+  { "GetNearestToObject", LuaGetNearestToObject },
   { "GetObjectOnTile", LuaGetObjectOnTile },
   { "ObjectBlockingTile", LuaObjectBlockingTile },
   { "GetTileInfo", LuaGetTileInfo },
@@ -169,6 +170,10 @@ int StateMachine::LuaGetObjects( lua_State *L ) {
 
 int StateMachine::LuaGetNearestObject( lua_State *L ) {
   return m_runningState->LuaGetNearestObject( L );
+}
+
+int StateMachine::LuaGetNearestToObject( lua_State *L ) {
+  return m_runningState->LuaGetNearestToObject( L );
 }
 
 int StateMachine::LuaGetObjectOnTile( lua_State *L ) {

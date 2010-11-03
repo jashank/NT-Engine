@@ -69,6 +69,8 @@ class StateMachine {
 
   static int LuaGetNearestObject( lua_State *L );
 
+  static int LuaGetNearestToObject( lua_State *L );
+
   static int LuaGetObjectOnTile( lua_State *L );
 
   static int LuaObjectBlockingTile( lua_State *L );

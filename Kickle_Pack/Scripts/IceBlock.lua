@@ -7,15 +7,12 @@ local IceBlock = {}
 
 IceBlock.kicked = false
 IceBlock.moving = false
-IceBlock.startingX = -1
-IceBlock.startingY = -1
 IceBlock.destroyed = false 
-IceBlock.slimeSpawnX = -1
-IceBlock.slimeSpawnY = -1
+IceBlock.slimeSpawn = nil
 
 function IceBlock.Init( self )
+  IceBlock.slimeSpawn = State.GetNearestToObject( "SpawnPoint", self )
   self:ResetTimer()
-  IceBlock.startingX, IceBlock.startingY = self:GetTile()
 end
 
 function IceBlock.AI( self )
@@ -55,7 +52,7 @@ function IceBlock.AI( self )
       if tileType == "water" then
         local tileType, tileName =
           State.GetTileInfo( self:GetTile() )
-        State.SetTile( facingX, facingY, tileName, 0 )
+          State.SetTile( facingX, facingY, tileName, 0 )
       end
     else
       if obj then
@@ -66,24 +63,9 @@ function IceBlock.AI( self )
   end
 
   if IceBlock.destroyed then
+    spawn = IceBlock.slimeSpawn
+    spawn:GetTable().Spawn( spawn )
     State.DestroyObject( self )
-    if IceBlock.slimeSpawnX == -1 and IceBlock.slimeSpawnY == -1 then
-      local stateName = State.GetName()
-      if stateName == "GardenLand_C" then
-        if IceBlock.startingY == 6 then
-          IceBlock.slimeSpawnX = 6
-          IceBlock.slimeSpawnY = 3
-        else
-          IceBlock.slimeSpawnX = 8
-          IceBlock.slimeSpawnY = 3
-        end
-      end
-    end
-    State.CreateObject(
-      "Kickle_Pack/Objects/Slime.xml",
-      IceBlock.slimeSpawnX,
-      IceBlock.slimeSpawnY
-    )
   end
 end
 

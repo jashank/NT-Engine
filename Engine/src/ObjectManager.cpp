@@ -298,64 +298,61 @@ int ObjectManager::LuaGetNearestObject( lua_State *L ) {
   int tileX = lua_tointeger( L, -2 );
   int tileY = lua_tointeger( L, -1 );
 
-  int distanceX = nt::state::GetMapWidth();
-  int distanceY = nt::state::GetMapHeight();
+  Lunar<Object>::push( L, NearestObject( type, tileX, tileY ));
+  return 1;
+}
 
-  Object *nearestObj = NULL;
 
-  std::pair<MapItrConst, MapItrConst> keyRange =  
-    m_objTypes.equal_range( type );
-  
-  for ( MapItrConst itr = keyRange.first; itr != keyRange.second; ++itr ) {
-    Object *obj = (*itr).second;
+int ObjectManager::LuaGetNearestToObject( lua_State *L ) {
+  if ( !lua_isstring( L, -2 )) {
+    LogLuaErr( "String not passed for object type to GetNearestToObject." );
+    return 0;
+  }
+  std::string type = lua_tostring( L, -2 );
 
-    const nt::core::IntRect &tiles = ObjectAttorney::GetTileRange( obj );
-    if ( tiles.Contains( tileX, tileY )) {
-      Lunar<Object>::push( L, obj );
-      return 1;
-    }
-
-    int distanceX2 = 0;
-    if ( tileX < tiles.topLeft.x ) {
-      distanceX2 = tiles.topLeft.x - tileX;
-    } else if ( tileX > tiles.bottomRight.x ) { 
-      distanceX2 = tileX - tiles.bottomRight.x;
-    }
-
-    int distanceY2 = 0;
-    if ( tileY < tiles.topLeft.y ) {
-      distanceY2 = tiles.topLeft.y - tileY;
-    } else if ( tileY > tiles.bottomRight.y ) {
-      distanceY2 = tileY - tiles.topLeft.y;
-    }
-
-    if (( distanceX2 + distanceY2 ) < ( distanceX + distanceY )) {
-      distanceX = distanceX2;
-      distanceY = distanceY2;
-      nearestObj = obj;
-    }
+  Object *obj = NULL;
+  if ( !(obj = Lunar<Object>::check( L, -1 ))) {
+    LogLuaErr( "Object not passed for second argument to GetNearestToObject" );
+    return 0;
   }
 
-  Lunar<Object>::push( L, nearestObj );
+  const nt::core::IntRect &tiles = ObjectAttorney::GetTileRange( obj ); 
+  int tileX = tiles.topLeft.x;
+  int tileY = tiles.topLeft.y;
+
+  Lunar<Object>::push( L, NearestObject( type, tileX, tileY, obj ));
   return 1;
 }
 
 
 int ObjectManager::LuaGetObjectOnTile( lua_State *L ) {
-  if ( !lua_isnumber( L, -2 ) ) {
+  if ( !lua_isnumber( L, 1 ) ) {
     LogLuaErr( "Number not passed to x position in GetObjectOnTile." );
     return 0;
   }
-  int tileX = lua_tointeger( L, -2 );
+  int tileX = lua_tointeger( L, 1 );
 
-  if ( !lua_isnumber( L, -1 ) ) {
-    LogLuaErr( "Number not passed to y position in GetObjectOnTile.");
+  if ( !lua_isnumber( L, 2 ) ) {
+    LogLuaErr( "Number not passed to y position in GetObjectOnTile." );
     return 0;
   }
-  int tileY = lua_tointeger( L, -1 );
+  int tileY = lua_tointeger( L, 2 );
+
+  std::string type = "";
+  if ( lua_gettop( L ) == 3 ) {
+    if ( !lua_isstring( L, 3 )) {
+      LogLuaErr( "String not passed to type argument in GetObjectOnTile." );
+      return 0;
+    }
+    type = lua_tostring( L, 3 );
+  }
 
   if ( nt::state::InRange( tileX, tileY )) {
-    Lunar<Object>::push( L, ObjectOnTile( tileX, tileY ));
+    if ( type == "" ) {
+      Lunar<Object>::push( L, ObjectOnTile( tileX, tileY ));
+    } else {
+      Lunar<Object>::push( L, ObjectOnTile( tileX, tileY, type ));
+    }
     return 1;
   } else {
     LogLuaErr( "Negative tile passed to GetObjectOnTile" );
@@ -406,7 +403,7 @@ void ObjectManager::RemoveObject( Object *obj ) {
 }
 
 
-Object* ObjectManager::FindObject( const std::string &type ) const {
+Object *ObjectManager::FindObject( const std::string &type ) const {
   std::pair<MapItrConst, MapItrConst> objects =
     m_objTypes.equal_range( type ); 
   if ( objects.first != objects.second ) {
@@ -416,12 +413,73 @@ Object* ObjectManager::FindObject( const std::string &type ) const {
 }
 
 
-Object* ObjectManager::ObjectOnTile( int x, int y ) const {
+Object *ObjectManager::ObjectOnTile( int x, int y ) const {
   m_objGrid->SetRange( x, y, x, y );
   while ( Object *obj = m_objGrid->GetElem() ) {
     return obj;
   }
   return NULL;
+}
+
+
+Object *ObjectManager::ObjectOnTile( int x, int y, std::string &type ) const {
+  m_objGrid->SetRange( x, y, x, y );
+  while ( Object *obj = m_objGrid->GetElem() ) {
+    if ( ObjectAttorney::GetType( obj ) == type ) {
+      return obj;
+    }
+  }
+  return NULL;
+}
+
+
+Object *ObjectManager::NearestObject( 
+  std::string &type, 
+  int x, 
+  int y, 
+  Object *exclude 
+) const {
+  int distanceX = nt::state::GetMapWidth();
+  int distanceY = nt::state::GetMapHeight();
+
+  Object *nearestObj = NULL;
+
+  std::pair<MapItrConst, MapItrConst> keyRange =  
+    m_objTypes.equal_range( type );
+  
+  for ( MapItrConst itr = keyRange.first; itr != keyRange.second; ++itr ) {
+    Object *obj = (*itr).second;
+    if ( obj == exclude ) {
+      continue;
+    }
+
+    const nt::core::IntRect &tiles = ObjectAttorney::GetTileRange( obj );
+    if ( tiles.Contains( x, y )) {
+      return obj;
+    }
+
+    int distanceX2 = 0;
+    if ( x < tiles.topLeft.x ) {
+      distanceX2 = tiles.topLeft.x - x;
+    } else if ( x > tiles.bottomRight.x ) { 
+      distanceX2 = x - tiles.bottomRight.x;
+    }
+
+    int distanceY2 = 0;
+    if ( y < tiles.topLeft.y ) {
+      distanceY2 = tiles.topLeft.y - y;
+    } else if ( y > tiles.bottomRight.y ) {
+      distanceY2 = y - tiles.topLeft.y;
+    }
+
+    if (( distanceX2 + distanceY2 ) < ( distanceX + distanceY )) {
+      distanceX = distanceX2;
+      distanceY = distanceY2;
+      nearestObj = obj;
+    }
+  }
+
+  return nearestObj;
 }
 
 

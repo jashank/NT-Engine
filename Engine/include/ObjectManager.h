@@ -79,6 +79,8 @@ class ObjectManager {
 
   int LuaGetNearestObject( lua_State *L );
 
+  int LuaGetNearestToObject( lua_State *L );
+
   int LuaGetObjectOnTile( lua_State *L );
 
   int LuaObjectBlockingTile( lua_State *L );
@@ -123,7 +125,7 @@ class ObjectManager {
    * @return Object with 'objType' as its type. If no Object is found, returns
    * NULL. If more than one is found, returns first found.
    */ 
-  Object* FindObject( const std::string &objType ) const;
+  Object *FindObject( const std::string &objType ) const;
 
   /**
    * @param x x tile coordinate.
@@ -131,7 +133,24 @@ class ObjectManager {
    * @return First Object on specified tile location. If no objects,
    * returns NULL. 
    */
-  Object* ObjectOnTile( int x, int y ) const;
+  Object *ObjectOnTile( int x, int y ) const;
+
+  /**
+   * Returns object on (x,y) tile coordinate with type passed.
+   */
+  Object *ObjectOnTile( int x, int y, std::string &type ) const;
+
+  /**
+   * Returns object of type nearest to the tile (x,y) (inclusive). 
+   * Optional fourth argument to specify NOT to return that
+   * Object if it is found, and instead to continue searching.
+   */
+  Object *NearestObject(
+    std::string &type,
+    int x,
+    int y,
+    Object *exclude = NULL
+  ) const;
 
   /**
    * Checks to see if Object passed is colliding with any Objects

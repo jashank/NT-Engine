@@ -23,16 +23,15 @@ end
 
 function IceBreath.HandleCollision( self, other )
   local otherType = other:GetType()
-        if ( otherType == "Slime" ) then
+  if ( otherType == "Slime" ) then
     IceBlock = State.CreateObject(
                  "Kickle_Pack/Objects/IceBlock.xml",
                  other:GetTile()
                  );
-    IceBlock:GetTable().slimeSpawnX = other:GetTable().spawnPointX
-    IceBlock:GetTable().slimeSpawnY = other:GetTable().spawnPointY
+    IceBlock:GetTable().slimeSpawn = other:GetTable().spawn
     State.DestroyObject( other )
     State.DestroyObject( self )
-        end
+ end
 end
 
 return IceBreath

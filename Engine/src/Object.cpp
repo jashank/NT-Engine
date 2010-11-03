@@ -341,13 +341,8 @@ int Object::LuaGetType( lua_State *L ) {
 
 
 int Object::LuaGetTile( lua_State *L ) {
-  int tileSize = nt::state::GetTileSize();
-
-  int tileX = m_collisionRect.topLeft.x / tileSize;
-  int tileY = m_collisionRect.topLeft.y / tileSize;
-
-  lua_pushinteger( L, tileX );
-  lua_pushinteger( L, tileY );
+  lua_pushinteger( L, m_tileRange.topLeft.x );
+  lua_pushinteger( L, m_tileRange.topLeft.y );
   return 2;
 }
 

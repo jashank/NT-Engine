@@ -96,6 +96,11 @@ int State::LuaGetNearestObject( lua_State *L ) {
   return m_objectManager.LuaGetNearestObject( L );
 }
 
+int State::LuaGetNearestToObject( lua_State *L ) {
+  return m_objectManager.LuaGetNearestToObject( L );
+}
+
+
 int State::LuaGetObjectOnTile( lua_State *L ) {
   return m_objectManager.LuaGetObjectOnTile( L );
 }

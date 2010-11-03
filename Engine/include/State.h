@@ -79,6 +79,8 @@ class State {
 
   int LuaGetNearestObject( lua_State *L );
 
+  int LuaGetNearestToObject( lua_State *L );
+
   int LuaGetObjectOnTile( lua_State *L );
 
   int LuaObjectBlockingTile( lua_State *L );
