@@ -138,12 +138,13 @@ Object::Object(
     y -= height - tileDim;
   }
   m_sprite.SetInitialPosition( x, y );
-  AdjustTileRange();
-  m_lastTileRange = m_tileRange;
 
   if( !LoadCollisionData( filepath ) ) {
     LogErr( "Object XML file " + filepath + " didn't load correctly." );
   }
+
+  AdjustTileRange();
+  m_lastTileRange = m_tileRange;
 
   InitLua();
 
@@ -287,7 +288,7 @@ int Object::LuaMove( lua_State *L ) {
       }
       case DOWN: {
         nextCoords.x = m_tileRange.topLeft.x;
-        nextCoords.y = m_tileRange.topLeft.y + 1;
+        nextCoords.y = m_tileRange.bottomRight.y + 1;
         break;
       }
       case LEFT: {
@@ -296,7 +297,7 @@ int Object::LuaMove( lua_State *L ) {
         break;
       }
       case RIGHT: {
-        nextCoords.x = m_tileRange.topLeft.x + 1;
+        nextCoords.x = m_tileRange.bottomRight.x + 1;
         nextCoords.y = m_tileRange.topLeft.y;
         break;
       }
@@ -342,14 +343,8 @@ int Object::LuaGetType( lua_State *L ) {
 int Object::LuaGetTile( lua_State *L ) {
   int tileSize = nt::state::GetTileSize();
 
-  int tileX = m_sprite.GetPosition().x / tileSize;
-
-  float y = m_sprite.GetPosition().y;
-  int height = m_sprite.GetFrameHeight();
-  if ( height > tileSize ) {
-    y += height - tileSize;
-  }
-  int tileY = y / tileSize;
+  int tileX = m_collisionRect.topLeft.x / tileSize;
+  int tileY = m_collisionRect.topLeft.y / tileSize;
 
   lua_pushinteger( L, tileX );
   lua_pushinteger( L, tileY );
@@ -764,18 +759,10 @@ void Object::Realign() {
 void Object::AdjustTileRange() {
   int tileSize = nt::state::GetTileSize();
 
-  float x = m_sprite.GetPosition().x;
-  float y = m_sprite.GetPosition().y;
-
-  m_tileRange.topLeft.x = x / tileSize;
-  m_tileRange.topLeft.y = y / tileSize;
-
-  const sf::Vector2f &size = m_sprite.GetSize();
-
-  m_tileRange.bottomRight.x =
-    ( x + size.x ) / tileSize;
-  m_tileRange.bottomRight.y =
-    ( y + size.y ) / tileSize;
+  m_tileRange.topLeft.x = m_collisionRect.topLeft.x / tileSize;
+  m_tileRange.topLeft.y = m_collisionRect.topLeft.y / tileSize;
+  m_tileRange.bottomRight.x = m_collisionRect.bottomRight.x / tileSize;
+  m_tileRange.bottomRight.y = m_collisionRect.bottomRight.y / tileSize; 
 }
 
 

@@ -185,7 +185,8 @@ void ObjectManager::Render( float alpha, const Camera &cam )  {
   for ( RenderSetItr obj = set.begin(); obj != set.end(); ++obj ) {
     Object *object = *obj;
     // Interpolate the sprite's position for blending, then turn it back.
-    const sf::Vector2f &pos = ObjectAttorney::GetSpritePosition( object );
+    // Copy current position because it will change when interpolated.
+    sf::Vector2f pos = ObjectAttorney::GetSpritePosition( object );
     ObjectAttorney::InterpolateSprite( object, alpha );
     nt::window::Draw( ObjectAttorney::GetSprite( object ) );
     nt::window::Draw( ObjectAttorney::GetText( object ));

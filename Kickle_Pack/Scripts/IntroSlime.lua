@@ -17,7 +17,8 @@ function IntroSlime.AI( self )
     local rightX = 9
 
     local x, y = self:GetTile()
-    if ( x == rightX or State.GetObjectOnTile( x + 1, y )) then
+    obj = State.GetObjectOnTile( x + 1, y )
+    if ( x == rightX or ( obj ~= self and obj ~= nil )) then
       self:SetDir( Util.DOWN )
       Util.SetAndPlay( self, Util.DOWN )
       IntroSlime.sitting = true
