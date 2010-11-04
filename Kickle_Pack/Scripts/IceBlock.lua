@@ -9,7 +9,6 @@ IceBlock.kicked = false
 IceBlock.moving = false
 IceBlock.destroyed = false 
 IceBlock.slimeSpawn = nil
-IceBlock.hittingSpring = false
 
 function IceBlock.Init( self )
   IceBlock.slimeSpawn = State.GetNearestToObject( "SpawnPoint", self )
@@ -31,6 +30,7 @@ function IceBlock.AI( self )
     objType = obj:GetType()
   end 
 
+  -- IceBlock just kicked
   if IceBlock.kicked then
     IceBlock.kicked = false
 
@@ -48,6 +48,7 @@ function IceBlock.AI( self )
     end
   end
 
+  -- IceBlock in motion
   if IceBlock.moving then
     if tileType == "water" or tileType == "" then
       IceBlock.destroyed = true
@@ -57,13 +58,14 @@ function IceBlock.AI( self )
           State.SetTile( facingX, facingY, tileName, 0 )
       end
     else
-      if obj and not IceBlock.hittingSpring then
-        self:SetNoClip( obj:GetType() == "Spring" )
+      if objType == "Spring" then
+        self:SetNoClip( true ) 
       end
     end
     IceBlock.moving = self:Move()
   end
 
+  -- IceBlock destroyed
   if IceBlock.destroyed then
     spawn = IceBlock.slimeSpawn
     spawn:GetTable().Spawn( spawn )
@@ -79,26 +81,16 @@ function IceBlock.HandleCollision( self, other )
     self:ResetTimer() -- Refreezes IceBlock
 
   elseif otherType == "Slime" then
-    local slimeSpawnX = other:GetTable().spawnPointX;
-    local slimeSpawnY = other:GetTable().spawnPointY;
-    State.CreateObject( 
-      "Kickle_Pack/Objects/Slime.xml",
-      slimeSpawnX,
-      slimeSpawnY
-    )
+    spawn = other:GetTable().spawn
+    spawn:GetTable().Spawn( spawn )
     State.DestroyObject( other )
 
   elseif otherType == "Penguin" then
     State.DestroyObject( other )
   
   elseif otherType == "Spring" then
-    IceBlock.hittingSpring = true
-    if other:GetFrame() <= 4 then
-      self:SlowDown( 60 )
-    elseif self:GetSpeed() == 0 and other:GetFrame() >= 5 then
-      self:SetDir( Util.GetOppositeDir( self:GetDir())) 
-      self:SetSpeed( 240 )
-    end
+    self:SetNoClip( false )
+    other:GetTable().SpringBlock( self )
   end
 end
 
