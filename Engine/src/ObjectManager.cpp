@@ -362,6 +362,56 @@ int ObjectManager::LuaGetObjectOnTile( lua_State *L ) {
 }
 
 
+int ObjectManager::LuaGetObjectsOnTile( lua_State *L ) {
+  if ( !lua_isnumber( L, 1 ) ) {
+    LogLuaErr( "Number not passed to x position in GetObjectsOnTile." );
+    return 0;
+  }
+  int tileX = lua_tointeger( L, 1 );
+
+  if ( !lua_isnumber( L, 2 ) ) {
+    LogLuaErr( "Number not passed to y position in GetObjectsOnTile." );
+    return 0;
+  }
+  int tileY = lua_tointeger( L, 2 );
+
+  std::string type = "";
+  if ( lua_gettop( L ) == 3 ) {
+    if ( !lua_isstring( L, 3 )) {
+      LogLuaErr( "String not passed to type argument in GetObjectsOnTile." );
+      return 0;
+    }
+    type = lua_tostring( L, 3 );
+  }
+
+  if ( nt::state::InRange( tileX, tileY )) {
+    lua_newtable( L );
+    int newTable = lua_gettop( L );
+    int index = 1; // Lua table indices start at 1
+
+    m_objGrid->SetRange( tileX, tileY, tileX, tileY );
+    if ( type == "" ) {
+      while ( Object *obj = m_objGrid->GetElem()) {
+        Lunar<Object>::push( L, obj );
+        lua_rawseti( L, newTable, index );
+        ++index;
+      }
+    } else {
+      while ( Object *obj = m_objGrid->GetElem()) {
+        if ( ObjectAttorney::GetType( obj ) == type ) {
+          Lunar<Object>::push( L, obj );
+          lua_rawseti( L, newTable, index );
+          ++index;
+        }
+      }
+    }
+    return 1;
+  }
+  LogLuaErr( "Invalid tile passed to GetObjectsOnTile." );
+  return 0;
+}
+
+
 int ObjectManager::LuaObjectBlockingTile( lua_State *L ) {
   if ( !lua_isnumber( L, -2 ) ) {
     LogLuaErr( "Number not passed to x position in ObjectBlockingTile" );

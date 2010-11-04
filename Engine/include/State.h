@@ -83,6 +83,8 @@ class State {
 
   int LuaGetObjectOnTile( lua_State *L );
 
+  int LuaGetObjectsOnTile( lua_State *L );
+
   int LuaObjectBlockingTile( lua_State *L );
 
   int LuaGetTileInfo( lua_State *L );

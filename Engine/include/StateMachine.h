@@ -73,6 +73,8 @@ class StateMachine {
 
   static int LuaGetObjectOnTile( lua_State *L );
 
+  static int LuaGetObjectsOnTile( lua_State *L );
+
   static int LuaObjectBlockingTile( lua_State *L );
 
   static int LuaGetTileInfo( lua_State *L );

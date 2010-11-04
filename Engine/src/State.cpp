@@ -100,9 +100,12 @@ int State::LuaGetNearestToObject( lua_State *L ) {
   return m_objectManager.LuaGetNearestToObject( L );
 }
 
-
 int State::LuaGetObjectOnTile( lua_State *L ) {
   return m_objectManager.LuaGetObjectOnTile( L );
+}
+
+int State::LuaGetObjectsOnTile( lua_State *L ) {
+  return m_objectManager.LuaGetObjectsOnTile( L );
 }
 
 int State::LuaObjectBlockingTile( lua_State *L ) {

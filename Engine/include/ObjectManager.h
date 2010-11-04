@@ -83,6 +83,8 @@ class ObjectManager {
 
   int LuaGetObjectOnTile( lua_State *L );
 
+  int LuaGetObjectsOnTile( lua_State *L );
+
   int LuaObjectBlockingTile( lua_State *L );
   //@}
 
