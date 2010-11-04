@@ -23,6 +23,7 @@ function Kickle.HandleCollision( self, other )
     if Kickle.state ~= DYING then
       Kickle.state = DYING
       Util.SetAndPlay( self, self:GetDir() + Kickle.state )
+      self:SetRenderPriority( -2 )
     end
 
   elseif ( otherType == "DreamBag" and Kickle.state ~= DYING ) then
@@ -111,14 +112,6 @@ function Kickle.WalkRight( self )
     Kickle.state = WALKING
     self:Move()
     Util.SetAndPlay( self, Util.RIGHT + Kickle.state )
-  end
-end
-
-
-function Kickle.Suicide( self )
-  if ( Kickle.state ~= DYING ) then
-    Kickle.state = DYING
-    Util.SetAndPlay( self, self:GetDir() + Kickle.state )
   end
 end
 

@@ -23,12 +23,12 @@ struct ObjectManager::CreationCmp {
 };
 
 
-struct ObjectManager::YPosCmp {
+struct ObjectManager::RenderPriorityCmp {
   bool operator()( Object *a, Object *b ) {
-    int aPos = ObjectAttorney::GetSprite( a ).GetPosition().y;
-    int bPos = ObjectAttorney::GetSprite( b ).GetPosition().y;
-    if ( aPos != bPos ) {
-      return aPos < bPos;
+    int aPriority = ObjectAttorney::GetRenderPriority( a );
+    int bPriority = ObjectAttorney::GetRenderPriority( b );
+    if ( aPriority != bPriority ) {
+      return aPriority < bPriority;
     }
 
     int aNum = ObjectAttorney::GetCreationNum( a );
@@ -42,7 +42,8 @@ struct ObjectManager::YPosCmp {
  ******************************/
 namespace {
   typedef std::set<Object*, ObjectManager::CreationCmp>::iterator SetItr;
-  typedef std::set<Object*, ObjectManager::YPosCmp>::iterator RenderSetItr;
+  typedef std::set<Object*, 
+            ObjectManager::RenderPriorityCmp>::iterator RenderSetItr;
 }
 
 /********************************
@@ -179,8 +180,8 @@ void ObjectManager::Render( float alpha, const Camera &cam )  {
   GetCamCoords( cam, 1, 1, tLx, tLy, bRx, bRy );
 
   m_objGrid->SetRange( tLx, tLy, bRx, bRy );
-  std::set<Object*, YPosCmp> set;
-  FillSet<YPosCmp>( set );
+  std::set<Object*, RenderPriorityCmp> set;
+  FillSet<RenderPriorityCmp>( set );
 
   for ( RenderSetItr obj = set.begin(); obj != set.end(); ++obj ) {
     Object *object = *obj;

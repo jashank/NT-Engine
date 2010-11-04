@@ -3,6 +3,7 @@
   <animation path="Kickle_Pack/Animations/DreamBagAnim_48x48.xml" />
   <script path="Kickle_Pack/Scripts/DreamBag.lua" />
   <speed pps="42" />
-  <rect x="0" y="0" width="48" height="48" />
+  <rect x="0" y="0" width="47" height="47" />
+  <render priority="-1" />
   <tile block="false" />
 </object>

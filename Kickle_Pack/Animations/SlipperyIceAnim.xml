@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+
+<animations>
+
+  <sheet path="Kickle_Pack/Sheets/slippery_ice.png">
+
+    <strip name="slippery_ice">
+      <clip x="0" y="0" width="48" height="48" />
+    </strip>
+
+  </sheet>
+</animations>
+

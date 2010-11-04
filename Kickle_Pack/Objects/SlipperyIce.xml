@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<object>
+  <animation path="Kickle_Pack/Animations/SlipperyIceAnim.xml" />
+  <script path="Kickle_Pack/Scripts/SlipperyIce.lua" />
+  <rect x="10" y="10" width="28" height="28" />
+  <render priority="-3" />
+  <tile block="false" />
+</object>

@@ -138,6 +138,8 @@ class Object {
 
   int LuaSetAlpha( lua_State *L );
 
+  int LuaSetRenderPriority( lua_State *L );
+
   int LuaMove( lua_State *L );
 
   int LuaIsMoving( lua_State *L );
@@ -270,6 +272,11 @@ class Object {
    * Nth Object created in app. For example, if this is 1, then this was 1st.
    */
   int m_creationNum;
+
+  /**
+   * Render priority. Higher priority means should be rendered on top.
+   */
+  int m_renderPriority;
 
   /**
    * If true, keep moving in m_direction.
@@ -444,18 +451,16 @@ class ObjectAttorney {
    * @param obj object whose sprite position is to be retrieved.
    * @return Object's sprite position.
    */
-  static const sf::Vector2f &GetSpritePosition( const Object *obj ) {
-    return obj->m_sprite.GetPosition();
-  }
+  static const sf::Vector2f &GetSpritePosition( const Object *obj )
+  {  return obj->m_sprite.GetPosition(); }
 
   /**
    * Sets the Object's sprite position to coordinates in vector.
    * @param obj object whose sprite position is to be modified.
    * @param vec vector with coordinates to set to sprite position.
    */
-  static void SetSpritePosition( Object *obj, const sf::Vector2f &vec ) {
-    obj->m_sprite.SetPosition( vec );
-  }
+  static void SetSpritePosition( Object *obj, const sf::Vector2f &vec )
+  {  obj->m_sprite.SetPosition( vec ); }
 
   /**
    * Interpolates the Object's sprite position with its previous position.
@@ -464,9 +469,15 @@ class ObjectAttorney {
    * @param alpha blending factor between previous frame and current frame.
    * Should be from [0:1].
    */
-  static void InterpolateSprite( Object *obj, float alpha ) {
-    obj->m_sprite.Interpolate( alpha );
-  }
+  static void InterpolateSprite( Object *obj, float alpha )
+  {  obj->m_sprite.Interpolate( alpha ); }
+
+  /**
+   * Returns Object's render priority. Higher priority indicates that it
+   * should be rendered on top of Objects with lower priority.
+   */
+  static int GetRenderPriority( const Object *obj )
+  { return obj->m_renderPriority; }
 
   /**
    * Returns when Object was created. For example, if one passes the first

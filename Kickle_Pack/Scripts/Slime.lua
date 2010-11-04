@@ -18,7 +18,8 @@ end
 
 function Slime.HandleCollision( self, other )
   local otherType = other:GetType()
-  if otherType == "Slime" or otherType == "Penguin" then
+  if otherType == "Slime" or otherType == "Penguin" or
+     otherType == "SlipperyIce" then
     local dir = self:SetDir( Util.GetOppositeDir( self:GetDir()))       
     Util.SetAndPlay( self, dir )
   end

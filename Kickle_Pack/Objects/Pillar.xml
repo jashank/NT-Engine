@@ -2,6 +2,6 @@
 <object>
   <animation path="Kickle_Pack/Animations/PillarAnim_48x48.xml" />
   <script path="Kickle_Pack/Scripts/Pillar.lua" />
-  <rect x="0" y="0" width="0" height="0" />
+  <rect x="6" y="15" width="34" height="30" />
   <tile block="true" />
 </object>

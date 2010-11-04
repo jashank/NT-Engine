@@ -3,5 +3,6 @@
   <animation path="Kickle_Pack/Animations/SpawnPointAnim_48x48.xml" />
   <script path="Kickle_Pack/Scripts/SpawnPoint.lua" />
   <rect x="0" y="0" width="0" height="0" />
+  <render priority="-1" />
   <tile block="true" />
 </object>

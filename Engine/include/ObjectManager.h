@@ -88,16 +88,17 @@ class ObjectManager {
 
  private:
   /**
-   * Compares Objects by order of creation. Earlier creation means less than.
+   * Compares Objects by order of creation.
+   * Earlier creation takes precedence.
    */
   struct CreationCmp;
 
   /**
-   * Compares Objects by the y position of their sprite. Higher y position
-   * (meaning the actual position coordinate is lower) means less than. If
-   * the positions are the same then compares by order of creation.
+   * Compares Objects by their render priority.
+   * If equal then compares by creation order. An Object with a higher
+   * render priority will be rendered last so it will be blitted on top.
    */
-  struct YPosCmp;
+  struct RenderPriorityCmp;
 
   typedef std::multimap<std::string, Object*>::iterator MapItr;
   typedef std::multimap<std::string, Object*>::const_iterator MapItrConst;

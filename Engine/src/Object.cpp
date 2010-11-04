@@ -30,6 +30,7 @@ Lunar<Object>::RegType Object::methods[] = {
   { "GetFrame", &Object::LuaGetFrame },
   { "IsAnimating", &Object::LuaIsAnimating },
   { "SetAlpha", &Object::LuaSetAlpha },
+  { "SetRenderPriority", &Object::LuaSetRenderPriority },
   { "Move", &Object::LuaMove },
   { "IsMoving", &Object::LuaIsMoving },
   { "SetNotColliding", &Object::LuaSetNotColliding },
@@ -62,7 +63,8 @@ Lunar<Object>::RegType Object::methods[] = {
 
 
 Object::Object( lua_State *L )
- : m_creationNum( 0 ), 
+ : m_creationNum( 0 ),
+   m_renderPriority( 0 ),
    m_moving( false ),
    m_blockingTiles( false ),
    m_noClip( false ),
@@ -111,6 +113,7 @@ Object::Object(
 )
  : 
    m_creationNum( 0 ),
+   m_renderPriority( 0 ),
    m_moving( false ),
    m_blockingTiles( false ),
    m_noClip( false ),
@@ -272,6 +275,16 @@ int Object::LuaSetAlpha( lua_State *L ) {
   } else {
     LogLuaErr( "Passed negative integer to SetAlpha in Object: " + m_type );
   }
+  return 0;
+}
+
+
+int Object::LuaSetRenderPriority( lua_State *L ) {
+  if ( !lua_isnumber( L, -1 )) {
+    LogLuaErr( "Number not passed to SetRenderPriority in Object: " + m_type );
+    return 0;
+  }
+  m_renderPriority = lua_tointeger( L, -1 );
   return 0;
 }
 
@@ -645,6 +658,11 @@ bool Object::LoadObjectData( const std::string &filepath ) {
   TiXmlElement *speed = root->FirstChildElement( "speed" );
   if ( speed ) {
     speed->QueryFloatAttribute( "pps", &m_speed );
+  }
+
+  TiXmlElement *render = root->FirstChildElement( "render" );
+  if ( render ) {
+    render->QueryIntAttribute( "priority", &m_renderPriority );
   }
 
   //Load input data if there is any
