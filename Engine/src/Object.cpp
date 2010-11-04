@@ -33,7 +33,6 @@ Lunar<Object>::RegType Object::methods[] = {
   { "SetRenderPriority", &Object::LuaSetRenderPriority },
   { "Move", &Object::LuaMove },
   { "IsMoving", &Object::LuaIsMoving },
-  { "SetNotColliding", &Object::LuaSetNotColliding },
   { "GetType", &Object::LuaGetType },
   { "GetTile", &Object::LuaGetTile },
   { "GetTileRange", &Object::LuaGetTileRange },
@@ -90,6 +89,11 @@ Object::Object( lua_State *L )
 
 
 Object::~Object() {
+  for ( std::list<Object*>::iterator colObj = m_collidingWith.begin();
+        colObj != m_collidingWith.end(); ++colObj ) {
+    (*colObj)->m_collidingWith.remove( this );
+  }
+
   if ( m_L ) {
     luaL_unref( m_L, LUA_REGISTRYINDEX, m_id );
   }
@@ -332,18 +336,6 @@ int Object::LuaMove( lua_State *L ) {
 int Object::LuaIsMoving( lua_State *L ) {
   lua_pushboolean( L, m_moving );
   return 1;
-}
-
-
-int Object::LuaSetNotColliding( lua_State *L ) {
-  Object* const other = Lunar<Object>::check( L, 1 );
-  if ( other ) {
-    m_collidingWith.remove( other );
-    return 0;
-  } else {
-    LogLuaErr( "No Object passed to SetNotColliding in Object: " + m_type );
-    return 0;
-  }
 }
 
 

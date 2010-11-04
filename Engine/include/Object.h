@@ -97,7 +97,7 @@ class Object {
    * passing self as first argument and Object that this Object collided
    * with as second argument. Once an Object collides with another, those
    * Objects won't 'HandleCollision' with each other again until after they
-   * separated (unless user undoes this with SetNotColliding). 
+   * separated.
    * @param collisionObj Object this Object collided with.
    */
   void HandleCollision( Object* collisionObj );
@@ -143,10 +143,6 @@ class Object {
   int LuaMove( lua_State *L );
 
   int LuaIsMoving( lua_State *L );
-
-  int LuaOnCollisionCourse( lua_State *L );
- 
-  int LuaSetNotColliding( lua_State *L );
 
   int LuaGetType( lua_State *L );
 

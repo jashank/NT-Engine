@@ -9,11 +9,13 @@ IceBlock.kicked = false
 IceBlock.moving = false
 IceBlock.destroyed = false 
 IceBlock.slimeSpawn = nil
+IceBlock.hittingSpring = false
 
 function IceBlock.Init( self )
   IceBlock.slimeSpawn = State.GetNearestToObject( "SpawnPoint", self )
   self:ResetTimer()
 end
+
 
 function IceBlock.AI( self )
   local timeFrozen = self:GetElapsedTime()
@@ -55,7 +57,7 @@ function IceBlock.AI( self )
           State.SetTile( facingX, facingY, tileName, 0 )
       end
     else
-      if obj then
+      if obj and not IceBlock.hittingSpring then
         self:SetNoClip( obj:GetType() == "Spring" )
       end
     end
@@ -90,13 +92,13 @@ function IceBlock.HandleCollision( self, other )
     State.DestroyObject( other )
   
   elseif otherType == "Spring" then
+    IceBlock.hittingSpring = true
     if other:GetFrame() <= 4 then
       self:SlowDown( 60 )
     elseif self:GetSpeed() == 0 and other:GetFrame() >= 5 then
       self:SetDir( Util.GetOppositeDir( self:GetDir())) 
       self:SetSpeed( 240 )
     end
-    self:SetNotColliding( other )
   end
 end
 
