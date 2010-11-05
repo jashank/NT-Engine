@@ -90,47 +90,5 @@ function Util.SetAndPlay( object, animIndex )
   object:PlayAnim()
 end
 
-
--- Generic enemy AI for an Object to use. Moves in same direction until
--- either it hits the same axis as Kickle (in which case it changes direction
--- to go towards Kickle unless it can't move in that direction)
--- or can't move any further.
-function Util.GenericEnemyAI( enemy )
-  local kickle = State.GetObject( "Kickle" )
-  if kickle then
-    local enemyX, enemyY = enemy:GetTile()
-    local kickleX, kickleY = kickle:GetTile()
-    local newDir = enemy:GetDir()
-    if enemyX == kickleX then
-      if enemyY < kickleY then
-        newDir = Util.DOWN
-      elseif enemyY > kickleY then
-        newDir = Util.UP
-      end
-    elseif enemyY == kickleY then
-      if enemyX < kickleX then
-        newDir = Util.RIGHT
-      elseif enemyX > kickleX then
-        newDir = Util.LEFT
-      end
-    end
-    local facingX, facingY = Util.GetTileInDir( newDir, enemyX, enemyY )
-    if State.TileIsCrossable( facingX, facingY ) and
-       not State.ObjectBlockingTile( facingX, facingY ) then
-      enemy:SetDir( newDir )
-    end
-  end
-
-  local facingX, facingY = Util.GetTileObjectFaces( enemy )
-  if not State.TileIsCrossable( facingX, facingY ) or  
-     State.ObjectBlockingTile( facingX, facingY ) then
-    enemy:SetDir( Util.GetNextDir( enemy:GetDir() ))
-  end
-
-  
-  Util.SetAndPlay( enemy, enemy:GetDir())
-  enemy:Move()
-end
-
 return Util
 

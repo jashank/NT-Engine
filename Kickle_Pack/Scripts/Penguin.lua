@@ -1,35 +1,18 @@
---Penguin Behavior Table
 package.path = package.path .. ";Kickle_Pack/Scripts/?.lua"
-Util = require ("ObjectUtilities")
+Util = require("ObjectUtilities")
+EnemyLib = require("EnemyLib")
 
 local Penguin = {}
 
 Penguin.frozen = false
 
 function Penguin.AI( self )
-  if not Penguin.frozen then
-    Util.GenericEnemyAI( self )
-  else 
-    local timeFrozen = self:GetElapsedTime()
-    if ( timeFrozen >= 5 ) then
-      Penguin.frozen = false
-      self:BlockTileRange( false )
-    end
-  end
+  EnemyLib.FrozenAI( self, 5 )
 end
 
 function Penguin.HandleCollision( self, other )
-  local otherType = other:GetType()
-  if otherType == "IceBreath" then
-    Penguin.frozen = true
-    self:BlockTileRange( true )
-    -- Set animation to frozen
-    self:ResetTimer()
-    State.DestroyObject( other )
-  
-  elseif otherType == "Slime" then
-    local dir = self:SetDir( Util.GetOppositeDir( self:GetDir()))
-    Util.SetAndPlay( self, dir )
+  if not EnemyLib.FrozenCollision( self, other ) then
+    EnemyLib.GenericCollision( self, other )
   end
 end
 

@@ -4,8 +4,16 @@ Util = require ("ObjectUtilities")
 -- IceBreath Behavior Table
 
 local IceBreath = {}
+IceBreath.tilesCrossed = 0
 
-function IceBreath.AI( self )   
+function IceBreath.AI( self )
+  if ( IceBreath.tilesCrossed >= 6 ) then
+    State.DestroyObject( self )
+    return
+  else
+    IceBreath.tilesCrossed = IceBreath.tilesCrossed + 1
+  end
+
   local facingTileX, facingTileY = Util.GetTileObjectFaces( self )
   local tileType = State.GetTileInfo( facingTileX, facingTileY )
   local otherObj = State.GetObjectOnTile( facingTileX, facingTileY )

@@ -1,5 +1,6 @@
 package.path = package.path .. ";Kickle_Pack/Scripts/?.lua"
 Util = require ("ObjectUtilities")
+EnemyLib = require("EnemyLib")
 
 --Slime Behavior Table
 
@@ -12,15 +13,18 @@ function Slime.Init( self )
 end
 
 function Slime.AI( self )
-  Util.GenericEnemyAI( self )
+  EnemyLib.GenericAI( self )
 end
 
 
 function Slime.HandleCollision( self, other )
+  if EnemyLib.GenericCollision( self, other ) then
+    return
+  end
+
   local otherType = other:GetType()
-  if otherType == "Slime" or otherType == "Penguin" or
-     otherType == "SlipperyIce" then
-    local dir = self:SetDir( Util.GetOppositeDir( self:GetDir()))       
+  if otherType == "SlipperyIce" then
+    local dir = self:SetDir( Util.GetOppositeDir( self:GetDir()))
     Util.SetAndPlay( self, dir )
   end
 end
