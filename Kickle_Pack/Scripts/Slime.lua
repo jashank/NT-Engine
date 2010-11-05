@@ -26,6 +26,22 @@ function Slime.HandleCollision( self, other )
   if otherType == "SlipperyIce" then
     local dir = self:SetDir( Util.GetOppositeDir( self:GetDir()))
     Util.SetAndPlay( self, dir )
+
+  elseif otherType == "IceBreath" then
+    local tx, ty, bx, by = self:GetTileRange()
+    dir = self:GetDir()
+
+    local cx, cy = tx, ty
+    -- protect against block spawning on Kickle
+    if dir == Util.UP then
+      cx, cy = tx, by
+    elseif dir == Util.LEFT then
+      cx, cy = bx, ty
+    end
+
+    block = State.CreateObject("Kickle_Pack/Objects/IceBlock.xml", cx, cy)
+    State.DestroyObject( self )
+    State.DestroyObject( other )
   end
 end
 

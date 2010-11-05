@@ -29,17 +29,5 @@ function IceBreath.AI( self )
   self:PlayAnim()
 end
 
-function IceBreath.HandleCollision( self, other )
-  local otherType = other:GetType()
-  if ( otherType == "Slime" ) then
-    IceBlock = State.CreateObject(
-                 "Kickle_Pack/Objects/IceBlock.xml",
-                 other:GetTile()
-                 );
-    IceBlock:GetTable().slimeSpawn = other:GetTable().spawn
-    State.DestroyObject( other )
-    State.DestroyObject( self )
- end
-end
 
 return IceBreath

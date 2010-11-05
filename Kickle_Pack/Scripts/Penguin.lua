@@ -1,5 +1,4 @@
 package.path = package.path .. ";Kickle_Pack/Scripts/?.lua"
-Util = require("ObjectUtilities")
 EnemyLib = require("EnemyLib")
 
 local Penguin = {}

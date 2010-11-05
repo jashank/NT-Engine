@@ -168,7 +168,7 @@ void ObjectManager::Update( float dt, const Camera &cam ) {
         ++obj;
       }
     }
-    SAFEDELETE( m_toBeDestroyed[i] );
+    SAFEDELETE( delObj );
   }
 
   m_toBeDestroyed.clear();

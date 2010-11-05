@@ -19,7 +19,7 @@ function Kickle.HandleCollision( self, other )
   local otherType = other:GetType()
   -- Things that kill Kickle
   if ( otherType == "Slime" or otherType == "Penguin" or 
-       otherType == "IceBlock" ) then
+       otherType == "IceBlock" or otherType == "Chicken" ) then
     if Kickle.state ~= DYING then
       Kickle.state = DYING
       Util.SetAndPlay( self, self:GetDir() + Kickle.state )
@@ -155,17 +155,11 @@ function Kickle.PerformAttack( self )
         objOnTile:GetTable().Kick( objOnTile, kickleDir )
         return
 
-      elseif objType == "Penguin" and 
+      elseif objType == "Penguin" or objType == "Chicken" and 
              objOnTile:GetTable().frozen then
         Kickle.state = KICKING
         Util.SetAndPlay( self, kickleDir + Kickle.state )
         State.DestroyObject( objOnTile )
-        return
-
-      elseif objType == "PowerRock" then
-        Kickle.state = KICKING
-        Util.SetAndPlay( self, kickleDir + Kickle.state )
-        objOnTile:GetTable().kicked = true
         return
       end
     end

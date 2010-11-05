@@ -11,7 +11,7 @@ function DreamBag.HandleCollision( self, other )
   local otherType = other:GetType()
   if ( not self:IsMoving() and (
         otherType == "Slime" or otherType == "Penguin" or
-        otherType == "IceBlock" )) then
+        or otherType == "Chicken" or otherType == "IceBlock" )) then
     local dir = math.random( Util.UP, Util.RIGHT )
     local canMove = false
     local tileX, tileY = Util.GetTileInDirection( self, dir )

@@ -11,29 +11,29 @@ Util.RIGHT = 3
 
 -- Returns tile in direction passed relative to tile location passed
 function Util.GetTileInDir( dir, tileX, tileY )
-        if ( dir == Util.UP ) then
-                tileY = tileY - 1
-        elseif ( dir == Util.DOWN ) then
-                tileY = tileY + 1
-        elseif ( dir == Util.LEFT ) then
-                tileX = tileX - 1
-        else
-                tileX = tileX + 1
-        end
+  if ( dir == Util.UP ) then
+    tileY = tileY - 1
+  elseif ( dir == Util.DOWN ) then
+    tileY = tileY + 1
+  elseif ( dir == Util.LEFT ) then
+    tileX = tileX - 1
+  else
+    tileX = tileX + 1
+  end
 
-        return tileX, tileY
+  return tileX, tileY
 end
 
 
 -- Returns tile Object is facing
 function Util.GetTileObjectFaces( Object )
-        return Util.GetTileInDir( Object:GetDir(), Object:GetTile())
+  return Util.GetTileInDir( Object:GetDir(), Object:GetTile())
 end
 
 
 -- Returns tile in in direction relative to Object passed
 function Util.GetTileInDirection( Object, dir )
-        return Util.GetTileInDir( dir, Object:GetTile() )
+  return Util.GetTileInDir( dir, Object:GetTile() )
 end
 
 
