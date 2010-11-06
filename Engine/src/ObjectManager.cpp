@@ -41,8 +41,9 @@ struct ObjectManager::RenderPriorityCmp {
  * Typedefs
  ******************************/
 namespace {
-  typedef std::set<const IntrObj, ObjectManager::CreationCmp>::iterator SetItr;
-  typedef std::set<const IntrObj, 
+  typedef std::set<ObjectManager::IntrObj, 
+            ObjectManager::CreationCmp>::iterator SetItr;
+  typedef std::set<ObjectManager::IntrObj, 
             ObjectManager::RenderPriorityCmp>::iterator RenderSetItr;
 }
 
@@ -65,7 +66,7 @@ bool ObjectManager::LoadData( const TiXmlElement *dataRoot, lua_State *L ) {
   // before ObjectManager
   int width = nt::state::GetMapWidth();
   int height = nt::state::GetMapHeight();
-  m_objGrid = new nt::core::RangeMatrix3D<const IntrObj>( width, height );
+  m_objGrid = new nt::core::RangeMatrix3D<IntrObj>( width, height );
 
   const TiXmlElement *objType = dataRoot->FirstChildElement( "object" );
   if ( objType ) {
@@ -82,8 +83,8 @@ bool ObjectManager::LoadData( const TiXmlElement *dataRoot, lua_State *L ) {
             instance->QueryIntAttribute( "y", &y );
             instance->QueryIntAttribute( "strip", &strip );
             if ( nt::state::InRange( x, y ) && strip >= 0 ) {
-              const IntrObj(
-                ObjectAttorney::Create( path, x, y , strip, L )) obj;
+              const IntrObj obj(
+                ObjectAttorney::Create( path, x, y , strip, L ));
               AddObject( obj );
             } else {
               LogErr( "Tile location or strip negative for Object in state file." );
@@ -108,7 +109,7 @@ bool ObjectManager::LoadData( const TiXmlElement *dataRoot, lua_State *L ) {
   int mapHeight = nt::state::GetMapHeight();
 
   m_objGrid->SetRange( 0, 0, mapWidth - 1, mapHeight - 1 );
-  std::set<const IntrObj, CreationCmp> set;
+  std::set<IntrObj, CreationCmp> set;
   FillSet<CreationCmp>( set );
   for ( SetItr obj = set.begin(); obj != set.end(); ++obj ) {
     ObjectAttorney::Init( *obj );
@@ -123,7 +124,7 @@ void ObjectManager::HandleEvents( const Camera & cam ) {
   GetCamCoords( cam, 1, 1, tLx, tLy, bRx, bRy );
 
   m_objGrid->SetRange( tLx, tLy, bRx, bRy );
-  std::set<const IntrObj, CreationCmp> set;
+  std::set<IntrObj, CreationCmp> set;
   FillSet<CreationCmp>( set );
   for ( SetItr obj = set.begin(); obj != set.end(); ++obj ) {
     ObjectAttorney::HandleEvents( *obj );
@@ -136,7 +137,7 @@ void ObjectManager::Update( float dt, const Camera &cam ) {
   GetCamCoords( cam, 1, 1, tLx, tLy, bRx, bRy );
 
   m_objGrid->SetRange( tLx, tLy, bRx, bRy );
-  std::set<const IntrObj, CreationCmp> set;
+  std::set<IntrObj, CreationCmp> set;
   FillSet<CreationCmp>( set );
 
   // Need to separate collision from logic
@@ -181,7 +182,7 @@ void ObjectManager::Render( float alpha, const Camera &cam )  {
   GetCamCoords( cam, 1, 1, tLx, tLy, bRx, bRy );
 
   m_objGrid->SetRange( tLx, tLy, bRx, bRy );
-  std::set<const IntrObj, RenderPriorityCmp> set;
+  std::set<IntrObj, RenderPriorityCmp> set;
   FillSet<RenderPriorityCmp>( set );
 
   for ( RenderSetItr obj = set.begin(); obj != set.end(); ++obj ) {
@@ -225,11 +226,11 @@ int ObjectManager::LuaCreateObject( lua_State *L ) {
   int tileY = lua_tointeger( L, -1 );
 
   if ( tileX >= 0 && tileY >= 0 ) {
-    const IntrObj(
-      ObjectAttorney::Create( path, tileX, tileY, 0, L )) newObject;
+    const IntrObj newObject(
+      ObjectAttorney::Create( path, tileX, tileY, 0, L ));
     AddObject( newObject );
     ObjectAttorney::Init( newObject );
-    Lunar<Object>::push( L, *newObject );
+    Lunar<Object>::push( L, newObject.get() );
     return 1;
   } else {
     LogLuaErr( "Negative tile passed to CreateObject" );
@@ -242,7 +243,7 @@ int ObjectManager::LuaDestroyObject( lua_State *L ) {
   Object *objToDestroy = Lunar<Object>::check(L, 1);
   if ( objToDestroy ) {
     lua_remove( L, 1 );
-    const IntrObj( objToDestroy ) obj;
+    const IntrObj obj( objToDestroy );
     RemoveObject( obj );
     return 0;
   } else {
@@ -278,7 +279,7 @@ int ObjectManager::LuaGetObjects( lua_State *L ) {
   std::pair<MapItrConst, MapItrConst> objects =
     m_objTypes.equal_range( type );
   for ( MapItrConst obj = objects.first; obj != objects.second; ++obj ) {
-      Lunar<Object>::push( L, *(obj.second) );
+      Lunar<Object>::push( L, ((*obj).second).get() );
       lua_rawseti( L, newTable, index );
       ++index;
   }
@@ -312,18 +313,18 @@ int ObjectManager::LuaGetNearestToObject( lua_State *L ) {
   }
   std::string type = lua_tostring( L, -2 );
 
-  Object *obj = NULL;
-  if ( !(obj = Lunar<Object>::check( L, -1 ))) {
+  Object *pObj = NULL;
+  if ( !(pObj = Lunar<Object>::check( L, -1 ))) {
     LogLuaErr( "Object not passed for second argument to GetNearestToObject" );
     return 0;
   }
 
-  const IntrObj( obj ) obj;
+  const IntrObj obj( pObj );
   const nt::core::IntRect &tiles = ObjectAttorney::GetTileRange( obj ); 
   int tileX = tiles.topLeft.x;
   int tileY = tiles.topLeft.y;
 
-  Lunar<Object>::push( L, NearestObject( type, tileX, tileY, obj ));
+  Lunar<Object>::push( L, NearestObject( type, tileX, tileY, pObj ));
   return 1;
 }
 
@@ -394,14 +395,14 @@ int ObjectManager::LuaGetObjectsOnTile( lua_State *L ) {
     m_objGrid->SetRange( tileX, tileY, tileX, tileY );
     if ( type == "" ) {
       while ( const IntrObj *obj = m_objGrid->GetElem()) {
-        Lunar<Object>::push( L, **obj );
+        Lunar<Object>::push( L, obj->get() );
         lua_rawseti( L, newTable, index );
         ++index;
       }
     } else {
       while ( const IntrObj *obj = m_objGrid->GetElem()) {
         if ( ObjectAttorney::GetType( *obj ) == type ) {
-          Lunar<Object>::push( L, **obj );
+          Lunar<Object>::push( L, obj->get() );
           lua_rawseti( L, newTable, index );
           ++index;
         }
@@ -460,7 +461,7 @@ Object *ObjectManager::FindObject( const std::string &type ) const {
   std::pair<MapItrConst, MapItrConst> objects =
     m_objTypes.equal_range( type ); 
   if ( objects.first != objects.second ) {
-    return ( *((*(objects.first)).second) );
+    return ( ((*(objects.first)).second).get() );
   }
   return NULL;
 }
@@ -469,7 +470,7 @@ Object *ObjectManager::FindObject( const std::string &type ) const {
 Object *ObjectManager::ObjectOnTile( int x, int y ) const {
   m_objGrid->SetRange( x, y, x, y );
   while ( const IntrObj *obj = m_objGrid->GetElem() ) {
-    return **obj;
+    return obj->get();
   }
   return NULL;
 }
@@ -478,8 +479,8 @@ Object *ObjectManager::ObjectOnTile( int x, int y ) const {
 Object *ObjectManager::ObjectOnTile( int x, int y, std::string &type ) const {
   m_objGrid->SetRange( x, y, x, y );
   while ( const IntrObj *obj = m_objGrid->GetElem() ) {
-    if ( ObjectAttorney::GetType( **obj ) == type ) {
-      return **obj;
+    if ( ObjectAttorney::GetType( obj->get() ) == type ) {
+      return obj->get();
     }
   }
   return NULL;
@@ -501,14 +502,14 @@ Object *ObjectManager::NearestObject(
     m_objTypes.equal_range( type );
   
   for ( MapItrConst itr = keyRange.first; itr != keyRange.second; ++itr ) {
-    const IntroObj( (*itr).second ) obj;
-    if ( *obj == exclude ) {
+    const IntrObj obj( (*itr).second );
+    if ( obj.get() == exclude ) {
       continue;
     }
 
     const nt::core::IntRect &tiles = ObjectAttorney::GetTileRange( obj );
     if ( tiles.Contains( x, y )) {
-      return *obj;
+      return obj.get();
     }
 
     int distanceX2 = 0;
@@ -528,7 +529,7 @@ Object *ObjectManager::NearestObject(
     if (( distanceX2 + distanceY2 ) < ( distanceX + distanceY )) {
       distanceX = distanceX2;
       distanceY = distanceY2;
-      nearestObj = *obj;
+      nearestObj = obj.get();
     }
   }
 
@@ -550,11 +551,11 @@ void ObjectManager::UpdateCollisions( const IntrObj &obj, const Camera &cam ) {
 
   m_objGrid->SetRange( tileRange.topLeft.x, tileRange.topLeft.y,
                        tileRange.bottomRight.x, tileRange.bottomRight.y );
-  std::set<const IntrObj, CreationCmp> set;
+  std::set<IntrObj, CreationCmp> set;
   FillSet<CreationCmp>( set );
 
   for ( SetItr itr = set.begin(); itr != set.end(); ++itr ) {
-    const IntrObj( *itr ) colObj;
+    const IntrObj colObj( *itr );
 
     if ( colObj != obj && std::find( 
          m_toBeDestroyed.begin(), m_toBeDestroyed.end(), colObj ) ==

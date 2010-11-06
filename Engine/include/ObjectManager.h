@@ -105,6 +105,7 @@ class ObjectManager {
   struct RenderPriorityCmp;
 
   typedef boost::intrusive_ptr<Object> IntrObj;
+
   typedef std::multimap<std::string, IntrObj>::iterator MapItr;
   typedef std::multimap<std::string, IntrObj>::const_iterator MapItrConst;
 
@@ -204,27 +205,27 @@ class ObjectManager {
    * This means that you should call SetRange before calling this method.
    */
   template< typename Compare >
-  void FillSet( std::set<const IntrObj, Compare> &set ) const;
+  void FillSet( std::set<IntrObj, Compare> &set ) const;
 
   /**
    * Key is Object's type. Holds all Objects in the current State of that type.
    */
-  std::multimap<std::string, const IntrObj> m_objTypes; 
+  std::multimap<std::string, IntrObj> m_objTypes; 
 
   /**
    * 3D Matrix that holds Objects at each position.
    */
-  nt::core::RangeMatrix3D<const IntrObj> *m_objGrid;
+  nt::core::RangeMatrix3D<IntrObj> *m_objGrid;
 
   /**
    * Holds Objects that were sent to be destroyed on the last update.
    */
-  std::vector<const IntrObj> m_toBeDestroyed;
+  std::vector<IntrObj> m_toBeDestroyed;
 };
 
 
 template< typename Compare >
-void ObjectManager::FillSet( std::set<const IntrObj, Compare> &set ) const {
+void ObjectManager::FillSet( std::set<IntrObj, Compare> &set ) const {
   while ( const IntrObj *obj = m_objGrid->GetElem() ) {
     set.insert( *obj );
   }

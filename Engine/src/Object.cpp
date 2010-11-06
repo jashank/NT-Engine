@@ -63,6 +63,7 @@ Lunar<Object>::RegType Object::methods[] = {
 
 Object::Object( lua_State *L )
  : m_creationNum( 0 ),
+   m_references( 0 ),
    m_renderPriority( 0 ),
    m_moving( false ),
    m_blockingTiles( false ),
@@ -117,6 +118,7 @@ Object::Object(
 )
  : 
    m_creationNum( 0 ),
+   m_references( 0 ),
    m_renderPriority( 0 ),
    m_moving( false ),
    m_blockingTiles( false ),

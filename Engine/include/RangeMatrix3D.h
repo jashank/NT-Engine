@@ -68,7 +68,7 @@ class RangeMatrix3D {
           m_elemItr = m_mat[i].begin();
         }
         if ( m_elemItr != m_mat[i].end() ) {
-          return *m_elemItr++;
+          return &(*m_elemItr++);
         }
         ++count;
       }
