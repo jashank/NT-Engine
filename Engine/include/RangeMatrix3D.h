@@ -52,10 +52,11 @@ class RangeMatrix3D {
   }
 
   /**
-   * Returns next element in range last set (just at 0,0 if none set yet).
+   * Returns pointer to next element in range last set 
+   * (just at 0,0 if none set yet).
    * Iterates by column. When no more elements exist, returns NULL.
    */
-  T GetElem() {
+  const T *GetElem() {
     // Counts loop iterations to keep iteration position correct
     int count = 0;
 
@@ -79,7 +80,7 @@ class RangeMatrix3D {
   /**
    * Adds an element to range of positions in 'range', inclusive.
    */
-  void AddElem( T elem, const IntRect &range ) {
+  void AddElem( const T &elem, const IntRect &range ) {
     for ( int x = range.topLeft.x; x <= range.bottomRight.x; ++x ) {
       for ( int y = range.topLeft.y; y <= range.bottomRight.y; ++y ) {
         int i = Index( x, y );
@@ -92,7 +93,7 @@ class RangeMatrix3D {
    * Removes element from range of positions, inclusive. It is okay if
    * element is not in one of the positions.
    */
-  void RemoveElem( T elem, const IntRect &range ) {
+  void RemoveElem( const T &elem, const IntRect &range ) {
     for ( int x = range.topLeft.x; x <= range.bottomRight.x; ++x ) {
       for ( int y = range.topLeft.y; y <= range.bottomRight.y; ++y ) {
         int i = Index( x, y );
@@ -105,7 +106,7 @@ class RangeMatrix3D {
    * Moves element from positions in lastRange to positions in currRange.
    */
   void MoveElem(
-    T elem,
+    const T &elem,
     const IntRect &lastRange,
     const IntRect &currRange
   ) {

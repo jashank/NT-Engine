@@ -11,6 +11,8 @@ extern "C" {
   #include "lauxlib.h"
 }
 
+#include <boost/intrusive_ptr.hpp>
+
 #include "RangeMatrix3D.h"
 
 class Camera;
@@ -102,8 +104,9 @@ class ObjectManager {
    */
   struct RenderPriorityCmp;
 
-  typedef std::multimap<std::string, Object*>::iterator MapItr;
-  typedef std::multimap<std::string, Object*>::const_iterator MapItrConst;
+  typedef boost::intrusive_ptr<Object> IntrObj;
+  typedef std::multimap<std::string, IntrObj>::iterator MapItr;
+  typedef std::multimap<std::string, IntrObj>::const_iterator MapItrConst;
 
   //@{
   /**
@@ -116,12 +119,12 @@ class ObjectManager {
   /**
    * @param obj Object to add to manager.
    */
-  void AddObject( Object *obj );
+  void AddObject( const IntrObj &obj );
 
   /**
    * @param obj Object to remove from manager.
    */
-  void RemoveObject( Object *obj );
+  void RemoveObject( const IntrObj &obj );
 
   /**
    * @param objType type of Object to search for.
@@ -163,7 +166,7 @@ class ObjectManager {
    * @param obj Object to check.
    * @param cam Camera viewing the State.
    */
-  void UpdateCollisions( Object *obj, const Camera &cam );
+  void UpdateCollisions( const IntrObj &obj, const Camera &cam );
 
   /**
    * Checks objects in range passed to ensure that their tile coordinate
@@ -201,29 +204,29 @@ class ObjectManager {
    * This means that you should call SetRange before calling this method.
    */
   template< typename Compare >
-  void FillSet( std::set<Object*, Compare> &set ) const;
+  void FillSet( std::set<const IntrObj, Compare> &set ) const;
 
   /**
    * Key is Object's type. Holds all Objects in the current State of that type.
    */
-  std::multimap<std::string, Object*> m_objTypes; 
+  std::multimap<std::string, const IntrObj> m_objTypes; 
 
   /**
    * 3D Matrix that holds Objects at each position.
    */
-  nt::core::RangeMatrix3D<Object*> *m_objGrid;
+  nt::core::RangeMatrix3D<const IntrObj> *m_objGrid;
 
   /**
    * Holds Objects that were sent to be destroyed on the last update.
    */
-  std::vector<Object*> m_toBeDestroyed;
+  std::vector<const IntrObj> m_toBeDestroyed;
 };
 
 
 template< typename Compare >
-void ObjectManager::FillSet( std::set<Object*, Compare> &set ) const {
-  while ( Object *obj = m_objGrid->GetElem() ) {
-    set.insert( obj );
+void ObjectManager::FillSet( std::set<const IntrObj, Compare> &set ) const {
+  while ( const IntrObj *obj = m_objGrid->GetElem() ) {
+    set.insert( *obj );
   }
 }
 
