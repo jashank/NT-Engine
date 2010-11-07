@@ -4,7 +4,6 @@
 
 #include "AnimSprite.h"
 #include "Camera.h"
-#include "Object.h"
 #include "Rect.h"
 #include "StateComm.h"
 #include "tinyxml.h"
@@ -47,17 +46,6 @@ namespace {
             ObjectManager::RenderPriorityCmp>::iterator RenderSetItr;
 }
 
-/********************************
- Constructor and Destructor
-********************************/
-ObjectManager::ObjectManager()
-  :m_objGrid( NULL ) {}
-
-
-ObjectManager::~ObjectManager() {
-  SAFEDELETE( m_objGrid );
-}
-
 /*******************************
 Public Methods
 *******************************/
@@ -66,7 +54,7 @@ bool ObjectManager::LoadData( const TiXmlElement *dataRoot, lua_State *L ) {
   // before ObjectManager
   int width = nt::state::GetMapWidth();
   int height = nt::state::GetMapHeight();
-  m_objGrid = new nt::core::RangeMatrix3D<IntrObj>( width, height );
+  m_objGrid.reset( new nt::core::RangeMatrix3D<IntrObj>( width, height ));
 
   const TiXmlElement *objType = dataRoot->FirstChildElement( "object" );
   if ( objType ) {

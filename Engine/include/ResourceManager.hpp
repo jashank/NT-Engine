@@ -1,15 +1,11 @@
 #include <memory>
 #include <sstream>
 
+#include "Utilities.h"
+
 template< typename resource_t >
 void ResourceLoader< resource_t >::operator()(
   std::pair< const std::string, resource_t* > &resource ) {
-  DEBUG_STATEMENT(
-    std::cout
-    << "Deleting Resource...\n-->Filename: " << resource.first
-    << "\n-->Address: " << resource.second
-    << std::endl;
-  )
   SAFEDELETE(resource.second);
 }
 
@@ -57,19 +53,11 @@ void ResourceManager<resource_t, loader_t>::Clear() {
 template< typename resource_t, typename loader_t >
 resource_t* ResourceManager< resource_t, loader_t >::Load(
   const std::string &filePath ) {
-  DEBUG_STATEMENT(
-    LogMsg( "Loading Resource...\n-->Filename: " + filePath + "\n" );
-  )
 
   //Check to see if resource has already been loaded,
   //if so then return a reference to that resource
   typename map_t::iterator result = m_resources.find( filePath );
   if( result != m_resources.end() ) {
-    DEBUG_STATEMENT(
-      std::ostringstream ss;
-      ss << "-->File already loaded\n-->Address: " << result->second << "\n";
-      LogMsg( ss );
-    )
     return result->second;
   }
 
@@ -77,11 +65,6 @@ resource_t* ResourceManager< resource_t, loader_t >::Load(
   std::auto_ptr<resource_t> resource( m_loader.Load( filePath ) );
 
   //Insert it into map and return a reference to that resource.
-  DEBUG_STATEMENT(
-    std::ostringstream ss;
-    ss << filePath << " --> Address: " << resource.get() << "\n";
-    LogMsg( ss );
-  )
   m_resources.insert( std::make_pair( filePath, resource.get() ) );
 
   return resource.release();

@@ -3,12 +3,14 @@
 
 #include <string>
 
+#include <boost/scoped_ptr.hpp>
+
 extern "C" {
   #include "lauxlib.h"
 }
 
-class lua_State;
 class State;
+class lua_State;
 
 /**
  * Starts off running first State loaded in and provides a Lua interface
@@ -104,7 +106,7 @@ class StateMachine {
   static lua_State *m_luaState;
 
   /* State currently being run by machine. */
-  static State *m_runningState;
+  static boost::scoped_ptr<State> m_runningState;
 
   /* Whether another state has been set to change to for next Step. */
   static bool m_nextStateSet;

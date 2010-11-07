@@ -4,6 +4,9 @@
 #include <map>
 #include <string>
 
+#include <boost/scoped_array.hpp>
+#include <boost/scoped_ptr.hpp>
+
 extern "C" {
   #include "lua.h"
   #include "lauxlib.h"
@@ -25,7 +28,6 @@ class TiXmlElement;
 class TileManager {
  public:
   TileManager();
-  ~TileManager();
 
   /**
    * Loads tile information from <tiles> element of State XML file. 
@@ -143,7 +145,7 @@ class TileManager {
    * @return Tile at x,y coordinate passed. NULL if coordinate is invalid or
    * no tile located at coordinate.
    */
-  const Tile* GetTile( int x, int y ) const;
+  Tile *GetTile( int x, int y ) const;
 
   /**
    * Checks to make sure x,y coordinate exists on map.
@@ -157,7 +159,7 @@ class TileManager {
   /**
    * Array of animated sprites for the different tiles.
    */
-  AnimSprite *m_tileSprites;
+  boost::scoped_array<AnimSprite> m_tileSprites;
 
   /**
    * The number of different tiles loaded in.
@@ -200,7 +202,7 @@ class TileManager {
    * Represents layout of tiles on 2D grid. 
    * Accessed via typical (x,y).
    */
-  nt::core::Matrix2D<int> *m_layout;
+  boost::scoped_ptr<nt::core::Matrix2D<int> > m_layout;
 };
 
 #endif // TILEMANAGER_H

@@ -6,12 +6,6 @@
 #include <string>
 #include <utility>
 
-#include "Utilities.h"
-
-#if defined(DEBUG)|defined(_DEBUG)
-#include<iostream>
-#endif
-
 /**
  * String comparison functor used for std::map.
  */

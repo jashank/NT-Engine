@@ -9,8 +9,8 @@ extern "C" {
 
 #include "Object.h" // To register Objects to Lua
 #include "State.h"
-#include "Window.h"
 #include "Utilities.h"
+#include "Window.h"
 
 /*****************
  * Static Members
@@ -43,15 +43,17 @@ const luaL_Reg StateMachine::m_luaFuncs[] = {
 };
 
 bool StateMachine::m_nextStateSet = false;
+boost::scoped_ptr<State> StateMachine::m_runningState;
 lua_State *StateMachine::m_luaState = NULL;
-State *StateMachine::m_runningState = NULL;
 std::string StateMachine::m_nextStatePath = "";
 
 /*******************************
  * Constructors and Destructors
  ******************************/
 StateMachine::~StateMachine() {
-  SAFEDELETE( m_runningState );
+  // Objects need to unreference from lua
+  m_runningState.reset();
+
   lua_close( m_luaState );
   m_luaState = NULL;
 } 
@@ -68,9 +70,9 @@ bool StateMachine::Setup( const std::string &filePath ) {
   luaL_register( m_luaState, "State", m_luaFuncs );
   Object::LuaRegister( m_luaState );
 
-  m_runningState = new State();
+  m_runningState.reset( new State());
   if ( !m_runningState->Init( filePath, m_luaState )) {
-    SAFEDELETE( m_runningState );
+    m_runningState.reset();
     return false;
   }
   return true;
@@ -229,7 +231,6 @@ int StateMachine::LuaSlowDownCam( lua_State *L ) {
  * Private Member Functions
  **************************/
 void StateMachine::NextState() {
-  SAFEDELETE( m_runningState );
-  m_runningState = new State();
+  m_runningState.reset( new State());
   m_runningState->Init( m_nextStatePath, m_luaState );
 }

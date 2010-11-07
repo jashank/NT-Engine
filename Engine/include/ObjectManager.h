@@ -12,11 +12,12 @@ extern "C" {
 }
 
 #include <boost/intrusive_ptr.hpp>
+#include <boost/scoped_ptr.hpp>
 
+#include "Object.h"
 #include "RangeMatrix3D.h"
 
 class Camera;
-class Object;
 class TiXmlElement;
 
 /**
@@ -26,8 +27,8 @@ class TiXmlElement;
  */
 class ObjectManager {
  public:
-  ObjectManager(); 
-  ~ObjectManager();
+  ObjectManager() {}
+  ~ObjectManager() {}
 
   /**
    * Loads Objects in from <objects> element of State XML file.
@@ -215,7 +216,7 @@ class ObjectManager {
   /**
    * 3D Matrix that holds Objects at each position.
    */
-  nt::core::RangeMatrix3D<IntrObj> *m_objGrid;
+  boost::scoped_ptr<nt::core::RangeMatrix3D<IntrObj> > m_objGrid;
 
   /**
    * Holds Objects that were sent to be destroyed on the last update.

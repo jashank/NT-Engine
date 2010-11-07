@@ -15,25 +15,18 @@ extern "C" {
 #include "ResourceLib.h"
 #include "State.h"
 #include "tinyxml.h"
+#include "Utilities.h"
 #include "Window.h"
 
 /******************************
 Constructors and Destructors.
 ******************************/
 TileManager::TileManager()
- : m_tileSprites( NULL ),
-   m_numTileTypes( 0 ),
+ : m_numTileTypes( 0 ),
    m_width( 0 ),
    m_height( 0 ),
    m_numTiles( 0 ),
-   m_tileDim( 0 ),
-   m_layout( NULL ) {}
-
-
-TileManager::~TileManager() {
-  SAFEDELETEA( m_tileSprites );
-  SAFEDELETE( m_layout );
-}
+   m_tileDim( 0 ) {}
 
 /***************************************
 Public Methods
@@ -84,7 +77,7 @@ void TileManager::Render( const Camera &cam ) {
     for ( int x = tLx; x <= bRx; ++x ) {
       for ( int y = tLy; y <= bRy; ++y ) {
 
-        tile = *( m_layout->Get( x, y ));
+        tile = m_layout->Get( x, y );
         if ( tile != BLANK_TILE_ID ) {
           screenX = static_cast<float>( x ) * m_tileDim;
           screenY = static_cast<float>( y ) * m_tileDim;
@@ -114,7 +107,7 @@ int TileManager::GetMapHeight() const {
 
 bool TileManager::TileIsCrossable( int x, int y )  const {
   if ( TileOnMap( x, y )) { 
-    ConstTileInfoIter iter = m_tileDataId.find( *( m_layout->Get( x, y )));
+    ConstTileInfoIter iter = m_tileDataId.find( m_layout->Get( x, y ));
     if ( iter != m_tileDataId.end() ) {
       return ( iter->second->cid == CROSSABLE );
     }
@@ -230,7 +223,7 @@ bool TileManager::LoadTileAnims( const std::string &animPath ) {
 
   if ( tileAnims ) {
     m_numTileTypes = tileAnims->GetNumAnims();
-    m_tileSprites = new AnimSprite[m_numTileTypes];
+    m_tileSprites.reset( new AnimSprite[m_numTileTypes] );
 
     for ( int i = 0; i < m_numTileTypes; ++i ) {
       m_tileSprites[i].SetAnimData( tileAnims );
@@ -267,7 +260,7 @@ bool TileManager::LoadTileLayout( const TiXmlElement *layout ) {
   layout->Attribute( "width", &m_width );
   layout->Attribute( "height", &m_height );
 
-  m_layout = new nt::core::Matrix2D<int>( m_width, m_height );
+  m_layout.reset( new nt::core::Matrix2D<int>( m_width, m_height ));
   nt::core::Matrix2D<int>::iterator itr = m_layout->begin();
   while ( itr != m_layout->end() ) {
     *itr = BLANK_TILE_ID;
@@ -285,7 +278,7 @@ bool TileManager::LoadTileLayout( const TiXmlElement *layout ) {
     int currentTile = -1;
 
     while ( tileMapStream >> currentTile && row < m_height ) {
-      *( m_layout->Get( column, row )) = currentTile;
+      m_layout->Set( column, row, currentTile );
       ++column;
       if ( column >= m_width ) {
         column = 0;
@@ -337,15 +330,15 @@ void TileManager::SetTile( int x, int y, const std::string &tileName ) {
     std::map<std::string, Tile>::iterator tileDataItr
      = m_tileDataName.find( tileName );
     if ( tileDataItr != m_tileDataName.end() ) {
-      *( m_layout->Get( x, y )) = tileDataItr->second.id;
+      m_layout->Set( x, y, tileDataItr->second.id );
     }
   }
 }
 
 
-const Tile* TileManager::GetTile( int x, int y ) const {
+Tile *TileManager::GetTile( int x, int y ) const {
   if ( TileOnMap( x, y )) { 
-    int id = *( m_layout->Get( x, y ));
+    int id = m_layout->Get( x, y );
     ConstTileInfoIter tile = m_tileDataId.find( id );
     if( tile != m_tileDataId.end() ) {
       return tile->second;
@@ -357,7 +350,7 @@ const Tile* TileManager::GetTile( int x, int y ) const {
 
 void TileManager::SetCollision( int x, int y, int collisionId ) {
   if ( TileOnMap( x, y )) {
-    m_tileDataId[*( m_layout->Get( x, y ))]->cid = collisionId;
+    m_tileDataId[m_layout->Get( x, y )]->cid = collisionId;
   }
 }
 

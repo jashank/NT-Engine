@@ -36,11 +36,6 @@ namespace window {
   void Close();
 
   /**
-   * Destroys window that has been created.
-   */
-  void Destroy();
-
-  /**
    * Clears graphical contents of window for another rendering.
    * Should be called every frame.
    */

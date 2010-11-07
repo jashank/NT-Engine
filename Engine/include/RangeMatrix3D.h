@@ -3,8 +3,9 @@
 
 #include <list>
 
+#include <boost/scoped_array.hpp>
+
 #include "Rect.h"
-#include "Utilities.h"
 
 namespace nt {
 namespace core {
@@ -23,14 +24,7 @@ class RangeMatrix3D {
    * Constructor creates 3 dimensional matrix bounded by first 2 dimensions.
    */
   RangeMatrix3D( int cols, int rows )
-    :m_cols( cols ), m_rows( rows ) {
-    int size = cols * rows;
-    m_mat = new std::list<T>[size];
-  }
-
-  ~RangeMatrix3D() {
-    SAFEDELETEA( m_mat );
-  }
+    :m_cols( cols ), m_rows( rows ), m_mat( new std::list<T>[cols * rows] ) {}
 
   /**
    * Sets a range in the matrix to retrieve elements from via GetElem.
@@ -152,7 +146,7 @@ class RangeMatrix3D {
 
   int m_cols; /** Columns in matrix. */
   int m_rows; /** Rows in matrix. */
-  std::list<T> *m_mat; /** Array representation of matrix. */
+  boost::scoped_array<std::list<T> > m_mat;
 
   nt::core::IntRect m_range; /** Range currently being iterated over. */
   nt::core::IntVec m_rangeItr; /** Iterates over dimensions of range. */

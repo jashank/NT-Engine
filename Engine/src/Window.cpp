@@ -10,7 +10,7 @@
 
 // Holds actual window
 namespace {
-  sf::RenderWindow *win = NULL;
+  sf::RenderWindow win;
 } 
 
 
@@ -22,54 +22,52 @@ namespace window {
     int width, 
     int height 
   ) {
-    win = new sf::RenderWindow( sf::VideoMode( width, height ), title );
+    win.Create(sf::VideoMode( width, height ), title );
   }
 
 
   void Close() {
-    win->Close();
+    win.Close();
   }
 
-
-  void Destroy() {
-    SAFEDELETE( win );
-  }
 
   void Clear() {
-    win->Clear();
+    win.Clear();
   }
+
 
   void Display() {
-    win->Display();
+    win.Display();
   }
 
+
   void Draw( const sf::Drawable &object ) {
-    win->Draw( object );
+    win.Draw( object );
   }
 
 
   bool IsOpen() {
-    return win->IsOpened();
+    return win.IsOpened();
   }
 
 
   bool GetEvent( sf::Event &event ) {
-    return win->GetEvent( event );
+    return win.GetEvent( event );
   }
 
 
   const sf::Input &GetInput() {
-    return win->GetInput();
+    return win.GetInput();
   }
 
 
   void OffsetView( float x, float y ) {
-    win->GetDefaultView().Move( x, y );
+    win.GetDefaultView().Move( x, y );
   }
 
 
   void ResetView() {
-    sf::FloatRect viewRect = win->GetDefaultView().GetRect();
+    sf::FloatRect viewRect = win.GetDefaultView().GetRect();
     int offX = -viewRect.Left;
     int offY = -viewRect.Top;
     OffsetView( offX, offY );
