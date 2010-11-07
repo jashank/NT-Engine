@@ -9,7 +9,6 @@ Chicken.frozen = false
 function Chicken.AI( self )
   for i = Util.UP, Util.RIGHT do
     local x, y = Util.GetTileInDirection( self, i )
-    print(x .. " " .. y)
     block = State.GetObjectOnTile( x, y, "IceBlock" )
     if block and not block:GetTable().kicked then
       self:SetDir( i )
