@@ -557,10 +557,7 @@ void ObjectManager::UpdateCollisions( const IntrObj &obj, const Camera &cam ) {
   for ( SetItr itr = set.begin(); itr != set.end(); ++itr ) {
     const IntrObj colObj( *itr );
 
-    if ( colObj != obj && std::find( 
-         m_toBeDestroyed.begin(), m_toBeDestroyed.end(), colObj ) ==
-         m_toBeDestroyed.end()) {
-
+    if ( colObj != obj ) {
       bool collidingWithObj = ObjectAttorney::IsCollidingWith( obj, colObj );
 
       bool intersects =

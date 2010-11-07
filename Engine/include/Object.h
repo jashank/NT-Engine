@@ -9,6 +9,7 @@
 
 #include <boost/intrusive_ptr.hpp>
 class Object;
+// To declare functions as members of Object
 namespace boost {
   void intrusive_ptr_add_ref( Object *obj );
   void intrusive_ptr_release( Object * obj );
@@ -207,11 +208,6 @@ class Object {
 
   //@}
 
-  //@{
-  /**
-   * Helper functions.
-   */
-
   /**
    * Loads all data except collision data from Object's XML file.
    * @param filepath path to Object's XML file.
@@ -264,7 +260,6 @@ class Object {
    * @return Opposite direction Object is traveling.
    */
   Dir GetOppositeDir( Dir dir );
-  //@}
 
   /***********************
    Private Data Members
@@ -389,7 +384,7 @@ class Object {
 /** Intrusive pointer functions for Object. */
 namespace boost {
   inline void intrusive_ptr_add_ref( Object *obj ) {
-    ++(obj->m_references);
+    ++( obj->m_references );
   }
 
   inline void intrusive_ptr_release( Object *obj ) {
