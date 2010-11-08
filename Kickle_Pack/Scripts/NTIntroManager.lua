@@ -1,4 +1,5 @@
-local NTIntroMngr = {}
+local NTIntroMngr = require("Entity")
+
 NTIntroMngr.alpha = 0
 NTIntroMngr.incalpha = true
 NTIntroMngr.freezeLogo = false

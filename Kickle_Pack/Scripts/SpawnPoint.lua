@@ -1,4 +1,6 @@
-local SpawnPoint = {}
+package.path = package.path .. ";Kickle_Pack/Scripts/?.lua"
+local SpawnPoint = require("Entity")
+
 SpawnPoint.slimeQueue = 0
 
 

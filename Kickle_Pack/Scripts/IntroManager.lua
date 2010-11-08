@@ -1,4 +1,4 @@
-local IntroMngr = {}
+local IntroMngr = require("Entity")
 IntroMngr.slimeCnt = 0
 IntroMngr.scene = 0
 

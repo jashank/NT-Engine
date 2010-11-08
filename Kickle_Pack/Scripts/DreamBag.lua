@@ -1,17 +1,20 @@
 package.path = package.path .. ";Kickle_Pack/Scripts/?.lua"
-Util = require ("ObjectUtilities")
+local Util = require ("ObjectUtilities")
 
 math.randomseed( os.time() )
 
---DreamBag Behavior Table
+local DreamBag = require("Entity")
 
-local DreamBag = {}
 
 function DreamBag.HandleCollision( self, other )
-  local otherType = other:GetType()
-  if ( not self:IsMoving() and (
-        otherType == "Slime" or otherType == "Penguin" or
-        or otherType == "Chicken" or otherType == "IceBlock" )) then
+  if other:GetType() == "Pillar" then
+    State.DestroyObject( other )
+  end
+end
+
+
+function DreamBag.Push( self )
+  if ( not self:IsMoving() ) then
     local dir = math.random( Util.UP, Util.RIGHT )
     local canMove = false
     local tileX, tileY = Util.GetTileInDirection( self, dir )
@@ -43,4 +46,6 @@ function DreamBag.HandleCollision( self, other )
   end
 end
 
+
 return DreamBag
+

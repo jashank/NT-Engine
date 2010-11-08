@@ -1,7 +1,7 @@
 package.path = package.path .. ";Kickle_Pack/Scripts/?.lua"
-Util = require("ObjectUtilities")
+local Util = require("ObjectUtilities")
 
-local IntroSlime = {}
+local IntroSlime = require("Entity")
 IntroSlime.sitting = false
 
 function IntroSlime.Init( self )

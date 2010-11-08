@@ -1,9 +1,7 @@
 package.path = package.path .. ";Kickle_Pack/Scripts/?.lua"
-Util = require( "ObjectUtilities" )
+local Util = require( "ObjectUtilities" )
 
--- Pillar Behavior Table
-
-local Pillar = {}
+local Pillar = require("Entity")
 
 Pillar.lower = false
 
@@ -19,14 +17,6 @@ function Pillar.AI( self )
 end
 
 
-function Pillar.HandleCollision( self, other )
-  local otherType = other:GetType()
-  if ( otherType == "Slime" or otherType == "DreamBag" ) then
-    State.DestroyObject( self )
-  end
-end
-
-
 function Pillar.Lower( self )
   Pillar.lower = true
   self:SetReverseAnim( true )
@@ -36,3 +26,4 @@ end
   
 
 return Pillar
+

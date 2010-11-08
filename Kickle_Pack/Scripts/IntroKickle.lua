@@ -1,9 +1,8 @@
 package.path = package.path .. ";Kickle_Pack/Scripts/?.lua"
-Util = require("ObjectUtilities")
+local Util = require("ObjectUtilities")
 
-local IntroKickle = {}
+local IntroKickle = require("Entity")
 IntroKickle.setTimer = false
-
 
 function IntroKickle.Init( self )
   self:SetDir( Util.DOWN )

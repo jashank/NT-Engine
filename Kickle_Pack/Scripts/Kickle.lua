@@ -1,5 +1,5 @@
 package.path = package.path .. ";Kickle_Pack/Scripts/?.lua"
-Util = require( "ObjectUtilities" )
+local Util = require( "ObjectUtilities" )
 
 -- Correspond to Kickle's sprite sheet (each row makes val increment by 1)
 local STANDING = 0
@@ -10,23 +10,14 @@ local DYING = 16
 
 -- Kickle Behavior Table
 
-local Kickle = {}
+local Kickle = require("Entity")
 
 Kickle.state = STANDING -- Current state kickle is in
 Kickle.godMode = false
 
 function Kickle.HandleCollision( self, other )
   local otherType = other:GetType()
-  -- Things that kill Kickle
-  if ( otherType == "Slime" or otherType == "Penguin" or 
-       otherType == "IceBlock" or otherType == "Chicken" ) then
-    if Kickle.state ~= DYING then
-      Kickle.state = DYING
-      Util.SetAndPlay( self, self:GetDir() + Kickle.state )
-      self:SetRenderPriority( -2 )
-    end
-
-  elseif ( otherType == "DreamBag" and Kickle.state ~= DYING ) then
+  if ( otherType == "DreamBag" and Kickle.state ~= DYING ) then
     State.DestroyObject( other )
   end
 end
@@ -146,7 +137,7 @@ function Kickle.PerformAttack( self )
     local kickleDir = self:GetDir()
     local objOnTile = State.GetObjectOnTile( tileX, tileY )
 
-    if objOnTile then
+    if objOnTile and objOnTile:GetTable().IsFreezable() then
       objType = objOnTile:GetType()
 
       if objType == "IceBlock" then
@@ -155,8 +146,8 @@ function Kickle.PerformAttack( self )
         objOnTile:GetTable().Kick( objOnTile, kickleDir )
         return
 
-      elseif objType == "Penguin" or objType == "Chicken" and 
-             objOnTile:GetTable().frozen then
+      elseif objOnTile:GetTable().IsEnemy() and
+             objOnTile:GetTable().IsFrozen() then
         Kickle.state = KICKING
         Util.SetAndPlay( self, kickleDir + Kickle.state )
         State.DestroyObject( objOnTile )
@@ -180,6 +171,15 @@ end
 function Kickle.GodMode( self )
   Kickle.godMode = not Kickle.godMode 
   self:SetNoClip( Kickle.godMode )
+end
+
+
+function Kickle.Kill( self )
+  if Kickle.state ~= DYING then
+    Kickle.state = DYING
+    Util.SetAndPlay( self, self:GetDir() + Kickle.state )
+    self:SetRenderPriority( -2 )
+  end
 end
 
 return Kickle

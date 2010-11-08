@@ -1,4 +1,5 @@
-local SlipperyIce = {}
+package.path = package.path .. ";Kickle_Pack/Scripts/?.lua"
+local SlipperyIce = require("Entity")
 
 function SlipperyIce.HandleCollision( self, other )
   otherType = other:GetType()
@@ -6,7 +7,6 @@ function SlipperyIce.HandleCollision( self, other )
     State.DestroyObject( other )
   end
 end
-
 
 return SlipperyIce
 

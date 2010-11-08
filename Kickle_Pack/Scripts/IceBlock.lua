@@ -1,14 +1,14 @@
 package.path = package.path .. ";Kickle_Pack/Scripts/?.lua"
-Util = require "ObjectUtilities"
+local Util = require("ObjectUtilities")
 
---IceBlock Behavior Table
+local IceBlock = require("Entity")
 
-local IceBlock = {}
-
+IceBlock.isFreezable = true
 IceBlock.kicked = false
 IceBlock.moving = false
 IceBlock.destroyed = false 
 IceBlock.slimeSpawn = nil
+
 
 function IceBlock.Init( self )
   IceBlock.slimeSpawn = State.GetNearestToObject( "SpawnPoint", self )
@@ -75,22 +75,21 @@ end
 
 
 function IceBlock.HandleCollision( self, other )
-  local otherType = other:GetType()
-  if otherType == "IceBreath" then
+  if other:GetTable().IsEnemy() then
     State.DestroyObject( other )
-    self:ResetTimer() -- Refreezes IceBlock
+  end
 
-  elseif otherType == "Slime" then
+  local otherType = other:GetType()
+  if otherType == "Slime" then
     spawn = other:GetTable().spawn
     spawn:GetTable().Spawn( spawn )
-    State.DestroyObject( other )
-
-  elseif otherType == "Penguin" then
-    State.DestroyObject( other )
-  
   elseif otherType == "Spring" then
     self:SetNoClip( false )
     other:GetTable().SpringBlock( self )
+  elseif otherType == "DreamBag" then
+    other:GetTable.Push( other )
+  elseif otherType == "Kickle" then
+    other:GetTable().Kill( other )
   end
 end
 
@@ -100,4 +99,10 @@ function IceBlock.Kick( self, dir )
   self:SetDir( dir )
 end 
 
+
+function IceBlock.Freeze( self )
+  self:ResetTimer() -- Refreeze IceBlock
+end
+
 return IceBlock
+

@@ -1,8 +1,8 @@
 package.path = package.path .. ";Kickle_Pack/Scripts/?.lua"
-Util = require "ObjectUtilities"
+local Util = require "ObjectUtilities"
 
 --Spring Behavior Table
-local Spring = {}
+local Spring = require("Entity")
 Spring.block = nil
 
 function Spring.Init( self )

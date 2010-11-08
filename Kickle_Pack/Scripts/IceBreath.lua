@@ -1,9 +1,8 @@
 package.path = package.path .. ";Kickle_Pack/Scripts/?.lua"
-Util = require ("ObjectUtilities")
+local Util = require ("ObjectUtilities")
 
--- IceBreath Behavior Table
+local IceBreath = require("Entity")
 
-local IceBreath = {}
 IceBreath.tilesCrossed = 0
 
 function IceBreath.AI( self )
@@ -18,9 +17,12 @@ function IceBreath.AI( self )
   local tileType = State.GetTileInfo( facingTileX, facingTileY )
   local otherObj = State.GetObjectOnTile( facingTileX, facingTileY )
 
-  self:SetNoClip( tileType == "water" or
-    ( otherObj and ( otherObj:GetType() == "IceBlock" or
-      otherObj:GetType() == "Penguin" )))
+  if tileType == "water" or
+     ( otherObj and otherObj:GetTable().IsFreezable() ) then
+    self:SetNoClip( true )
+  else
+    self:SetNoClip( false )
+  end
 
   if not self:Move() then
     State.DestroyObject( self )
@@ -30,4 +32,12 @@ function IceBreath.AI( self )
 end
 
 
+function IceBreath.HandleCollision( self, other )
+  if other:GetTable().IsFreezable() then
+    other:GetTable().Freeze( other )
+    State.DestroyObject( self )
+  end
+end
+
 return IceBreath
+
