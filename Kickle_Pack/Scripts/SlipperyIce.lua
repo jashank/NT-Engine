@@ -1,5 +1,6 @@
 package.path = package.path .. ";Kickle_Pack/Scripts/?.lua"
 local SlipperyIce = require("Entity")
+setmetatable( SlipperyIce, {__index = require("Entity")})
 
 function SlipperyIce.HandleCollision( self, other )
   otherType = other:GetType()

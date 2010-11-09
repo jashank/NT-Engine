@@ -10,7 +10,8 @@ local DYING = 16
 
 -- Kickle Behavior Table
 
-local Kickle = require("Entity")
+local Kickle = {}
+setmetatable( Kickle, {__index = require("Entity")})
 
 Kickle.state = STANDING -- Current state kickle is in
 Kickle.godMode = false

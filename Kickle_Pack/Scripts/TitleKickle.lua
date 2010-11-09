@@ -1,5 +1,9 @@
 package.path = package.path .. ";Kickle_Pack/Scripts/?.lua"
-local TitleKickle = require( "Kickle" )
+local Util = require("ObjectUtilities")
+
+local TitleKickle = {}
+setmetatable( TitleKickle, {__index = require("Kickle")})
+
 
 function TitleKickle.Init( self )
   self:SetDir( Util.DOWN )

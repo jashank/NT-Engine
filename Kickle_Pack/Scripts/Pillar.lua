@@ -1,7 +1,8 @@
 package.path = package.path .. ";Kickle_Pack/Scripts/?.lua"
 local Util = require( "ObjectUtilities" )
 
-local Pillar = require("Entity")
+local Pillar = {}
+setmetatable( Pillar, {__index = require("Entity")})
 
 Pillar.lower = false
 
@@ -23,7 +24,5 @@ function Pillar.Lower( self )
   self:PlayAnim( 0 )
 end
   
-  
-
 return Pillar
 

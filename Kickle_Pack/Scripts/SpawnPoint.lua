@@ -1,5 +1,6 @@
 package.path = package.path .. ";Kickle_Pack/Scripts/?.lua"
-local SpawnPoint = require("Entity")
+local SpawnPoint = {}
+setmetatable( SpawnPoint, {__index = require("Entity")})
 
 SpawnPoint.slimeQueue = 0
 

@@ -1,17 +1,15 @@
 package.path = package.path .. ";Kickle_Pack/Scripts/?.lua"
 local Util = require ("ObjectUtilities")
 
-local Slime = require("Enemy")
+local Slime = {}
+setmetatable( Slime, {__index = require("Enemy")})
+
 local Slime.isFreezable = true
 
 Slime.spawn = nil
 
 function Slime.Init( self )
   Slime.spawn = State.GetNearestObject( "SpawnPoint", self:GetTile())
-end
-
-function Slime.AI( self )
-  EnemyLib.GenericAI( self )
 end
 
 

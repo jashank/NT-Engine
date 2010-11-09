@@ -1,4 +1,6 @@
-local NTIntroMngr = require("Entity")
+package.path = package.path .. ";Kickle_Pack/Scripts/?.lua"
+local NTIntroMngr = {}
+setmetatable( NTIntroMngr, {__index = require("Entity")})
 
 NTIntroMngr.alpha = 0
 NTIntroMngr.incalpha = true

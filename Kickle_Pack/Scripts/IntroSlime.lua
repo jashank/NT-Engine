@@ -1,7 +1,9 @@
 package.path = package.path .. ";Kickle_Pack/Scripts/?.lua"
 local Util = require("ObjectUtilities")
 
-local IntroSlime = require("Entity")
+local IntroSlime = {}
+setmetatable( IntroSlime, {__index = require("Entity")})
+
 IntroSlime.sitting = false
 
 function IntroSlime.Init( self )
@@ -29,3 +31,4 @@ function IntroSlime.AI( self )
 end
 
 return IntroSlime
+

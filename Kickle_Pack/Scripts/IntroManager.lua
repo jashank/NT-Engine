@@ -1,4 +1,7 @@
-local IntroMngr = require("Entity")
+package.path = package.path .. ";Kickle_Pack/Scripts/?.lua"
+local IntroMngr = {}
+setmetatable( IntroMngr, {__index = require("Entity")})
+
 IntroMngr.slimeCnt = 0
 IntroMngr.scene = 0
 

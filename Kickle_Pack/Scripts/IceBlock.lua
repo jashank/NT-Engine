@@ -1,7 +1,8 @@
 package.path = package.path .. ";Kickle_Pack/Scripts/?.lua"
 local Util = require("ObjectUtilities")
 
-local IceBlock = require("Entity")
+local IceBlock = {}
+setmetatable( IceBlock, {__index = require("Entity")})
 
 IceBlock.isFreezable = true
 IceBlock.kicked = false

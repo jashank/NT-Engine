@@ -1,8 +1,8 @@
 package.path = package.path .. ";Kickle_Pack/Scripts/?.lua"
 local Util = require ("ObjectUtilities")
 
-local Chicken = require("FreezableEnemy")
-
+local Chicken = {}
+setmetatable( Chicken, {__index = require("FreezableEnemy")})
 
 local FreezableEnemyAI = Chicken.AI
 -- Kicks any blocks around him because he is a jerk.

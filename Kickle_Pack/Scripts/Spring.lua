@@ -2,7 +2,9 @@ package.path = package.path .. ";Kickle_Pack/Scripts/?.lua"
 local Util = require "ObjectUtilities"
 
 --Spring Behavior Table
-local Spring = require("Entity")
+local Spring = {}
+setmetatable( Spring, {__index = require("Entity")})
+
 Spring.block = nil
 
 function Spring.Init( self )
@@ -10,6 +12,7 @@ function Spring.Init( self )
   self:SetDir( Util.GetOppositeDir( dir ))
   self:StopAnim()
 end
+
 
 function Spring.AI( self )
   if Spring.block then
@@ -22,6 +25,7 @@ function Spring.AI( self )
     end
   end
 end
+
 
 function Spring.HandleCollision( self, other )
   self:StopAnim()

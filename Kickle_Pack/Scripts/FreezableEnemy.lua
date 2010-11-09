@@ -4,7 +4,9 @@ local Util = require ("ObjectUtilities")
 -- A Freezable enemy is an enemy that is frozen in the sense that it becomes
 -- frozen solid for a bit, but this effect wears off. I.e. this does not
 -- apply to Slimes who turn into IceBlocks.
-local FreezableEnemy = require("Enemy")
+local FreezableEnemy = {}
+setmetatable( FreezableEnemy, {__index = require("Enemy")})
+
 
 FreezableEnemy.isFreezable = true
 FreezableEnemy.frozen = true
@@ -35,4 +37,6 @@ end
 function FreezableEnemy.IsFrozen()
   return FreezableEnemy.frozen
 end
+
+return FreezableEnemy
 

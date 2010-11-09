@@ -1,7 +1,8 @@
 package.path = package.path .. ";Kickle_Pack/Scripts/?.lua"
 local Util = require ("ObjectUtilities")
 
-local IceBreath = require("Entity")
+local IceBreath = {}
+setmetatable( IceBreath, {__index = require("Entity")})
 
 IceBreath.tilesCrossed = 0
 

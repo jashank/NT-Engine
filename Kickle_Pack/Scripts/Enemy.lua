@@ -1,7 +1,8 @@
 package.path = package.path .. ";Kickle_Pack/Scripts/?.lua"
 local Util = require ("ObjectUtilities")
 
-local Enemy = require("Entity")
+local Enemy = {}
+setmetatable( Enemy, {__index = require("Entity")})
 
 Enemy.isEnemy = true
 
