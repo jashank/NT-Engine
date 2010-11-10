@@ -1,8 +1,7 @@
 package.path = package.path .. ";Kickle_Pack/Scripts/?.lua"
 local Util = require("ObjectUtilities")
 
-local IntroBlock = {}
-setmetatable( IntroBlock, {__index = require("Entity")})
+local IntroBlock = require("Entity"):New()
 
 function IntroBlock.Init( self )
   self:SetDir( Util.DOWN )

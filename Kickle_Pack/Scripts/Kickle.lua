@@ -10,9 +10,7 @@ local DYING = 16
 
 -- Kickle Behavior Table
 
-local Kickle = {}
-setmetatable( Kickle, {__index = require("Entity")})
-
+local Kickle = require("Entity"):New()
 Kickle.state = STANDING -- Current state kickle is in
 Kickle.godMode = false
 
@@ -138,7 +136,7 @@ function Kickle.PerformAttack( self )
     local kickleDir = self:GetDir()
     local objOnTile = State.GetObjectOnTile( tileX, tileY )
 
-    if objOnTile and objOnTile:GetTable().IsFreezable() then
+    if objOnTile and objOnTile:GetTable():IsFreezable() then
       objType = objOnTile:GetType()
 
       if objType == "IceBlock" then

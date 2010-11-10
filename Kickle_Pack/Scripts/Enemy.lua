@@ -1,10 +1,7 @@
 package.path = package.path .. ";Kickle_Pack/Scripts/?.lua"
 local Util = require ("ObjectUtilities")
 
-local Enemy = {}
-setmetatable( Enemy, {__index = require("Entity")})
-
-Enemy.isEnemy = true
+local Enemy = require("Entity"):New{ isEnemy = true }
 
 -- Moves in same direction until either it hits the same axis as Kickle 
 -- (in which case it changes direction to go towards Kickle unless it can't 
@@ -57,7 +54,7 @@ function Enemy.HandleCollision( self, other )
     if otherType == "Kickle" then
       other:GetTable().Kill( other )
     elseif otherType == "DreamBag" then
-      other:GetTable.Push( other )
+      other:GetTable().Push( other )
     elseif otherType == "Pillar" then
       State.DestroyObject( other )
     end

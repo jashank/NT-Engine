@@ -1,9 +1,7 @@
 package.path = package.path .. ";Kickle_Pack/Scripts/?.lua"
 local Util = require("ObjectUtilities")
 
-local IntroKickle = {}
-setmetatable( IntroKickle, {__index = require("Entity")})
-
+local IntroKickle = require("Entity"):New()
 IntroKickle.setTimer = false
 
 function IntroKickle.Init( self )

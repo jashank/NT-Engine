@@ -1,11 +1,7 @@
 package.path = package.path .. ";Kickle_Pack/Scripts/?.lua"
 local Util = require ("ObjectUtilities")
 
-local Slime = {}
-setmetatable( Slime, {__index = require("Enemy")})
-
-local Slime.isFreezable = true
-
+local Slime = require("Enemy"):New{ isFreezable = true }
 Slime.spawn = nil
 
 function Slime.Init( self )

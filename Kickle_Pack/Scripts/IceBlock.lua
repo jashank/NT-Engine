@@ -1,9 +1,7 @@
 package.path = package.path .. ";Kickle_Pack/Scripts/?.lua"
 local Util = require("ObjectUtilities")
 
-local IceBlock = {}
-setmetatable( IceBlock, {__index = require("Entity")})
-
+local IceBlock = require("Entity"):New()
 IceBlock.isFreezable = true
 IceBlock.kicked = false
 IceBlock.moving = false
@@ -103,6 +101,11 @@ end
 
 function IceBlock.Freeze( self )
   self:ResetTimer() -- Refreeze IceBlock
+end
+
+
+function IceBlock:IsKicked()
+  return self.kicked
 end
 
 return IceBlock

@@ -3,8 +3,7 @@ local Util = require ("ObjectUtilities")
 
 math.randomseed( os.time() )
 
-local DreamBag = {}
-setmetatable( DreamBag, {__index = require("Entity")})
+local DreamBag = require("Entity"):New()
 
 function DreamBag.HandleCollision( self, other )
   if other:GetType() == "Pillar" then

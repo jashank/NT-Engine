@@ -1,8 +1,7 @@
 package.path = package.path .. ";Kickle_Pack/Scripts/?.lua"
 local Util = require ("ObjectUtilities")
 
-local Chicken = {}
-setmetatable( Chicken, {__index = require("FreezableEnemy")})
+local Chicken = require("FreezableEnemy"):New()
 
 local FreezableEnemyAI = Chicken.AI
 -- Kicks any blocks around him because he is a jerk.
@@ -10,9 +9,9 @@ function Chicken.AI( self )
   for i = Util.UP, Util.RIGHT do
     local x, y = Util.GetTileInDirection( self, i )
     block = State.GetObjectOnTile( x, y, "IceBlock" )
-    if block and not block:GetTable().kicked then
+    if block and not block:GetTable():IsKicked() then
       self:SetDir( i )
-      block:GetTable().Kick( block, i )
+      block:GetTable():Kick( block, i )
       return
     end
   end

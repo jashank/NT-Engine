@@ -1,7 +1,6 @@
 package.path = package.path .. ";Kickle_Pack/Scripts/?.lua"
-local IntroMngr = {}
-setmetatable( IntroMngr, {__index = require("Entity")})
 
+local IntroMngr = require("Entity"):New()
 IntroMngr.slimeCnt = 0
 IntroMngr.scene = 0
 

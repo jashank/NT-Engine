@@ -1,9 +1,7 @@
 package.path = package.path .. ";Kickle_Pack/Scripts/?.lua"
 local Util = require ("ObjectUtilities")
 
-local IceBreath = {}
-setmetatable( IceBreath, {__index = require("Entity")})
-
+local IceBreath = require("Entity"):New()
 IceBreath.tilesCrossed = 0
 
 function IceBreath.AI( self )
@@ -19,7 +17,7 @@ function IceBreath.AI( self )
   local otherObj = State.GetObjectOnTile( facingTileX, facingTileY )
 
   if tileType == "water" or
-     ( otherObj and otherObj:GetTable().IsFreezable() ) then
+     ( otherObj and otherObj:GetTable():IsFreezable() ) then
     self:SetNoClip( true )
   else
     self:SetNoClip( false )
@@ -34,7 +32,7 @@ end
 
 
 function IceBreath.HandleCollision( self, other )
-  if other:GetTable().IsFreezable() then
+  if other:GetTable():IsFreezable() then
     other:GetTable().Freeze( other )
     State.DestroyObject( self )
   end
