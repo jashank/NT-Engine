@@ -6,12 +6,12 @@ local Enemy = require("Entity"):New{ isEnemy = true }
 -- Moves in same direction until either it hits the same axis as Kickle 
 -- (in which case it changes direction to go towards Kickle unless it can't 
 -- move in that direction) or can't move any further.
-function Enemy.AI( self )
+function Enemy:AI( enemy )
   local kickle = State.GetObject( "Kickle" )
   if kickle then
-    local enemyX, enemyY = self:GetTile()
+    local enemyX, enemyY = enemy:GetTile()
     local kickleX, kickleY = kickle:GetTile()
-    local newDir = self:GetDir()
+    local newDir = enemy:GetDir()
     if enemyX == kickleX then
       if enemyY < kickleY then
         newDir = Util.DOWN
@@ -28,33 +28,33 @@ function Enemy.AI( self )
     local facingX, facingY = Util.GetTileInDir( newDir, enemyX, enemyY )
     if State.TileIsCrossable( facingX, facingY ) and
        not State.ObjectBlockingTile( facingX, facingY ) then
-      self:SetDir( newDir )
+      enemy:SetDir( newDir )
     end
   end
 
-  local facingX, facingY = Util.GetTileObjectFaces( self )
+  local facingX, facingY = Util.GetTileObjectFaces( enemy )
   if not State.TileIsCrossable( facingX, facingY ) or  
      State.ObjectBlockingTile( facingX, facingY ) then
-    self:SetDir( Util.GetNextDir( self:GetDir() ))
+    enemy:SetDir( Util.GetNextDir( enemy:GetDir() ))
   end
 
   
-  Util.SetAndPlay( self, self:GetDir())
-  self:Move()
+  Util.SetAndPlay( enemy, enemy:GetDir())
+  enemy:Move()
 end
 
 
 -- Bounce off of other enemies and kill Kickle if encountered.
-function Enemy.HandleCollision( self, other )
-  if other:GetTable().IsEnemy() then
-    local dir = self:SetDir( Util.GetOppositeDir( self:GetDir() ))
+function Enemy:HandleCollision( enemy, other )
+  if other:GetTable():IsEnemy() then
+    local dir = enemy:SetDir( Util.GetOppositeDir( enemy:GetDir() ))
     Util.SetAndPlay( enemy, dir )
   else
     otherType = other:GetType()
     if otherType == "Kickle" then
-      other:GetTable().Kill( other )
+      other:GetTable():Kill( other )
     elseif otherType == "DreamBag" then
-      other:GetTable().Push( other )
+      other:GetTable():Push( other )
     elseif otherType == "Pillar" then
       State.DestroyObject( other )
     end

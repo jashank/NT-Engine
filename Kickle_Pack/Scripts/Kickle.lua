@@ -11,144 +11,144 @@ local DYING = 16
 -- Kickle Behavior Table
 
 local Kickle = require("Entity"):New()
-Kickle.state = STANDING -- Current state kickle is in
+Kickle.state = STANDING
 Kickle.godMode = false
 
-function Kickle.HandleCollision( self, other )
+function Kickle:HandleCollision( kickle, other )
   local otherType = other:GetType()
-  if ( otherType == "DreamBag" and Kickle.state ~= DYING ) then
+  if ( otherType == "DreamBag" and self.state ~= DYING ) then
     State.DestroyObject( other )
   end
 end
 
 
-function Kickle.AI( self )
-  if ( Kickle.state == WALKING ) then
-    Kickle.state = STANDING
-    self:SetAnim( self:GetDir() + Kickle.state )
-  elseif ( Kickle.state ~= DYING and not self:IsAnimating() ) then
-    Kickle.state = STANDING
-    self:SetAnim( self:GetDir() + Kickle.state )
+function Kickle:AI( kickle )
+  if ( self.state == WALKING ) then
+    self.state = STANDING
+    kickle:SetAnim( kickle:GetDir() + self.state )
+  elseif ( self.state ~= DYING and not kickle:IsAnimating() ) then
+    self.state = STANDING
+    kickle:SetAnim( kickle:GetDir() + self.state )
   end
-  self:PlayAnim()
+  kickle:PlayAnim()
 end
 
 
-function Kickle.FaceUp( self )
-  if ( Kickle.state ~= DYING ) then
-    self:SetDir( Util.UP )
-    Util.SetAndPlay( self, Util.UP + Kickle.state )
-  end
-end
-
-
-function Kickle.FaceDown( self )
-  if ( Kickle.state ~= DYING ) then
-    self:SetDir( Util.DOWN )
-    Util.SetAndPlay( self, Util.DOWN + Kickle.state )
+function Kickle:FaceUp( kickle )
+  if ( self.state ~= DYING ) then
+    kickle:SetDir( Util.UP )
+    Util.SetAndPlay( kickle, Util.UP + self.state )
   end
 end
 
 
-function Kickle.FaceLeft( self )
-  if ( Kickle.state ~= DYING ) then
-    self:SetDir( Util.LEFT )
-    Util.SetAndPlay( self, Util.LEFT + Kickle.state )
+function Kickle:FaceDown( kickle )
+  if ( self.state ~= DYING ) then
+    kickle:SetDir( Util.DOWN )
+    Util.SetAndPlay( kickle, Util.DOWN + self.state )
   end
 end
 
 
-function Kickle.FaceRight( self )
-  if ( Kickle.state ~= DYING ) then
-    self:SetDir( Util.RIGHT )
-    Util.SetAndPlay( self, Util.RIGHT + Kickle.state )
+function Kickle:FaceLeft( kickle )
+  if ( self.state ~= DYING ) then
+    kickle:SetDir( Util.LEFT )
+    Util.SetAndPlay( kickle, Util.LEFT + self.state )
   end
 end
 
 
-function Kickle.WalkUp( self )
-  if ( Kickle.state ~= DYING ) then
-    self:SetDir( Util.UP )
-    Kickle.state = WALKING
-    self:Move()
-    Util.SetAndPlay( self, Util.UP + Kickle.state )
+function Kickle:FaceRight( kickle )
+  if ( self.state ~= DYING ) then
+    kickle:SetDir( Util.RIGHT )
+    Util.SetAndPlay( kickle, Util.RIGHT + self.state )
   end
 end
 
 
-function Kickle.WalkDown( self )
-  if ( Kickle.state ~= DYING ) then
-    self:SetDir( Util.DOWN )
-    Kickle.state = WALKING
-    self:Move()
-    Util.SetAndPlay( self, Util.DOWN + Kickle.state )
+function Kickle:WalkUp( kickle )
+  if ( self.state ~= DYING ) then
+    kickle:SetDir( Util.UP )
+    self.state = WALKING
+    kickle:Move()
+    Util.SetAndPlay( kickle, Util.UP + self.state )
   end
 end
 
 
-function Kickle.WalkLeft( self )
-  if ( Kickle.state ~= DYING ) then
-    self:SetDir( Util.LEFT )
-    Kickle.state = WALKING
-    self:Move()
-    Util.SetAndPlay( self, Util.LEFT + Kickle.state )
+function Kickle:WalkDown( kickle )
+  if ( self.state ~= DYING ) then
+    kickle:SetDir( Util.DOWN )
+    self.state = WALKING
+    kickle:Move()
+    Util.SetAndPlay( kickle, Util.DOWN + self.state )
   end
 end
 
 
-function Kickle.WalkRight( self )
-  if ( Kickle.state ~= DYING ) then
-    self:SetDir( Util.RIGHT )
-    Kickle.state = WALKING
-    self:Move()
-    Util.SetAndPlay( self, Util.RIGHT + Kickle.state )
+function Kickle:WalkLeft( kickle )
+  if ( self.state ~= DYING ) then
+    kickle:SetDir( Util.LEFT )
+    self.state = WALKING
+    kickle:Move()
+    Util.SetAndPlay( kickle, Util.LEFT + self.state )
   end
 end
 
 
-function Kickle.PerformPillar( self )
-  if ( Kickle.state == STANDING ) then
-    local tileX, tileY = Util.GetTileObjectFaces( self )
+function Kickle:WalkRight( kickle )
+  if ( self.state ~= DYING ) then
+    kickle:SetDir( Util.RIGHT )
+    self.state = WALKING
+    kickle:Move()
+    Util.SetAndPlay( kickle, Util.RIGHT + self.state )
+  end
+end
+
+
+function Kickle:PerformPillar( kickle )
+  if ( self.state == STANDING ) then
+    local tileX, tileY = Util.GetTileObjectFaces( kickle )
 
     if ( State.TileIsCrossable( tileX, tileY ) and
          not State.ObjectBlockingTile( tileX, tileY ) ) then
-      Kickle.state = PILLAR
-      Util.SetAndPlay( self, self:GetDir() + Kickle.state )
+      self.state = PILLAR
+      Util.SetAndPlay( kickle, kickle:GetDir() + self.state )
       local pillar = State.CreateObject(
                        "Kickle_Pack/Objects/Pillar.xml", tileX, tileY )
 
     elseif ( State.ObjectBlockingTile( tileX, tileY ) ) then
       local objOnTile = State.GetObjectOnTile( tileX, tileY )
       if( objOnTile:GetType() == "Pillar" ) then
-        Kickle.state = PILLAR
-        self:SetReverseAnim( true )
-        Util.SetAndPlay( self, self:GetDir() + Kickle.state )
-        objOnTile:GetTable().Lower( objOnTile )
+        self.state = PILLAR
+        kickle:SetReverseAnim( true )
+        Util.SetAndPlay( kickle, kickle:GetDir() + self.state )
+        objOnTile:GetTable():Lower( objOnTile )
       end
     end
   end
 end
 
 
-function Kickle.PerformAttack( self )
-  if ( Kickle.state == STANDING ) then
-    local tileX, tileY = Util.GetTileObjectFaces( self )
-    local kickleDir = self:GetDir()
+function Kickle:PerformAttack( kickle )
+  if ( self.state == STANDING ) then
+    local tileX, tileY = Util.GetTileObjectFaces( kickle )
+    local kickleDir = kickle:GetDir()
     local objOnTile = State.GetObjectOnTile( tileX, tileY )
 
     if objOnTile and objOnTile:GetTable():IsFreezable() then
       objType = objOnTile:GetType()
+      objTable = objOnTile:GetTable()
 
       if objType == "IceBlock" then
-        Kickle.state = KICKING
-        Util.SetAndPlay( self, kickleDir + Kickle.state );
-        objOnTile:GetTable().Kick( objOnTile, kickleDir )
+        self.state = KICKING
+        Util.SetAndPlay( kickle, kickleDir + self.state );
+        objTable:Kick( objOnTile, kickleDir )
         return
 
-      elseif objOnTile:GetTable().IsEnemy() and
-             objOnTile:GetTable().IsFrozen() then
-        Kickle.state = KICKING
-        Util.SetAndPlay( self, kickleDir + Kickle.state )
+      elseif objTable:IsEnemy() and objTable:IsFrozen() then
+        self.state = KICKING
+        Util.SetAndPlay( kickle, kickleDir + self.state )
         State.DestroyObject( objOnTile )
         return
       end
@@ -159,7 +159,7 @@ function Kickle.PerformAttack( self )
           not State.ObjectBlockingTile( tileX, tileY ) ) then
       local iceBreath = State.CreateObject(
                          "Kickle_Pack/Objects/IceBreath.xml", tileX, tileY )
-      local iceBreathDir = self:GetDir()
+      local iceBreathDir = kickle:GetDir()
       iceBreath:SetDir( iceBreathDir )
       Util.SetAndPlay( iceBreath, iceBreathDir )
     end
@@ -167,17 +167,17 @@ function Kickle.PerformAttack( self )
 end
 
 
-function Kickle.GodMode( self )
-  Kickle.godMode = not Kickle.godMode 
-  self:SetNoClip( Kickle.godMode )
+function Kickle:GodMode( kickle )
+  self.godMode = not self.godMode 
+  kickle:SetNoClip( self.godMode )
 end
 
 
-function Kickle.Kill( self )
-  if Kickle.state ~= DYING then
-    Kickle.state = DYING
-    Util.SetAndPlay( self, self:GetDir() + Kickle.state )
-    self:SetRenderPriority( -2 )
+function Kickle:Kill( kickle )
+  if self.state ~= DYING then
+    self.state = DYING
+    Util.SetAndPlay( kickle, kickle:GetDir() + self.state )
+    kickle:SetRenderPriority( -2 )
   end
 end
 

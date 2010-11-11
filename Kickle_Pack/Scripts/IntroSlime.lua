@@ -4,28 +4,33 @@ local Util = require("ObjectUtilities")
 local IntroSlime = require("Entity"):New()
 IntroSlime.sitting = false
 
-function IntroSlime.Init( self )
+function IntroSlime:Init( slime )
   objs = State.GetObjects("IntroSlime")
-  self:SetDir( Util.RIGHT )
-  Util.SetAndPlay( self, Util.RIGHT )
-  self:Move()
+  slime:SetDir( Util.RIGHT )
+  Util.SetAndPlay( slime, Util.RIGHT )
+  slime:Move()
 end
 
 
-function IntroSlime.AI( self )
-  if not IntroSlime.sitting then
+function IntroSlime:AI( slime )
+  if not self.sitting then
     local rightX = 9
 
-    local x, y = self:GetTile()
-    obj = State.GetObjectOnTile( x + 1, y )
-    if ( x == rightX or ( obj ~= self and obj ~= nil )) then
-      self:SetDir( Util.DOWN )
-      Util.SetAndPlay( self, Util.DOWN )
-      IntroSlime.sitting = true
+    local x, y = slime:GetTile()
+    local obj = State.GetObjectOnTile( x + 1, y )
+    if ( x == rightX or ( obj ~= slime and obj ~= nil )) then
+      slime:SetDir( Util.DOWN )
+      Util.SetAndPlay( slime, Util.DOWN )
+      self.sitting = true
     else
-      self:Move()
+      slime:Move()
     end
   end
+end
+
+
+function IntroSlime:IsSitting()
+  return self.sitting
 end
 
 return IntroSlime

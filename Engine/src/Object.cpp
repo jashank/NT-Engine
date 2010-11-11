@@ -180,12 +180,16 @@ void Object::HandleCollision( Object* const collisionObj ) {
   m_collidingWith.push_back( collisionObj );
 
   if ( m_id != LUA_NOREF ) {
+    // Push HandleCollision from Object table onto stack
     lua_rawgeti( m_L, LUA_REGISTRYINDEX, m_id );
     lua_getfield( m_L, -1, "HandleCollision" );
     if ( lua_isfunction( m_L, -1 ) ) {
+      // Push Object's table, the object, and object it is colliding with
+      // as arguments to HandleCollision.
+      lua_rawgeti( m_L, LUA_REGISTRYINDEX, m_id );
       Lunar<Object>::push( m_L, this );
       Lunar<Object>::push( m_L, collisionObj );
-      lua_call( m_L, 2, 0 );
+      lua_call( m_L, 3, 0 );
     }
     lua_settop( m_L, 0 );
   }
@@ -775,11 +779,14 @@ void Object::AdjustTileRange() {
 
 void Object::CallScriptFunc( std::string funcName ) {
   if ( m_id != LUA_NOREF ) {
+    // Grab function name from Object's table
     lua_rawgeti( m_L, LUA_REGISTRYINDEX, m_id );
     lua_getfield( m_L, -1, funcName.c_str() );
     if( lua_isfunction( m_L, -1 ) ) {
+      // Push Object's table and Object to function.
+      lua_rawgeti( m_L, LUA_REGISTRYINDEX, m_id );
       Lunar<Object>::push( m_L, this );
-      lua_call( m_L, 1, 0 );
+      lua_call( m_L, 2, 0 );
     }
     lua_settop( m_L, 0 );
   }

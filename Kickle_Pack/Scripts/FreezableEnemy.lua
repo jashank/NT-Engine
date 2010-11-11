@@ -4,38 +4,33 @@ local Util = require ("ObjectUtilities")
 -- A Freezable enemy is an enemy that is frozen in the sense that it becomes
 -- frozen solid for a bit, but this effect wears off. I.e. this does not
 -- apply to Slimes who turn into IceBlocks.
-local FreezableEnemy = {}
-setmetatable( FreezableEnemy, {__index = require("Enemy")})
+local FreezableEnemy = require("Enemy"):New{ isFreezable = true }
+FreezableEnemy.frozen = false 
 
-
-FreezableEnemy.isFreezable = true
-FreezableEnemy.frozen = true
-
-local EnemyAI = FreezableEnemy.AI
 -- Same as EnemyAI but if the enemy is frozen it needs to set a timer until
 -- it can be unfrozen.
-function FreezableEnemy.AI( self )
-  if not FreezableEnemy.frozen then
-    EnemyAI( self )
+function FreezableEnemy:AI( fenemy )
+  if not self.frozen then
+    self.__index:AI( fenemy )
   else 
-    local timeFrozen = self:GetElapsedTime()
+    local timeFrozen = fenemy:GetElapsedTime()
     if ( timeFrozen >= 5 ) then
-      FreezableEnemy.frozen = false
-      self:BlockTileRange( false )
+      self.frozen = false
+      fenemy:BlockTileRange( false )
     end
   end
 end
 
 
-function FreezableEnemy.Freeze( self )
-  FreezableEnemy.frozen = true
-  self:BlockTileRange( true )
-  self:ResetTimer()
+function FreezableEnemy:Freeze( fenemy )
+  self.frozen = true
+  fenemy:BlockTileRange( true )
+  fenemy:ResetTimer()
 end
 
 
-function FreezableEnemy.IsFrozen()
-  return FreezableEnemy.frozen
+function FreezableEnemy:IsFrozen()
+  return self.frozen
 end
 
 return FreezableEnemy

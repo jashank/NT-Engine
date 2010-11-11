@@ -26,14 +26,14 @@ end
 
 
 -- Returns tile Object is facing
-function Util.GetTileObjectFaces( Object )
-  return Util.GetTileInDir( Object:GetDir(), Object:GetTile())
+function Util.GetTileObjectFaces( obj )
+  return Util.GetTileInDir( obj:GetDir(), obj:GetTile())
 end
 
 
 -- Returns tile in in direction relative to Object passed
-function Util.GetTileInDirection( Object, dir )
-  return Util.GetTileInDir( dir, Object:GetTile() )
+function Util.GetTileInDirection( obj, dir )
+  return Util.GetTileInDir( dir, obj:GetTile() )
 end
 
 
@@ -85,9 +85,9 @@ end
 
 
 -- Sets an object's animation and then plays it.
-function Util.SetAndPlay( object, animIndex )
-  object:SetAnim( animIndex )
-  object:PlayAnim()
+function Util.SetAndPlay( obj, animIndex )
+  obj:SetAnim( animIndex )
+  obj:PlayAnim()
 end
 
 return Util

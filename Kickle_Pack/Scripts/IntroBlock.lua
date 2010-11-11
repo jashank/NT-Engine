@@ -3,17 +3,17 @@ local Util = require("ObjectUtilities")
 
 local IntroBlock = require("Entity"):New()
 
-function IntroBlock.Init( self )
-  self:SetDir( Util.DOWN )
+function IntroBlock:Init( block )
+  block:SetDir( Util.DOWN )
 end
 
 
-function IntroBlock.AI( self )
-  self:Move()
+function IntroBlock:AI( block )
+  block:Move()
 end
 
 
-function IntroBlock.HandleCollision( self, other )
+function IntroBlock:HandleCollision( block, other )
   State.DestroyObject( other )
 end
 

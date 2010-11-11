@@ -1,8 +1,8 @@
 package.path = package.path .. ";Kickle_Pack/Scripts/?.lua"
-local SlipperyIce = require("Entity")
-setmetatable( SlipperyIce, {__index = require("Entity")})
 
-function SlipperyIce.HandleCollision( self, other )
+local SlipperyIce = require("Entity"):New()
+
+function SlipperyIce:HandleCollision( ice, other )
   otherType = other:GetType()
   if otherType == "Pillar" then
     State.DestroyObject( other )

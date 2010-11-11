@@ -1,27 +1,26 @@
 package.path = package.path .. ";Kickle_Pack/Scripts/?.lua"
 local Util = require("ObjectUtilities")
 
-local IceBlock = require("Entity"):New()
-IceBlock.isFreezable = true
+local IceBlock = require("Entity"):New{ isFreezable = true }
 IceBlock.kicked = false
 IceBlock.moving = false
 IceBlock.destroyed = false 
 IceBlock.slimeSpawn = nil
 
 
-function IceBlock.Init( self )
-  IceBlock.slimeSpawn = State.GetNearestToObject( "SpawnPoint", self )
-  self:ResetTimer()
+function IceBlock:Init( iceblock )
+  self.slimeSpawn = State.GetNearestToObject( "SpawnPoint", iceblock )
+  iceblock:ResetTimer()
 end
 
 
-function IceBlock.AI( self )
-  local timeFrozen = self:GetElapsedTime()
+function IceBlock:AI( iceblock )
+  local timeFrozen = iceblock:GetElapsedTime()
   if ( timeFrozen >= 45 ) then
-    IceBlock.destroyed = true
+    self.destroyed = true
   end
 
-  local facingX, facingY = Util.GetTileObjectFaces( self )
+  local facingX, facingY = Util.GetTileObjectFaces( iceblock )
   local tileType = State.GetTileInfo( facingX, facingY )
   local obj = State.GetObjectOnTile( facingX, facingY )
   local objType = ""
@@ -30,77 +29,78 @@ function IceBlock.AI( self )
   end 
 
   -- IceBlock just kicked
-  if IceBlock.kicked then
-    IceBlock.kicked = false
+  if self.kicked then
+    self.kicked = false
 
     local facingSpring = false
     if objType == "Spring" then
-      facingSpring = ( self:GetDir() == Util.GetOppositeDir( obj:GetDir()))
+      facingSpring = 
+        ( iceblock:GetDir() == Util.GetOppositeDir( obj:GetDir()))
     end      
     
     if ( State.ObjectBlockingTile( facingX, facingY ) and not facingSpring ) or 
        ( not State.TileIsCrossable( facingX, facingY ) and
          tileType ~= "water" ) then 
-      IceBlock.destroyed = true
+      self.destroyed = true
     else
-      IceBlock.moving = true
+      self.moving = true
     end
   end
 
   -- IceBlock in motion
-  if IceBlock.moving then
+  if self.moving then
     if tileType == "water" or tileType == "" then
-      IceBlock.destroyed = true
+      self.destroyed = true
       if tileType == "water" then
         local tileType, tileName =
-          State.GetTileInfo( self:GetTile() )
+          State.GetTileInfo( iceblock:GetTile() )
           State.SetTile( facingX, facingY, tileName, 0 )
       end
     else
       if objType == "Spring" then
-        self:SetNoClip( true ) 
+        iceblock:SetNoClip( true ) 
       end
     end
-    IceBlock.moving = self:Move()
+    self.moving = iceblock:Move()
   end
 
   -- IceBlock destroyed
-  if IceBlock.destroyed then
-    spawn = IceBlock.slimeSpawn
-    spawn:GetTable().Spawn( spawn )
-    State.DestroyObject( self )
+  if self.destroyed then
+    spawn = self.slimeSpawn
+    spawn:GetTable():Spawn( spawn )
+    State.DestroyObject( iceblock )
   end
 end
 
 
-function IceBlock.HandleCollision( self, other )
-  if other:GetTable().IsEnemy() then
+function IceBlock:HandleCollision( iceblock, other )
+  if other:GetTable():IsEnemy() then
     State.DestroyObject( other )
   end
 
   local otherType = other:GetType()
   if otherType == "Slime" then
-    spawn = other:GetTable().spawn
-    spawn:GetTable().Spawn( spawn )
+    spawn = other:GetTable():GetSpawn()
+    spawn:GetTable():Spawn( spawn )
   elseif otherType == "Spring" then
-    self:SetNoClip( false )
-    other:GetTable().SpringBlock( self )
+    iceblock:SetNoClip( false )
+    other:GetTable():SpringBlock( iceblock )
   elseif otherType == "DreamBag" then
-    other:GetTable.Push( other )
+    other:GetTable():Push( other )
   elseif otherType == "Kickle" then
-    other:GetTable().Kill( other )
+    other:GetTable():Kill( other )
   end
 end
 
 
-function IceBlock.Kick( self, dir )
-  IceBlock.kicked = true
-  self:SetDir( dir )
+function IceBlock:Kick( iceblock, dir )
+  self.kicked = true
+  iceblock:SetDir( dir )
 end 
 
 
-function IceBlock.Freeze( self )
-  self:ResetTimer() -- Refreeze IceBlock
+function IceBlock:Freeze( iceblock )
+  iceblock:ResetTimer() -- Refreeze IceBlock
 end
 
 

@@ -4,24 +4,23 @@ local Util = require ("ObjectUtilities")
 local Slime = require("Enemy"):New{ isFreezable = true }
 Slime.spawn = nil
 
-function Slime.Init( self )
-  Slime.spawn = State.GetNearestObject( "SpawnPoint", self:GetTile())
+function Slime:Init( slime )
+  self.spawn = State.GetNearestObject( "SpawnPoint", slime:GetTile())
 end
 
 
-local EnemyCollision = Slime.HandleCollision
-function Slime.HandleCollision( self, other )
-  EnemyCollision( self, other )
+function Slime:HandleCollision( slime, other )
+  self.__index:HandleCollision( slime, other )
   if other:GetType() == "SlipperyIce" then
-    local dir = self:SetDir( Util.GetOppositeDir( self:GetDir()))
-    Util.SetAndPlay( self, dir )
+    local dir = slime:SetDir( Util.GetOppositeDir( slime:GetDir()))
+    Util.SetAndPlay( slime, dir )
   end
 end
 
 
-function Slime.Freeze( self )
-  local tx, ty, bx, by = self:GetTileRange()
-  dir = self:GetDir()
+function Slime:Freeze( slime )
+  local tx, ty, bx, by = slime:GetTileRange()
+  dir = slime:GetDir()
 
   local cx, cy = tx, ty
   -- protect against block spawning on Kickle
@@ -32,13 +31,18 @@ function Slime.Freeze( self )
   end
 
   block = State.CreateObject("Kickle_Pack/Objects/IceBlock.xml", cx, cy)
-  State.DestroyObject( self )
+  State.DestroyObject( slime )
 end
 
 
 -- Slime never freezes, just gets destroyed and turned into an IceBlock.
-function Slime.IsFrozen()
+function Slime:IsFrozen()
   return false
+end
+
+
+function Slime:GetSpawn()
+  return slime.spawn
 end
 
 return Slime

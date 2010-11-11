@@ -1,15 +1,18 @@
 package.path = package.path .. ";Kickle_Pack/Scripts/?.lua"
-local StageManager = {}
-setmetatable( StageManager, {__index = require("Entity")})
 
-function StageManager.AI( self )
+local StageManager = require("Entity"):New()
+
+
+function StageManager:AI( mngr )
   if( not State.GetObject( "DreamBag" )) then
     State.Portal( "nextStage" )
   end
 end
 
-function StageManager.Reset( self )
+
+function StageManager:Reset( mngr )
   State.Reset()
 end
 
 return StageManager
+

@@ -1,27 +1,25 @@
 package.path = package.path .. ";Kickle_Pack/Scripts/?.lua"
 local Util = require( "ObjectUtilities" )
 
-local Pillar = {}
-setmetatable( Pillar, {__index = require("Entity")})
-
+local Pillar = require("Entity"):New()
 Pillar.lower = false
 
-function Pillar.Init( self )
-  Util.SetAndPlay( self, 0 )
+function Pillar:Init( pillar )
+  Util.SetAndPlay( pillar, 0 )
 end
 
 
-function Pillar.AI( self )
-  if ( Pillar.lower and not self:IsAnimating() ) then
-    State.DestroyObject( self )
+function Pillar:AI( pillar )
+  if ( self.lower and not pillar:IsAnimating() ) then
+    State.DestroyObject( pillar )
   end
 end
 
 
-function Pillar.Lower( self )
-  Pillar.lower = true
-  self:SetReverseAnim( true )
-  self:PlayAnim( 0 )
+function Pillar:Lower( pillar )
+  self.lower = true
+  pillar:SetReverseAnim( true )
+  pillar:PlayAnim( 0 )
 end
   
 return Pillar

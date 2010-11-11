@@ -5,18 +5,18 @@ math.randomseed( os.time() )
 
 local DreamBag = require("Entity"):New()
 
-function DreamBag.HandleCollision( self, other )
+function DreamBag:HandleCollision( bag, other )
   if other:GetType() == "Pillar" then
     State.DestroyObject( other )
   end
 end
 
 
-function DreamBag.Push( self )
-  if ( not self:IsMoving() ) then
+function DreamBag:Push( bag )
+  if ( not bag:IsMoving() ) then
     local dir = math.random( Util.UP, Util.RIGHT )
     local canMove = false
-    local tileX, tileY = Util.GetTileInDirection( self, dir )
+    local tileX, tileY = Util.GetTileInDirection( bag, dir )
     local otherBag = State.GetObjectOnTile( tileX, tileY )
 
     if (( otherBag and otherBag:GetType() == "DreamBag" ) or
@@ -24,7 +24,7 @@ function DreamBag.Push( self )
       local newDir = Util.GetNextDir( dir )
 
       while newDir ~= dir do
-        local tileX, tileY = Util.GetTileInDirection( self, newDir ) 
+        local tileX, tileY = Util.GetTileInDirection( bag, newDir ) 
         local otherBag = State.GetObjectOnTile( tileX, tileY )
         if (( otherBag and otherBag:GetType() == "DreamBag" ) or
             not State.TileIsCrossable( tileX, tileY )) then
@@ -39,8 +39,8 @@ function DreamBag.Push( self )
     end
 
     if canMove then
-      self:SetDir( dir )
-      self:Move()
+      bag:SetDir( dir )
+      bag:Move()
     end
   end
 end

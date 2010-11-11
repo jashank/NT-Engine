@@ -4,37 +4,37 @@ local Util = require ("ObjectUtilities")
 local IceBreath = require("Entity"):New()
 IceBreath.tilesCrossed = 0
 
-function IceBreath.AI( self )
-  if ( IceBreath.tilesCrossed >= 6 ) then
-    State.DestroyObject( self )
+function IceBreath:AI( icebreath )
+  if ( self.tilesCrossed >= 6 ) then
+    State.DestroyObject( icebreath )
     return
   else
-    IceBreath.tilesCrossed = IceBreath.tilesCrossed + 1
+    self.tilesCrossed = self.tilesCrossed + 1
   end
 
-  local facingTileX, facingTileY = Util.GetTileObjectFaces( self )
+  local facingTileX, facingTileY = Util.GetTileObjectFaces( icebreath )
   local tileType = State.GetTileInfo( facingTileX, facingTileY )
   local otherObj = State.GetObjectOnTile( facingTileX, facingTileY )
 
   if tileType == "water" or
      ( otherObj and otherObj:GetTable():IsFreezable() ) then
-    self:SetNoClip( true )
+    icebreath:SetNoClip( true )
   else
-    self:SetNoClip( false )
+    icebreath:SetNoClip( false )
   end
 
-  if not self:Move() then
-    State.DestroyObject( self )
+  if not icebreath:Move() then
+    State.DestroyObject( icebreath )
   end
 
-  self:PlayAnim()
+  icebreath:PlayAnim()
 end
 
 
-function IceBreath.HandleCollision( self, other )
+function IceBreath:HandleCollision( icebreath, other )
   if other:GetTable():IsFreezable() then
-    other:GetTable().Freeze( other )
-    State.DestroyObject( self )
+    other:GetTable():Freeze( other )
+    State.DestroyObject( icebreath )
   end
 end
 

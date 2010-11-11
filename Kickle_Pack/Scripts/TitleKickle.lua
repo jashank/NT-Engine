@@ -1,16 +1,16 @@
 package.path = package.path .. ";Kickle_Pack/Scripts/?.lua"
 local Util = require("ObjectUtilities")
 
-local TitleKickle = {}
-setmetatable( TitleKickle, {__index = require("Kickle")})
+local TitleKickle = require("Kickle"):New()
 
 
-function TitleKickle.Init( self )
-  self:SetDir( Util.DOWN )
+function TitleKickle:Init( kickle )
+  kickle:SetDir( Util.DOWN )
 end
 
+
 -- temporary!!
-function TitleKickle.Play( self )
+function TitleKickle:Play( kickle )
   State.LoadPath( "Kickle_Pack/States/GardenLand_A.xml" )
 end
 
