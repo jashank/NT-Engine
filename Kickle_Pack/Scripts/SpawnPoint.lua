@@ -12,7 +12,7 @@ function SpawnPoint:Spawn( spawn )
   if slime then
     otherPoint = State.GetNearestToObject( "SpawnPoint", spawn )
     if otherPoint then
-      otherPoint:GetTable().MustSpawn( otherPoint )
+      otherPoint:GetTable():MustSpawn( otherPoint )
     else
       self.slimeQueue = self.slimeQueue + 1
     end

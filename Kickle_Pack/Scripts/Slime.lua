@@ -9,8 +9,9 @@ function Slime:Init( slime )
 end
 
 
+local EnemyCollision = Slime.HandleCollision
 function Slime:HandleCollision( slime, other )
-  self.__index:HandleCollision( slime, other )
+  EnemyCollision( self, slime, other )
   if other:GetType() == "SlipperyIce" then
     local dir = slime:SetDir( Util.GetOppositeDir( slime:GetDir()))
     Util.SetAndPlay( slime, dir )

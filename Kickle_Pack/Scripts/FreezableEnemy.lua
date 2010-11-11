@@ -9,9 +9,10 @@ FreezableEnemy.frozen = false
 
 -- Same as EnemyAI but if the enemy is frozen it needs to set a timer until
 -- it can be unfrozen.
+local EnemyAI = FreezableEnemy.AI
 function FreezableEnemy:AI( fenemy )
   if not self.frozen then
-    self.__index:AI( fenemy )
+    EnemyAI( self, fenemy )
   else 
     local timeFrozen = fenemy:GetElapsedTime()
     if ( timeFrozen >= 5 ) then
