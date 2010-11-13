@@ -3,7 +3,6 @@
 
 #include <string>
 
-#include <boost/shared_ptr.hpp>
 #include <SFML/Graphics/Image.hpp>
 
 #include "Rect.h"
@@ -106,7 +105,7 @@ private:
     std::vector<float> frameTimes; /** Only stores 1 time if no unique times. */
     int numFrames; /** Number of frames in animation. */
     nt::core::IntRect frameRect; /** (x,y)-first frame (w,h)-frame sizes */
-    boost::shared_ptr<sf::Image> image; /** Image that animation is on. */
+    sf::Image *image; /** Image that animation is on. */
     std::string name; /** Name assigned to animation in animation file. */
   };
 
@@ -124,13 +123,9 @@ private:
    * @param sheet image sheet that animation is located on.
    * @return Whether strip was successfully parsed.
    */
-  bool ParseStrip(
-    const TiXmlElement *strip,
-    const boost::shared_ptr<sf::Image> &sheet
-  );
+  bool ParseStrip( const TiXmlElement *strip, sf::Image *sheet );
 
   std::vector<Animation> m_anims; /** Stores all animations. */
 };
 
 #endif // ANIMDATA_H
-

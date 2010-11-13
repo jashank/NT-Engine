@@ -1,5 +1,10 @@
 #include "ResourceLib.h"
 
+#include <SFML/Audio/Music.hpp>
+#include <SFML/Audio/SoundBuffer.hpp>
+#include <SFML/Graphics.hpp>
+
+#include "AnimData.h"
 #include "ResourceManager.h"
 
 // All of the resources the engine holds
@@ -15,36 +20,54 @@ namespace {
 namespace nt {
 namespace rsrc {
 
-const boost::shared_ptr<sf::Image> &LoadImg( const std::string &relPath ) {
-  return images.Load( relPath );
-}
+  sf::Image *LoadImg( const std::string &relPath ) {
+    return images.Load( relPath );
+  }
 
-const boost::shared_ptr<sf::Font> &LoadFont( const std::string &relPath ) {
-  return fonts.Load( relPath );
-}
+  sf::Font *LoadFont( const std::string &relPath ) {
+    return fonts.Load( relPath );
+  }
 
-const boost::shared_ptr<sf::SoundBuffer> &LoadSound( 
-  const std::string &relPath
-) {
-  return sounds.Load( relPath );
-}
+  sf::SoundBuffer *LoadSound( const std::string &relPath ) {
+    return sounds.Load( relPath );
+  }
 
-const boost::shared_ptr<sf::Music> &LoadMusic( const std::string &relPath ) {
-  return music.Load( relPath );
-}
+  sf::Music *LoadMusic( const std::string &relPath ) {
+    return music.Load( relPath );
+  }
 
-const boost::shared_ptr<AnimData> &LoadAnim( const std::string &relPath ) {
-  return anims.Load( relPath );
-}
+  AnimData *LoadAnim( const std::string &relPath ) {
+    return anims.Load( relPath );
+  }
 
-void ReleaseUnused() {
-  images.ReleaseUnused();
-  fonts.ReleaseUnused();
-  sounds.ReleaseUnused();
-  music.ReleaseUnused();
-  anims.ReleaseUnused();    
-}
- 
+  void ClearImgs() {
+    images.Clear();
+  }
+
+  void ClearFonts() {
+    fonts.Clear();
+  }
+
+  void ClearSounds() {
+    sounds.Clear();
+  }
+
+  void ClearMusic() {
+    music.Clear();
+  }
+
+  void ClearAnims() {
+    anims.Clear();
+  }
+
+  void ClearAll() {
+    images.Clear();
+    fonts.Clear();
+    sounds.Clear();
+    music.Clear();
+    anims.Clear();
+  }
+
 } // namespace rsrc 
 } // namespace nt
   

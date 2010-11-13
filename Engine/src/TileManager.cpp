@@ -8,8 +8,6 @@ extern "C" {
   #include "lua.h"
 }
 
-#include <boost/shared_ptr.hpp>
-
 #include "AnimData.h"
 #include "AnimSprite.h"
 #include "Camera.h"
@@ -221,8 +219,7 @@ int TileManager::LuaSetTile( lua_State *L ) {
 Private Methods
 ************************************/
 bool TileManager::LoadTileAnims( const std::string &animPath ) {
-  const boost::shared_ptr<AnimData> &tileAnims =
-    nt::rsrc::LoadAnim( animPath );
+  AnimData *tileAnims = nt::rsrc::LoadAnim( animPath );
 
   if ( tileAnims ) {
     m_numTileTypes = tileAnims->GetNumAnims();

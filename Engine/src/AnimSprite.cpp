@@ -11,7 +11,8 @@
 Public Methods
 ************************************************/
 AnimSprite::AnimSprite()
- : m_playing( false ),
+ : m_animData( NULL ),
+   m_playing( false ),
    m_reversed( false ),
    m_setToReverse( false ),
    m_frameTimeLeft( 0.0f ),
@@ -73,7 +74,7 @@ int AnimSprite::GetAnimation() const {
 
 
 void AnimSprite::LoadAnimData( const std::string &filepath ) {
-  const boost::shared_ptr<AnimData> &anim = nt::rsrc::LoadAnim( filepath );
+  AnimData *anim = nt::rsrc::LoadAnim( filepath.c_str() );
   if ( anim ) {
     SetAnimData( anim );
   } else {
@@ -142,8 +143,6 @@ void AnimSprite::SetAnimation( int animIndex ) {
 
     sf::Image *sheet = m_animData->GetImage( m_animNum );
     if ( sheet ) {
-      // Dangerous if image is ever held after resource manager
-      // has deallocated.
       SetImage( *sheet );
     }
     
@@ -152,14 +151,12 @@ void AnimSprite::SetAnimation( int animIndex ) {
 }
 
 
-void AnimSprite::SetAnimData( const boost::shared_ptr<AnimData> &anim ) {
-  m_animData = anim;
+void AnimSprite::SetAnimData( const AnimData *animData ) {
+  m_animData = animData;
   m_frameTimeLeft = m_animData->GetFrameTime( m_animNum, m_frameNum );
 
   sf::Image *sheet = m_animData->GetImage( m_animNum );
   if ( sheet ) {
-    // Dangerous if image is ever held after resource manager
-    // has deallocated.
     SetImage( *sheet );
   }
 }

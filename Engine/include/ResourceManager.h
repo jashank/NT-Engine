@@ -4,8 +4,7 @@
 #include <algorithm>
 #include <map>
 #include <string>
-
-#include <boost/shared_ptr.hpp>
+#include <utility>
 
 /**
  * String comparison functor used for std::map.
@@ -18,34 +17,43 @@ struct strCmp {
 
 
 /**
- * Loads data into resources stored in ResourceManager. Template parameter is
+ * Loads and deletes resources for the ResourceManager. Template parameter is
  * the resource type, which will be the same as the resource type of the 
  * ResourceManager.
  */
-template<typename resource_t>
+template< typename resource_t >
 struct ResourceLoader {
   /**
-   * Loads data from filePath into resource passed. Returns true if operation
-   * succeeded.
+   * Safely deletes resource passed.
+   * @param resource pair storing resource's filename and the resource itself.
    */
-  bool Load(
-    const std::string& filePath, 
-    boost::shared_ptr<resource_t> &rsrc 
-  );
+  virtual void operator()( std::pair< const std::string, resource_t* > &resource );
+
+  /**
+   * Loads resource found at filePath, calling LoadFromFile with filePath
+   * passed on a new resource_t object created.
+   * @param filePath path to file to load resource from.
+   * @return Pointer to the resource.
+   */
+  virtual resource_t* Load( const std::string& filePath );
 };
 
 
-template<typename resource_t, typename loader_t=ResourceLoader< resource_t > >
+template< typename resource_t, typename loader_t=ResourceLoader< resource_t > >
 class ResourceManager {
 public:
   ResourceManager() {}
 
   /**
-   * Clears all contents. Note that manager holds shared pointers, so
-   * make sure everything else that may be using a resource is no longer
-   * using it before destroying the ResourceManager.
+   * Calls Clear().
    */
   ~ResourceManager();
+
+  /**
+   * Clears ResourceManager, safely deleting all contents from the application 
+   * and freeing that memory for further use.
+   */
+  void Clear();
 
   /**
    * Loads resource located at file passed into the ResourceManager. Will not
@@ -54,17 +62,10 @@ public:
    * @return Resource loaded in. If resource was already loaded, returns it.
    * If resource failed to load, returns NULL.
    */
-  const boost::shared_ptr<resource_t> &Load( const std::string &filePath );
-
-  /**
-   * Releases unused resources, meaning resources that aren't being held by
-   * anything besides the manager.
-   */
-  void ReleaseUnused();
+  resource_t* Load( const std::string& filePath );
 
 private:
-  typedef boost::shared_ptr<resource_t> shared_rsrc;
-  typedef std::map<const std::string, shared_rsrc, strCmp> map_t;
+  typedef std::map< const std::string, resource_t*, strCmp > map_t;
   
   //@{
   /**

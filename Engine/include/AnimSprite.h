@@ -3,10 +3,9 @@
 
 #include <string>
 
-#include <boost/shared_ptr.hpp>
 #include <SFML/Graphics/Sprite.hpp>
 
-#include "AnimData.h"
+class AnimData;
 
 /**
  * sf::Sprite with methods to enable easier animation based on AnimData
@@ -115,7 +114,7 @@ class AnimSprite : public sf::Sprite {
    * Sets sprite's AnimData. Current animation index is not changed. 
    * @param animData new AnimData for this sprite.
    */
-  void SetAnimData( const boost::shared_ptr<AnimData> &anim );
+  void SetAnimData( const AnimData *animData );
   
   /**
    * @return whether sprite's animation is playing.
@@ -141,9 +140,7 @@ class AnimSprite : public sf::Sprite {
    */
   void NextFrame();
 
-  /** Animation data stored for this sprite. */
-  boost::shared_ptr<AnimData> m_animData;
-
+  const AnimData *m_animData; /** Animation data stored for this sprite. */
   bool m_playing; /** Whether animation is playing. */
   bool m_reversed; /** Whether animation is to be played in reverse. */
   bool m_setToReverse; /** Enables newly set animation to start in reverse. */

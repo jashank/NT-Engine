@@ -1,50 +1,58 @@
 #include <memory>
 #include <sstream>
-#include <utility>
-
-#include <boost/make_shared.hpp>
 
 #include "Utilities.h"
+
+template< typename resource_t >
+void ResourceLoader< resource_t >::operator()(
+  std::pair< const std::string, resource_t* > &resource ) {
+  SAFEDELETE(resource.second);
+}
+
 
 // Specialize load for sf::Music because it uses OpenFromFile rather than
 // LoadFromFile in SFML.
 template<>
-bool ResourceLoader<sf::Music>::Load(
-  const std::string &filepath,
-  boost::shared_ptr<sf::Music> &rsrc 
-) {
-  if( !rsrc->OpenFromFile( filepath ) ) {
+sf::Music* ResourceLoader< sf::Music >::Load( const std::string &filepath ) {
+  std::auto_ptr< sf::Music > resource( new sf::Music() );
+  if( !resource->OpenFromFile( filepath ) ) {
     LogErr( "Song in" + filepath + "failed to load." );
-    return false;
+    return NULL;
   }
-  return true;
+  return resource.release();
 }
 
 
-template<typename resource_t>
-bool ResourceLoader<resource_t>::Load( 
-  const std::string &filePath,
-  boost::shared_ptr<resource_t> &rsrc
-) {
-  if( !rsrc->LoadFromFile( filePath ) ) {
+template< typename resource_t >
+resource_t* ResourceLoader< resource_t >::Load( const std::string &filePath ) {
+  std::auto_ptr<resource_t> resource( new resource_t );
+  if( !resource->LoadFromFile( filePath ) ) {
     LogErr( "Resource " + filePath + " not found." );
-    return false;
   }
-  return true;
+
+  return resource.release();
 }
 
 
-template<typename resource_t, typename loader_t>
+template< typename resource_t, typename loader_t >
 ResourceManager< resource_t, loader_t >::~ResourceManager() {
+  this->Clear();
+}
+
+
+template< typename resource_t, typename loader_t >
+void ResourceManager<resource_t, loader_t>::Clear() {
+  std::for_each<typename map_t::iterator, loader_t>(
+    m_resources.begin(),
+    m_resources.end(),
+    m_loader );
   m_resources.clear();
 }
 
 
-template<typename resource_t, typename loader_t>
-const boost::shared_ptr<resource_t> 
-  &ResourceManager<resource_t, loader_t>::Load(
-  const std::string &filePath
-) {
+template< typename resource_t, typename loader_t >
+resource_t* ResourceManager< resource_t, loader_t >::Load(
+  const std::string &filePath ) {
 
   //Check to see if resource has already been loaded,
   //if so then return a reference to that resource
@@ -53,29 +61,11 @@ const boost::shared_ptr<resource_t>
     return result->second;
   }
 
-  // Load resource and insert into map, then return it.
-  boost::shared_ptr<resource_t> rsrc = boost::make_shared<resource_t>();
+  //Load the resource with loader functor and temporarily store in autoptr
+  std::auto_ptr<resource_t> resource( m_loader.Load( filePath ) );
 
-  if ( m_loader.Load( filePath, rsrc )) {
-    std::pair<typename map_t::iterator, bool> ret;
-    ret = m_resources.insert( std::make_pair( filePath, rsrc ));
-    return ret.first->second;
-  }
+  //Insert it into map and return a reference to that resource.
+  m_resources.insert( std::make_pair( filePath, resource.get() ) );
 
-  // TODO -- update
-  throw;
+  return resource.release();
 }
-
-
-template<typename resource_t, typename loader_t>
-void ResourceManager<resource_t, loader_t>::ReleaseUnused() {
-  for ( typename map_t::iterator rsrc = m_resources.begin(); 
-        rsrc != m_resources.end(); ) {
-    typename map_t::iterator erase_elem = rsrc++;
-
-    if ( erase_elem->second.unique() ) {
-      m_resources.erase( erase_elem );
-    }
-  }
-}
-

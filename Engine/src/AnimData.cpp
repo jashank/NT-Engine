@@ -20,8 +20,7 @@ bool AnimData::LoadFromFile( const std::string &filepath ) {
     TiXmlElement *root = handleDoc.FirstChildElement( "animations" ).Element();
     TiXmlElement *sheet = root->FirstChildElement( "sheet" );
     do {
-      const boost::shared_ptr<sf::Image> &loadedSheet =
-        nt::rsrc::LoadImg( sheet->Attribute( "path" ));
+      sf::Image *loadedSheet = nt::rsrc::LoadImg( sheet->Attribute( "path" ));
       if ( loadedSheet ) {
         // A strip
         TiXmlElement *elem = sheet->FirstChildElement();
@@ -134,9 +133,9 @@ nt::core::IntRect AnimData::GetFrameRect(
 }
 
 
-sf::Image *AnimData::GetImage( int animIndex ) const {
+sf::Image* AnimData::GetImage( int animIndex ) const {
   if ( animIndex >= 0 && (unsigned int) animIndex < m_anims.size() ) {
-    return m_anims[animIndex].image.get();
+    return m_anims[animIndex].image;
   } else {
     return NULL;
   }
@@ -150,9 +149,7 @@ AnimData::Animation::Animation()
   isLooped( false ),
   numFrames( 1 ) {}
 
-bool AnimData::ParseStrip(
-  const TiXmlElement *strip,
-  const boost::shared_ptr<sf::Image> &sheet ) {
+bool AnimData::ParseStrip( const TiXmlElement *strip, sf::Image *sheet ) {
   Animation anim;
 
   anim.image = sheet;

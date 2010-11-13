@@ -9,6 +9,7 @@ extern "C" {
 }
 
 #include "Object.h" // To register Objects to Lua
+#include "ResourceLib.h"
 #include "State.h"
 #include "Utilities.h"
 #include "Window.h"
@@ -57,6 +58,8 @@ StateMachine::~StateMachine() {
 
   lua_close( m_luaState );
   m_luaState = NULL;
+
+  nt::rsrc::ClearAll();
 } 
 
 /*******************************
