@@ -3,15 +3,13 @@
 
 #include <string>
 
-// Forward declarations of SFML resources
-namespace sf {
-  class Image;
-  class Font;
-  class SoundBuffer;
-  class Music;  
-}
+#include <SFML/Audio/Music.hpp>
+#include <SFML/Audio/SoundBuffer.hpp>
+#include <SFML/Graphics.hpp>
 
-class AnimData;
+#include <boost/shared_ptr.hpp>
+
+#include "AnimData.h"
 
 /**
  * nt::rsrc contains functions to load resources in the application.
@@ -28,27 +26,23 @@ namespace rsrc {
    *
    * See the SFML documentation to see file formats supported.
    * @param relPath path to file to load that is relative to location of engine.
-   * @return Resource if the load was successful or it has already been loaded,
-   *         NULL otherwise.
+   * @return Resource if the load was successful or it has already been
+   *         loaded. Will contain NULL if resource failed to load.
    */
-  sf::Image *LoadImg( const std::string &relPath );
-  sf::Font *LoadFont( const std::string &relPath );
-  sf::SoundBuffer *LoadSound( const std::string &relPath );
-  sf::Music *LoadMusic( const std::string &relPath );
-  AnimData *LoadAnim( const std::string &relPath );
+  const boost::shared_ptr<sf::Image> &LoadImg( const std::string &relPath );
+  const boost::shared_ptr<sf::Font> &LoadFont( const std::string &relPath );
+  const boost::shared_ptr<sf::SoundBuffer> &LoadSound( 
+    const std::string &relPath
+  );
+  const boost::shared_ptr<sf::Music> &LoadMusic( const std::string &relPath );
+  const boost::shared_ptr<AnimData> &LoadAnim( const std::string &relPath );
   //@}
 
-  //@{
   /**
-   * The following functions release the various resources.
+   * Releases unused resources. An unused resource means that nothing
+   * currently holds the resource besides the manager.
    */
-  void ClearImgs();
-  void ClearFonts();
-  void ClearSounds();
-  void ClearMusic();
-  void ClearAnims();
-  void ClearAll();
-  //@}
+  void ReleaseUnused();
 
 } // namespace rsrc
 } // namespace nt

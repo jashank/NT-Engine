@@ -14,7 +14,6 @@ extern "C" {
  * Destructor
  *****************************************/
 State::~State() {
-  nt::rsrc::ClearAll();
   nt::state::EndStateComm();
 }
 
