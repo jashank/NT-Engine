@@ -108,5 +108,10 @@ function IceBlock:IsKicked()
   return self.kicked
 end
 
+
+function IceBlock:SetSlimeSpawn( spawn )
+  self.slimeSpawn = spawn
+end
+
 return IceBlock
 

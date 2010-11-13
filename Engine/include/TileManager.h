@@ -7,17 +7,13 @@
 #include <boost/scoped_array.hpp>
 #include <boost/scoped_ptr.hpp>
 
-extern "C" {
-  #include "lua.h"
-  #include "lauxlib.h"
-}
-
 #include "Matrix2D.h"
 #include "Tile.h"
 
 class AnimSprite;
 class Camera;
 class TiXmlElement;
+class lua_State;
 
 /**
  * Holds and manages all Tiles in the current state. Provides functions to 

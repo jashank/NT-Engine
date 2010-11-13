@@ -6,11 +6,6 @@
 #include <string>
 #include <vector>
 
-extern "C" {
-  #include "lua.h"
-  #include "lauxlib.h"
-}
-
 #include <boost/intrusive_ptr.hpp>
 #include <boost/scoped_ptr.hpp>
 
@@ -18,6 +13,7 @@ extern "C" {
 #include "RangeMatrix3D.h"
 
 class Camera;
+class lua_State;
 class TiXmlElement;
 
 /**

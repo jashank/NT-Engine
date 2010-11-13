@@ -2,6 +2,10 @@
 
 #include <utility>
 
+extern "C" {
+  #include "lua.h"
+}
+
 #include "AnimSprite.h"
 #include "Camera.h"
 #include "Rect.h"

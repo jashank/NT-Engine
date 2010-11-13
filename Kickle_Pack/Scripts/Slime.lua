@@ -32,6 +32,7 @@ function Slime:Freeze( slime )
   end
 
   block = State.CreateObject("Kickle_Pack/Objects/IceBlock.xml", cx, cy)
+  block:GetTable():SetSlimeSpawn( self.spawn )
   State.DestroyObject( slime )
 end
 
@@ -43,7 +44,7 @@ end
 
 
 function Slime:GetSpawn()
-  return slime.spawn
+  return self.spawn
 end
 
 return Slime

@@ -2,9 +2,14 @@
 
 #include <utility>
 
+extern "C" {
+  #include "lua.h"
+}
+
 #include <SFML/Audio/Music.hpp>
 
 #include "ResourceLib.h"
+#include "tinyxml.h"
 #include "Utilities.h"
 
 /*****************************
@@ -40,13 +45,11 @@ bool MusicManager::LoadData( const TiXmlElement *root ) {
         }
       } else {
         LogErr( "Path not specified for song element in State file." );
+        return false;
       }
 
-    } while ( song = song->NextSiblingElement( "song" ));
+    } while ( (song = song->NextSiblingElement( "song" )) );
   }
+  return true;
 }
 
-
-int MusicManager::LuaPlayMusic( lua_State *L ) {
-  // If 
-}
