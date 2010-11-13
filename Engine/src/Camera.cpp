@@ -7,7 +7,7 @@
 #include "Window.h"
 
 extern "C" {
-  #include "lualib.h"
+  #include "lua.h"
 }
 
 /******************************

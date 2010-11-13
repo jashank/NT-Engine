@@ -5,12 +5,9 @@
 
 #include <boost/scoped_ptr.hpp>
 
-extern "C" {
-  #include "lauxlib.h"
-}
-
 class State;
 class lua_State;
+class luaL_Reg;
 
 /**
  * Starts off running first State loaded in and provides a Lua interface

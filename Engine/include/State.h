@@ -12,6 +12,8 @@
 #include "StateComm.h"
 #include "TileManager.h"
 
+class lua_State;
+
 /**
  * A highly customizable construct representing a single "scene" in the
  * application. Each State has an XML file where the user specifies tile

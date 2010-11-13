@@ -3,7 +3,7 @@
 #include <utility>
 
 extern "C" {
-  #include "lualib.h"
+  #include "lua.h"
 }
 
 #include "ResourceLib.h"
@@ -40,7 +40,6 @@ void State::Update( float dt ) {
   m_camera.Update( dt );
   m_tileManager.Update( dt );
   m_objectManager.Update( dt, m_camera );
-  m_musicManager.Update();
 }
 
 

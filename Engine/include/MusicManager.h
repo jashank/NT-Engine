@@ -7,6 +7,8 @@
 namespace sf {
   class Music;
 }
+class TiXmlElement;
+class lua_State;
 
 /**
  * Manages music in the state providing interface to perform various
