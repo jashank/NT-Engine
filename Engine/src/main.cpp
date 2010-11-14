@@ -8,6 +8,7 @@
 * written in XML and Lua. 
 */
 
+#include <exception>
 #include <string>
 #include <sys/stat.h> // Used to check if input file exists.
 
@@ -20,52 +21,59 @@
 #include "Window.h"
 
 int main( int argc, char *argv[] ) {
-  ClearLog();
-  Config::Load();
+  try {
+    ClearLog();
+    Config::Load();
 
-  std::string levelPath("Kickle_Pack/States/NTIntro.xml");
-  if ( argc == 2 ) {
-    struct stat fileInfoBuffer;
-    if ( stat( argv[1], &fileInfoBuffer ) == 0 ) { // If the file exists.
-      levelPath = std::string(argv[1]); // Get level from command line.
-    }
-  }
-
-  std::string title = "Kickle!";
-  nt::window::Create(
-    title,
-    Config::GetScreenWidth(),
-    Config::GetScreenHeight()
-  );
-  StateMachine mach;
-  mach.Setup( levelPath );
-
-  const float dt = 1.0 / Config::GetFPS();
-  float frameTime = 0.0;
-  float accumulator = 0.0;
-
-  sf::Clock timer;
-  timer.Reset();
-
-  while ( nt::window::IsOpen() ) {
-    while ( accumulator >= dt ) {
-      mach.Step( dt );
-      accumulator -= dt;
+    std::string levelPath("Kickle_Pack/States/NTIntro.xml");
+    if ( argc == 2 ) {
+      struct stat fileInfoBuffer;
+      if ( stat( argv[1], &fileInfoBuffer ) == 0 ) { // If the file exists.
+        levelPath = std::string(argv[1]); // Get level from command line.
+      }
     }
 
-    float alpha = accumulator / dt;
+    std::string title = "Kickle!";
+    nt::window::Create(
+      title,
+      Config::GetScreenWidth(),
+      Config::GetScreenHeight()
+    );
+    StateMachine mach;
+    mach.Setup( levelPath );
 
-    mach.Render( alpha );
-    nt::window::Display();
-    nt::window::Clear();
+    const float dt = 1.0 / Config::GetFPS();
+    float frameTime = 0.0;
+    float accumulator = 0.0;
 
-    frameTime = timer.GetElapsedTime();
-    accumulator += frameTime;
+    sf::Clock timer;
     timer.Reset();
-    if ( frameTime < dt ) {
-      sf::Sleep( dt - frameTime );
-    } 
-  }
 
-  return 0;
+    while ( nt::window::IsOpen() ) {
+      while ( accumulator >= dt ) {
+        mach.Step( dt );
+        accumulator -= dt;
+      }
+
+      float alpha = accumulator / dt;
+
+      mach.Render( alpha );
+      nt::window::Display();
+      nt::window::Clear();
+
+      frameTime = timer.GetElapsedTime();
+      accumulator += frameTime;
+      timer.Reset();
+      if ( frameTime < dt ) {
+        sf::Sleep( dt - frameTime );
+      } 
+    }
+
+    return 0;
+  }
+  catch ( std::exception &e ) {
+    const std::string exitErr = "Exiting program due to: ";
+    LogErr( exitErr + e.what() + "\n" );
+    return 1;
+  }
 }

@@ -1,5 +1,6 @@
 #include <memory>
 #include <sstream>
+#include <stdexcept>
 #include <utility>
 
 #include <boost/make_shared.hpp>
@@ -62,8 +63,7 @@ const boost::shared_ptr<resource_t>
     return ret.first->second;
   }
 
-  // TODO -- update
-  throw;
+  throw std::runtime_error("Resource failed to load.");
 }
 
 

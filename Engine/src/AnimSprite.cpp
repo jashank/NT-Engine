@@ -84,7 +84,8 @@ void AnimSprite::LoadAnimData( const std::string &filepath ) {
 
 
 void AnimSprite::Play() {
-  m_playing = true;
+  // Only play if there is animation data to play
+  m_playing = m_animData;
 }
 
 

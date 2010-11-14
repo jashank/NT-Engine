@@ -58,8 +58,6 @@ StateMachine::~StateMachine() {
 
   lua_close( m_luaState );
   m_luaState = NULL;
-
-  nt::rsrc::ClearAll();
 } 
 
 /*******************************
@@ -237,4 +235,5 @@ int StateMachine::LuaSlowDownCam( lua_State *L ) {
 void StateMachine::NextState() {
   m_runningState.reset( new State());
   m_runningState->Init( m_nextStatePath, m_luaState );
+  nt::rsrc::ReleaseUnused();
 }

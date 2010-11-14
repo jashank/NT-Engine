@@ -154,3 +154,4 @@ class AnimSprite : public sf::Sprite {
 };
 
 #endif // ANIMSPRITE_H
+
