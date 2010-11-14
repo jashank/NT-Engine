@@ -49,10 +49,10 @@ public:
 
   /**
    * Loads resource located at file passed into the ResourceManager. Will not
-   * load duplicate resources into memory.
+   * load duplicate resources into memory. Throws runtime_error exception 
+   * if unable to load resource.
    * @param filePath path to file to load resource from.
    * @return Resource loaded in. If resource was already loaded, returns it.
-   * If resource failed to load, returns NULL.
    */
   const boost::shared_ptr<resource_t> &Load( const std::string &filePath );
 

@@ -4,15 +4,20 @@
 #include <string>
 
 #include <boost/shared_ptr.hpp>
-#include <SFML/Graphics/Sprite.hpp>
+#include <SFML/Graphics/Drawable.hpp>
 
 #include "AnimData.h"
+
+namespace sf {
+  class RenderTarget;
+}
+
 
 /**
  * sf::Sprite with methods to enable easier animation based on AnimData
  * loaded in.
  */
-class AnimSprite : public sf::Sprite {
+class AnimSprite : public sf::Drawable {
  public:
   /**
    * Animation and frame are initialized to invalid values. User must set
@@ -126,6 +131,13 @@ class AnimSprite : public sf::Sprite {
    * Sets sprite's alpha channel to argument passed.
    */
   void SetAlpha( unsigned int alpha );
+
+ protected:
+  /**
+   * Overrides Drawable's Render to deal with this being an
+   * animated sprite.
+   */
+  virtual void Render( sf::RenderTarget &target ) const;
 
  private:
   //@{

@@ -88,10 +88,10 @@ public:
 
   /**
    * @param animIndex index into animations stored by AnimData. Validity
-   * of index is checked.
-   * @return Sheet that animation was drawn on. NULL if index is invalid.
+   * of index is checked. Throws range_error exception if index is invalid.
+   * @return Sheet that animation was drawn on.
    */
-  sf::Image* GetImage( int animIndex ) const;
+  const boost::shared_ptr<sf::Image> &GetImage( int animIndex ) const;
 
 private:
   /**

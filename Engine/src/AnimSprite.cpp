@@ -1,9 +1,12 @@
 #include "AnimSprite.h"
 
-#include <SFML/Graphics/Rect.hpp>
 #include <SFML/Graphics/Color.hpp>
+#include <SFML/Graphics/Rect.hpp>
+#include <SFML/Graphics/RenderTarget.hpp>
+#include <SFML/Window.hpp>
 
 #include "AnimData.h"
+#include "Rect.h"
 #include "ResourceLib.h"
 #include "Utilities.h"
 
@@ -120,17 +123,6 @@ void AnimSprite::SetReverse( bool reversed ) {
 
 void AnimSprite::SetFrame( int frameNum ) {
   m_frameNum = frameNum;
-  
-  nt::core::IntRect frameRect = 
-    m_animData->GetFrameRect( m_animNum, m_frameNum );
-  sf::IntRect subRect(
-    frameRect.topLeft.x,
-    frameRect.topLeft.y,
-    frameRect.bottomRight.x,
-    frameRect.bottomRight.y
-  );
-
-  SetSubRect( subRect );
 }
 
 
@@ -141,13 +133,6 @@ void AnimSprite::SetAnimation( int animIndex ) {
     m_reversed = m_setToReverse;
     m_setToReverse = false;
 
-    sf::Image *sheet = m_animData->GetImage( m_animNum );
-    if ( sheet ) {
-      // Dangerous if image is ever held after resource manager
-      // has deallocated.
-      SetImage( *sheet );
-    }
-    
     Stop();
   }
 }
@@ -156,13 +141,6 @@ void AnimSprite::SetAnimation( int animIndex ) {
 void AnimSprite::SetAnimData( const boost::shared_ptr<AnimData> &anim ) {
   m_animData = anim;
   m_frameTimeLeft = m_animData->GetFrameTime( m_animNum, m_frameNum );
-
-  sf::Image *sheet = m_animData->GetImage( m_animNum );
-  if ( sheet ) {
-    // Dangerous if image is ever held after resource manager
-    // has deallocated.
-    SetImage( *sheet );
-  }
 }
 
 
@@ -173,6 +151,53 @@ bool AnimSprite::IsAnimating() {
 
 void AnimSprite::SetAlpha( unsigned int alpha ) {
   SetColor( sf::Color( 255, 255, 255, alpha ));
+}
+
+/***************************
+ * Protected Methods
+ **************************/
+// Follows basically the same algorithm as sf::Sprite. See the SFML
+// documentation for details. Stuff has been cut out because engine
+// doesn't include it.
+void AnimSprite::Render( sf::RenderTarget &target ) const {
+  // If there is animation data then there is an image.
+  if ( m_animData ) {
+    const boost::shared_ptr<sf::Image> &img = 
+      m_animData->GetImage( m_animNum );
+
+    glTranslatef( 0.375, 0.375, 0.0 );
+    img->Bind();
+
+    nt::core::IntRect ntRect =
+      m_animData->GetFrameRect( m_animNum, m_frameNum );
+    float frameWidth = static_cast<float>( ntRect.GetWidth() );
+    float frameHeight = static_cast<float>( ntRect.GetHeight() );
+
+    // For now just convert to sfml stuff unless this becomes a
+    // performance problem.
+    sf::IntRect sfRect(
+      ntRect.topLeft.x, 
+      ntRect.topLeft.y, 
+      ntRect.bottomRight.x,
+      ntRect.bottomRight.y
+    );
+
+    sf::FloatRect texCoords = img->GetTexCoords( sfRect );
+
+    glBegin(GL_QUADS);
+      glTexCoord2f( texCoords.Left, texCoords.Top );
+      glVertex2f( 0.0, 0.0 );
+
+      glTexCoord2f( texCoords.Left, texCoords.Bottom );
+      glVertex2f( 0.0, frameHeight );
+
+      glTexCoord2f( texCoords.Right, texCoords.Bottom );
+      glVertex2f( frameWidth, frameHeight );
+
+      glTexCoord2f( texCoords.Right, texCoords.Top );
+      glVertex2f( frameWidth, 0.0 );
+    glEnd();
+  }
 }
 
 /************************************************

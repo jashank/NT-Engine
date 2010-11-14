@@ -1,6 +1,7 @@
 #include "AnimData.h"
 
 #include <sstream>
+#include <stdexcept>
 
 #include "Rect.h"
 #include "ResourceLib.h"
@@ -134,12 +135,13 @@ nt::core::IntRect AnimData::GetFrameRect(
 }
 
 
-sf::Image *AnimData::GetImage( int animIndex ) const {
+const boost::shared_ptr<sf::Image> &AnimData::GetImage( 
+  int animIndex
+) const {
   if ( animIndex >= 0 && (unsigned int) animIndex < m_anims.size() ) {
-    return m_anims[animIndex].image.get();
-  } else {
-    return NULL;
+    return m_anims[animIndex].image;
   }
+  throw std::range_error("Invalid index into animation data.");
 }
 
 /************************************************
