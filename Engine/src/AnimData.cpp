@@ -152,12 +152,11 @@ AnimData::Animation::Animation()
   isLooped( false ),
   numFrames( 1 ) {}
 
+
 bool AnimData::ParseStrip(
   const TiXmlElement *strip,
   const boost::shared_ptr<sf::Image> &sheet ) {
   Animation anim;
-
-  anim.image = sheet;
 
   const char *name = strip->Attribute( "name" );
   if ( name ) {
@@ -211,6 +210,7 @@ bool AnimData::ParseStrip(
   }
 
   m_anims.push_back( anim );
+  m_anims.back().image = sheet;
   return true;
 }
 

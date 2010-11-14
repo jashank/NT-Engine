@@ -19,8 +19,7 @@ AnimSprite::AnimSprite()
    m_setToReverse( false ),
    m_frameTimeLeft( 0.0f ),
    m_animNum( -1 ),
-   m_frameNum( -1 ) {
-}
+   m_frameNum( -1 ) {}
 
 
 void AnimSprite::Update( float dt ) {

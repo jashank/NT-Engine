@@ -38,11 +38,12 @@ const boost::shared_ptr<AnimData> &LoadAnim( const std::string &relPath ) {
 }
 
 void ReleaseUnused() {
+  // Order matters! (Anims hold images)
+  anims.ReleaseUnused();    
   images.ReleaseUnused();
   fonts.ReleaseUnused();
   sounds.ReleaseUnused();
   music.ReleaseUnused();
-  anims.ReleaseUnused();    
 }
  
 } // namespace rsrc 
