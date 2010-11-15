@@ -30,9 +30,16 @@ function Slime:Freeze( slime )
   elseif dir == Util.LEFT then
     cx, cy = bx, ty
   end
+  
+  -- Ensure that slimes isn't currently on a spawn point, can be taken out
+  -- when slimes don't spawn directly on spawn points anymore
+  if not State.ObjectBlockingTile( cx, cy ) then
+    block = State.CreateObject("Kickle_Pack/Objects/IceBlock.xml", cx, cy)
+    block:GetTable():SetSlimeSpawn( self.spawn )
+  else
+    self.spawn:GetTable():Spawn( self.spawn )
+  end
 
-  block = State.CreateObject("Kickle_Pack/Objects/IceBlock.xml", cx, cy)
-  block:GetTable():SetSlimeSpawn( self.spawn )
   State.DestroyObject( slime )
 end
 

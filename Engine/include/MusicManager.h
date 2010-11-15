@@ -4,9 +4,11 @@
 #include <map>
 #include <string>
 
-namespace sf {
-  class Music;
-}
+#include <boost/shared_ptr.hpp>
+#include <SFML/Audio/Music.hpp>
+
+#include "NamePath.h"
+
 class TiXmlElement;
 class lua_State;
 
@@ -16,7 +18,7 @@ class lua_State;
  */
 class MusicManager {
  public:
-  MusicManager();
+  MusicManager(); 
   ~MusicManager();
 
   /**
@@ -38,7 +40,7 @@ class MusicManager {
 
   int LuaPauseMusic( lua_State *L );
 
-  int LuaMusicIsPlaying( lua_State *L );
+  int LuaMusicIsPlaying( lua_State *L ) const;
 
   int LuaLoopMusic( lua_State *L );
 
@@ -52,14 +54,30 @@ class MusicManager {
   //@}
 
  private:
-  /** 
-   * Name/path pairs for music loaded in. If music has no associated name
-   * then path is used as name.
-   */
-  std::map<std::string, std::string> m_namePaths;
+  typedef std::map<const NamePath, boost::shared_ptr<sf::Music > > map_type;
 
-  /** Music currently playing. */
-  sf::Music *m_music;
+  /**
+   * Returns pointer to sf::Music associated with string passed. String may
+   * be the music's name or file path. Returns NULL if none found.
+   */
+  sf::Music *GetMusic( const std::string &nameOrPath ) const;
+
+  /**
+   * Stops music currently playing and assigns sf::Music pointer passed to it.
+   * Assumes music passed is not NULL.
+   */
+  void StopAndSet( sf::Music *music );
+
+  /** If true, won't stop the music when manager is destroyed. */
+  bool m_keepMusicPlaying;
+
+  /** Music currently in use (playing, stopped, whatever). */
+  sf::Music *m_currentMusic;
+
+  /** 
+   * Holds pointers to sf::Music and their associated names and paths.
+   */
+  map_type m_music;
 };
 
 #endif // MUSIC_MANAGER_H
