@@ -35,6 +35,7 @@ const luaL_Reg StateMachine::m_luaFuncs[] = {
   { "GetTileInfo", LuaGetTileInfo },
   { "TileIsCrossable", LuaTileIsCrossable },
   { "SetTile", LuaSetTile },
+  { "PlayMusic", LuaPlayMusic },
   { "SpanCam", LuaSpanCam },
   { "OffsetCam", LuaOffsetCam },
   { "CenterCam", LuaCenterCam },
@@ -203,6 +204,10 @@ int StateMachine::LuaTileIsCrossable( lua_State *L ) {
 
 int StateMachine::LuaSetTile( lua_State *L ) {
   return m_runningState->LuaSetTile( L );
+}
+
+int StateMachine::LuaPlayMusic( lua_State *L ) {
+  return m_runningState->LuaPlayMusic( L );
 }
 
 int StateMachine::LuaSpanCam( lua_State *L ) {

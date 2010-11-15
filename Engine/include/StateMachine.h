@@ -82,6 +82,8 @@ class StateMachine {
 
   static int LuaSetTile( lua_State *L );
 
+  static int LuaPlayMusic( lua_State *L );
+
   static int LuaSpanCam( lua_State *L );
 
   static int LuaOffsetCam( lua_State *L );

@@ -9,6 +9,7 @@ function IntroMngr:Init( mngr )
   State.SpanCam( 15, 15 )
   State.OffsetCam( 1, 1 )
   mngr:ResetTimer()
+  State.PlayMusic( "RetroKickle" )
 end
 
 

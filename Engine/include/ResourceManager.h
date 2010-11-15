@@ -22,7 +22,7 @@ struct strCmp {
  * the resource type, which will be the same as the resource type of the 
  * ResourceManager.
  */
-template<typename resource_t>
+template<typename Resource>
 struct ResourceLoader {
   /**
    * Loads data from filePath into resource passed. Returns true if operation
@@ -30,12 +30,12 @@ struct ResourceLoader {
    */
   bool Load(
     const std::string& filePath, 
-    boost::shared_ptr<resource_t> &rsrc 
+    boost::shared_ptr<Resource> &rsrc 
   );
 };
 
 
-template<typename resource_t, typename loader_t=ResourceLoader< resource_t > >
+template<typename Resource, typename Loader = ResourceLoader< Resource > > 
 class ResourceManager {
 public:
   ResourceManager() {}
@@ -54,7 +54,7 @@ public:
    * @param filePath path to file to load resource from.
    * @return Resource loaded in. If resource was already loaded, returns it.
    */
-  const boost::shared_ptr<resource_t> &Load( const std::string &filePath );
+  const boost::shared_ptr<Resource> &Load( const std::string &filePath );
 
   /**
    * Releases unused resources, meaning resources that aren't being held by
@@ -63,8 +63,8 @@ public:
   void ReleaseUnused();
 
 private:
-  typedef boost::shared_ptr<resource_t> shared_rsrc;
-  typedef std::map<const std::string, shared_rsrc, strCmp> map_t;
+  typedef boost::shared_ptr<Resource> shared_rsrc;
+  typedef std::map<const std::string, shared_rsrc, strCmp> map_type;
   
   //@{
   /**
@@ -74,8 +74,8 @@ private:
   ResourceManager& operator=( const ResourceManager& );
   //@}
 
-  loader_t m_loader; /** ResourceManager's ResourceLoader. */
-  map_t m_resources; /** Map containing 'file path/resource' pairs. */
+  Loader m_loader; /** ResourceManager's ResourceLoader. */
+  map_type m_resources; /** Map containing 'file path/resource' pairs. */
 };
 
 #include "ResourceManager.hpp"

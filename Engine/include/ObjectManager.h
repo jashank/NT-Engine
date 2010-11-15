@@ -72,19 +72,19 @@ class ObjectManager {
 
   int LuaDestroyObject( lua_State *L );
 
-  int LuaGetObject( lua_State *L );
+  int LuaGetObject( lua_State *L ) const;
 
-  int LuaGetObjects( lua_State *L );
+  int LuaGetObjects( lua_State *L ) const;
 
-  int LuaGetNearestObject( lua_State *L );
+  int LuaGetNearestObject( lua_State *L ) const ;
 
-  int LuaGetNearestToObject( lua_State *L );
+  int LuaGetNearestToObject( lua_State *L ) const ;
 
-  int LuaGetObjectOnTile( lua_State *L );
+  int LuaGetObjectOnTile( lua_State *L ) const ;
 
-  int LuaGetObjectsOnTile( lua_State *L );
+  int LuaGetObjectsOnTile( lua_State *L ) const ;
 
-  int LuaObjectBlockingTile( lua_State *L );
+  int LuaObjectBlockingTile( lua_State *L ) const ;
   //@}
 
  private:
@@ -101,10 +101,8 @@ class ObjectManager {
    */
   struct RenderPriorityCmp;
 
-  typedef boost::intrusive_ptr<Object> IntrObj;
-
-  typedef std::multimap<std::string, IntrObj>::iterator MapItr;
-  typedef std::multimap<std::string, IntrObj>::const_iterator MapItrConst;
+  typedef boost::intrusive_ptr<Object> intrObj_type;
+  typedef std::multimap<std::string, intrObj_type> nameMap_type;
 
   //@{
   /**
@@ -117,12 +115,12 @@ class ObjectManager {
   /**
    * @param obj Object to add to manager.
    */
-  void AddObject( const IntrObj &obj );
+  void AddObject( const intrObj_type &obj );
 
   /**
    * @param obj Object to remove from manager.
    */
-  void RemoveObject( const IntrObj &obj );
+  void RemoveObject( const intrObj_type &obj );
 
   /**
    * @param objType type of Object to search for.
@@ -164,7 +162,7 @@ class ObjectManager {
    * @param obj Object to check.
    * @param cam Camera viewing the State.
    */
-  void UpdateCollisions( const IntrObj &obj, const Camera &cam );
+  void UpdateCollisions( const intrObj_type &obj, const Camera &cam );
 
   /**
    * Checks objects in range passed to ensure that their tile coordinate
@@ -202,28 +200,28 @@ class ObjectManager {
    * This means that you should call SetRange before calling this method.
    */
   template< typename Compare >
-  void FillSet( std::set<IntrObj, Compare> &set ) const;
+  void FillSet( std::set<intrObj_type, Compare> &set ) const;
 
   /**
    * Key is Object's type. Holds all Objects in the current State of that type.
    */
-  std::multimap<std::string, IntrObj> m_objTypes; 
+  nameMap_type m_objTypes;
 
   /**
    * 3D Matrix that holds Objects at each position.
    */
-  boost::scoped_ptr<nt::core::RangeMatrix3D<IntrObj> > m_objGrid;
+  boost::scoped_ptr<nt::core::RangeMatrix3D<intrObj_type> > m_objGrid;
 
   /**
    * Holds Objects that were sent to be destroyed on the last update.
    */
-  std::vector<IntrObj> m_toBeDestroyed;
+  std::vector<intrObj_type> m_toBeDestroyed;
 };
 
 
 template< typename Compare >
-void ObjectManager::FillSet( std::set<IntrObj, Compare> &set ) const {
-  while ( const IntrObj *obj = m_objGrid->GetElem() ) {
+void ObjectManager::FillSet( std::set<intrObj_type, Compare> &set ) const {
+  while ( const intrObj_type *obj = m_objGrid->GetElem() ) {
     set.insert( *obj );
   }
 }

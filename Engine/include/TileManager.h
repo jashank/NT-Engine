@@ -81,16 +81,15 @@ class TileManager {
    * these all return the number of arguments that the caller should
    * return to Lua.
    */
-  int LuaGetTileInfo( lua_State *L );
+  int LuaGetTileInfo( lua_State *L ) const;
 
-  int LuaTileIsCrossable( lua_State *L );
+  int LuaTileIsCrossable( lua_State *L ) const;
 
   int LuaSetTile( lua_State *L );
   //@}
 
  private:
-  typedef std::map< int, Tile* >::iterator TileInfoIter;
-  typedef std::map< int, Tile* >::const_iterator ConstTileInfoIter;
+  typedef std::map<int, Tile*> idMap_type;
 
   static const int CROSSABLE = 0;
   static const int BLANK_TILE_ID = -1;
@@ -192,7 +191,7 @@ class TileManager {
   /**
    * 'ID of tile/pointer to Tile' pairs.
    */
-  std::map<int, Tile*> m_tileDataId;
+  idMap_type m_tileDataId;
 
   /**
    * Represents layout of tiles on 2D grid. 

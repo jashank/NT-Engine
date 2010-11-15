@@ -43,10 +43,10 @@ class TimedKey {
   bool IsDown() const;
 
  private:
-  typedef std::map<std::string, sf::Key::Code> KeyMap;
+  typedef std::map<std::string, sf::Key::Code> keyMap_type;
 
   /** Mapping of key strings that can't simply be casted to an sf Key Code. */
-  static KeyMap m_extraKeys;
+  static keyMap_type m_extraKeys;
 
   /** True if key is activated. */
   bool m_activated;

@@ -57,11 +57,9 @@ class InputHandler {
   );
 
  private:
-  typedef std::multimap<std::string, TimedKey>::iterator keyRegItr;
-  typedef std::multimap<std::string, TimedKey>::const_iterator constKeyRegItr;
-  typedef std::map<std::string, std::string>::iterator msRegItr;
-  typedef std::map<std::string, std::string>::const_iterator constMsRegItr;
-  typedef boost::function1<void, std::string&> funcType;
+  typedef std::multimap<std::string, TimedKey> keymap_type;
+  typedef std::multimap<std::string, std::string> mousemap_type;
+  typedef boost::function1<void, std::string&> func_type;
 
   //@{
   /**
@@ -100,17 +98,17 @@ class InputHandler {
    * mouse-event/function-name pairs. Possible mouse events are "MouseClicked",
    * "MousePressed", and "MouseReleased".
    */
-  std::map<std::string, std::string> m_mouseRegistry;
+  mousemap_type m_mouseRegistry;
 
   /**
    * Keys registered for this handler, storing function name/TimedKey pairs.
    */
-  std::multimap<std::string, TimedKey> m_keyRegistry; 
+  keymap_type m_keyRegistry; 
 
   /**
    * Keys already held down when key data was loaded in.
    */
-  std::multimap<std::string, TimedKey> m_prevKeys; 
+  keymap_type m_prevKeys; 
 };
 
 #endif // INPUT_HANDLER_H

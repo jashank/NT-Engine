@@ -9,7 +9,7 @@
 /***************************
  * Initialize Extra Keys
  **************************/
-TimedKey::KeyMap TimedKey::m_extraKeys =
+TimedKey::keyMap_type TimedKey::m_extraKeys =
   boost::assign::map_list_of
   ("escape", sf::Key::Escape)
   ("lcontrol", sf::Key::LControl)
@@ -93,7 +93,7 @@ TimedKey::TimedKey( std::string &keyString, bool repeat, float delay )
     m_kCode = static_cast<sf::Key::Code>( keyString[0] );
 
   } else {
-    KeyMap::iterator keyPair = m_extraKeys.find( lwrKey );
+    keyMap_type::iterator keyPair = m_extraKeys.find( lwrKey );
     
     if ( keyPair != m_extraKeys.end() ) {
       m_kCode = keyPair->second;

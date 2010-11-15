@@ -22,10 +22,10 @@ bool ResourceLoader<sf::Music>::Load(
 }
 
 
-template<typename resource_t>
-bool ResourceLoader<resource_t>::Load( 
+template<typename Resource>
+bool ResourceLoader<Resource>::Load( 
   const std::string &filePath,
-  boost::shared_ptr<resource_t> &rsrc
+  boost::shared_ptr<Resource> &rsrc
 ) {
   if( !rsrc->LoadFromFile( filePath ) ) {
     LogErr( "Resource " + filePath + " not found." );
@@ -35,30 +35,30 @@ bool ResourceLoader<resource_t>::Load(
 }
 
 
-template<typename resource_t, typename loader_t>
-ResourceManager< resource_t, loader_t >::~ResourceManager() {
+template<typename Resource, typename Loader>
+ResourceManager< Resource, Loader >::~ResourceManager() {
   m_resources.clear();
 }
 
 
-template<typename resource_t, typename loader_t>
-const boost::shared_ptr<resource_t> 
-  &ResourceManager<resource_t, loader_t>::Load(
+template<typename Resource, typename Loader>
+const boost::shared_ptr<Resource> 
+  &ResourceManager<Resource, Loader>::Load(
   const std::string &filePath
 ) {
 
   //Check to see if resource has already been loaded,
   //if so then return a reference to that resource
-  typename map_t::iterator result = m_resources.find( filePath );
+  typename map_type::iterator result = m_resources.find( filePath );
   if( result != m_resources.end() ) {
     return result->second;
   }
 
   // Load resource and insert into map, then return it.
-  boost::shared_ptr<resource_t> rsrc = boost::make_shared<resource_t>();
+  boost::shared_ptr<Resource> rsrc = boost::make_shared<Resource>();
 
   if ( m_loader.Load( filePath, rsrc )) {
-    std::pair<typename map_t::iterator, bool> ret;
+    std::pair<typename map_type::iterator, bool> ret;
     ret = m_resources.insert( std::make_pair( filePath, rsrc ));
     return ret.first->second;
   }
@@ -67,11 +67,11 @@ const boost::shared_ptr<resource_t>
 }
 
 
-template<typename resource_t, typename loader_t>
-void ResourceManager<resource_t, loader_t>::ReleaseUnused() {
-  for ( typename map_t::iterator rsrc = m_resources.begin(); 
+template<typename Resource, typename Loader>
+void ResourceManager<Resource, Loader>::ReleaseUnused() {
+  for ( typename map_type::iterator rsrc = m_resources.begin(); 
         rsrc != m_resources.end(); ) {
-    typename map_t::iterator erase_elem = rsrc++;
+    typename map_type::iterator erase_elem = rsrc++;
 
     if ( erase_elem->second.unique() ) {
       m_resources.erase( erase_elem );

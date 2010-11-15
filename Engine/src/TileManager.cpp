@@ -109,9 +109,11 @@ int TileManager::GetMapHeight() const {
 
 bool TileManager::TileIsCrossable( int x, int y )  const {
   if ( TileOnMap( x, y )) { 
-    ConstTileInfoIter iter = m_tileDataId.find( m_layout->Get( x, y ));
-    if ( iter != m_tileDataId.end() ) {
-      return ( iter->second->cid == CROSSABLE );
+    idMap_type::const_iterator itr = 
+      m_tileDataId.find( m_layout->Get( x, y ));
+
+    if ( itr != m_tileDataId.end() ) {
+      return ( itr->second->cid == CROSSABLE );
     }
   }
   return false;
@@ -125,7 +127,7 @@ bool TileManager::TileOnMap( int x, int y ) const {
 /********************************
  * Lua Functions
  * *****************************/
-int TileManager::LuaGetTileInfo( lua_State *L ) {
+int TileManager::LuaGetTileInfo( lua_State *L ) const {
   if ( !lua_isnumber( L, -2 ) ) {
     LogLuaErr( "Number not passed to x position in GetTileInfo." );
     return 0;
@@ -157,7 +159,7 @@ int TileManager::LuaGetTileInfo( lua_State *L ) {
 }
 
 
-int TileManager::LuaTileIsCrossable( lua_State *L ) {
+int TileManager::LuaTileIsCrossable( lua_State *L ) const {
   if ( !lua_isnumber( L, -2 ) ) {
     LogLuaErr( "Number not passed to x position in TileIsCrossable." );
     return 0;
@@ -342,7 +344,7 @@ void TileManager::SetTile( int x, int y, const std::string &tileName ) {
 Tile *TileManager::GetTile( int x, int y ) const {
   if ( TileOnMap( x, y )) { 
     int id = m_layout->Get( x, y );
-    ConstTileInfoIter tile = m_tileDataId.find( id );
+    idMap_type::const_iterator tile = m_tileDataId.find( id );
     if( tile != m_tileDataId.end() ) {
       return tile->second;
     }

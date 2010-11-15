@@ -82,44 +82,48 @@ int State::LuaDestroyObject( lua_State *L ) {
   return m_objectManager.LuaDestroyObject( L );
 }
 
-int State::LuaGetObject( lua_State *L ) {
+int State::LuaGetObject( lua_State *L ) const {
   return m_objectManager.LuaGetObject( L );
 }
 
-int State::LuaGetObjects( lua_State *L ) {
+int State::LuaGetObjects( lua_State *L ) const {
   return m_objectManager.LuaGetObjects( L );
 }
 
-int State::LuaGetNearestObject( lua_State *L ) {
+int State::LuaGetNearestObject( lua_State *L ) const {
   return m_objectManager.LuaGetNearestObject( L );
 }
 
-int State::LuaGetNearestToObject( lua_State *L ) {
+int State::LuaGetNearestToObject( lua_State *L ) const {
   return m_objectManager.LuaGetNearestToObject( L );
 }
 
-int State::LuaGetObjectOnTile( lua_State *L ) {
+int State::LuaGetObjectOnTile( lua_State *L ) const {
   return m_objectManager.LuaGetObjectOnTile( L );
 }
 
-int State::LuaGetObjectsOnTile( lua_State *L ) {
+int State::LuaGetObjectsOnTile( lua_State *L ) const {
   return m_objectManager.LuaGetObjectsOnTile( L );
 }
 
-int State::LuaObjectBlockingTile( lua_State *L ) {
+int State::LuaObjectBlockingTile( lua_State *L ) const {
   return m_objectManager.LuaObjectBlockingTile( L );
 }
 
-int State::LuaGetTileInfo( lua_State *L ) {
+int State::LuaGetTileInfo( lua_State *L ) const {
   return m_tileManager.LuaGetTileInfo( L );
 }
 
-int State::LuaTileIsCrossable( lua_State *L ) {
+int State::LuaTileIsCrossable( lua_State *L ) const {
   return m_tileManager.LuaTileIsCrossable( L );
 }
 
 int State::LuaSetTile( lua_State *L ) {
   return m_tileManager.LuaSetTile( L );
+}
+
+int State::LuaPlayMusic( lua_State *L ) {
+  return m_musicManager.LuaPlayMusic( L );
 }
 
 int State::LuaSpanCam( lua_State *L ) {
@@ -156,31 +160,7 @@ bool State::LoadFromFile( const std::string &filePath, lua_State *L ) {
     TiXmlElement *root = doc.FirstChildElement( "state" );
     if ( root ) {
 
-      TiXmlElement *elem = root->FirstChildElement( "tiles" );
-      if ( !m_tileManager.LoadData( elem )) {
-        LogErr( "Problem loading tiles in state file " + filePath );
-        return false;
-      }
-
-      // Set state comm temporarily for ObjectManager and Camera
-      // to access TileManager
-      nt::state::SetStateComm( this );
-
-      m_camera.Span(
-        m_tileManager.GetMapWidth() - 1,
-        m_tileManager.GetMapHeight() - 1
-      );
-
-      elem = root->FirstChildElement( "objects" );
-      if ( !m_objectManager.LoadData( elem, L )) {
-        LogErr( "Problem loading Objects in state file " + filePath );
-        return false;
-      }
-
-      // End temporary StateComm set
-      nt::state::EndStateComm();
-
-      elem = root->FirstChildElement( "music" );
+      TiXmlElement *elem = root->FirstChildElement( "music" );
       if ( !m_musicManager.LoadData( elem )) {
         LogErr( "Problem loading music in state file " + filePath );
         return false;
@@ -212,6 +192,31 @@ bool State::LoadFromFile( const std::string &filePath, lua_State *L ) {
           }
         } while ( (font = font->NextSiblingElement( "font" )) );
       }
+
+
+      elem = root->FirstChildElement( "tiles" );
+      if ( !m_tileManager.LoadData( elem )) {
+        LogErr( "Problem loading tiles in state file " + filePath );
+        return false;
+      }
+
+      // Set state comm temporarily for ObjectManager and Camera
+      // to access TileManager
+      nt::state::SetStateComm( this );
+
+      m_camera.Span(
+        m_tileManager.GetMapWidth() - 1,
+        m_tileManager.GetMapHeight() - 1
+      );
+
+      elem = root->FirstChildElement( "objects" );
+      if ( !m_objectManager.LoadData( elem, L )) {
+        LogErr( "Problem loading Objects in state file " + filePath );
+        return false;
+      }
+
+      // End temporary StateComm set
+      nt::state::EndStateComm();
 
     } else {
       LogErr( "<state> tag not specified in state file " + filePath );

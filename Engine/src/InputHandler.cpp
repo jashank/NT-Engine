@@ -40,23 +40,25 @@ bool InputHandler::LoadInputList( const TiXmlElement *inputRoot ) {
 void InputHandler::Update() {
   // Move any keys that were held down when loaded in to key registry if they
   // have been released
-  for ( keyRegItr itr = m_prevKeys.begin(); itr != m_prevKeys.end(); ) {
-    keyRegItr checkDown = itr++;
+  for ( keymap_type::iterator itr = m_prevKeys.begin(); 
+        itr != m_prevKeys.end(); ) {
+
+    keymap_type::iterator checkDown = itr++;
     if ( !checkDown->second.IsDown() ) {
       m_keyRegistry.insert( *checkDown );
       m_prevKeys.erase( checkDown );
     }
   }
        
-  for ( keyRegItr itr = m_keyRegistry.begin(); itr != m_keyRegistry.end();
-        ++itr ) {
+  for ( keymap_type::iterator itr = m_keyRegistry.begin(); 
+        itr != m_keyRegistry.end(); ++itr ) {
     itr->second.Update();
   }
 }
 
 
-void InputHandler::ScanKeys( const funcType &func ) const {
-  for ( constKeyRegItr itr = m_keyRegistry.begin(); 
+void InputHandler::ScanKeys( const func_type &func ) const {
+  for ( keymap_type::const_iterator itr = m_keyRegistry.begin(); 
         itr != m_keyRegistry.end(); ++itr ) {
     if ( itr->second.IsActivated() ) {
       std::string funcName = itr->first;
@@ -67,7 +69,7 @@ void InputHandler::ScanKeys( const funcType &func ) const {
 
 
 void InputHandler::ScanMouse( 
-  const funcType &func, 
+  const func_type &func, 
   const nt::core::FloatRect &mouseArea 
 ) {
   if ( !m_mouseRegistry.empty() ) {
@@ -91,7 +93,7 @@ void InputHandler::ScanMouse(
       m_mousePressed = false;
     }
 
-    constMsRegItr msItr = m_mouseRegistry.find( eventString );
+    mousemap_type::const_iterator msItr = m_mouseRegistry.find( eventString );
     if ( msItr != m_mouseRegistry.end() ) {
       std::string funcName = msItr->second;
       func( funcName );

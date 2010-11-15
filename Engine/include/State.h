@@ -75,25 +75,27 @@ class State {
 
   int LuaDestroyObject( lua_State *L );
 
-  int LuaGetObject( lua_State *L );
+  int LuaGetObject( lua_State *L ) const;
 
-  int LuaGetObjects( lua_State *L );
+  int LuaGetObjects( lua_State *L ) const;
 
-  int LuaGetNearestObject( lua_State *L );
+  int LuaGetNearestObject( lua_State *L ) const;
 
-  int LuaGetNearestToObject( lua_State *L );
+  int LuaGetNearestToObject( lua_State *L ) const;
 
-  int LuaGetObjectOnTile( lua_State *L );
+  int LuaGetObjectOnTile( lua_State *L ) const;
 
-  int LuaGetObjectsOnTile( lua_State *L );
+  int LuaGetObjectsOnTile( lua_State *L ) const;
 
-  int LuaObjectBlockingTile( lua_State *L );
+  int LuaObjectBlockingTile( lua_State *L ) const;
 
-  int LuaGetTileInfo( lua_State *L );
+  int LuaGetTileInfo( lua_State *L ) const;
 
-  int LuaTileIsCrossable( lua_State *L );
+  int LuaTileIsCrossable( lua_State *L ) const;
 
   int LuaSetTile( lua_State *L );
+
+  int LuaPlayMusic( lua_State *L );
 
   int LuaSpanCam( lua_State *L );
 

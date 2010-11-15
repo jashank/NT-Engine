@@ -13,7 +13,7 @@
     </object>
   </objects>
   <music>
-    <song name="" path="Kickle_Pack/Sound/KickleTheme.ogg"/>
+    <song name="RetroKickle" path="Kickle_Pack/Sound/KickleTheme.ogg"/>
   </music>
   <portals/>
   <fonts/>

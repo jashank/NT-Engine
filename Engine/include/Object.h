@@ -410,7 +410,7 @@ namespace boost {
 class ObjectAttorney {
   friend class ObjectManager;
 
-  typedef boost::intrusive_ptr<Object> IntrObj;
+  typedef boost::intrusive_ptr<Object> intrObj_type;
 
   /**
    * Constructs Object via dynamic allocation.
@@ -435,14 +435,14 @@ class ObjectAttorney {
    * Calls Object's Init function.
    * @param obj to call Init on
    */
-  static void Init( const IntrObj &obj )
+  static void Init( const intrObj_type &obj )
   { obj->Init(); }
   
   /**
    * Calls Object's HandleEvents function.
    * @param obj object to call HandleEvents on
    */
-  static void HandleEvents( const IntrObj &obj ) 
+  static void HandleEvents( const intrObj_type &obj ) 
   { obj->HandleEvents(); }
 
   /**
@@ -450,7 +450,7 @@ class ObjectAttorney {
    * @param obj object to call HandleCollision on
    * @param collisionObj object that obj is colliding with
    */ 
-  static void HandleCollision( const IntrObj &obj, const IntrObj &colObj ) 
+  static void HandleCollision( const intrObj_type &obj, const intrObj_type &colObj ) 
   { obj->HandleCollision( colObj.get() ); }
 
   /**
@@ -458,7 +458,7 @@ class ObjectAttorney {
    * @param obj object to call UpdateAI on
    * @param dt delta time - amount of time to step forward
    */
-  static void UpdateAI( const IntrObj &obj, float dt ) 
+  static void UpdateAI( const intrObj_type &obj, float dt ) 
   { obj->UpdateAI( dt ); }
 
   /**
@@ -466,7 +466,7 @@ class ObjectAttorney {
    * @param obj object whose sprite is to be retrieved.
    * @return Object's sprite.
    */
-  static const AnimSprite &GetSprite( const IntrObj &obj )
+  static const AnimSprite &GetSprite( const intrObj_type &obj )
   { return obj->m_sprite; }
 
   /**
@@ -474,7 +474,7 @@ class ObjectAttorney {
    * @param obj object whose sprite position is to be retrieved.
    * @return Object's sprite position.
    */
-  static const sf::Vector2f &GetSpritePosition( const IntrObj &obj )
+  static const sf::Vector2f &GetSpritePosition( const intrObj_type &obj )
   {  return obj->m_sprite.GetPosition(); }
 
   /**
@@ -482,7 +482,7 @@ class ObjectAttorney {
    * @param obj object whose sprite position is to be modified.
    * @param vec vector with coordinates to set to sprite position.
    */
-  static void SetSpritePosition( const IntrObj &obj, const sf::Vector2f &vec )
+  static void SetSpritePosition( const intrObj_type &obj, const sf::Vector2f &vec )
   {  obj->m_sprite.SetPosition( vec ); }
 
   /**
@@ -492,14 +492,14 @@ class ObjectAttorney {
    * @param alpha blending factor between previous frame and current frame.
    * Should be from [0:1].
    */
-  static void InterpolateSprite( const IntrObj &obj ,float alpha )
+  static void InterpolateSprite( const intrObj_type &obj ,float alpha )
   {  obj->m_sprite.Interpolate( alpha ); }
 
   /**
    * Returns Object's render priority. Higher priority indicates that it
    * should be rendered on top of Objects with lower priority.
    */
-  static int GetRenderPriority( const IntrObj &obj )
+  static int GetRenderPriority( const intrObj_type &obj )
   { return obj->m_renderPriority; }
 
   /**
@@ -508,21 +508,21 @@ class ObjectAttorney {
    * @param obj object to get information from.
    * @return When Object was created.
    */
-  static int GetCreationNum( const IntrObj &obj )
+  static int GetCreationNum( const intrObj_type &obj )
   { return obj->m_creationNum; }
 
   /**
    * Returns range of tiles that Object is on.
    * @return obj's tile coordinates.
    */
-  static const nt::core::IntRect& GetTileRange( const IntrObj &obj )
+  static const nt::core::IntRect& GetTileRange( const intrObj_type &obj )
   { return obj->m_tileRange; }
 
   /**
    * Returns range of tiles that Object was on in last Update.
    * @return obj's tile coordinates.
    */
-  static const nt::core::IntRect& GetLastTileRange( const IntrObj &obj )
+  static const nt::core::IntRect& GetLastTileRange( const intrObj_type &obj )
   { return obj->m_lastTileRange; }
   
   /**
@@ -530,7 +530,7 @@ class ObjectAttorney {
    * @param obj object to check
    * @return true if obj is blocking tile, false otherwise
    */
-  static int BlockingTileRange( const IntrObj &obj )
+  static int BlockingTileRange( const intrObj_type &obj )
   { return obj->m_blockingTiles; }
  
   /**
@@ -538,7 +538,7 @@ class ObjectAttorney {
    * @param obj object to retrieve type from
    * @return object's type
    */
-  static const std::string& GetType( const IntrObj &obj )
+  static const std::string& GetType( const intrObj_type &obj )
   { return obj->m_type; }
 
   /**
@@ -546,7 +546,7 @@ class ObjectAttorney {
    * @param obj object to retrieve collision rectangle from
    * @return obj's collision rectangle
    */
-  static const nt::core::FloatRect& GetRect( const IntrObj &obj )
+  static const nt::core::FloatRect& GetRect( const intrObj_type &obj )
   { return obj->m_collisionRect; }
  
   /**
@@ -557,8 +557,8 @@ class ObjectAttorney {
    * @return Whether other is in obj's list
    */
   static bool IsCollidingWith(
-    const IntrObj &obj, 
-    const IntrObj &other )
+    const intrObj_type &obj, 
+    const intrObj_type &other )
   { return ( std::find(
                obj->m_collidingWith.begin(), 
                obj->m_collidingWith.end(), 
@@ -572,8 +572,8 @@ class ObjectAttorney {
    * @param other object that needs to be removed from obj's collision list
    */
   static void RemoveFromCollidingWith(
-    const IntrObj &obj,
-    const IntrObj &other 
+    const intrObj_type &obj,
+    const intrObj_type &other 
   )
   { obj->m_collidingWith.remove( other.get() ); }
 
@@ -582,7 +582,7 @@ class ObjectAttorney {
    * @param obj Object to get sf::String from.
    * @return sf::String that Object holds.
    */
-  static const sf::String& GetText( const IntrObj &obj )
+  static const sf::String& GetText( const intrObj_type &obj )
   { return obj->m_text; }
 };  
 
