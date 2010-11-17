@@ -17,12 +17,15 @@ extern "C" {
 /*****************
  * Static Members
  ****************/
-const luaL_Reg StateMachine::m_luaFuncs[] = {
+const luaL_Reg StateMachine::m_luaStateFuncs[] = {
   { "LoadPath", LuaLoadPath },
   { "Reset", LuaReset },
   { "Portal", LuaPortal },
   { "GetName", LuaGetName },
-  { "LogErr", LuaLogErr },
+  { NULL, NULL }
+};
+
+const luaL_Reg StateMachine::m_luaMapFuncs[] = {
   { "CreateObject", LuaCreateObject },
   { "DestroyObject", LuaDestroyObject },
   { "GetObject", LuaGetObject },
@@ -35,13 +38,26 @@ const luaL_Reg StateMachine::m_luaFuncs[] = {
   { "GetTileInfo", LuaGetTileInfo },
   { "TileIsCrossable", LuaTileIsCrossable },
   { "SetTile", LuaSetTile },
-  { "PlayMusic", LuaPlayMusic },
-  { "SpanCam", LuaSpanCam },
-  { "OffsetCam", LuaOffsetCam },
-  { "CenterCam", LuaCenterCam },
-  { "SetCamSpeed", LuaSetCamSpeed },
-  { "SpeedUpCam", LuaSpeedUpCam },
-  { "SlowDownCam", LuaSlowDownCam },
+  { NULL, NULL }
+};
+
+const luaL_Reg StateMachine::m_luaMusicFuncs[] = {
+  { "Play", LuaPlayMusic },
+  { NULL, NULL }
+};
+
+const luaL_Reg StateMachine::m_luaCamFuncs[] = {
+  { "Span", LuaSpanCam },
+  { "Offset", LuaOffsetCam },
+  { "Center", LuaCenterCam },
+  { "SetSpeed", LuaSetCamSpeed },
+  { "SpeedUp", LuaSpeedUpCam },
+  { "SlowDown", LuaSlowDownCam },
+  { NULL, NULL }
+};
+
+const luaL_Reg StateMachine::m_luaErrorFuncs[] = {
+  { "LogErr", LuaLogErr },
   { NULL, NULL }
 };
 
@@ -70,7 +86,11 @@ bool StateMachine::Setup( const std::string &filePath ) {
     return false;
   }
   luaL_openlibs( m_luaState );
-  luaL_register( m_luaState, "State", m_luaFuncs );
+  luaL_register( m_luaState, "State", m_luaStateFuncs );
+  luaL_register( m_luaState, "Map", m_luaMapFuncs );
+  luaL_register( m_luaState, "Music", m_luaMusicFuncs );
+  luaL_register( m_luaState, "Camera", m_luaCamFuncs );
+  luaL_register( m_luaState, "Error", m_luaErrorFuncs );
   Object::LuaRegister( m_luaState );
 
   m_runningState.reset( new State());

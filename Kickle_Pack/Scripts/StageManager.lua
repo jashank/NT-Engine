@@ -4,7 +4,7 @@ local StageManager = require("Entity"):New()
 
 
 function StageManager:AI( mngr )
-  if( not State.GetObject( "DreamBag" )) then
+  if( not Map.GetObject( "DreamBag" )) then
     State.Portal( "nextStage" )
   end
 end

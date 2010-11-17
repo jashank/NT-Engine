@@ -17,7 +17,7 @@ Kickle.godMode = false
 function Kickle:HandleCollision( kickle, other )
   local otherType = other:GetType()
   if ( otherType == "DreamBag" and self.state ~= DYING ) then
-    State.DestroyObject( other )
+    Map.DestroyObject( other )
   end
 end
 
@@ -110,15 +110,15 @@ function Kickle:PerformPillar( kickle )
   if ( self.state == STANDING ) then
     local tileX, tileY = Util.GetTileObjectFaces( kickle )
 
-    if ( State.TileIsCrossable( tileX, tileY ) and
-         not State.ObjectBlockingTile( tileX, tileY ) ) then
+    if ( Map.TileIsCrossable( tileX, tileY ) and
+         not Map.ObjectBlockingTile( tileX, tileY ) ) then
       self.state = PILLAR
       Util.SetAndPlay( kickle, kickle:GetDir() + self.state )
-      local pillar = State.CreateObject(
+      local pillar = Map.CreateObject(
                        "Kickle_Pack/Objects/Pillar.xml", tileX, tileY )
 
-    elseif ( State.ObjectBlockingTile( tileX, tileY ) ) then
-      local objOnTile = State.GetObjectOnTile( tileX, tileY )
+    elseif ( Map.ObjectBlockingTile( tileX, tileY ) ) then
+      local objOnTile = Map.GetObjectOnTile( tileX, tileY )
       if( objOnTile:GetType() == "Pillar" ) then
         self.state = PILLAR
         kickle:SetReverseAnim( true )
@@ -134,7 +134,7 @@ function Kickle:PerformAttack( kickle )
   if ( self.state == STANDING ) then
     local tileX, tileY = Util.GetTileObjectFaces( kickle )
     local kickleDir = kickle:GetDir()
-    local objOnTile = State.GetObjectOnTile( tileX, tileY )
+    local objOnTile = Map.GetObjectOnTile( tileX, tileY )
 
     if objOnTile and objOnTile:GetTable():IsFreezable() then
       objType = objOnTile:GetType()
@@ -149,15 +149,15 @@ function Kickle:PerformAttack( kickle )
       elseif objTable:IsEnemy() and objTable:IsFrozen() then
         self.state = KICKING
         Util.SetAndPlay( kickle, kickleDir + self.state )
-        State.DestroyObject( objOnTile )
+        Map.DestroyObject( objOnTile )
         return
       end
     end
 
-    if (( State.TileIsCrossable( tileX, tileY ) or
-          State.GetTileInfo( tileX, tileY ) == "water" ) and
-          not State.ObjectBlockingTile( tileX, tileY ) ) then
-      local iceBreath = State.CreateObject(
+    if (( Map.TileIsCrossable( tileX, tileY ) or
+          Map.GetTileInfo( tileX, tileY ) == "water" ) and
+          not Map.ObjectBlockingTile( tileX, tileY ) ) then
+      local iceBreath = Map.CreateObject(
                          "Kickle_Pack/Objects/IceBreath.xml", tileX, tileY )
       local iceBreathDir = kickle:GetDir()
       iceBreath:SetDir( iceBreathDir )

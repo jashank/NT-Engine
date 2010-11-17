@@ -6,10 +6,10 @@ IntroMngr.scene = 0
 
 -- Resets timer. Many sequences in intro are timed.
 function IntroMngr:Init( mngr )
-  State.SpanCam( 15, 15 )
-  State.OffsetCam( 1, 1 )
+  Camera.Span( 15, 15 )
+  Camera.Offset( 1, 1 )
   mngr:ResetTimer()
-  State.PlayMusic( "RetroKickle" )
+  Music.Play( "RetroKickle" )
 end
 
 
@@ -18,13 +18,13 @@ end
 -- couldn't (something was already there). Slimes are set to block the tiles
 -- they are on.
 function IntroMngr:EnterSlime( tileX, tileY )
-  local slimeA = State.GetObjectOnTile( tileX, tileY )
-  local slimeB = State.GetObjectOnTile( tileX + 1, tileY )
+  local slimeA = Map.GetObjectOnTile( tileX, tileY )
+  local slimeB = Map.GetObjectOnTile( tileX + 1, tileY )
   if slimeA or slimeB then
     return false
   end
 
-  local s = State.CreateObject( 
+  local s = Map.CreateObject( 
     "Kickle_Pack/Objects/IntroSlime.xml", tileX, tileY )
   return true
 end
@@ -33,7 +33,7 @@ end
 -- Returns true if all slimes on screen are sitting and stops them from
 -- blocking their tiles.
 function IntroMngr:SlimesSitting()
-  local slimes = State.GetObjects( "IntroSlime" )
+  local slimes = Map.GetObjects( "IntroSlime" )
   for k, v in ipairs( slimes ) do
     if not v:GetTable():IsSitting() then return false end
   end
@@ -47,10 +47,10 @@ end
 
 -- Creates ice blocks to fly towards slimes
 function IntroMngr:CreateBlocks()
-  local slimes = State.GetObjects( "IntroSlime" )
+  local slimes = Map.GetObjects( "IntroSlime" )
   for k, v in ipairs( slimes ) do
     local x, y = v:GetTile()
-    State.CreateObject( "Kickle_Pack/Objects/IntroBlock.xml", x, 0 )
+    Map.CreateObject( "Kickle_Pack/Objects/IntroBlock.xml", x, 0 )
   end
 end
 
@@ -85,10 +85,10 @@ function IntroMngr:AI( mngr )
   -- Enter Kickle once blocks are at bottom of screen.
   -- Kickle handles the rest.
   elseif ( self.scene == 3 ) then
-    local block = State.GetObject( "IntroBlock" )
+    local block = Map.GetObject( "IntroBlock" )
     local x, y = block:GetTile()
     if y == 14 then
-      State.CreateObject( "Kickle_Pack/Objects/IntroKickle.xml", 8, 0 )
+      Map.CreateObject( "Kickle_Pack/Objects/IntroKickle.xml", 8, 0 )
       self.scene = self.scene + 1
     end
   end

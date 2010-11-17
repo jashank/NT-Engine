@@ -11,7 +11,7 @@ end
 
 function Pillar:AI( pillar )
   if ( self.lower and not pillar:IsAnimating() ) then
-    State.DestroyObject( pillar )
+    Map.DestroyObject( pillar )
   end
 end
 

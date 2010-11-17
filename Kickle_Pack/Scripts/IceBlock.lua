@@ -9,7 +9,7 @@ IceBlock.slimeSpawn = nil
 
 
 function IceBlock:Init( iceblock )
-  self.slimeSpawn = State.GetNearestToObject( "SpawnPoint", iceblock )
+  self.slimeSpawn = Map.GetNearestToObject( "SpawnPoint", iceblock )
   iceblock:ResetTimer()
 end
 
@@ -21,8 +21,8 @@ function IceBlock:AI( iceblock )
   end
 
   local facingX, facingY = Util.GetTileObjectFaces( iceblock )
-  local tileType = State.GetTileInfo( facingX, facingY )
-  local obj = State.GetObjectOnTile( facingX, facingY )
+  local tileType = Map.GetTileInfo( facingX, facingY )
+  local obj = Map.GetObjectOnTile( facingX, facingY )
   local objType = ""
   if obj then
     objType = obj:GetType()
@@ -38,8 +38,8 @@ function IceBlock:AI( iceblock )
         ( iceblock:GetDir() == Util.GetOppositeDir( obj:GetDir()))
     end      
     
-    if ( State.ObjectBlockingTile( facingX, facingY ) and not facingSpring ) or 
-       ( not State.TileIsCrossable( facingX, facingY ) and
+    if ( Map.ObjectBlockingTile( facingX, facingY ) and not facingSpring ) or 
+       ( not Map.TileIsCrossable( facingX, facingY ) and
          tileType ~= "water" ) then 
       self.destroyed = true
     else
@@ -53,8 +53,8 @@ function IceBlock:AI( iceblock )
       self.destroyed = true
       if tileType == "water" then
         local tileType, tileName =
-          State.GetTileInfo( iceblock:GetTile() )
-          State.SetTile( facingX, facingY, tileName, 0 )
+          Map.GetTileInfo( iceblock:GetTile() )
+          Map.SetTile( facingX, facingY, tileName, 0 )
       end
     else
       if objType == "Spring" then
@@ -68,14 +68,14 @@ function IceBlock:AI( iceblock )
   if self.destroyed then
     spawn = self.slimeSpawn
     spawn:GetTable():Spawn( spawn )
-    State.DestroyObject( iceblock )
+    Map.DestroyObject( iceblock )
   end
 end
 
 
 function IceBlock:HandleCollision( iceblock, other )
   if other:GetTable():IsEnemy() then
-    State.DestroyObject( other )
+    Map.DestroyObject( other )
   end
 
   local otherType = other:GetType()

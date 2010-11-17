@@ -98,8 +98,20 @@ class StateMachine {
   //@}
 
  private:
-  /* Names of functions when called in Lua. */
-  static const luaL_Reg m_luaFuncs[];
+  /* Names of functions in State library. */
+  static const luaL_Reg m_luaStateFuncs[];
+
+  /* Names of functions in Map library. */
+  static const luaL_Reg m_luaMapFuncs[];
+
+  /* Names of functions in Music library. */
+  static const luaL_Reg m_luaMusicFuncs[];
+
+  /* Names of functions in Camera library. */
+  static const luaL_Reg m_luaCamFuncs[];
+
+  /* Names of functions in Error library. */
+  static const luaL_Reg m_luaErrorFuncs[];
 
   /* Lua state to create interaction between Lua and engine. */
   static lua_State *m_luaState;

@@ -4,8 +4,11 @@
 #include <string>
 
 /**
- * Can be used for storing name/file path combinations. Overloads some
- * comparison functionality for ease of use.
+ * Can be used for storing name/file path combinations. Overloads comparison
+ * functionality to allow for comparing for equality via path or name. For
+ * example, if one wanted to find a NamePath pair of the name 'foo' in a map
+ * they could search for a NamePath with name 'foo' and path 'foo', and the
+ * map would return any NamePath with either the name 'foo' or path 'foo'.
  */
 struct NamePath {
   NamePath() {}
@@ -16,7 +19,7 @@ struct NamePath {
   std::string path;
 
   /**
-   * Compare paths since these should always be unique.
+   * If either path or name are equal then NamePaths are equal.
    */
   bool operator<( const NamePath &other ) const {
     return path < other.path && name < other.name;

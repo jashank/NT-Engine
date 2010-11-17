@@ -14,7 +14,7 @@ end
 
 
 function IntroBlock:HandleCollision( block, other )
-  State.DestroyObject( other )
+  Map.DestroyObject( other )
 end
 
 return IntroBlock

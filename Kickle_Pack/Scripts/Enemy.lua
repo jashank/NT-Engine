@@ -7,7 +7,7 @@ local Enemy = require("Entity"):New{ isEnemy = true }
 -- (in which case it changes direction to go towards Kickle unless it can't 
 -- move in that direction) or can't move any further.
 function Enemy:AI( enemy )
-  local kickle = State.GetObject( "Kickle" )
+  local kickle = Map.GetObject( "Kickle" )
   if kickle then
     local enemyX, enemyY = enemy:GetTile()
     local kickleX, kickleY = kickle:GetTile()
@@ -26,15 +26,15 @@ function Enemy:AI( enemy )
       end
     end
     local facingX, facingY = Util.GetTileInDir( newDir, enemyX, enemyY )
-    if State.TileIsCrossable( facingX, facingY ) and
-       not State.ObjectBlockingTile( facingX, facingY ) then
+    if Map.TileIsCrossable( facingX, facingY ) and
+       not Map.ObjectBlockingTile( facingX, facingY ) then
       enemy:SetDir( newDir )
     end
   end
 
   local facingX, facingY = Util.GetTileObjectFaces( enemy )
-  if not State.TileIsCrossable( facingX, facingY ) or  
-     State.ObjectBlockingTile( facingX, facingY ) then
+  if not Map.TileIsCrossable( facingX, facingY ) or  
+     Map.ObjectBlockingTile( facingX, facingY ) then
     enemy:SetDir( Util.GetNextDir( enemy:GetDir() ))
   end
 
@@ -56,7 +56,7 @@ function Enemy:HandleCollision( enemy, other )
     elseif otherType == "DreamBag" then
       other:GetTable():Push( other )
     elseif otherType == "Pillar" then
-      State.DestroyObject( other )
+      Map.DestroyObject( other )
     end
   end
 end

@@ -7,7 +7,7 @@ NTIntroMngr.freezeLogo = false
 
 -- Initializes intro manager to create the logo and set it to transparent
 function NTIntroMngr:Init( obj )
-  local logo = State.CreateObject( "Kickle_Pack/Objects/NTLogo.xml", 6, 7 )
+  local logo = Map.CreateObject( "Kickle_Pack/Objects/NTLogo.xml", 6, 7 )
   logo:SetAlpha( self.alpha )
   obj:ResetTimer()
 end
@@ -24,7 +24,7 @@ end
 function NTIntroMngr:IncLogoAlpha()
   self.alpha = self.alpha + 5
   if ( self.alpha <= 255 ) then
-    local logo = State.GetObject( "NTLogo" )
+    local logo = Map.GetObject( "NTLogo" )
     logo:SetAlpha( self.alpha )
     return false
   end
@@ -37,7 +37,7 @@ end
 function NTIntroMngr:DecLogoAlpha()
   self.alpha = self.alpha - 5
   if ( self.alpha >= 0 ) then
-    local logo = State.GetObject("NTLogo")
+    local logo = Map.GetObject("NTLogo")
     logo:SetAlpha( self.alpha )
     return false
   end

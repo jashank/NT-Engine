@@ -5,7 +5,7 @@ local Slime = require("Enemy"):New{ isFreezable = true }
 Slime.spawn = nil
 
 function Slime:Init( slime )
-  self.spawn = State.GetNearestObject( "SpawnPoint", slime:GetTile())
+  self.spawn = Map.GetNearestObject( "SpawnPoint", slime:GetTile())
 end
 
 
@@ -33,14 +33,14 @@ function Slime:Freeze( slime )
   
   -- Ensure that slimes isn't currently on a spawn point, can be taken out
   -- when slimes don't spawn directly on spawn points anymore
-  if not State.ObjectBlockingTile( cx, cy ) then
-    block = State.CreateObject("Kickle_Pack/Objects/IceBlock.xml", cx, cy)
+  if not Map.ObjectBlockingTile( cx, cy ) then
+    block = Map.CreateObject("Kickle_Pack/Objects/IceBlock.xml", cx, cy)
     block:GetTable():SetSlimeSpawn( self.spawn )
   else
     self.spawn:GetTable():Spawn( self.spawn )
   end
 
-  State.DestroyObject( slime )
+  Map.DestroyObject( slime )
 end
 
 

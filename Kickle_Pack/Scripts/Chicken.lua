@@ -8,7 +8,7 @@ local EnemyAI = Chicken.AI
 function Chicken:AI( chicken )
   for i = Util.UP, Util.RIGHT do
     local x, y = Util.GetTileInDirection( chicken, i )
-    block = State.GetObjectOnTile( x, y, "IceBlock" )
+    block = Map.GetObjectOnTile( x, y, "IceBlock" )
     if block and not block:GetTable():IsKicked() then
       chicken:SetDir( i )
       block:GetTable():Kick( block, i )

@@ -5,7 +5,7 @@ local SlipperyIce = require("Entity"):New()
 function SlipperyIce:HandleCollision( ice, other )
   otherType = other:GetType()
   if otherType == "Pillar" then
-    State.DestroyObject( other )
+    Map.DestroyObject( other )
   end
 end
 
