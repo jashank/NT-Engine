@@ -14,7 +14,7 @@ end
 function Spring:AI( spring )
   if self.block then
     if spring:GetFrame() <= 4 then
-      self.block:SlowDown( 60 )
+      self.block:AdjustSpeed( -60 )
     elseif self.block:GetSpeed() == 0 and spring:GetFrame() >= 5 then
       self.block:SetDir( Util.GetOppositeDir( self.block:GetDir()))
       self.block:SetSpeed( 240 )

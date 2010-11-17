@@ -97,6 +97,20 @@ class State {
 
   int LuaPlayMusic( lua_State *L );
 
+  int LuaStopMusic( lua_State *L );
+
+  int LuaPauseMusic( lua_State *L );
+
+  int LuaMusicIsPlaying( lua_State *L ) const;
+
+  int LuaLoopMusic( lua_State *L );
+
+  int LuaGetMusicVolume( lua_State *L ) const;
+
+  int LuaSetMusicVolume( lua_State *L );
+
+  int LuaAdjustMusicVolume( lua_State *L );
+
   int LuaSpanCam( lua_State *L );
 
   int LuaOffsetCam( lua_State *L );
@@ -105,9 +119,7 @@ class State {
 
   int LuaSetCamSpeed( lua_State *L );
 
-  int LuaSpeedUpCam( lua_State *L );
-
-  int LuaSlowDownCam( lua_State *L );
+  int LuaAdjustCamSpeed( lua_State *L );
   //@}
 
  private:

@@ -6,6 +6,7 @@ local TitleKickle = require("Kickle"):New()
 
 function TitleKickle:Init( kickle )
   kickle:SetDir( Util.DOWN )
+  Music.Play( "MenuTheme" )
 end
 
 

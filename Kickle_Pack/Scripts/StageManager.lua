@@ -2,6 +2,10 @@ package.path = package.path .. ";Kickle_Pack/Scripts/?.lua"
 
 local StageManager = require("Entity"):New()
 
+function StageManager:Init( mngr )
+  Music.Play( "StageTheme" )
+end
+
 
 function StageManager:AI( mngr )
   if( not Map.GetObject( "DreamBag" )) then

@@ -67,9 +67,7 @@ class Camera {
 
   int LuaSetSpeed( lua_State *L );
 
-  int LuaSpeedUp( lua_State *L );
-
-  int LuaSlowDown( lua_State *L );
+  int LuaAdjustSpeed( lua_State *L );
   //@}
 
  private:

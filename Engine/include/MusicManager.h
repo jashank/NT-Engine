@@ -44,11 +44,11 @@ class MusicManager {
 
   int LuaLoopMusic( lua_State *L );
 
-  int LuaSetVolume( lua_State *L );
+  int LuaGetMusicVolume( lua_State *L ) const;
 
-  int LuaIncVolume( lua_State *L );
+  int LuaSetMusicVolume( lua_State *L );
 
-  int LuaDecVolume( lua_State *L );
+  int LuaAdjustMusicVolume( lua_State *L );
 
   int LuaKeepMusicPlaying( lua_State *L );
   //@}
@@ -61,6 +61,19 @@ class MusicManager {
    * be the music's name or file path. Returns NULL if none found.
    */
   sf::Music *GetMusic( const std::string &nameOrPath ) const;
+
+  /**
+   * Checks to see if music is already playing before playing it.
+   * Assumes music passed is not NULL.
+   */
+  void SafePlay( sf::Music *music );
+
+  /**
+   * Checks to see if music passed is the same as the current music. If it
+   * isn't then changes to music passed and plays it. Otherwise, safely
+   * plays the current music. Assumes music passed is not NULL.
+   */
+  void CheckAndPlay( sf::Music *music );
 
   /**
    * Stops music currently playing and assigns sf::Music pointer passed to it.

@@ -45,8 +45,7 @@ Lunar<Object>::RegType Object::methods[] = {
   { "GetElapsedTime", &Object::LuaGetElapsedTime },
   { "GetSpeed", &Object::LuaGetSpeed },
   { "SetSpeed", &Object::LuaSetSpeed },
-  { "SlowDown", &Object::LuaSlowDown },
-  { "SpeedUp", &Object::LuaSpeedUp },
+  { "AdjustSpeed", &Object::LuaAdjustSpeed },
   { "Print", &Object::LuaPrint },
   { "ClearText", &Object::LuaClearText },
   { "SetText", &Object::LuaSetText },
@@ -446,26 +445,15 @@ int Object::LuaSetSpeed( lua_State *L ) {
 }
 
 
-int Object::LuaSlowDown( lua_State *L ) {
+int Object::LuaAdjustSpeed( lua_State *L ) {
   if ( !lua_isnumber( L, -1 )) {
-    LogLuaErr( "Number not passed to SlowDown for Object: " + m_type );
-    return 0;
-  }
-  m_speed -= lua_tonumber( L, -1 );
-
-  if ( m_speed < 0.f ) {
-    m_speed = 0.f;
-  }
-  return 0;
-}
-
-
-int Object::LuaSpeedUp( lua_State *L ) {
-  if ( !lua_isnumber( L, -1 )) {
-    LogLuaErr( "Number not passed to SpeedUp for Object: " + m_type );
+    LogLuaErr( "Number not passed to AdjustSpeed for Object: " + m_type );
     return 0;
   }
   m_speed += lua_tonumber( L, -1 );
+  if ( m_speed < 0.f ) {
+    m_speed = 0.f;
+  }
   return 0;
 }
 

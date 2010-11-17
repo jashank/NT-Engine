@@ -126,6 +126,34 @@ int State::LuaPlayMusic( lua_State *L ) {
   return m_musicManager.LuaPlayMusic( L );
 }
 
+int State::LuaStopMusic( lua_State *L ) {
+  return m_musicManager.LuaStopMusic( L );
+}
+
+int State::LuaPauseMusic( lua_State *L ) {
+  return m_musicManager.LuaPauseMusic( L );
+}
+
+int State::LuaMusicIsPlaying( lua_State *L ) const {
+  return m_musicManager.LuaMusicIsPlaying( L );
+}
+
+int State::LuaLoopMusic( lua_State *L ) {
+  return m_musicManager.LuaLoopMusic( L );
+}
+
+int State::LuaGetMusicVolume( lua_State *L ) const {
+  return m_musicManager.LuaGetMusicVolume( L );
+}
+
+int State::LuaSetMusicVolume( lua_State *L ) {
+  return m_musicManager.LuaSetMusicVolume( L );
+}
+
+int State::LuaAdjustMusicVolume( lua_State *L ) {
+  return m_musicManager.LuaAdjustMusicVolume( L );
+}
+
 int State::LuaSpanCam( lua_State *L ) {
   return m_camera.LuaSpan( L );
 }
@@ -142,12 +170,8 @@ int State::LuaSetCamSpeed( lua_State *L ) {
   return m_camera.LuaSetSpeed( L );
 }
 
-int State::LuaSpeedUpCam( lua_State *L ) {
-  return m_camera.LuaSpeedUp( L );
-}
-
-int State::LuaSlowDownCam( lua_State *L ) {
-  return m_camera.LuaSlowDown( L );
+int State::LuaAdjustCamSpeed( lua_State *L ) {
+  return m_camera.LuaAdjustSpeed( L );
 }
 
 /**********************************

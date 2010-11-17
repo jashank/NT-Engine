@@ -63,7 +63,7 @@
     </object>
   </objects>
   <music>
-    <song name="" path="Kickle_Pack/Sound/stage_1.ogg"/>
+    <song name="StageTheme" path="Kickle_Pack/Sound/stage_2.ogg"/>
   </music>
   <portals/>
   <fonts/>

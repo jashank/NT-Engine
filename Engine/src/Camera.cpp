@@ -174,7 +174,7 @@ int Camera::LuaSetCenter( lua_State *L ) {
 
 int Camera::LuaSetSpeed( lua_State *L ) {
   if ( !lua_isnumber( L, -1 )) {
-    LogLuaErr( "Number not passed to SetCamSpeed." );
+    LogLuaErr( "Number not passed to Camera.SetSpeed." );
     return 0;
   }
   m_speed = lua_tonumber( L, -1 );
@@ -182,25 +182,14 @@ int Camera::LuaSetSpeed( lua_State *L ) {
 }
 
 
-int Camera::LuaSpeedUp( lua_State *L ) {
+int Camera::LuaAdjustSpeed( lua_State *L ) {
   if ( !lua_isnumber( L, -1 )) {
-    LogLuaErr( "Number not passed to SpeedUpCam." );
+    LogLuaErr( "Number not passed to Camera.AdjustSpeed." );
     return 0;
   }
   m_speed += lua_tonumber( L, -1 );
   return 0;
 }
-
-
-int Camera::LuaSlowDown( lua_State *L ) {
-  if ( !lua_isnumber( L, -1 )) {
-    LogLuaErr( "Number not passed to SpeedUpCam." );
-    return 0;
-  }
-  m_speed -= lua_tonumber( L, -1 );
-  return 0;
-}
-
 
 /***************************
  * Private Member Functions

@@ -57,7 +57,7 @@ int MusicManager::LuaPlayMusic( lua_State *L ) {
   switch( args ) {
     case 0: {
       if ( m_currentMusic ) {
-        m_currentMusic->Play();
+        SafePlay( m_currentMusic );
       }
       return 0;
     }
@@ -68,8 +68,7 @@ int MusicManager::LuaPlayMusic( lua_State *L ) {
       }
       sf::Music *music = GetMusic( lua_tostring( L, -1 ));
       if ( music ) {
-        StopAndSet( music );
-        m_currentMusic->Play();
+        CheckAndPlay( music );
       }
       return 0;
     }
@@ -80,9 +79,8 @@ int MusicManager::LuaPlayMusic( lua_State *L ) {
       }
       sf::Music *music = GetMusic( lua_tostring( L, -2 ));
       if ( music ) {
-        StopAndSet( music );
+        CheckAndPlay( music );
         m_currentMusic->SetVolume( lua_tonumber( L, -1 ));
-        m_currentMusic->Play();
       }
       return 0;
     }
@@ -91,6 +89,78 @@ int MusicManager::LuaPlayMusic( lua_State *L ) {
   }
 }
 
+
+int MusicManager::LuaStopMusic( lua_State *L ) {
+  if ( m_currentMusic ) {
+    m_currentMusic->Stop();
+  }
+  return 0;
+}
+
+
+int MusicManager::LuaPauseMusic( lua_State *L ) {
+  if ( m_currentMusic ) {
+    m_currentMusic->Pause();
+  }
+  return 0;
+}
+
+
+int MusicManager::LuaMusicIsPlaying( lua_State *L ) const {
+  if ( m_currentMusic ) {
+    lua_pushboolean( L, m_currentMusic->GetStatus() == sf::Music::Playing );
+  } else {
+    lua_pushboolean( L, false );
+  }
+  return 1;
+}
+
+
+int MusicManager::LuaLoopMusic( lua_State *L ) {
+  if ( !lua_isboolean( L, -1 )) {
+    LogLuaErr( "Boolean not passed to Music.Loop" );
+    return 0;
+  }
+  if ( m_currentMusic ) {
+    m_currentMusic->SetLoop( lua_toboolean( L, -1 ));
+  }
+  return 0;
+}
+
+
+int MusicManager::LuaGetMusicVolume( lua_State *L ) const {
+  if ( m_currentMusic ) {
+    lua_pushnumber( L, m_currentMusic->GetVolume() );
+    return 1;
+  } else {
+    return 0;
+  }
+}
+
+
+int MusicManager::LuaSetMusicVolume( lua_State *L ) {
+  if ( !lua_isnumber( L, -1 )) {
+    LogLuaErr( "Number not passed to Music.SetVolume" );
+    return 0;
+  }
+  if ( m_currentMusic ) {
+    m_currentMusic->SetVolume( lua_tonumber( L, -1 ));
+  }
+  return 0;
+}
+
+
+int MusicManager::LuaAdjustMusicVolume( lua_State *L ) {
+  if ( !lua_isnumber( L, -1 )) {
+    LogLuaErr( "Number not passed to Music.AdjustVolume" );
+    return 0;
+  }
+  if ( m_currentMusic ) {
+    float vol = m_currentMusic->GetVolume();
+    m_currentMusic->SetVolume( vol + lua_tonumber( L, -1 ));
+  }
+  return 0;
+}
 
 /**********************
  * Private Methods
@@ -103,6 +173,23 @@ sf::Music *MusicManager::GetMusic( const std::string &nameOrPath ) const {
     return music->second.get();
   }
   return NULL;
+}
+
+
+void MusicManager::SafePlay( sf::Music *music ) {
+  if ( music->GetStatus() != sf::Music::Playing ) {
+    music->Play();
+  }
+}
+
+
+void MusicManager::CheckAndPlay( sf::Music *music ) {
+  if ( m_currentMusic != music ) {
+    StopAndSet( music );
+    m_currentMusic->Play();
+  } else {
+    SafePlay( m_currentMusic );
+  }
 }
 
 

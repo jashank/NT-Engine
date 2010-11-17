@@ -43,6 +43,13 @@ const luaL_Reg StateMachine::m_luaMapFuncs[] = {
 
 const luaL_Reg StateMachine::m_luaMusicFuncs[] = {
   { "Play", LuaPlayMusic },
+  { "Stop", LuaStopMusic },
+  { "Pause", LuaPauseMusic },
+  { "IsPlaying", LuaMusicIsPlaying },
+  { "Loop", LuaLoopMusic },
+  { "GetVolume", LuaGetMusicVolume },
+  { "SetVolume", LuaSetMusicVolume },
+  { "AdjustVolume", LuaAdjustMusicVolume },
   { NULL, NULL }
 };
 
@@ -51,8 +58,7 @@ const luaL_Reg StateMachine::m_luaCamFuncs[] = {
   { "Offset", LuaOffsetCam },
   { "Center", LuaCenterCam },
   { "SetSpeed", LuaSetCamSpeed },
-  { "SpeedUp", LuaSpeedUpCam },
-  { "SlowDown", LuaSlowDownCam },
+  { "AdjustSpeed", LuaAdjustCamSpeed },
   { NULL, NULL }
 };
 
@@ -230,6 +236,34 @@ int StateMachine::LuaPlayMusic( lua_State *L ) {
   return m_runningState->LuaPlayMusic( L );
 }
 
+int StateMachine::LuaStopMusic( lua_State *L ) {
+  return m_runningState->LuaStopMusic( L );
+}
+
+int StateMachine::LuaPauseMusic( lua_State *L ) {
+  return m_runningState->LuaPauseMusic( L );
+}
+
+int StateMachine::LuaMusicIsPlaying( lua_State *L ) {
+  return m_runningState->LuaMusicIsPlaying( L );
+}
+
+int StateMachine::LuaLoopMusic( lua_State *L ) {
+  return m_runningState->LuaLoopMusic( L );
+}
+
+int StateMachine::LuaGetMusicVolume( lua_State *L ) {
+  return m_runningState->LuaGetMusicVolume( L );
+}
+
+int StateMachine::LuaSetMusicVolume( lua_State *L ) {
+  return m_runningState->LuaSetMusicVolume( L );
+}
+
+int StateMachine::LuaAdjustMusicVolume( lua_State *L ) {
+  return m_runningState->LuaAdjustMusicVolume( L );
+}
+
 int StateMachine::LuaSpanCam( lua_State *L ) {
   return m_runningState->LuaSpanCam( L );
 }
@@ -246,12 +280,8 @@ int StateMachine::LuaSetCamSpeed( lua_State *L ) {
   return m_runningState->LuaSetCamSpeed( L );
 }
 
-int StateMachine::LuaSpeedUpCam( lua_State *L ) {
-  return m_runningState->LuaSpeedUpCam( L );
-}
-
-int StateMachine::LuaSlowDownCam( lua_State *L ) {
-  return m_runningState->LuaSlowDownCam( L );
+int StateMachine::LuaAdjustCamSpeed( lua_State *L ) {
+  return m_runningState->LuaAdjustCamSpeed( L );
 }
 
 /***************************

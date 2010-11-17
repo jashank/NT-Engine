@@ -84,6 +84,20 @@ class StateMachine {
 
   static int LuaPlayMusic( lua_State *L );
 
+  static int LuaStopMusic( lua_State *L );
+
+  static int LuaPauseMusic( lua_State *L );
+
+  static int LuaMusicIsPlaying( lua_State *L );
+
+  static int LuaLoopMusic( lua_State *L );
+
+  static int LuaGetMusicVolume( lua_State *L );
+
+  static int LuaSetMusicVolume( lua_State *L );
+
+  static int LuaAdjustMusicVolume( lua_State *L );
+
   static int LuaSpanCam( lua_State *L );
 
   static int LuaOffsetCam( lua_State *L );
@@ -92,9 +106,7 @@ class StateMachine {
 
   static int LuaSetCamSpeed( lua_State *L );
 
-  static int LuaSpeedUpCam( lua_State *L );
-
-  static int LuaSlowDownCam( lua_State *L );
+  static int LuaAdjustCamSpeed( lua_State *L );
   //@}
 
  private:
