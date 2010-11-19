@@ -154,6 +154,10 @@ int State::LuaAdjustMusicVolume( lua_State *L ) {
   return m_musicManager.LuaAdjustMusicVolume( L );
 }
 
+int State::LuaKeepMusicPlaying( lua_State *L ) {
+  return m_musicManager.LuaKeepMusicPlaying( L );
+}
+
 int State::LuaSpanCam( lua_State *L ) {
   return m_camera.LuaSpan( L );
 }

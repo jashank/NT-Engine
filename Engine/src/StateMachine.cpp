@@ -50,6 +50,7 @@ const luaL_Reg StateMachine::m_luaMusicFuncs[] = {
   { "GetVolume", LuaGetMusicVolume },
   { "SetVolume", LuaSetMusicVolume },
   { "AdjustVolume", LuaAdjustMusicVolume },
+  { "DontStop", LuaKeepMusicPlaying },
   { NULL, NULL }
 };
 
@@ -262,6 +263,10 @@ int StateMachine::LuaSetMusicVolume( lua_State *L ) {
 
 int StateMachine::LuaAdjustMusicVolume( lua_State *L ) {
   return m_runningState->LuaAdjustMusicVolume( L );
+}
+
+int StateMachine::LuaKeepMusicPlaying( lua_State *L ) {
+  return m_runningState->LuaKeepMusicPlaying( L );
 }
 
 int StateMachine::LuaSpanCam( lua_State *L ) {

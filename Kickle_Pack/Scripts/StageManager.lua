@@ -4,6 +4,7 @@ local StageManager = require("Entity"):New()
 
 function StageManager:Init( mngr )
   Music.Play( "StageTheme" )
+  Music.DontStop( true )  
 end
 
 

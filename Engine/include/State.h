@@ -111,6 +111,8 @@ class State {
 
   int LuaAdjustMusicVolume( lua_State *L );
 
+  int LuaKeepMusicPlaying( lua_State *L );
+
   int LuaSpanCam( lua_State *L );
 
   int LuaOffsetCam( lua_State *L );

@@ -162,6 +162,16 @@ int MusicManager::LuaAdjustMusicVolume( lua_State *L ) {
   return 0;
 }
 
+
+int MusicManager::LuaKeepMusicPlaying( lua_State *L ) {
+  if ( !lua_isboolean( L, -1 )) {
+    LogLuaErr( "Boolean not passed to Music.KeepPlaying" );
+    return 0;
+  }
+  m_keepMusicPlaying = lua_toboolean( L, -1 );
+  return 0;
+}
+
 /**********************
  * Private Methods
  *********************/
