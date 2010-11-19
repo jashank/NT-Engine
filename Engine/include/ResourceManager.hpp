@@ -15,7 +15,7 @@ bool ResourceLoader<sf::Music>::Load(
   boost::shared_ptr<sf::Music> &rsrc 
 ) {
   if( !rsrc->OpenFromFile( filepath ) ) {
-    LogErr( "Song in" + filepath + "failed to load." );
+    LogErr( "Song in" + filepath + " failed to load." );
     return false;
   }
   return true;

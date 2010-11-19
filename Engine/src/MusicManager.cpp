@@ -196,10 +196,8 @@ void MusicManager::SafePlay( sf::Music *music ) {
 void MusicManager::CheckAndPlay( sf::Music *music ) {
   if ( m_currentMusic != music ) {
     StopAndSet( music );
-    m_currentMusic->Play();
-  } else {
-    SafePlay( m_currentMusic );
   }
+  SafePlay( music );
 }
 
 
