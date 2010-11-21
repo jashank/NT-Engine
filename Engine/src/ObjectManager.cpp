@@ -6,14 +6,12 @@ extern "C" {
   #include "lua.h"
 }
 
-#include "AnimSprite.h"
 #include "Camera.h"
 #include "Rect.h"
 #include "StateComm.h"
 #include "tinyxml.h"
 #include "Utilities.h"
 #include "Vector.h"
-#include "Window.h"
 
 /*******************************
  * Comparison Functors
@@ -181,14 +179,7 @@ void ObjectManager::Render( float alpha, const Camera &cam )  {
   FillSet<RenderPriorityCmp>( set );
 
   for ( RenderSetItr obj = set.begin(); obj != set.end(); ++obj ) {
-    const intrObj_type &object = *obj;
-    // Interpolate the sprite's position for blending, then turn it back.
-    // Copy current position because it will change when interpolated.
-    sf::Vector2f pos = ObjectAttorney::GetSpritePosition( object );
-    ObjectAttorney::InterpolateSprite( object, alpha );
-    nt::window::Draw( ObjectAttorney::GetSprite( object ) );
-    nt::window::Draw( ObjectAttorney::GetText( object ));
-    ObjectAttorney::SetSpritePosition( object, pos );
+    (*obj)->Draw( alpha );
   }
 }
 

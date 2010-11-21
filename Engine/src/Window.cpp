@@ -41,11 +41,6 @@ namespace window {
   }
 
 
-  void Draw( const sf::Drawable &object ) {
-    win.Draw( object );
-  }
-
-
   bool IsOpen() {
     return win.IsOpened();
   }

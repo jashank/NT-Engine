@@ -4,7 +4,6 @@
 #include <string>
 
 namespace sf {
-  class Drawable;
   class Event;
   class Input;
 }
@@ -45,11 +44,6 @@ namespace window {
    * Displays contents drawn on window. Should be called every frame.
    */
   void Display();
-
-  /**
-   * Draws any SFML Drawable object to the window.
-   */
-  void Draw( const sf::Drawable &object );
 
   /**
    * Returns true if window is open.
