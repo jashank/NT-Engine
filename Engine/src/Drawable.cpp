@@ -11,6 +11,12 @@ namespace graphics {
 // docs for more information.
 void Drawable::Draw( float alpha ) {
   glMatrixMode( GL_MODELVIEW );
+
+  // Save logical position before interpolating so can go back to it
+  // after rendering
+  const sf::Vector2f logicPos = GetPosition();
+  Interpolate( alpha );
+
   glPushMatrix();
   glMultMatrix( GetMatrix().Get4x4Elements() );
   
@@ -41,10 +47,12 @@ void Drawable::Draw( float alpha ) {
   glColor4f( color.r / 255.0, color.g / 255.0, 
              color.b / 255.0, color.a / 255.0 );
 
-  Render( alpha );
+  Render();
 
   glMatrixMode( GL_MODELVIEW );
   glPopMatrix();
+
+  SetPosition( logicPos );
 }
 
 } // graphics

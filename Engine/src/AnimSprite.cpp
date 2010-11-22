@@ -35,20 +35,6 @@ void AnimSprite::Update( float dt ) {
 }
 
 
-void AnimSprite::Interpolate( float alpha ) {
-  sf::Vector2f current;
-  current.x = GetPosition().x * alpha;
-  current.y = GetPosition().y * alpha;
-
-  sf::Vector2f last;
-  float diff = 1.0 - alpha;
-  last.x = m_lastPos.x * ( diff );
-  last.y = m_lastPos.y * ( diff );
-
-  SetPosition( current.x + last.x, current.y + last.y );
-}
-
-
 void AnimSprite::SetInitialPosition( float x, float y ) {
   m_lastPos.x = x;
   m_lastPos.y = y;
@@ -152,15 +138,62 @@ void AnimSprite::SetAlpha( unsigned int alpha ) {
   SetColor( sf::Color( 255, 255, 255, alpha ));
 }
 
-/***************************
- * Protected Methods
- **************************/
+
+/************************************************
+Private Methods
+************************************************/
+void AnimSprite::NextFrame() {
+  int frameNum = m_frameNum;
+  if( !m_reversed ) {
+    ++frameNum;
+    if( frameNum >= m_animData->GetNumFrames( m_animNum ) ) {
+      if( m_animData->IsLooped( m_animNum ) ) {
+        frameNum = 0;
+      }
+      else {
+        --frameNum;
+        Pause();
+      }
+    }
+  }
+  else {
+    --frameNum;
+    if( frameNum == 0 ) {
+      if( m_animData->IsLooped( m_animNum ) ) {
+        frameNum = m_animData->GetNumFrames( m_animNum )-1;
+      }
+      else {
+        Pause();
+      }
+    }
+  }
+  SetFrame( frameNum );
+  m_frameTimeLeft = m_animData->GetFrameTime( m_animNum, m_frameNum );
+}
+
+
+void AnimSprite::Interpolate( float alpha ) {
+  sf::Vector2f current;
+  current.x = GetPosition().x * alpha;
+  current.y = GetPosition().y * alpha;
+
+  sf::Vector2f last;
+  float diff = 1.0 - alpha;
+  last.x = m_lastPos.x * ( diff );
+  last.y = m_lastPos.y * ( diff );
+
+  SetPosition( current.x + last.x, current.y + last.y );
+}
+
+
 // Follows basically the same algorithm as sf::Sprite. See the SFML
 // documentation for details. Stuff has been cut out because engine
 // doesn't include it.
 void AnimSprite::Render( sf::RenderTarget &target ) const {
   // If there is animation data then there is an image.
   if ( m_animData ) {
+    // Hold physics based position to go back to after rendering
+    const sf::Vector2f &logicPosition = GetPosition();
     const boost::shared_ptr<sf::Image> &img = 
       m_animData->GetImage( m_animNum );
 
@@ -199,35 +232,4 @@ void AnimSprite::Render( sf::RenderTarget &target ) const {
   }
 }
 
-/************************************************
-Private Methods
-************************************************/
-void AnimSprite::NextFrame() {
-  int frameNum = m_frameNum;
-  if( !m_reversed ) {
-    ++frameNum;
-    if( frameNum >= m_animData->GetNumFrames( m_animNum ) ) {
-      if( m_animData->IsLooped( m_animNum ) ) {
-        frameNum = 0;
-      }
-      else {
-        --frameNum;
-        Pause();
-      }
-    }
-  }
-  else {
-    --frameNum;
-    if( frameNum == 0 ) {
-      if( m_animData->IsLooped( m_animNum ) ) {
-        frameNum = m_animData->GetNumFrames( m_animNum )-1;
-      }
-      else {
-        Pause();
-      }
-    }
-  }
-  SetFrame( frameNum );
-  m_frameTimeLeft = m_animData->GetFrameTime( m_animNum, m_frameNum );
-}
 

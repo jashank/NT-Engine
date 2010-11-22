@@ -4,9 +4,9 @@
 #include <string>
 
 #include <boost/shared_ptr.hpp>
-#include <SFML/Graphics/Drawable.hpp>
 
 #include "AnimData.h"
+#include "Drawable.h"
 
 namespace sf {
   class RenderTarget;
@@ -17,7 +17,7 @@ namespace sf {
  * sf::Sprite with methods to enable easier animation based on AnimData
  * loaded in.
  */
-class AnimSprite : public sf::Drawable {
+class AnimSprite : public nt::graphics::Drawable {
  public:
   /**
    * Animation and frame are initialized to invalid values. User must set
@@ -46,7 +46,7 @@ class AnimSprite : public sf::Drawable {
   /**
    * If you know that the sprite has just been created and you want to set
    * its position, call this function. Allows for correct interpolation
-   * on first creation.
+   * on first creation. (Otherwise will use (0,0) for last position).
    */
   void SetInitialPosition( float x, float y );
 
@@ -132,13 +132,6 @@ class AnimSprite : public sf::Drawable {
    */
   void SetAlpha( unsigned int alpha );
 
- protected:
-  /**
-   * Overrides Drawable's Render to deal with this being an
-   * animated sprite.
-   */
-  virtual void Render( sf::RenderTarget &target ) const;
-
  private:
   //@{
   /**
@@ -152,6 +145,21 @@ class AnimSprite : public sf::Drawable {
    * Sets sprite's current clip to the next frame in the animation sequence.
    */
   void NextFrame();
+
+  /**
+   * Interpolates the sprite's position with its current position and its
+   * previous position. Note that this actually changes the sprite's
+   * position.
+   * @param alpha blending factor between previous frame and current frame.
+   * Should be from [0:1].
+   */
+  void Interpolate( float alpha );
+
+  /**
+   * Overrides Drawable's Render to deal with this being an
+   * animated sprite.
+   */
+  void Render( float alpha ) const;
 
   /** Animation data stored for this sprite. */
   boost::shared_ptr<AnimData> m_animData;

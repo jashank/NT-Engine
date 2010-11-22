@@ -2,6 +2,7 @@
 #define DRAWABLE_H
 
 #include <SFML/Graphics/Drawable.hpp>
+#include <SFML/System/Vector2.hpp>
 
 namespace nt {
 namespace graphics {
@@ -24,9 +25,13 @@ class Drawable : public sf::Drawable {
 
   protected:
    /**
-    * Derived classes should define this.
+    * Derived classes should define this. Called by Draw after matrix OpenGL
+    * matrix is set up and position is interpolated.
     */
-   virtual void Render( float alpha ) const = 0;
+   virtual void Render() const = 0;
+
+  private:
+   sf::Vector2f 
 };
 
 } // graphics
