@@ -2,8 +2,6 @@
 
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/Rect.hpp>
-#include <SFML/Graphics/RenderTarget.hpp>
-#include <SFML/Window.hpp>
 
 #include "AnimData.h"
 #include "Rect.h"
@@ -32,13 +30,6 @@ void AnimSprite::Update( float dt ) {
     }
   }
   m_setToReverse = false;
-}
-
-
-void AnimSprite::SetInitialPosition( float x, float y ) {
-  m_lastPos.x = x;
-  m_lastPos.y = y;
-  SetPosition( x, y );
 }
 
 
@@ -169,20 +160,6 @@ void AnimSprite::NextFrame() {
   }
   SetFrame( frameNum );
   m_frameTimeLeft = m_animData->GetFrameTime( m_animNum, m_frameNum );
-}
-
-
-void AnimSprite::Interpolate( float alpha ) {
-  sf::Vector2f current;
-  current.x = GetPosition().x * alpha;
-  current.y = GetPosition().y * alpha;
-
-  sf::Vector2f last;
-  float diff = 1.0 - alpha;
-  last.x = m_lastPos.x * ( diff );
-  last.y = m_lastPos.y * ( diff );
-
-  SetPosition( current.x + last.x, current.y + last.y );
 }
 
 

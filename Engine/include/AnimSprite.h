@@ -35,22 +35,6 @@ class AnimSprite : public nt::graphics::Drawable {
   void Update( float dt );
 
   /**
-   * Interpolates the sprite's position with its current position and its
-   * previous position. Note that this actually changes the sprite's
-   * position.
-   * @param alpha blending factor between previous frame and current frame.
-   * Should be from [0:1].
-   */
-  void Interpolate( float alpha );
-
-  /**
-   * If you know that the sprite has just been created and you want to set
-   * its position, call this function. Allows for correct interpolation
-   * on first creation. (Otherwise will use (0,0) for last position).
-   */
-  void SetInitialPosition( float x, float y );
-
-  /**
    * @return Number of current frame sprite is on.
    */
   int GetFrame() const;
@@ -147,19 +131,10 @@ class AnimSprite : public nt::graphics::Drawable {
   void NextFrame();
 
   /**
-   * Interpolates the sprite's position with its current position and its
-   * previous position. Note that this actually changes the sprite's
-   * position.
-   * @param alpha blending factor between previous frame and current frame.
-   * Should be from [0:1].
-   */
-  void Interpolate( float alpha );
-
-  /**
    * Overrides Drawable's Render to deal with this being an
    * animated sprite.
    */
-  void Render( float alpha ) const;
+  void Render() const;
 
   /** Animation data stored for this sprite. */
   boost::shared_ptr<AnimData> m_animData;
@@ -170,7 +145,6 @@ class AnimSprite : public nt::graphics::Drawable {
   float m_frameTimeLeft; /** Time left for current frame to play. */
   int m_animNum; /** Number of animation sprite is currently on. */
   int m_frameNum; /** Number of frame sprite is currently on. */ 
-  sf::Vector2f m_lastPos; /** Last position that sprite was in on last update. */
 };
 
 #endif // ANIMSPRITE_H

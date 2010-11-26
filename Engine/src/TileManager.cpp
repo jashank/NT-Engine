@@ -18,7 +18,6 @@ extern "C" {
 #include "State.h"
 #include "tinyxml.h"
 #include "Utilities.h"
-#include "Window.h"
 
 /******************************
 Constructors and Destructors.
