@@ -63,7 +63,7 @@ void TileManager::Update( float dt ) {
 }
 
 
-void TileManager::Render( const Camera &cam ) {
+void TileManager::Render( float alpha, const Camera &cam ) {
   if ( m_tileSprites ) {
     const nt::core::IntRect &view = cam.GetAdjustedFocus( 1, 1 );
     int tLx = view.topLeft.x;
@@ -83,7 +83,7 @@ void TileManager::Render( const Camera &cam ) {
           screenX = static_cast<float>( x ) * m_tileDim;
           screenY = static_cast<float>( y ) * m_tileDim;
           m_tileSprites[tile].SetPosition( screenX, screenY );
-          m_tileSprites[tile]->Draw( alpha );
+          m_tileSprites[tile].Draw( alpha );
         }
       }
     }

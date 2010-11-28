@@ -21,8 +21,6 @@ AnimSprite::AnimSprite()
 
 
 void AnimSprite::Update( float dt ) {
-  m_lastPos = GetPosition();
-
   if( m_playing ) {
     m_frameTimeLeft -= dt;
     if( m_frameTimeLeft <= 0.0f ) {
@@ -166,11 +164,9 @@ void AnimSprite::NextFrame() {
 // Follows basically the same algorithm as sf::Sprite. See the SFML
 // documentation for details. Stuff has been cut out because engine
 // doesn't include it.
-void AnimSprite::Render( sf::RenderTarget &target ) const {
+void AnimSprite::Render() const {
   // If there is animation data then there is an image.
   if ( m_animData ) {
-    // Hold physics based position to go back to after rendering
-    const sf::Vector2f &logicPosition = GetPosition();
     const boost::shared_ptr<sf::Image> &img = 
       m_animData->GetImage( m_animNum );
 

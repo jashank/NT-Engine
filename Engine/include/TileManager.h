@@ -42,7 +42,7 @@ class TileManager {
    * Renders tiles on screen.
    * @param cam Camera currently viewing the State.
    */
-  void Render( const Camera &cam );
+  void Render( float alpha, const Camera &cam );
 
   /**
    * @return Dimensions of tiles in this State (since tiles are square, only

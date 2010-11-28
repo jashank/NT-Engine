@@ -179,7 +179,7 @@ void ObjectManager::Render( float alpha, const Camera &cam )  {
   FillSet<RenderPriorityCmp>( set );
 
   for ( RenderSetItr obj = set.begin(); obj != set.end(); ++obj ) {
-    (*obj)->Draw( alpha );
+    ObjectAttorney::Render( *obj, alpha );
   }
 }
 

@@ -3,7 +3,7 @@
 
 #include <SFML/Graphics/Drawable.hpp>
 
-#include "Vector"
+#include "Vector.h"
 
 namespace nt {
 namespace graphics {
@@ -14,7 +14,13 @@ namespace graphics {
  */
 class Drawable : public sf::Drawable {
  public:
-  Drawable( float posX, float posY, float lastPosX = 0, float lastPosY = 0 );
+  Drawable() {}
+  Drawable( 
+    float posX, 
+    float posY, 
+    float lastPosX = 0.0, 
+    float lastPosY = 0.0 
+  );
   Drawable( const nt::core::FloatVec &pos, 
             const nt::core::FloatVec &lastPos = 
               nt::core::FloatVec( 0.0, 0.0 ));
@@ -26,7 +32,7 @@ class Drawable : public sf::Drawable {
    * @param alpha blending factor between previous frame and current frame.
    * Should be between [0:1].
    */
-  void Draw( float alpha );
+  virtual void Draw( float alpha );
 
   /**
    * If Drawable thing wasn't initialized with its starting position, then
@@ -47,6 +53,11 @@ class Drawable : public sf::Drawable {
    * current position, last position, and alpha value passed.
    */
   void Lerp( float alpha );
+
+  /**
+   * Get rid of unneeded pure Render function from sf::Drawable.
+   */
+  void Render( sf::RenderTarget &target ) const {}
 
   /** Last (x,y) position drawable thing was in. */
   nt::core::FloatVec m_lastPos;

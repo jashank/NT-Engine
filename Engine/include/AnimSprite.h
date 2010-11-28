@@ -8,11 +8,6 @@
 #include "AnimData.h"
 #include "Drawable.h"
 
-namespace sf {
-  class RenderTarget;
-}
-
-
 /**
  * sf::Sprite with methods to enable easier animation based on AnimData
  * loaded in.

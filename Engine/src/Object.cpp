@@ -145,7 +145,7 @@ Object::Object(
     //Take into account the sprites that are taller than a normal tile
     y -= height - tileDim;
   }
-  m_sprite.SetInitialPosition( x, y );
+  m_sprite.SetStartingPos( x, y );
 
   if( !LoadCollisionData( filepath ) ) {
     LogErr( "Object XML file " + filepath + " didn't load correctly." );
@@ -205,6 +205,12 @@ void Object::UpdateAI( float dt ) {
   } else {
     CallScriptFunc( "AI" );
   }
+}
+
+
+void Object::Render( float alpha ) {
+  m_sprite.Draw( alpha );
+  // Draw text!!!
 }
 
 

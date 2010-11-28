@@ -25,19 +25,18 @@ Drawable::Drawable(
  * Public Methods
  **************************/
 // Almost exactly the same as SFML draw, just less checking because
-// of features not used and has lerpring. See SFML docs for more info.
+// of features not used and has lerping. See SFML docs for more info.
 void Drawable::Draw( float alpha ) {
-  glMatrixMode( GL_MODELVIEW );
-
   // Save logical position before lerping so can go back to it after
   // rendering
   const sf::Vector2f logicPos = GetPosition();
   Lerp( alpha );
 
+  glMatrixMode( GL_MODELVIEW );
   glPushMatrix();
-  glMultMatrix( GetMatrix().Get4x4Elements() );
+  glMultMatrixf( GetMatrix().Get4x4Elements() );
   
-  sf::Blend blendMode = GetBlendMode();
+  sf::Blend::Mode blendMode = GetBlendMode();
   if ( blendMode  == sf::Blend::None ) {
     glDisable( GL_BLEND );
   } else {
@@ -70,6 +69,8 @@ void Drawable::Draw( float alpha ) {
   glPopMatrix();
 
   SetPosition( logicPos );
+  m_lastPos.x = logicPos.x;
+  m_lastPos.y = logicPos.y;
 }
 
 
