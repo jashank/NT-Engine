@@ -10,14 +10,14 @@ namespace graphics {
  * Constructors
  *************************/
 Drawable::Drawable( float posX, float posY, float lastPosX, float lastPosY )
-  : m_lastPos( lastPosX, lastPosY ) {
+  : m_lerpBlend( 0.0 ), m_lastPos( lastPosX, lastPosY ) {
   SetPosition( posX, posY );
 }
 
 Drawable::Drawable( 
   const nt::core::FloatVec &pos,
   const nt::core::FloatVec &lastPos 
-) : m_lastPos( lastPos ) {
+) : m_lerpBlend( 0.0 ), m_lastPos( lastPos ) {
   SetPosition( pos.x, pos.y );
 }
 
@@ -26,11 +26,11 @@ Drawable::Drawable(
  **************************/
 // Almost exactly the same as SFML draw, just less checking because
 // of features not used and has lerping. See SFML docs for more info.
-void Drawable::Draw( float alpha ) {
+void Drawable::Draw( sf::RenderTarget &target ) {
   // Save logical position before lerping so can go back to it after
   // rendering
   const sf::Vector2f logicPos = GetPosition();
-  Lerp( alpha );
+  Lerp( m_lerpBlend );
 
   glMatrixMode( GL_MODELVIEW );
   glPushMatrix();
@@ -74,15 +74,20 @@ void Drawable::Draw( float alpha ) {
 }
 
 
+void Drawable::SetLerpBlend( float alpha ) {
+  m_lerpBlend = alpha;
+}
+
+
 void Drawable::SetStartingPos( float x, float y ) {
   m_lastPos.x = x;
   m_lastPos.y = y;
   SetPosition( x, y );
 }
 
-/***************************
+/*************************
  * Private Methods
- **************************/
+ ************************/
 void Drawable::Lerp( float alpha ) {
   sf::Vector2f current;
   current.x = GetPosition().x * alpha;

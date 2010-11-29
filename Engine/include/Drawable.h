@@ -5,12 +5,16 @@
 
 #include "Vector.h"
 
+namespace sf {
+  class RenderTarget;
+}
+
 namespace nt {
 namespace graphics {
 
 /**
  * Overrides sf::Drawable's Draw function to allow for lerping via an alpha
- * value and removes the unnecessary need for a RenderTarget.
+ * value.
  */
 class Drawable : public sf::Drawable {
  public:
@@ -29,10 +33,14 @@ class Drawable : public sf::Drawable {
 
   /**
    * Same functionality as sf::Drawable but lerps before calling Render.
-   * @param alpha blending factor between previous frame and current frame.
-   * Should be between [0:1].
    */
-  virtual void Draw( float alpha );
+  virtual void Draw( sf::RenderTarget &target );
+
+  /**
+   * Sets blending factor for lerping this drawable object. Should be from
+   * [0:1].
+   */
+  virtual void SetLerpBlend( float alpha );
 
   /**
    * If Drawable thing wasn't initialized with its starting position, then
@@ -58,6 +66,9 @@ class Drawable : public sf::Drawable {
    * Get rid of unneeded pure Render function from sf::Drawable.
    */
   void Render( sf::RenderTarget &target ) const {}
+
+  /** Current blending factor for linear interpolation. */
+  float m_lerpBlend;
 
   /** Last (x,y) position drawable thing was in. */
   nt::core::FloatVec m_lastPos;

@@ -12,6 +12,7 @@ extern "C" {
 #include "tinyxml.h"
 #include "Utilities.h"
 #include "Vector.h"
+#include "Window.h"
 
 /*******************************
  * Comparison Functors
@@ -179,7 +180,7 @@ void ObjectManager::Render( float alpha, const Camera &cam )  {
   FillSet<RenderPriorityCmp>( set );
 
   for ( RenderSetItr obj = set.begin(); obj != set.end(); ++obj ) {
-    ObjectAttorney::Render( *obj, alpha );
+    nt::window::Draw( *((*obj).get()), alpha );
   }
 }
 

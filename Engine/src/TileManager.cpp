@@ -18,6 +18,7 @@ extern "C" {
 #include "State.h"
 #include "tinyxml.h"
 #include "Utilities.h"
+#include "Window.h"
 
 /******************************
 Constructors and Destructors.
@@ -83,7 +84,7 @@ void TileManager::Render( float alpha, const Camera &cam ) {
           screenX = static_cast<float>( x ) * m_tileDim;
           screenY = static_cast<float>( y ) * m_tileDim;
           m_tileSprites[tile].SetPosition( screenX, screenY );
-          m_tileSprites[tile].Draw( alpha );
+          nt::window::Draw( m_tileSprites[tile], alpha );
         }
       }
     }

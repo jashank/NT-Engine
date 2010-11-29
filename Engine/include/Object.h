@@ -35,7 +35,7 @@ class lua_State;
  *
  * See the Object Guide for more information.
  */
-class Object {
+class Object : public nt::graphics::Drawable {
  public:
   /**
    * Lunar requires Object constructor that just takes pointer to lua_State. 
@@ -56,6 +56,11 @@ class Object {
    * Object class. For example, "Move" is matched with &Object::LuaMove.
    */
   static Lunar<Object>::RegType methods[]; 
+
+  /**
+   * Draws Object's drawable components.
+   */
+  virtual void Draw( sf::RenderTarget &target );
 
  private:
   /**
@@ -123,13 +128,6 @@ class Object {
    * @param dt delta time - amount of time to step forward
    */
   void UpdateAI( float dt );
-
-  /**
-   * Renders object to the screen.
-   * @param alpha blending factor between previous frame and current frame.
-   * Should be between [0:1].
-   */
-  void Render( float alpha );
 
   //@{
   /**
@@ -265,6 +263,11 @@ class Object {
    * @return Opposite direction Object is traveling.
    */
   Dir GetOppositeDir( Dir dir );
+
+  /**
+   * Object doesn't actually render anything itself.
+   */
+  virtual void Render() const {}
 
   /***********************
    Private Data Members
@@ -467,14 +470,6 @@ class ObjectAttorney {
   { obj->UpdateAI( dt ); }
 
   /**
-   * Calls Object's Render function.
-   * @param obj object to call Render on.
-   * @param alpha blending factor between previous and current frame. [0:1].
-   */
-  static void Render( const intrObj_type &obj, float alpha )
-  { obj->Render( alpha ); }
-
-  /**
    * Returns Object's render priority. Higher priority indicates that it
    * should be rendered on top of Objects with lower priority.
    */
@@ -556,13 +551,6 @@ class ObjectAttorney {
   )
   { obj->m_collidingWith.remove( other.get() ); }
 
-  /**
-   * Returns sf::String that Object holds.
-   * @param obj Object to get sf::String from.
-   * @return sf::String that Object holds.
-   */
-  static const sf::String& GetText( const intrObj_type &obj )
-  { return obj->m_text; }
 };  
 
 #endif // OBJECT_H

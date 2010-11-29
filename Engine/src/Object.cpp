@@ -105,6 +105,11 @@ void Object::LuaRegister( lua_State *L ) {
 }
 
 
+void Object::Draw( sf::RenderTarget &target ) {
+  m_sprite.Draw( target );
+  // draw text
+}
+
 /***********************************************
  * Private
  **********************************************/
@@ -205,12 +210,6 @@ void Object::UpdateAI( float dt ) {
   } else {
     CallScriptFunc( "AI" );
   }
-}
-
-
-void Object::Render( float alpha ) {
-  m_sprite.Draw( alpha );
-  // Draw text!!!
 }
 
 

@@ -3,11 +3,16 @@
 
 #include <string>
 
+namespace nt {
+namespace graphics {
+  class Drawable;
+}
+}
+
 namespace sf {
   class Event;
   class Input;
 }
-
 
 /**
  * Contains interface for creating initial application window, retrieving
@@ -33,6 +38,11 @@ namespace window {
    * Closes window that has been created.
    */
   void Close();
+
+  /**
+   * Draws drawable object to the window using alpha value for lerping.
+   */
+  void Draw( nt::graphics::Drawable &toDraw, float alpha );
 
   /**
    * Clears graphical contents of window for another rendering.
