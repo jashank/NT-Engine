@@ -29,86 +29,104 @@ struct Vector {
   /**
    * @return This Vector with x,y,z assigned to by other's x,y,z.
    */
-  Vector<T>& operator=( const Vector<T>& other ) {
+  Vector<T> &operator=( const Vector<T>& other ) {
     x = other.x;
     y = other.y;
     z = other.z;
     return *this;
   }
 
-  /**
-   * @return This vector with other's x,y,z added to this' x,y,z.
-   */
-  Vector<T>& operator+=( const Vector<T>& other ) {
-    x += other.x;
-    y += other.y;
-    z += other.z;
-    return *this;
-  }
-
-  /**
-   * @return This vector with other's x,y,z subtracted from this' x,y,z.
-   */
-  Vector<T>& operator-=( const Vector<T>& other ) {
-    x -= other.x;
-    y -= other.y;
-    z -= other.z;
-    return *this;
-  }
-
-  /**
-   * @return This vector with x,y,z multipled by other's x,y,z.
-   */
-  Vector<T>& operator*=( const Vector<T>& other ) {
-    x *= other.x;
-    y *= other.y;
-    z *= other.z;
-    return *this;
-  }
-
-  /**
-   * @return This vector with x,y,z divided by other's x,y,z. 
-   */
-  Vector<T>& operator/=( const Vector* other ) {
-    x /= other.x;
-    y /= other.y;
-    z /= other.z;
-    return *this;
-  }
-
-  /**
-   * @return Vector with x,y,z of this and other added.
-   */
+  /** Vector addition. */
   Vector<T> operator+( const Vector<T> &other ) const {
     return Vector<T>(x+other.x, y+other.y, z+other.z);
   }
 
-  /**
-   * @return Vector with x,y,z of other subtracted from this.
-   */
+  /** Scalar addition. */
+  Vector<T> operator+( const T &val ) const {
+    return Vector<T>(x+val, y+val, z+val);
+  }
+
+  /** Vector subtraction. */
   Vector<T> operator-( const Vector<T> &other ) const {
     return Vector<T>(x-other.x, y-other.y, z-other.z);
   }
 
-  /**
-   * @return Vector with this' members negated.
-   */
+  /** Scalar subtraction. */
+  Vector<T> operator-( const T &val ) const {
+    return Vector<T>(x-val, y-val, z-val);
+  }
+
+  /** Negate vector. */
   Vector<T> operator-() const {
     return Vector<T>(-x, -y, -z);
   }
 
-  /**
-   * @return Vector with x,y,z of other multiplied by this.
-   */
+  /** Vector multiplication. */
   Vector<T> operator*( const Vector<T> &other ) const {
     return Vector<T>(x*other.x, y*other.y, z*other.z);
   }
 
-  /**
-   * @return Vector with x,y,z of other dividied by this.
-   */
+  /** Scalar multiplication. */
+  Vector<T> operator*( const T &val ) const {
+    return Vector<T>(x*val, y*val, z*val);
+  }
+
+  /** Vector division. */
   Vector<T> operator/( const Vector<T> &other ) const {
     return Vector<T>(x / other.x, y / other.y, z / other.z );
+  }
+
+  /** Scalar division. */
+  Vector<T> operator/( const T &val ) const {
+    return Vector<T>(x / val, y / val, z / val );
+  }
+
+  /** Vector addition assignment. */
+  Vector<T> &operator+=( const Vector<T> &other ) {
+    *this = *this + other;
+    return *this;
+  }
+
+  /** Scalar addition assignment. */
+  Vector<T> &operator+=( const T &val ) {
+    *this = *this + val;
+    return *this;
+  }
+
+  /** Vector subtraction assignment. */
+  Vector<T> &operator-=( const Vector<T> &other ) {
+    *this = *this - other;
+    return *this;
+  }
+
+  /** Scalar subtraction assignment. */
+  Vector<T> &operator-=( const T &val ) {
+    *this = *this - val;
+    return *this;
+  }
+
+  /** Vector multiplication assignment. */
+  Vector<T> &operator*=( const Vector<T> &other ) {
+    *this = *this * other;
+    return *this;
+  }
+
+  /** Scalar multiplication assignment. */
+  Vector<T> &operator*=( const T &val ) {
+    *this = *this * val;
+    return *this;
+  }
+
+  /** Vector division assignment. */
+  Vector<T> &operator/=( const Vector &other ) {
+    *this = *this / other;
+    return *this;
+  }
+
+  /** Scalar division assignment. */
+  Vector<T> &operator/=( const T &val ) {
+    *this = *this / val;
+    return *this;
   }
 
   /**

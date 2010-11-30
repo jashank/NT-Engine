@@ -6,13 +6,13 @@
 #include <boost/shared_ptr.hpp>
 
 #include "AnimData.h"
-#include "Drawable.h"
+#include "Lerpable.h"
 
 /**
- * sf::Sprite with methods to enable easier animation based on AnimData
+ * Lerpable sprite with methods to enable easier animation based on AnimData
  * loaded in.
  */
-class AnimSprite : public nt::graphics::Drawable {
+class AnimSprite : public nt::graphics::Lerpable {
  public:
   /**
    * Animation and frame are initialized to invalid values. User must set
@@ -126,10 +126,10 @@ class AnimSprite : public nt::graphics::Drawable {
   void NextFrame();
 
   /**
-   * Overrides Drawable's Render to deal with this being an
+   * Overrides Lerpable's Render to deal with this being an
    * animated sprite.
    */
-  void Render() const;
+  void Render( sf::RenderTarget &target ) const;
 
   /** Animation data stored for this sprite. */
   boost::shared_ptr<AnimData> m_animData;

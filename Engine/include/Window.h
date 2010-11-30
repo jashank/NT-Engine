@@ -5,9 +5,8 @@
 
 namespace nt {
 namespace graphics {
-  class Drawable;
-}
-}
+  class Lerpable;
+}}
 
 namespace sf {
   class Event;
@@ -40,9 +39,9 @@ namespace window {
   void Close();
 
   /**
-   * Draws drawable object to the window using alpha value for lerping.
+   * Draws lerpable object to the window using alpha value for lerping.
    */
-  void Draw( nt::graphics::Drawable &toDraw, float alpha );
+  void Draw( nt::graphics::Lerpable &toDraw, float alpha );
 
   /**
    * Clears graphical contents of window for another rendering.

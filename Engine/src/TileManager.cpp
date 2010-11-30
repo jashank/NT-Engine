@@ -83,7 +83,7 @@ void TileManager::Render( float alpha, const Camera &cam ) {
         if ( tile != BLANK_TILE_ID ) {
           screenX = static_cast<float>( x ) * m_tileDim;
           screenY = static_cast<float>( y ) * m_tileDim;
-          m_tileSprites[tile].SetPosition( screenX, screenY );
+          m_tileSprites[tile].SetStartingPos( screenX, screenY );
           nt::window::Draw( m_tileSprites[tile], alpha );
         }
       }

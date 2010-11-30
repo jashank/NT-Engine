@@ -35,7 +35,7 @@ class lua_State;
  *
  * See the Object Guide for more information.
  */
-class Object : public nt::graphics::Drawable {
+class Object {
  public:
   /**
    * Lunar requires Object constructor that just takes pointer to lua_State. 
@@ -56,11 +56,6 @@ class Object : public nt::graphics::Drawable {
    * Object class. For example, "Move" is matched with &Object::LuaMove.
    */
   static Lunar<Object>::RegType methods[]; 
-
-  /**
-   * Draws Object's drawable components.
-   */
-  virtual void Draw( sf::RenderTarget &target );
 
  private:
   /**
@@ -128,6 +123,11 @@ class Object : public nt::graphics::Drawable {
    * @param dt delta time - amount of time to step forward
    */
   void UpdateAI( float dt );
+
+  /**
+   * Draws Object to the window. Requires alpha value for lerping.
+   */
+  void Draw( float alpha );
 
   //@{
   /**
@@ -263,11 +263,6 @@ class Object : public nt::graphics::Drawable {
    * @return Opposite direction Object is traveling.
    */
   Dir GetOppositeDir( Dir dir );
-
-  /**
-   * Object doesn't actually render anything itself.
-   */
-  virtual void Render() const {}
 
   /***********************
    Private Data Members
@@ -468,6 +463,14 @@ class ObjectAttorney {
    */
   static void UpdateAI( const intrObj_type &obj, float dt ) 
   { obj->UpdateAI( dt ); }
+
+  /**
+   * Calls Object's Draw function.
+   * @param obj object to call Draw on
+   * @param alpha blending factor for lerping
+   */
+  static void Draw( const intrObj_type &obj, float alpha )
+  { obj->Draw( alpha ); }
 
   /**
    * Returns Object's render priority. Higher priority indicates that it

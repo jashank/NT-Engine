@@ -164,7 +164,7 @@ void AnimSprite::NextFrame() {
 // Follows basically the same algorithm as sf::Sprite. See the SFML
 // documentation for details. Stuff has been cut out because engine
 // doesn't include it.
-void AnimSprite::Render() const {
+void AnimSprite::Render( sf::RenderTarget &target ) const {
   // If there is animation data then there is an image.
   if ( m_animData ) {
     const boost::shared_ptr<sf::Image> &img = 

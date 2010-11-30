@@ -6,7 +6,7 @@
 #include <SFML/Window/VideoMode.hpp>
 
 #include "Config.h"
-#include "Drawable.h"
+#include "Lerpable.h"
 #include "Utilities.h"
 
 // Holds actual window
@@ -37,9 +37,10 @@ namespace window {
   }
 
 
-  void Draw( nt::graphics::Drawable &toDraw, float alpha ) {
-    toDraw.SetLerpBlend( alpha );
+  void Draw( nt::graphics::Lerpable &toDraw, float alpha ) {
+    toDraw.Lerp( alpha );
     win.Draw( toDraw );
+    toDraw.Unlerp();
   }
 
 

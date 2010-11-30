@@ -12,7 +12,6 @@ extern "C" {
 #include "tinyxml.h"
 #include "Utilities.h"
 #include "Vector.h"
-#include "Window.h"
 
 /*******************************
  * Comparison Functors
@@ -101,7 +100,7 @@ bool ObjectManager::LoadData( const TiXmlElement *dataRoot, lua_State *L ) {
 
   m_objGrid->SetRange( 0, 0, mapWidth - 1, mapHeight - 1 );
   std::set<intrObj_type, CreationCmp> set;
-  FillSet<CreationCmp>( set );
+  FillSet( set );
   for ( SetItr obj = set.begin(); obj != set.end(); ++obj ) {
     ObjectAttorney::Init( *obj );
   }
@@ -116,7 +115,7 @@ void ObjectManager::HandleEvents( const Camera & cam ) {
 
   m_objGrid->SetRange( tLx, tLy, bRx, bRy );
   std::set<intrObj_type, CreationCmp> set;
-  FillSet<CreationCmp>( set );
+  FillSet( set );
   for ( SetItr obj = set.begin(); obj != set.end(); ++obj ) {
     ObjectAttorney::HandleEvents( *obj );
   }
@@ -129,7 +128,7 @@ void ObjectManager::Update( float dt, const Camera &cam ) {
 
   m_objGrid->SetRange( tLx, tLy, bRx, bRy );
   std::set<intrObj_type, CreationCmp> set;
-  FillSet<CreationCmp>( set );
+  FillSet( set );
 
   // Need to separate collision from logic
   for ( SetItr obj = set.begin(); obj != set.end(); ++obj ) {
@@ -180,7 +179,7 @@ void ObjectManager::Render( float alpha, const Camera &cam )  {
   FillSet<RenderPriorityCmp>( set );
 
   for ( RenderSetItr obj = set.begin(); obj != set.end(); ++obj ) {
-    nt::window::Draw( *((*obj).get()), alpha );
+    ObjectAttorney::Draw( *obj, alpha );
   }
 }
 
@@ -547,7 +546,7 @@ void ObjectManager::UpdateCollisions( const intrObj_type &obj, const Camera &cam
   m_objGrid->SetRange( tileRange.topLeft.x, tileRange.topLeft.y,
                        tileRange.bottomRight.x, tileRange.bottomRight.y );
   std::set<intrObj_type, CreationCmp> set;
-  FillSet<CreationCmp>( set );
+  FillSet( set );
 
   for ( SetItr itr = set.begin(); itr != set.end(); ++itr ) {
     const intrObj_type colObj( *itr );

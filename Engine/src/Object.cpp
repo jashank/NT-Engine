@@ -10,6 +10,7 @@ extern "C" {
 #include "ResourceLib.h"
 #include "StateComm.h"
 #include "Utilities.h"
+#include "Window.h"
 #include "tinyxml.h"
 
 int Object::numCreated = 0;
@@ -102,12 +103,6 @@ Object::~Object() {
 
 void Object::LuaRegister( lua_State *L ) {
   Lunar<Object>::Register( L );
-}
-
-
-void Object::Draw( sf::RenderTarget &target ) {
-  m_sprite.Draw( target );
-  // draw text
 }
 
 /***********************************************
@@ -212,6 +207,11 @@ void Object::UpdateAI( float dt ) {
   }
 }
 
+
+void Object::Draw( float alpha ) {
+  nt::window::Draw( m_sprite, alpha );
+  // nt::window::Draw( m_text );
+}
 
 /********************
  * Lua API
