@@ -224,7 +224,7 @@ Private Methods
 ************************************/
 bool TileManager::LoadTileAnims( const std::string &animPath ) {
   const boost::shared_ptr<AnimData> &tileAnims =
-    nt::rsrc::LoadAnim( animPath );
+    nt::rsrc::LoadResource<AnimData>( animPath );
 
   if ( tileAnims ) {
     m_numTileTypes = tileAnims->GetNumAnims();

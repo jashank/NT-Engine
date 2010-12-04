@@ -6,7 +6,6 @@ extern "C" {
   #include "lua.h"
 }
 
-#include "ResourceLib.h"
 #include "tinyxml.h"
 #include "Utilities.h"
 
@@ -208,19 +207,11 @@ bool State::LoadFromFile( const std::string &filePath, lua_State *L ) {
         } while ( (port = port->NextSiblingElement( "port" )) );
       }
 
-      elem = root->FirstChildElement( "fonts" );
-      const TiXmlElement *font = elem->FirstChildElement( "font" );
-      if ( font ) {
-        do {
-          const char *path = font->Attribute( "path" );
-          if ( path ) {
-            nt::rsrc::LoadFont( path );
-          } else {
-            LogErr( "Name or path not specified for font in State: " + filePath );
-          }
-        } while ( (font = font->NextSiblingElement( "font" )) );
-      }
-
+      //elem = root->FirstChildElement( "fonts" );
+      //if ( !m_fontManager.LoadData( elem )) {
+      //  LogErr( "Problem loading fonts in State: " + filePath );
+      //  return false;
+      //}
 
       elem = root->FirstChildElement( "tiles" );
       if ( !m_tileManager.LoadData( elem )) {

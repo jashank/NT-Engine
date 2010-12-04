@@ -15,25 +15,38 @@ namespace {
 namespace nt {
 namespace rsrc {
 
-const boost::shared_ptr<sf::Image> &LoadImg( const std::string &relPath ) {
+template<>
+const boost::shared_ptr<sf::Image> &LoadResource<sf::Image>(
+  const std::string &relPath
+) {
   return images.Load( relPath );
 }
 
-const boost::shared_ptr<sf::Font> &LoadFont( const std::string &relPath ) {
+template<>
+const boost::shared_ptr<sf::Font> &LoadResource<sf::Font>( 
+  const std::string &relPath 
+) {
   return fonts.Load( relPath );
 }
 
-const boost::shared_ptr<sf::SoundBuffer> &LoadSound( 
+template<>
+const boost::shared_ptr<sf::SoundBuffer> &LoadResource<sf::SoundBuffer>( 
   const std::string &relPath
 ) {
   return sounds.Load( relPath );
 }
 
-const boost::shared_ptr<sf::Music> &LoadMusic( const std::string &relPath ) {
+template<>
+const boost::shared_ptr<sf::Music> &LoadResource<sf::Music>( 
+  const std::string &relPath 
+) {
   return music.Load( relPath );
 }
 
-const boost::shared_ptr<AnimData> &LoadAnim( const std::string &relPath ) {
+template<>
+const boost::shared_ptr<AnimData> &LoadResource<AnimData>( 
+  const std::string &relPath 
+) {
   return anims.Load( relPath );
 }
 

@@ -37,7 +37,7 @@ bool MusicManager::LoadData( const TiXmlElement *root ) {
           key.name = name;
         }
         m_music.insert(
-          map_type::value_type( key, nt::rsrc::LoadMusic( key.path ))
+          map_type::value_type( key, nt::rsrc::LoadResource<sf::Music>( key.path ))
         );
 
       } else {

@@ -20,27 +20,19 @@
  */
 namespace nt {
 namespace rsrc {
-  //@{
   /**
-   * The following functions allow loading of various resources.
-   *
-   * See the SFML documentation to see file formats supported.
-   * @param relPath path to file to load that is relative to location of engine.
+   * Loads resource specified in template parameter from ResourceManager.
+   * @param relPath path to file to load that is relative to location
+   *        of engine.
    * @return Resource if the load was successful or it has already been
-   *         loaded. Will contain NULL if resource failed to load.
+   *         loaded. Exception thrown by ResourceManager if load fails.
    */
-  const boost::shared_ptr<sf::Image> &LoadImg( const std::string &relPath );
-  const boost::shared_ptr<sf::Font> &LoadFont( const std::string &relPath );
-  const boost::shared_ptr<sf::SoundBuffer> &LoadSound( 
-    const std::string &relPath
-  );
-  const boost::shared_ptr<sf::Music> &LoadMusic( const std::string &relPath );
-  const boost::shared_ptr<AnimData> &LoadAnim( const std::string &relPath );
-  //@}
-
+  template<class T>
+  const boost::shared_ptr<T> &LoadResource( const std::string &relPath );
+  
   /**
    * Releases unused resources. An unused resource means that nothing
-   * currently holds the resource besides the manager.
+   * currently holds the resource besides the resource manager.
    */
   void ReleaseUnused();
 

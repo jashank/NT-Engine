@@ -24,7 +24,7 @@ class MusicManager {
   /**
    * Loads music in from <music> element of State XML file.
    * @param root <music> element of file.
-   * @return True if no errors.
+   * @return True if no errors in loading.
    */
   bool LoadData( const TiXmlElement *root );
 

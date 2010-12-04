@@ -68,5 +68,5 @@ class Lerpable : public sf::Drawable {
 } // graphics
 } // nt
 
-#endif // DRAWABLE_H
+#endif // LERPABLE_H
 

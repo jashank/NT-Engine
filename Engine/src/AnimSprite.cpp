@@ -50,7 +50,8 @@ int AnimSprite::GetAnimation() const {
 
 
 void AnimSprite::LoadAnimData( const std::string &filepath ) {
-  const boost::shared_ptr<AnimData> &anim = nt::rsrc::LoadAnim( filepath );
+  const boost::shared_ptr<AnimData> &anim = 
+    nt::rsrc::LoadResource<AnimData>( filepath );
   if ( anim ) {
     SetAnimData( anim );
   } else {

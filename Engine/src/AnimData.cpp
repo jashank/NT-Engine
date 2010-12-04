@@ -22,7 +22,7 @@ bool AnimData::LoadFromFile( const std::string &filepath ) {
     TiXmlElement *sheet = root->FirstChildElement( "sheet" );
     do {
       const boost::shared_ptr<sf::Image> &loadedSheet =
-        nt::rsrc::LoadImg( sheet->Attribute( "path" ));
+        nt::rsrc::LoadResource<sf::Image>( sheet->Attribute( "path" ));
       if ( loadedSheet ) {
         // A strip
         TiXmlElement *elem = sheet->FirstChildElement();
