@@ -4,15 +4,16 @@ extern "C" {
   #include "lua.h"
 }
 
-#include "ResourceLib.h"
-#include "tinyxml.h"
+#include "NamePath.h"
 #include "Utilities.h"
 
 /*****************************
  * Constructor
  ****************************/ 
 MusicManager::MusicManager()
-  :m_keepMusicPlaying( false ), m_currentMusic( NULL ) {}
+  :NamePathManager<sf::Music>( "song" ), 
+   m_keepMusicPlaying( false ), 
+   m_currentMusic( NULL ) {}
 
 MusicManager::~MusicManager() {
   if ( m_currentMusic && !m_keepMusicPlaying ) {
@@ -23,34 +24,6 @@ MusicManager::~MusicManager() {
 /*****************************
  * Public Methods
  ****************************/
-bool MusicManager::LoadData( const TiXmlElement *root ) {
-  const TiXmlElement *song = root->FirstChildElement( "song" );
-  if ( song ) {
-    do {
-      const char *name = song->Attribute( "name" );
-      const char *path = song->Attribute( "path" );
-
-      if ( path ) {
-        NamePath key;
-        key.path = path;
-        if ( name ) {
-          key.name = name;
-        }
-        m_music.insert(
-          map_type::value_type( key, nt::rsrc::LoadResource<sf::Music>( key.path ))
-        );
-
-      } else {
-        LogErr( "Path not specified for song element in State file." );
-        return false;
-      }
-
-    } while ( (song = song->NextSiblingElement( "song" )) );
-  }
-  return true;
-}
-
-
 int MusicManager::LuaPlayMusic( lua_State *L ) {
   int args = lua_gettop( L );
 
@@ -176,13 +149,7 @@ int MusicManager::LuaKeepMusicPlaying( lua_State *L ) {
  * Private Methods
  *********************/
 sf::Music *MusicManager::GetMusic( const std::string &nameOrPath ) const {
-  const NamePath key( nameOrPath, nameOrPath );
-
-  map_type::const_iterator music = m_music.find( key );
-  if ( music != m_music.end() ) {
-    return music->second.get();
-  }
-  return NULL;
+  return GetVal( nameOrPath ).get();
 }
 
 

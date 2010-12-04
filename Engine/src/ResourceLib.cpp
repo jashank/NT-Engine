@@ -1,6 +1,12 @@
 #include "ResourceLib.h"
 
+#include <SFML/Audio/Music.hpp>
+#include <SFML/Audio/SoundBuffer.hpp>
+#include <SFML/Graphics.hpp>
+
 #include "ResourceManager.h"
+
+#include "AnimData.h"
 
 // All of the resources the engine holds
 namespace {

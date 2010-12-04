@@ -1,32 +1,20 @@
 #ifndef MUSIC_MANAGER_H
 #define MUSIC_MANAGER_H
 
-#include <map>
-#include <string>
-
-#include <boost/shared_ptr.hpp>
 #include <SFML/Audio/Music.hpp>
 
-#include "NamePath.h"
+#include "NamePathManager.h"
 
-class TiXmlElement;
 class lua_State;
 
 /**
  * Manages music in the state providing interface to perform various
  * actions on the music playing/to be played.
  */
-class MusicManager {
+class MusicManager : public NamePathManager<sf::Music> {
  public:
   MusicManager(); 
   ~MusicManager();
-
-  /**
-   * Loads music in from <music> element of State XML file.
-   * @param root <music> element of file.
-   * @return True if no errors in loading.
-   */
-  bool LoadData( const TiXmlElement *root );
 
   //@{
   /**
@@ -54,8 +42,6 @@ class MusicManager {
   //@}
 
  private:
-  typedef std::map<const NamePath, boost::shared_ptr<sf::Music > > map_type;
-
   /**
    * Returns pointer to sf::Music associated with string passed. String may
    * be the music's name or file path. Returns NULL if none found.
@@ -86,11 +72,6 @@ class MusicManager {
 
   /** Music currently in use (playing, stopped, whatever). */
   sf::Music *m_currentMusic;
-
-  /** 
-   * Holds pointers to sf::Music and their associated names and paths.
-   */
-  map_type m_music;
 };
 
 #endif // MUSIC_MANAGER_H

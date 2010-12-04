@@ -2,6 +2,7 @@
 
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/Rect.hpp>
+#include <SFML/Window.hpp>
 
 #include "AnimData.h"
 #include "Rect.h"

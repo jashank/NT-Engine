@@ -3,13 +3,7 @@
 
 #include <string>
 
-#include <SFML/Audio/Music.hpp>
-#include <SFML/Audio/SoundBuffer.hpp>
-#include <SFML/Graphics.hpp>
-
 #include <boost/shared_ptr.hpp>
-
-#include "AnimData.h"
 
 /**
  * nt::rsrc contains functions to load resources in the application.
