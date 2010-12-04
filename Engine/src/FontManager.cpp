@@ -3,8 +3,10 @@
 /*************************
  * Constructor
  ************************/
-FontManager::FontManager()
-  :NamePathManager<sf::Font>( "font" ) {}
+FontManager::FontManager( const TiXmlElement *root )
+  :NamePathManager<sf::Font>( "font" ) {
+  LoadData( root );
+}
 
 /***********************
  * Public Methods

@@ -20,43 +20,21 @@ extern "C" {
 #include "Utilities.h"
 #include "Window.h"
 
-/******************************
-Constructors and Destructors.
-******************************/
-TileManager::TileManager()
+/****************
+ * Constructor
+ ***************/
+TileManager::TileManager( const TiXmlElement *root )
  : m_numTileTypes( 0 ),
    m_width( 0 ),
    m_height( 0 ),
    m_numTiles( 0 ),
-   m_tileDim( 0 ) {}
-
-/***************************************
-Public Methods
-***************************************/
-bool TileManager::LoadData( const TiXmlElement *dataRoot ) {
-  const TiXmlElement *tileSize = dataRoot->FirstChildElement( "size" );
-  tileSize->Attribute( "px", &m_tileDim );
-
-  const TiXmlElement *anims = dataRoot->FirstChildElement( "animation" );
-  const char *path = anims->Attribute( "path" );
-  // Path may be empty, inferring that there are no tile animations
-  if ( strcmp( path, "" ) != 0 ) {
-    if ( !LoadTileAnims( path )) {
-      LogErr( "Problem loading tile information from animation file." );
-      return false;
-    }
-  }
-
-  const TiXmlElement *layout = dataRoot->FirstChildElement( "layout" );
-  if ( !LoadTileLayout( layout )) {
-    LogErr( "Problem loading tile layout in state file." );
-    return false;
-  } 
-
-  return true;
+   m_tileDim( 0 ) {
+  LoadData( root );
 }
 
-
+/********************
+ * Public Methods
+ *******************/
 void TileManager::Update( float dt ) {
   for( int i = 0; i < m_numTileTypes; ++i ) {
     m_tileSprites[i].Update( dt );
@@ -222,6 +200,26 @@ int TileManager::LuaSetTile( lua_State *L ) {
 /************************************
 Private Methods
 ************************************/
+void TileManager::LoadData( const TiXmlElement *root ) {
+  const TiXmlElement *tileSize = root->FirstChildElement( "size" );
+  tileSize->Attribute( "px", &m_tileDim );
+
+  const TiXmlElement *anims = root->FirstChildElement( "animation" );
+  const char *path = anims->Attribute( "path" );
+  // Path may be empty, inferring that there are no tile animations
+  if ( strcmp( path, "" ) != 0 ) {
+    if ( !LoadTileAnims( path )) {
+      LogErr( "Problem loading tile information from animation file." );
+    }
+  }
+
+  const TiXmlElement *layout = root->FirstChildElement( "layout" );
+  if ( !LoadTileLayout( layout )) {
+    LogErr( "Problem loading tile layout in state file." );
+  } 
+}
+
+
 bool TileManager::LoadTileAnims( const std::string &animPath ) {
   const boost::shared_ptr<AnimData> &tileAnims =
     nt::rsrc::LoadResource<AnimData>( animPath );

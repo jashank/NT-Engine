@@ -4,9 +4,11 @@
 #include <string>
 #include <map>
 
+#include <boost/scoped_ptr.hpp>
 #include <SFML/System/Clock.hpp>
 
 #include "Camera.h"
+#include "FontManager.h"
 #include "ObjectManager.h"
 #include "MusicManager.h"
 #include "StateComm.h"
@@ -146,11 +148,19 @@ class State {
   /** Camera that controls what is viewed in the State. */
   Camera m_camera;
 
+  /** Manages all fonts loaded in this State. */
+  boost::scoped_ptr<FontManager> m_fontManager;
+
   /** Manages all Objects in this State. */
-  ObjectManager m_objectManager;
+  boost::scoped_ptr<ObjectManager> m_objectManager;
 
   /** Manages all music in this State. */
-  MusicManager m_musicManager; 
+  boost::scoped_ptr<MusicManager> m_musicManager; 
+
+  /**
+   * Manages all Tiles in this State.
+   */
+  boost::scoped_ptr<TileManager> m_tileManager;
 
   /**
    * 'name/file path' pairs that represent portals. A portal is like a
@@ -168,11 +178,6 @@ class State {
    * Name of this State (same as name of file without extension).
    */
   std::string m_name; 
-
-  /**
-   * Manages all Tiles in this State.
-   */
-  TileManager m_tileManager;
 };
 
 #endif // STATE_H

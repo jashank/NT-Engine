@@ -23,14 +23,10 @@ class lua_State;
  */
 class TileManager {
  public:
-  TileManager();
-
   /**
-   * Loads tile information from <tiles> element of State XML file. 
-   * @param dataRoot parent element of tile information.
-   * @return True if load was successful (no syntax errors). 
+   * Loads tile data from <tiles> element of State file.
    */
-  bool LoadData( const TiXmlElement *dataRoot );
+  TileManager( const TiXmlElement *root );
 
   /**
    * Updates animations for tiles on screen.
@@ -101,6 +97,12 @@ class TileManager {
   TileManager( const TileManager &manager );
   TileManager& operator=( const TileManager &manager );
   //@}
+
+  /**
+   * Loads tile information from <tiles> element of State XML file. 
+   * Called by constructor.
+   */
+  void LoadData( const TiXmlElement *root );
 
   /**
    * Loads animation data for tiles.

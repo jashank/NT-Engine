@@ -10,10 +10,12 @@ extern "C" {
 /*****************************
  * Constructor
  ****************************/ 
-MusicManager::MusicManager()
+MusicManager::MusicManager( const TiXmlElement *root )
   :NamePathManager<sf::Music>( "song" ), 
    m_keepMusicPlaying( false ), 
-   m_currentMusic( NULL ) {}
+   m_currentMusic( NULL ) {
+  LoadData( root );
+}
 
 MusicManager::~MusicManager() {
   if ( m_currentMusic && !m_keepMusicPlaying ) {

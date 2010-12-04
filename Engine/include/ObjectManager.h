@@ -23,17 +23,11 @@ class TiXmlElement;
  */
 class ObjectManager {
  public:
-  ObjectManager() {}
-  ~ObjectManager() {}
-
   /**
-   * Loads Objects in from <objects> element of State XML file.
-   * @param dataRoot parent element of objects set for creation upon
-   * initialization of state.
-   * @param L lua state for Objects to use
-   * @return True if load was successful (no syntax errors).
+   * Loads Objects in from <object> element of State file and sets
+   * lua_State to use for script interaction.
    */
-  bool LoadData( const TiXmlElement *dataRoot, lua_State *L );
+  ObjectManager( const TiXmlElement *root, lua_State *L ); 
 
   /**
    * Calls HandleEvents on every Object on screen.
@@ -88,6 +82,11 @@ class ObjectManager {
   //@}
 
  private:
+  /**
+   * Loads Objects in from <objects> element of State file.
+   */
+  void LoadData( const TiXmlElement *root, lua_State *L );
+
   /**
    * Compares Objects by order of creation.
    * Earlier creation takes precedence.

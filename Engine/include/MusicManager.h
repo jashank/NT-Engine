@@ -6,6 +6,7 @@
 #include "NamePathManager.h"
 
 class lua_State;
+class TiXmlElement;
 
 /**
  * Manages music in the state providing interface to perform various
@@ -13,7 +14,10 @@ class lua_State;
  */
 class MusicManager : public NamePathManager<sf::Music> {
  public:
-  MusicManager(); 
+  /**
+   * Loads data from <music> element of State file.
+   */
+  MusicManager( const TiXmlElement *root ); 
   ~MusicManager();
 
   //@{

@@ -7,13 +7,18 @@
 
 #include "NamePathManager.h"
 
+class TiXmlElement;
+
 /**
  * Keeps track of fonts loaded in and names given to them. Allows
  * retrieval of fonts based on their name or path.
  */
 class FontManager : public NamePathManager<sf::Font> {
  public:
-  FontManager();
+  /**
+   * Gets data from <font> element of State file.
+   */
+  FontManager( const TiXmlElement *root );
 
   /**
    * Retrieves font from the FontManager.

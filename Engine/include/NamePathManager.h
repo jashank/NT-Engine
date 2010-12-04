@@ -27,16 +27,15 @@ class NamePathManager {
   NamePathManager( const std::string &subElem );
   virtual ~NamePathManager() = 0;
 
+ protected:
+  typedef std::map<const NamePath, boost::shared_ptr<T> > map_type;
+
   /**
    * Loads values in from root element of State XML file and searches root
    * for sub-element name currently set.
    * @param root element of file.
-   * @return True if no errors in loading.
    */
-  bool LoadData( const TiXmlElement *root );
-
- protected:
-  typedef std::map<const NamePath, boost::shared_ptr<T> > map_type;
+  void LoadData( const TiXmlElement *root );
 
   /** Returns value matching name or path passed. */
   boost::shared_ptr<T> GetVal( const std::string &nameOrPath ) const;

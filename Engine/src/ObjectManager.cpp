@@ -48,67 +48,16 @@ namespace {
             ObjectManager::RenderPriorityCmp>::iterator RenderSetItr;
 }
 
-/*******************************
-Public Methods
-*******************************/
-bool ObjectManager::LoadData( const TiXmlElement *dataRoot, lua_State *L ) {
-  // State guaranteed to be loaded and TileManager guaranteed to be loaded
-  // before ObjectManager
-  int width = nt::state::GetMapWidth();
-  int height = nt::state::GetMapHeight();
-  m_objGrid.reset( new nt::core::RangeMatrix3D<intrObj_type>( width, height ));
-
-  const TiXmlElement *objType = dataRoot->FirstChildElement( "object" );
-  if ( objType ) {
-    do {
-      const char *path = objType->Attribute( "path" );
-      if ( path ) {
-        const TiXmlElement *instance = objType->FirstChildElement( "inst" );
-        if ( instance ) {
-          do {
-            int x = 0;
-            int y = 0;
-            int strip = 0;
-            instance->QueryIntAttribute( "x", &x );
-            instance->QueryIntAttribute( "y", &y );
-            instance->QueryIntAttribute( "strip", &strip );
-            if ( nt::state::InRange( x, y ) && strip >= 0 ) {
-              const intrObj_type obj(
-                ObjectAttorney::Create( path, x, y , strip, L ));
-              AddObject( obj );
-            } else {
-              LogErr( "Tile location or strip negative for Object in state file." );
-              return false;
-            }
-          } while ( (instance = instance->NextSiblingElement( "inst" )) );
-        } else {
-          LogErr( "No instances specified for Object in state file." );
-          return false;
-        }
-      } else {
-        LogErr( "No path specified for Object in state file." );
-        return false;
-      }
-    } while ( (objType = objType->NextSiblingElement( "object" )) );
-  } else {
-    LogErr( "No object specified in <objects>. Thus, not necessary." );
-    return false;
-  }
-  
-  int mapWidth = nt::state::GetMapWidth();
-  int mapHeight = nt::state::GetMapHeight();
-
-  m_objGrid->SetRange( 0, 0, mapWidth - 1, mapHeight - 1 );
-  std::set<intrObj_type, CreationCmp> set;
-  FillSet( set );
-  for ( SetItr obj = set.begin(); obj != set.end(); ++obj ) {
-    ObjectAttorney::Init( *obj );
-  }
-
-  return true;
+/***********************
+ * Constructor
+ **********************/
+ObjectManager::ObjectManager( const TiXmlElement *root, lua_State *L ) {
+  LoadData( root, L );
 }
 
-
+/*******************************
+ * Public Methods
+ ******************************/
 void ObjectManager::HandleEvents( const Camera & cam ) {
   int tLx, tLy, bRx, bRy;
   GetCamCoords( cam, 1, 1, tLx, tLy, bRx, bRy );
@@ -429,6 +378,60 @@ int ObjectManager::LuaObjectBlockingTile( lua_State *L ) const {
 /********************************************
   Private Methods
 *********************************************/
+void ObjectManager::LoadData( const TiXmlElement *root, lua_State *L ) {
+  // State guaranteed to be loaded and TileManager guaranteed to be loaded
+  // before ObjectManager
+  int width = nt::state::GetMapWidth();
+  int height = nt::state::GetMapHeight();
+  m_objGrid.reset( new nt::core::RangeMatrix3D<intrObj_type>( width, height ));
+
+  const TiXmlElement *objType = root->FirstChildElement( "object" );
+  if ( objType ) {
+    do {
+      const char *path = objType->Attribute( "path" );
+      if ( path ) {
+        const TiXmlElement *instance = objType->FirstChildElement( "inst" );
+        if ( instance ) {
+          do {
+            int x = 0;
+            int y = 0;
+            int strip = 0;
+            instance->QueryIntAttribute( "x", &x );
+            instance->QueryIntAttribute( "y", &y );
+            instance->QueryIntAttribute( "strip", &strip );
+            if ( nt::state::InRange( x, y ) && strip >= 0 ) {
+              const intrObj_type obj(
+                ObjectAttorney::Create( path, x, y , strip, L ));
+              AddObject( obj );
+            } else {
+              LogErr( "Tile location or strip negative for Object in state file." );
+              break;
+            }
+          } while ( (instance = instance->NextSiblingElement( "inst" )) );
+        } else {
+          LogErr( "No instances specified for Object in state file." );
+          break;
+        }
+      } else {
+        LogErr( "No path specified for Object in state file." );
+        break;
+      }
+    } while ( (objType = objType->NextSiblingElement( "object" )) );
+  } else {
+    LogErr( "No object specified in <objects>. Thus, not necessary." );
+  }
+  
+  int mapWidth = nt::state::GetMapWidth();
+  int mapHeight = nt::state::GetMapHeight();
+
+  m_objGrid->SetRange( 0, 0, mapWidth - 1, mapHeight - 1 );
+  std::set<intrObj_type, CreationCmp> set;
+  FillSet( set );
+  for ( SetItr obj = set.begin(); obj != set.end(); ++obj ) {
+    ObjectAttorney::Init( *obj );
+  }
+}
+
 void ObjectManager::AddObject( const intrObj_type &obj ) {
   m_objTypes.insert( std::make_pair(
     ObjectAttorney::GetType( obj ), obj )); 

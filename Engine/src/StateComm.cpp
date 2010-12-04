@@ -15,8 +15,8 @@ namespace state {
 
 bool SetStateComm( State *state ) {
   if ( !objMan && !tileMan ) {
-    objMan = &state->m_objectManager;
-    tileMan = &state->m_tileManager;
+    objMan = state->m_objectManager.get();
+    tileMan = state->m_tileManager.get();
     return true;
   }
   return false;

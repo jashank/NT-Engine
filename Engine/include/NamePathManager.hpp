@@ -14,10 +14,10 @@ template<class T>
 NamePathManager<T>::~NamePathManager() {}
 
 /*********************
- * Public Methods
+ * Protected Methods
  ********************/
 template<class T>
-bool NamePathManager<T>::LoadData( const TiXmlElement *root ) {
+void NamePathManager<T>::LoadData( const TiXmlElement *root ) {
   const TiXmlElement *subElem = root->FirstChildElement( m_subElem.c_str() );
   if ( subElem ) {
     do {
@@ -37,17 +37,13 @@ bool NamePathManager<T>::LoadData( const TiXmlElement *root ) {
         );
       } else {
         LogErr( "Path not specified for element in State file." );
-        return false;
+        break;
       }
     } while ( (subElem = subElem->NextSiblingElement( m_subElem.c_str() )) );
   }
-  return true;
 }
 
 
-/*************************
- * Protected Methods
- ************************/
 template<class T>
 boost::shared_ptr<T> NamePathManager<T>::GetVal( 
   const std::string &nameOrPath 
