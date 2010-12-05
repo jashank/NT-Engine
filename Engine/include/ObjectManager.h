@@ -30,6 +30,12 @@ class ObjectManager {
   ObjectManager( const TiXmlElement *root, lua_State *L ); 
 
   /**
+   * Initializes Objects added to ObjectManager during construction.
+   * Should only be called once immediately after construction.
+   */
+  void Init();
+
+  /**
    * Calls HandleEvents on every Object on screen.
    * @param cam Camera currently viewing the State.
    */
@@ -83,11 +89,6 @@ class ObjectManager {
 
  private:
   /**
-   * Loads Objects in from <objects> element of State file.
-   */
-  void LoadData( const TiXmlElement *root, lua_State *L );
-
-  /**
    * Compares Objects by order of creation.
    * Earlier creation takes precedence.
    */
@@ -110,6 +111,11 @@ class ObjectManager {
   ObjectManager( const ObjectManager &manager );
   ObjectManager& operator=( const ObjectManager &manager );
   //@}
+
+  /**
+   * Loads Objects in from <objects> element of State file.
+   */
+  void LoadData( const TiXmlElement *root, lua_State *L );
 
   /**
    * @param obj Object to add to manager.

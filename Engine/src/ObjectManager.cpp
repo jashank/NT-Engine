@@ -58,6 +58,19 @@ ObjectManager::ObjectManager( const TiXmlElement *root, lua_State *L ) {
 /*******************************
  * Public Methods
  ******************************/
+void ObjectManager::Init() {
+  int mapWidth = nt::state::GetMapWidth();
+  int mapHeight = nt::state::GetMapHeight();
+
+  m_objGrid->SetRange( 0, 0, mapWidth - 1, mapHeight - 1 );
+  std::set<intrObj_type, CreationCmp> set;
+  FillSet( set );
+  for ( SetItr obj = set.begin(); obj != set.end(); ++obj ) {
+    ObjectAttorney::Init( *obj );
+  }
+}
+
+
 void ObjectManager::HandleEvents( const Camera & cam ) {
   int tLx, tLy, bRx, bRy;
   GetCamCoords( cam, 1, 1, tLx, tLy, bRx, bRy );
@@ -379,8 +392,7 @@ int ObjectManager::LuaObjectBlockingTile( lua_State *L ) const {
   Private Methods
 *********************************************/
 void ObjectManager::LoadData( const TiXmlElement *root, lua_State *L ) {
-  // State guaranteed to be loaded and TileManager guaranteed to be loaded
-  // before ObjectManager
+  // TileManager guaranteed to be loaded before ObjectManager
   int width = nt::state::GetMapWidth();
   int height = nt::state::GetMapHeight();
   m_objGrid.reset( new nt::core::RangeMatrix3D<intrObj_type>( width, height ));
@@ -420,17 +432,8 @@ void ObjectManager::LoadData( const TiXmlElement *root, lua_State *L ) {
   } else {
     LogErr( "No object specified in <objects>. Thus, not necessary." );
   }
-  
-  int mapWidth = nt::state::GetMapWidth();
-  int mapHeight = nt::state::GetMapHeight();
-
-  m_objGrid->SetRange( 0, 0, mapWidth - 1, mapHeight - 1 );
-  std::set<intrObj_type, CreationCmp> set;
-  FillSet( set );
-  for ( SetItr obj = set.begin(); obj != set.end(); ++obj ) {
-    ObjectAttorney::Init( *obj );
-  }
 }
+
 
 void ObjectManager::AddObject( const intrObj_type &obj ) {
   m_objTypes.insert( std::make_pair(

@@ -221,6 +221,7 @@ bool State::LoadFromFile( const std::string &filePath, lua_State *L ) {
 
       elem = root->FirstChildElement( "objects" );
       m_objectManager.reset( new ObjectManager( elem, L ));
+      m_objectManager->Init();
 
       // End temporary StateComm set
       nt::state::EndStateComm();
