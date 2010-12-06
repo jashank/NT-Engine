@@ -100,11 +100,8 @@ bool StateMachine::Setup( const std::string &filePath ) {
   luaL_register( m_luaState, "Error", m_luaErrorFuncs );
   Object::LuaRegister( m_luaState );
 
-  m_runningState.reset( new State());
-  if ( !m_runningState->Init( filePath, m_luaState )) {
-    m_runningState.reset();
-    return false;
-  }
+  m_runningState.reset( new State( filePath, m_luaState ));
+  m_runningState->Init();
   return true;
 }
 
@@ -293,7 +290,7 @@ int StateMachine::LuaAdjustCamSpeed( lua_State *L ) {
  * Private Member Functions
  **************************/
 void StateMachine::NextState() {
-  m_runningState.reset( new State());
-  m_runningState->Init( m_nextStatePath, m_luaState );
+  m_runningState.reset( new State( m_nextStatePath, m_luaState ));
+  m_runningState->Init();
   nt::rsrc::ReleaseUnused();
 }

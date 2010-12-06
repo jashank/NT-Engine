@@ -13,7 +13,6 @@ extern "C" {
 #include "AnimData.h"
 #include "AnimSprite.h"
 #include "Camera.h"
-#include "Rect.h"
 #include "ResourceLib.h"
 #include "State.h"
 #include "tinyxml.h"
@@ -82,6 +81,11 @@ int TileManager::GetMapWidth() const {
 
 int TileManager::GetMapHeight() const {
   return m_height;
+}
+
+
+int TileManager::GetMapRect() const {
+  return nt::core::IntRect( 0, 0, m_width - 1, m_height - 1 );
 }
 
 

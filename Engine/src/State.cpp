@@ -12,20 +12,15 @@ extern "C" {
 /******************************************
  * Destructor
  *****************************************/
-State::~State() {
-  nt::state::EndStateComm();
+State::State( const std::string &filePath, lua_State *L ) {
+  LoadFromFile( filePath, L );
 }
 
 /*******************************************
  Public Member Functions
 *******************************************/
-bool State::Init( const std::string &filePath, lua_State *L ) {
-  if ( !LoadFromFile( filePath, L )) {
-    return false;
-  }
-  nt::state::SetStateComm( this );
-
-  return true;
+void State::Init() {
+  m_objectManager->Init();
 }
 
 
@@ -210,21 +205,16 @@ bool State::LoadFromFile( const std::string &filePath, lua_State *L ) {
       elem = root->FirstChildElement( "tiles" );
       m_tileManager.reset( new TileManager( elem ));
 
-      // Set state comm temporarily for ObjectManager and Camera
-      // to access TileManager
-      nt::state::SetStateComm( this );
-
       m_camera.Span(
         m_tileManager->GetMapWidth() - 1,
         m_tileManager->GetMapHeight() - 1
+        m_tileManager->GetMapRect()
       );
 
       elem = root->FirstChildElement( "objects" );
-      m_objectManager.reset( new ObjectManager( elem, L ));
-      m_objectManager->Init();
-
-      // End temporary StateComm set
-      nt::state::EndStateComm();
+      m_objectManager.reset( 
+        new ObjectManager( elem, m_tileManager->GetMapRect(), L )
+      );
 
     } else {
       LogErr( "<state> tag not specified in state file " + filePath );

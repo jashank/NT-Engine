@@ -11,7 +11,6 @@
 #include "FontManager.h"
 #include "ObjectManager.h"
 #include "MusicManager.h"
-#include "StateComm.h"
 #include "TileManager.h"
 
 class lua_State;
@@ -24,17 +23,20 @@ class lua_State;
  */
 class State {
  public:
-  State() {}
-  ~State();
+  /**
+   * Loads in State file at file path. Camera is initially set to view
+   * entire State, starting from top left tile.
+   * @param filePath path to State file.
+   * @param L lua state used for interaction with scripts.
+   */
+  State( const std::string &filePath, lua_State *L );
+  ~State() {}
 
   /**
-   * Initializes State via loading in State file at file path and setting up
-   * communication interface among parts of State. Camera is initially set 
-   * to view the entire State, starting from top-left tile.
-   * @param filePath path to the State file to load in
-   * @param L lua state being used for application
+   * Should be called immediately after construction. Initializes components
+   * that can't be initialized during construction process.
    */
-  bool Init( const std::string &filePath, lua_State *L );
+  void Init();
 
   /**
    * Handles events for anything that handles events in the State.
@@ -127,8 +129,6 @@ class State {
   //@}
 
  private:
-  friend bool nt::state::SetStateComm( State *state );
-
   //@{
   /**
    * Restrict copy constructor and assignment.

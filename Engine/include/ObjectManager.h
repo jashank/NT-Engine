@@ -24,10 +24,16 @@ class TiXmlElement;
 class ObjectManager {
  public:
   /**
-   * Loads Objects in from <object> element of State file and sets
-   * lua_State to use for script interaction.
+   * Loads Objects in from <object> element of State file.
+   * @param root <object> element
+   * @param mapRect IntRect representing tile map.
+   * @param L lua_State to use for script interaction.
    */
-  ObjectManager( const TiXmlElement *root, lua_State *L ); 
+  ObjectManager( 
+    const TiXmlElement *root, 
+    const nt::core::IntRect &mapRect, 
+    lua_State *L 
+  ); 
 
   /**
    * Initializes Objects added to ObjectManager during construction.
@@ -113,9 +119,14 @@ class ObjectManager {
   //@}
 
   /**
-   * Loads Objects in from <objects> element of State file.
+   * Loads Objects in from <objects> element of State file. Called by
+   * constructor.
    */
-  void LoadData( const TiXmlElement *root, lua_State *L );
+  void LoadData( 
+    const TiXmlElement *root, 
+    const nt::core::IntRect &mapRect,
+    lua_State *L 
+  );
 
   /**
    * @param obj Object to add to manager.

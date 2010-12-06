@@ -8,7 +8,6 @@ extern "C" {
 #include <SFML/System/Vector2.hpp>
 
 #include "ResourceLib.h"
-#include "StateComm.h"
 #include "Utilities.h"
 #include "Window.h"
 #include "tinyxml.h"

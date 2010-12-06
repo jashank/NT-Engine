@@ -8,7 +8,6 @@ extern "C" {
 
 #include "Camera.h"
 #include "Rect.h"
-#include "StateComm.h"
 #include "tinyxml.h"
 #include "Utilities.h"
 #include "Vector.h"
@@ -51,8 +50,12 @@ namespace {
 /***********************
  * Constructor
  **********************/
-ObjectManager::ObjectManager( const TiXmlElement *root, lua_State *L ) {
-  LoadData( root, L );
+ObjectManager::ObjectManager( 
+  const TiXmlElement *root, 
+  const nt::core::IntRect &mapRect,
+  lua_State *L 
+) {
+  LoadData( root, mapRect, L );
 }
 
 /*******************************
@@ -391,10 +394,12 @@ int ObjectManager::LuaObjectBlockingTile( lua_State *L ) const {
 /********************************************
   Private Methods
 *********************************************/
-void ObjectManager::LoadData( const TiXmlElement *root, lua_State *L ) {
-  // TileManager guaranteed to be loaded before ObjectManager
-  int width = nt::state::GetMapWidth();
-  int height = nt::state::GetMapHeight();
+void ObjectManager::LoadData( 
+  const TiXmlElement *root, 
+  nt::core::IntRect &mapRect,
+  lua_State *L ) {
+  int width = mapRect.GetWidth();
+  int hight = mapRect.GetHeight();
   m_objGrid.reset( new nt::core::RangeMatrix3D<intrObj_type>( width, height ));
 
   const TiXmlElement *objType = root->FirstChildElement( "object" );
@@ -411,12 +416,14 @@ void ObjectManager::LoadData( const TiXmlElement *root, lua_State *L ) {
             instance->QueryIntAttribute( "x", &x );
             instance->QueryIntAttribute( "y", &y );
             instance->QueryIntAttribute( "strip", &strip );
-            if ( nt::state::InRange( x, y ) && strip >= 0 ) {
+            if ( mapRect.Contains( x, y ) && strip >= 0 ) {
               const intrObj_type obj(
                 ObjectAttorney::Create( path, x, y , strip, L ));
               AddObject( obj );
             } else {
-              LogErr( "Tile location or strip negative for Object in state file." );
+              LogErr( 
+                "Tile out of range or strip negative for Object in state file."
+              );
               break;
             }
           } while ( (instance = instance->NextSiblingElement( "inst" )) );

@@ -8,6 +8,7 @@
 #include <boost/scoped_ptr.hpp>
 
 #include "Matrix2D.h"
+#include "Rect.h"
 #include "Tile.h"
 
 class AnimSprite;
@@ -55,6 +56,13 @@ class TileManager {
    * @return Height (in tiles) of tile map.
    */
   int GetMapHeight() const;
+
+  /**
+   * @return IntRect with corners representing corners of map. For example,
+   * a map with a bottom right corner of (5,6) would return an
+   * IntRect with a bottom right corner of (5,6).
+   */
+  nt::core::IntRect GetMapRect() const;
 
   /**
    * Checks to make sure coordinate passed is valid.

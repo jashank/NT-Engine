@@ -2,7 +2,6 @@
 
 #include <cstdlib>
 
-#include "StateComm.h"
 #include "Utilities.h"
 #include "Window.h"
 
@@ -88,19 +87,19 @@ nt::core::IntRect Camera::GetAdjustedFocus( int x, int y ) const {
 }
 
 
-void Camera::Span( int xSpan, int ySpan ) {
+void Camera::Span( int xSpan, int ySpan, nt::core::IntRect &mapRect ) {
   // Adjust span b/c tiles start at 0
   xSpan -= 1;
   ySpan -= 1;
 
   m_view.Scale( xSpan, ySpan );
-  nt::state::CullTileRect( m_view );
+  nt::core::CullRect( mapRect, m_view );
 }
 
 /*****************************
  * Lua Functions
  ****************************/
-int Camera::LuaSpan( lua_State *L ) {
+int Camera::LuaSpan( lua_State *L, nt::core::IntRect &mapRect ) {
   if ( m_moving ) {
     return 0;
   }
@@ -115,7 +114,7 @@ int Camera::LuaSpan( lua_State *L ) {
 
   int width = lua_tointeger( L, -2 );
   int height = lua_tointeger( L, -1 );
-  Span( width, height );
+  Span( width, height, mapRect );
   return 0;
 }
 
