@@ -8,6 +8,8 @@
 class lua_State;
 class TiXmlElement;
 
+namespace nt {
+
 /**
  * Manages music in the state providing interface to perform various
  * actions on the music playing/to be played.
@@ -77,6 +79,8 @@ class MusicManager : public NamePathManager<sf::Music> {
   /** Music currently in use (playing, stopped, whatever). */
   sf::Music *m_currentMusic;
 };
+
+} // namespace nt
 
 #endif // MUSIC_MANAGER_H
 

@@ -1,7 +1,6 @@
 #include "Lerpable.h"
 
 namespace nt {
-namespace graphics {
 
 /**************************
  * Constructor
@@ -26,10 +25,10 @@ void Lerpable::Lerp( float alpha ) {
   m_logicPos.x = GetPosition().x;
   m_logicPos.y = GetPosition().y;
 
-  nt::core::FloatVec current = m_logicPos * alpha;
+  FloatVec current = m_logicPos * alpha;
 
   float diff = 1.0 - alpha;
-  nt::core::FloatVec last = m_lastPos * diff;
+  FloatVec last = m_lastPos * diff;
 
   SetPosition( current.x + last.x, current.y + last.y );
 }
@@ -40,5 +39,4 @@ void Lerpable::Unlerp() {
   m_lastPos = m_logicPos;
 }
 
-} // graphics
-} // nt
+} // namespace nt

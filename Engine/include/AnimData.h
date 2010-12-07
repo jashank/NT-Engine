@@ -10,6 +10,8 @@
 #include "Vector.h"
 
 class TiXmlElement;
+
+namespace nt {
   
 /**
  * Stores and provides information on animations parsed in from animation file.
@@ -50,7 +52,7 @@ public:
    * @return (x,y) pixel coordinates of where the animation is located on the 
    * sheet it was drawn on. (0,0) if index is invalid.
    */
-  nt::core::IntVec GetAnimPosition( int animIndex ) const;
+  IntVec GetAnimPosition( int animIndex ) const;
 
   //@{
   /**
@@ -84,7 +86,7 @@ public:
    * of frame on sheet it is located on. Rect of first frame if frame index is
    * invalid and (0,0,0,0) rect if animation index is invalid.
    */
-  nt::core::IntRect GetFrameRect( int animIndex, int frameIndex ) const;
+  IntRect GetFrameRect( int animIndex, int frameIndex ) const;
 
   /**
    * @param animIndex index into animations stored by AnimData. Validity
@@ -105,7 +107,7 @@ private:
     bool isLooped; /** True if animation loops back on itself. */ 
     std::vector<float> frameTimes; /** Only stores 1 time if no unique times. */
     int numFrames; /** Number of frames in animation. */
-    nt::core::IntRect frameRect; /** (x,y)-first frame (w,h)-frame sizes */
+    IntRect frameRect; /** (x,y)-first frame (w,h)-frame sizes */
     boost::shared_ptr<sf::Image> image; /** Image that animation is on. */
     std::string name; /** Name assigned to animation in animation file. */
   };
@@ -131,6 +133,8 @@ private:
 
   std::vector<Animation> m_anims; /** Stores all animations. */
 };
+
+} // nt
 
 #endif // ANIMDATA_H
 

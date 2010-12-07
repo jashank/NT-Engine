@@ -6,6 +6,8 @@
 #include "Utilities.h"
 #include "Window.h"
 
+namespace nt {
+
 /*********************************
  * Constructors and Destructors
  * ******************************/
@@ -70,12 +72,12 @@ void InputHandler::ScanKeys( const func_type &func ) const {
 
 void InputHandler::ScanMouse( 
   const func_type &func, 
-  const nt::core::FloatRect &mouseArea 
+  const FloatRect &mouseArea 
 ) {
   if ( !m_mouseRegistry.empty() ) {
     std::string eventString = "";
 
-    const sf::Input *input = &nt::window::GetInput();
+    const sf::Input *input = &window::GetInput();
     int x = input->GetMouseX();
     int y = input->GetMouseY();
     bool mouseDown = input->IsMouseButtonDown( sf::Mouse::Left );
@@ -158,4 +160,5 @@ bool InputHandler::LoadMouseEvent(
   return true;
 }
   
+} // namespace nt
 

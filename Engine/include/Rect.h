@@ -4,7 +4,6 @@
 #include "Vector.h"
 
 namespace nt {
-namespace core {
 
 /**
  * Rectangle with (x,y) coordinates for top left and bottom right members.
@@ -25,8 +24,7 @@ struct Rect {
    * @param topLeft 2D Vector with coordinates for top left of rectangle.
    * @param bottomRight 2D Vector with coordinates for bottom right of rectangle.
    */
-  Rect( nt::core::Vector<T> topLeftCorner, 
-        nt::core::Vector<T> bottomRightCorner )
+  Rect( Vector<T> topLeftCorner, Vector<T> bottomRightCorner )
         : topLeft( topLeftCorner ), bottomRight( bottomRightCorner ) {}
 
   ~Rect() {}
@@ -48,8 +46,8 @@ struct Rect {
   /**
    * @return Vector with (width,height) of rect.
    */
-  nt::core::Vector<T> GetSize() const {
-    return nt::core::Vector<T>( GetWidth(), GetHeight() );
+  Vector<T> GetSize() const {
+    return Vector<T>( GetWidth(), GetHeight() );
   }
 
   /**
@@ -62,10 +60,10 @@ struct Rect {
   /**
    * @return Vector containing coordinates (x,y,z) of center of rectangle.
    */
-  nt::core::Vector<T> GetCenter() const {
+  Vector<T> GetCenter() const {
     T centerX = ( topLeft.x + bottomRight.x ) / 2;
     T centerY = ( topLeft.y + bottomRight.y ) / 2;
-    return nt::core::Vector<T>( centerX, centerY );
+    return Vector<T>( centerX, centerY );
   }
 
   /**
@@ -171,8 +169,28 @@ typedef Rect<int> IntRect;
 typedef Rect<float> FloatRect;
 //@}
 
-} // core
-} // nt
+/**
+ * Fits 'b' into 'a' by trimming any sides off of 'b' that extend outside of
+ * 'a'. For example, if a's coordinates were (0, 0, 5, 5) and b's coordinates
+ * were (0, 0, 5, 6), b would be changed to (0, 0, 5, 5).
+ */
+template<typename T>
+void FitRect( const Rect<T> &a, Rect<T> &b ) {
+  if ( b.topLeft.x < a.topLeft.x ) {
+    b.topLeft.x = a.topLeft.x;
+  }
+  if ( b.topLeft.y < a.topLeft.y ) {
+    b.topLeft.y = a.topLeft.y;
+  }
+  if ( b.bottomRight.x > a.bottomRight.x ) {
+    b.bottomRight.x = a.bottomRight.x;
+  }
+  if ( b.bottomRight.y > a.bottomRight.y ) {
+    b.bottomRight.y = a.bottomRight.y;
+  }
+}
+
+} // namespace nt
 
 #endif // RECT_H
 

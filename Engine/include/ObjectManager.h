@@ -16,6 +16,8 @@ class Camera;
 class lua_State;
 class TiXmlElement;
 
+namespace nt {
+
 /**
  * Holds and manages all Objects in the current state, updating them,
  * handling their interactions, and providing object management 
@@ -31,7 +33,7 @@ class ObjectManager {
    */
   ObjectManager( 
     const TiXmlElement *root, 
-    const nt::core::IntRect &mapRect, 
+    const IntRect &mapRect, 
     lua_State *L 
   ); 
 
@@ -124,7 +126,7 @@ class ObjectManager {
    */
   void LoadData( 
     const TiXmlElement *root, 
-    const nt::core::IntRect &mapRect,
+    const IntRect &mapRect,
     lua_State *L 
   );
 
@@ -226,7 +228,7 @@ class ObjectManager {
   /**
    * 3D Matrix that holds Objects at each position.
    */
-  boost::scoped_ptr<nt::core::RangeMatrix3D<intrObj_type> > m_objGrid;
+  boost::scoped_ptr<RangeMatrix3D<intrObj_type> > m_objGrid;
 
   /**
    * Holds Objects that were sent to be destroyed on the last update.
@@ -241,6 +243,8 @@ void ObjectManager::FillSet( std::set<intrObj_type, Compare> &set ) const {
     set.insert( *obj );
   }
 }
+
+} // namespace nt
 
 #endif // OBJECT_MANAGER_H
 

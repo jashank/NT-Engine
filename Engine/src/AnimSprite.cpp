@@ -52,7 +52,7 @@ int AnimSprite::GetAnimation() const {
 
 void AnimSprite::LoadAnimData( const std::string &filepath ) {
   const boost::shared_ptr<AnimData> &anim = 
-    nt::rsrc::LoadResource<AnimData>( filepath );
+    rsrc::LoadResource<AnimData>( filepath );
   if ( anim ) {
     SetAnimData( anim );
   } else {
@@ -175,7 +175,7 @@ void AnimSprite::Render( sf::RenderTarget &target ) const {
     glTranslatef( 0.375, 0.375, 0.0 );
     img->Bind();
 
-    nt::core::IntRect ntRect =
+    IntRect ntRect =
       m_animData->GetFrameRect( m_animNum, m_frameNum );
     float frameWidth = static_cast<float>( ntRect.GetWidth() );
     float frameHeight = static_cast<float>( ntRect.GetHeight() );

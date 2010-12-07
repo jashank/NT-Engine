@@ -9,6 +9,8 @@ class State;
 class lua_State;
 class luaL_Reg;
 
+namespace nt {
+
 /**
  * Starts off running first State loaded in and provides a Lua interface
  * for the user to control the current State and how the StateMachine will
@@ -144,6 +146,8 @@ class StateMachine {
    */
   void NextState();
 };
+
+} // namespace nt
 
 #endif // STATEMACHINE_H
 

@@ -10,6 +10,8 @@
 
 class TiXmlElement;
 
+namespace nt {
+
 /**
  * Holds map of NamePath/shared_ptr<T> pairs which can be loaded in from a 
  * State file. Each value in the map can be accessed via its name or path
@@ -46,6 +48,8 @@ class NamePathManager {
   /** Sub element to search for in root element in LoadData. */
   std::string m_subElem;
 };
+
+} // namespace nt
 
 #include "NamePathManager.hpp"
 

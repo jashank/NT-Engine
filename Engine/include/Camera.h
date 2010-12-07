@@ -6,6 +6,8 @@
 
 class lua_State;
 
+namespace nt {
+
 /**
  * Camera is useful (if not necessary) for States larger than the window
  * size. It supplies various functions to do camera like things (speed
@@ -24,8 +26,9 @@ class Camera {
   /**
    * Move if needs to move.
    * @param dt delta time - amount of time to step forward
+   * @param tileSize size of a tile in pixels.
    */
-  void Update( float dt );
+  void Update( float dt, int tileSize );
 
   /**
    * Returns a modified rectangle representation of the Camera's current
@@ -38,10 +41,15 @@ class Camera {
    * rectangle's leftmost parameter would still be 0.
    * @param x number of tiles to extend in -x and +x directions
    * @param y number of tiles to extend in -y and +y directions
+   * @param mapRect rectangle representation of tile map size
    * @return Rectangle representation of Camera's current view with
    * adjustments made regarding arguments passed. Units in tiles.
    */
-  nt::core::IntRect GetAdjustedFocus( int x, int y ) const;
+  IntRect GetAdjustedFocus( 
+    int x, 
+    int y, 
+    const IntRect &mapRect 
+  ) const;
 
   /**
    * Spans camera to view number of tiles passed in each direction.
@@ -51,7 +59,7 @@ class Camera {
    * If span exceeds dimensions of mapRect then will automatically adjust
    * to fit in maximum bounds.
    */
-  void Span( int xSpan, int ySpan, nt::core::IntRect &mapRect );
+  void Span( int xSpan, int ySpan, IntRect &mapRect );
 
   //@{
   /**
@@ -59,7 +67,7 @@ class Camera {
    * that these all return the number of arguments that the caller should
    * return to Lua.
    */
-  int LuaSpan( lua_State *L, nt::core::IntRect &mapRect );
+  int LuaSpan( lua_State *L, IntRect &mapRect );
 
   int LuaOffset( lua_State *L );
 
@@ -88,15 +96,17 @@ class Camera {
   float m_speed;
 
   /** Holds tile coordinates of top left along with width/height of view. */
-  nt::core::IntRect m_view;
+  IntRect m_view;
 
   /** Holds offset values in pixels when user moves camera. */
-  nt::core::IntVec m_offset;
+  IntVec m_offset;
 
   /** Distance camera has traveled horizontally and vertically in pixels. */
-  nt::core::FloatVec m_distance;
+  FloatVec m_distance;
 
 };
+
+} // namespace nt
 
 #endif // CAMERA_H
 

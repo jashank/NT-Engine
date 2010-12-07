@@ -7,6 +7,8 @@ extern "C" {
 #include "NamePath.h"
 #include "Utilities.h"
 
+namespace nt {
+
 /*****************************
  * Constructor
  ****************************/ 
@@ -176,4 +178,6 @@ void MusicManager::StopAndSet( sf::Music *music ) {
   }
   m_currentMusic = music;
 }
+
+} // namespace nt
 

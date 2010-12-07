@@ -16,6 +16,8 @@ class Camera;
 class TiXmlElement;
 class lua_State;
 
+namespace nt {
+
 /**
  * Holds and manages all Tiles in the current state. Provides functions to 
  * State API to modify the tiles and retrieve information from them. Note that
@@ -42,27 +44,17 @@ class TileManager {
   void Render( float alpha, const Camera &cam );
 
   /**
-   * @return Dimensions of tiles in this State (since tiles are square, only
-   * necessary to return one integer).
+   * Dimensions of tile in pixels. All tiles are perfect squares so only
+   * necessary to return one value.
    */
-  int GetTileDim() const;
-
-  /**
-   * @return Width (in tiles) of tile map.
-   */
-  int GetMapWidth() const;
-
-  /**
-   * @return Height (in tiles) of tile map.
-   */
-  int GetMapHeight() const;
+  int GetTileSize() const;
 
   /**
    * @return IntRect with corners representing corners of map. For example,
    * a map with a bottom right corner of (5,6) would return an
    * IntRect with a bottom right corner of (5,6).
    */
-  nt::core::IntRect GetMapRect() const;
+  const IntRect &GetMapRect() const;
 
   /**
    * Checks to make sure coordinate passed is valid.
@@ -71,13 +63,6 @@ class TileManager {
    * @return True if tile at (x,y) can be crossed.
    */
   bool TileIsCrossable( int x, int y ) const;
-
-  /**
-   * @param x x tile coordinate to check.
-   * @param y y tile coordinate to check.
-   * @return True if tile exists on map at (x, y).
-   */
-  bool TileOnMap( int x, int y ) const;
 
   //@{
   /**
@@ -172,14 +157,10 @@ class TileManager {
   int m_numTileTypes;
 
   /**
-   * Number of tiles on x-axis.
+   * IntRect representation of tile map. Coordinates represent map boundaries
+   * (in tiles).
    */
-  int m_width; 
-
-  /**
-   * Number of tiles on y-axis.
-   */
-  int m_height; 
+  IntRect m_mapRect;
 
   /**
    * Number of tiles in TileManager (which is equivalent to the 
@@ -191,7 +172,7 @@ class TileManager {
    * Tile dimensions (in pixels). Only a single value since tiles must be
    * perfect squares. Ex: a value of 48 would indicate 48x48 tiles.
    */
-  int m_tileDim;
+  int m_tileSize;
 
   /**
    * 'Name of tile/Tile' pairs. 
@@ -207,8 +188,10 @@ class TileManager {
    * Represents layout of tiles on 2D grid. 
    * Accessed via typical (x,y).
    */
-  boost::scoped_ptr<nt::core::Matrix2D<int> > m_layout;
+  boost::scoped_ptr<Matrix2D<int> > m_layout;
 };
+
+} // namespace nt
 
 #endif // TILEMANAGER_H
 

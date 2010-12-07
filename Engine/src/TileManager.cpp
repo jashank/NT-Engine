@@ -19,15 +19,15 @@ extern "C" {
 #include "Utilities.h"
 #include "Window.h"
 
+namespace nt {
+
 /****************
  * Constructor
  ***************/
 TileManager::TileManager( const TiXmlElement *root )
  : m_numTileTypes( 0 ),
-   m_width( 0 ),
-   m_height( 0 ),
    m_numTiles( 0 ),
-   m_tileDim( 0 ) {
+   m_tileSize( 0 ) {
   LoadData( root );
 }
 
@@ -43,7 +43,7 @@ void TileManager::Update( float dt ) {
 
 void TileManager::Render( float alpha, const Camera &cam ) {
   if ( m_tileSprites ) {
-    const nt::core::IntRect &view = cam.GetAdjustedFocus( 1, 1 );
+    const IntRect &view = cam.GetAdjustedFocus( 1, 1 );
     int tLx = view.topLeft.x;
     int tLy = view.topLeft.y;
     int bRx = view.bottomRight.x;
@@ -58,10 +58,10 @@ void TileManager::Render( float alpha, const Camera &cam ) {
 
         tile = m_layout->Get( x, y );
         if ( tile != BLANK_TILE_ID ) {
-          screenX = static_cast<float>( x ) * m_tileDim;
-          screenY = static_cast<float>( y ) * m_tileDim;
+          screenX = static_cast<float>( x ) * m_tileSize;
+          screenY = static_cast<float>( y ) * m_tileSize;
           m_tileSprites[tile].SetStartingPos( screenX, screenY );
-          nt::window::Draw( m_tileSprites[tile], alpha );
+          window::Draw( m_tileSprites[tile], alpha );
         }
       }
     }
@@ -69,28 +69,18 @@ void TileManager::Render( float alpha, const Camera &cam ) {
 }
 
 
-int TileManager::GetTileDim() const {
-  return m_tileDim;
+int TileManager::GetTileSize() const {
+  return m_tileSize;
 }
 
 
-int TileManager::GetMapWidth() const {
-  return m_width;
-}
-
-
-int TileManager::GetMapHeight() const {
-  return m_height;
-}
-
-
-int TileManager::GetMapRect() const {
-  return nt::core::IntRect( 0, 0, m_width - 1, m_height - 1 );
+const IntRect &TileManager::GetMapRect() const {
+  return m_mapRect;
 }
 
 
 bool TileManager::TileIsCrossable( int x, int y )  const {
-  if ( TileOnMap( x, y )) { 
+  if ( m_mapRect.Contains( x, y )) { 
     idMap_type::const_iterator itr = 
       m_tileDataId.find( m_layout->Get( x, y ));
 
@@ -101,10 +91,6 @@ bool TileManager::TileIsCrossable( int x, int y )  const {
   return false;
 }
 
-
-bool TileManager::TileOnMap( int x, int y ) const {
-  return ( x >= 0 && x < m_width && y >= 0 && y < m_height );
-}
 
 /********************************
  * Lua Functions
@@ -122,7 +108,7 @@ int TileManager::LuaGetTileInfo( lua_State *L ) const {
   }
   int tileY = lua_tointeger( L, -1 );
 
-  if ( TileOnMap( tileX, tileY )) {
+  if ( m_mapRect.Contains( tileX, tileY )) {
     const Tile *tile = GetTile( tileX, tileY );
     if ( tile ) {
       lua_pushstring( L, tile->type.c_str() );
@@ -154,7 +140,7 @@ int TileManager::LuaTileIsCrossable( lua_State *L ) const {
   }
   int tileY = lua_tointeger( L, -1 );
  
-  if ( TileOnMap( tileX, tileY )) {
+  if ( m_mapRect.Contains( tileX, tileY )) {
     lua_pushboolean( L, TileIsCrossable( tileX, tileY ));
     return 1;
   } else {
@@ -192,7 +178,7 @@ int TileManager::LuaSetTile( lua_State *L ) {
   SetTile( tileX, tileY, tileName );
   SetCollision( tileX, tileY, collisionID );
 
-  if ( TileOnMap( tileX, tileY )) {
+  if ( m_mapRect.Contains( tileX, tileY )) {
     SetTile( tileX, tileY, tileName );
     SetCollision( tileX, tileY, collisionID );
   } else {
@@ -206,7 +192,7 @@ Private Methods
 ************************************/
 void TileManager::LoadData( const TiXmlElement *root ) {
   const TiXmlElement *tileSize = root->FirstChildElement( "size" );
-  tileSize->Attribute( "px", &m_tileDim );
+  tileSize->Attribute( "px", &m_tileSize );
 
   const TiXmlElement *anims = root->FirstChildElement( "animation" );
   const char *path = anims->Attribute( "path" );
@@ -226,7 +212,7 @@ void TileManager::LoadData( const TiXmlElement *root ) {
 
 bool TileManager::LoadTileAnims( const std::string &animPath ) {
   const boost::shared_ptr<AnimData> &tileAnims =
-    nt::rsrc::LoadResource<AnimData>( animPath );
+    rsrc::LoadResource<AnimData>( animPath );
 
   if ( tileAnims ) {
     m_numTileTypes = tileAnims->GetNumAnims();
@@ -264,17 +250,20 @@ bool TileManager::LoadTileAnims( const std::string &animPath ) {
 
 
 bool TileManager::LoadTileLayout( const TiXmlElement *layout ) {
-  layout->Attribute( "width", &m_width );
-  layout->Attribute( "height", &m_height );
+  int width = 0;
+  int height = 0;
+  layout->Attribute( "width", &width );
+  layout->Attribute( "height", &height );
 
-  m_layout.reset( new nt::core::Matrix2D<int>( m_width, m_height ));
-  nt::core::Matrix2D<int>::iterator itr = m_layout->begin();
+  m_layout.reset( new Matrix2D<int>( width, height ));
+  Matrix2D<int>::iterator itr = m_layout->begin();
   while ( itr != m_layout->end() ) {
     *itr = BLANK_TILE_ID;
     ++itr;
   }  
 
-  m_numTiles = m_width * m_height;
+  m_mapRect.Scale( width, height );
+  m_numTiles = width * height;
 
   const char *layoutText = layout->GetText();
   // Grids with no tiles mapped will just be empty
@@ -284,10 +273,10 @@ bool TileManager::LoadTileLayout( const TiXmlElement *layout ) {
     std::stringstream tileMapStream( layoutText, std::ios_base::in );
     int currentTile = -1;
 
-    while ( tileMapStream >> currentTile && row < m_height ) {
+    while ( tileMapStream >> currentTile && row < height ) {
       m_layout->Set( column, row, currentTile );
       ++column;
-      if ( column >= m_width ) {
+      if ( column >= width ) {
         column = 0;
         ++row;
       }
@@ -333,7 +322,7 @@ bool TileManager::LoadTileInfo( const TiXmlElement *strip ) {
 
 
 void TileManager::SetTile( int x, int y, const std::string &tileName ) {
-  if ( TileOnMap( x, y )) {
+  if ( m_mapRect.Contains( x, y )) {
     std::map<std::string, Tile>::iterator tileDataItr
      = m_tileDataName.find( tileName );
     if ( tileDataItr != m_tileDataName.end() ) {
@@ -344,7 +333,7 @@ void TileManager::SetTile( int x, int y, const std::string &tileName ) {
 
 
 Tile *TileManager::GetTile( int x, int y ) const {
-  if ( TileOnMap( x, y )) { 
+  if ( m_mapRect.Contains( x, y )) { 
     int id = m_layout->Get( x, y );
     idMap_type::const_iterator tile = m_tileDataId.find( id );
     if( tile != m_tileDataId.end() ) {
@@ -356,8 +345,9 @@ Tile *TileManager::GetTile( int x, int y ) const {
 
 
 void TileManager::SetCollision( int x, int y, int collisionId ) {
-  if ( TileOnMap( x, y )) {
+  if ( m_mapRect.Contains( x, y )) {
     m_tileDataId[m_layout->Get( x, y )]->cid = collisionId;
   }
 }
 
+} // namespace nt

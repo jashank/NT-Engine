@@ -1,5 +1,7 @@
 #include "FontManager.h"
 
+namespace nt {
+
 /*************************
  * Constructor
  ************************/
@@ -16,4 +18,6 @@ boost::shared_ptr<sf::Font> FontManager::GetFont(
 ) const {
   return GetVal( nameOrPath );
 }
+
+} // namespace nt
 

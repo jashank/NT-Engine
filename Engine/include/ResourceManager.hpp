@@ -7,6 +7,8 @@
 
 #include "Utilities.h"
 
+namespace nt {
+
 // Specialize load for sf::Music because it uses OpenFromFile rather than
 // LoadFromFile in SFML.
 template<>
@@ -79,3 +81,4 @@ void ResourceManager<Resource, Loader>::ReleaseUnused() {
   }
 }
 
+} // namespace nt

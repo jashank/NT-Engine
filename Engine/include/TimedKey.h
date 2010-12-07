@@ -7,6 +7,8 @@
 #include <SFML/System/Clock.hpp>
 #include <SFML/Window/Event.hpp>
 
+namespace nt {
+
 /**
  * Key that keeps track of whether it is held down, and if so, how
  * long it has been held down.
@@ -72,6 +74,8 @@ class TimedKey {
   /** SFML key code this key is associated with. */
   sf::Key::Code m_kCode;
 };
+
+} // namespace nt
 
 #endif // TIMEDKEY_H
 

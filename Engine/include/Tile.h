@@ -3,6 +3,8 @@
 
 #include <string>
 
+namespace nt {
+
 /**
  * A base definition of a tile which consists of type,
  * name, tile id (id) and collision id (cid).
@@ -36,6 +38,8 @@ class Tile {
    */
   int cid;
 };
+
+} // namespace nt
 
 #endif // TILE_H
 

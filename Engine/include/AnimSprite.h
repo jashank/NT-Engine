@@ -8,11 +8,13 @@
 #include "AnimData.h"
 #include "Lerpable.h"
 
+namespace nt {
+
 /**
  * Lerpable sprite with methods to enable easier animation based on AnimData
  * loaded in.
  */
-class AnimSprite : public nt::graphics::Lerpable {
+class AnimSprite : public Lerpable {
  public:
   /**
    * Animation and frame are initialized to invalid values. User must set
@@ -141,6 +143,8 @@ class AnimSprite : public nt::graphics::Lerpable {
   int m_animNum; /** Number of animation sprite is currently on. */
   int m_frameNum; /** Number of frame sprite is currently on. */ 
 };
+
+} // namespace nt
 
 #endif // ANIMSPRITE_H
 

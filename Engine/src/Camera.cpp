@@ -3,11 +3,13 @@
 #include <cstdlib>
 
 #include "Utilities.h"
-#include "Window.h"
+#include "window::dow.h"
 
 extern "C" {
   #include "lua.h"
 }
+
+namespace nt {
 
 /******************************
  * Constructors and Destructors
@@ -16,20 +18,18 @@ Camera::Camera()
   :m_moving( false ), m_speed( -1.0 ) {}
 
 Camera::~Camera() { 
-  nt::window::ResetView();
+  window::ResetView();
 }
 
 /*****************************
  * Public Member Functions
  ****************************/
-void Camera::Update( float dt ) {
+void Camera::Update( float dt, int tileSize ) {
   if ( m_moving ) {
-    int tileSize = nt::state::GetTileSize();
-
     // Camera should move instantly
     if ( m_speed < 0.0 ) {
       m_view.Offset( m_offset.x / tileSize, m_offset.y / tileSize );
-      nt::window::OffsetView( m_offset.x, m_offset.y );
+      window::OffsetView( m_offset.x, m_offset.y );
 
       m_offset.x = m_offset.y = 0;
       m_moving = false;
@@ -69,37 +69,41 @@ void Camera::Update( float dt ) {
       m_distance.x = m_distance.y = 0.0;
     } else {
       m_view.Offset( m_distance.x / tileSize, m_distance.y / tileSize );
-      nt::window::OffsetView( viewOffX, viewOffY );
+      window::OffsetView( viewOffX, viewOffY );
     }
   }
 }
 
 
-nt::core::IntRect Camera::GetAdjustedFocus( int x, int y ) const {
+IntRect Camera::GetAdjustedFocus( 
+  int x, 
+  int y 
+  const IntRect &mapRect 
+) const {
   int topLeftX = m_view.topLeft.x - x;
   int topLeftY = m_view.topLeft.y - y;
   int bottomRightX = m_view.bottomRight.x + x;
   int bottomRightY = m_view.bottomRight.y + y;
 
-  nt::core::IntRect rect( topLeftX, topLeftY, bottomRightX, bottomRightY );
-  nt::state::CullTileRect( rect );
+  IntRect rect( topLeftX, topLeftY, bottomRightX, bottomRightY );
+  FitRect( mapRect, rect );
   return rect;
 }
 
 
-void Camera::Span( int xSpan, int ySpan, nt::core::IntRect &mapRect ) {
+void Camera::Span( int xSpan, int ySpan, IntRect &mapRect ) {
   // Adjust span b/c tiles start at 0
   xSpan -= 1;
   ySpan -= 1;
 
   m_view.Scale( xSpan, ySpan );
-  nt::core::CullRect( mapRect, m_view );
+  CullRect( mapRect, m_view );
 }
 
 /*****************************
  * Lua Functions
  ****************************/
-int Camera::LuaSpan( lua_State *L, nt::core::IntRect &mapRect ) {
+int Camera::LuaSpan( lua_State *L, IntRect &mapRect ) {
   if ( m_moving ) {
     return 0;
   }
@@ -194,7 +198,7 @@ int Camera::LuaAdjustSpeed( lua_State *L ) {
  * Private Member Functions
  **************************/
 void Camera::SetOffset( int x, int y ) {
-  nt::core::IntRect destRect( m_view );
+  IntRect destRect( m_view );
   destRect.Offset( x, y );
 
   int farTileX = nt::state::GetMapWidth() - 1;
@@ -218,4 +222,6 @@ void Camera::SetOffset( int x, int y ) {
   m_offset.x = adjX * tileSize;
   m_offset.y = adjY * tileSize;
 }
+
+} // namespace nt
 

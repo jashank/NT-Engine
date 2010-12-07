@@ -25,6 +25,8 @@ namespace boost {
 
 class lua_State;
 
+namespace nt {
+
 /**
  * Objects are heavily customizable via their associated lua script and xml 
  * file. They make up everything that has behavior in the app. They are 
@@ -345,17 +347,17 @@ class Object {
   /**
    * Range of tiles that Object was on in the last update.
    */
-  nt::core::IntRect m_lastTileRange;
+  IntRect m_lastTileRange;
 
   /**
    * Range of tiles that Object is on.
    */
-  nt::core::IntRect m_tileRange; 
+  IntRect m_tileRange; 
   
   /**
    * Object's bounding box for collision.
    */
-  nt::core::FloatRect m_collisionRect; // Object's collision box
+  FloatRect m_collisionRect; // Object's collision box
 
   /**
    * Timer that Object can use from its script.
@@ -365,7 +367,7 @@ class Object {
   /**
    * String that Object can manipulate from its script. This is rendered.
    */
-  nt::core::TimedString m_text; 
+  TimedString m_text; 
 
   /**
    * Objects this Object is colliding with.
@@ -492,14 +494,14 @@ class ObjectAttorney {
    * Returns range of tiles that Object is on.
    * @return obj's tile coordinates.
    */
-  static const nt::core::IntRect& GetTileRange( const intrObj_type &obj )
+  static const IntRect& GetTileRange( const intrObj_type &obj )
   { return obj->m_tileRange; }
 
   /**
    * Returns range of tiles that Object was on in last Update.
    * @return obj's tile coordinates.
    */
-  static const nt::core::IntRect& GetLastTileRange( const intrObj_type &obj )
+  static const IntRect& GetLastTileRange( const intrObj_type &obj )
   { return obj->m_lastTileRange; }
   
   /**
@@ -523,7 +525,7 @@ class ObjectAttorney {
    * @param obj object to retrieve collision rectangle from
    * @return obj's collision rectangle
    */
-  static const nt::core::FloatRect& GetRect( const intrObj_type &obj )
+  static const FloatRect& GetRect( const intrObj_type &obj )
   { return obj->m_collisionRect; }
  
   /**
@@ -555,6 +557,8 @@ class ObjectAttorney {
   { obj->m_collidingWith.remove( other.get() ); }
 
 };  
+
+} // namespace nt
 
 #endif // OBJECT_H
 

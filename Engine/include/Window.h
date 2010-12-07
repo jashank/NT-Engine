@@ -4,9 +4,8 @@
 #include <string>
 
 namespace nt {
-namespace graphics {
   class Lerpable;
-}}
+}
 
 namespace sf {
   class Event;
@@ -41,7 +40,7 @@ namespace window {
   /**
    * Draws lerpable object to the window using alpha value for lerping.
    */
-  void Draw( nt::graphics::Lerpable &toDraw, float alpha );
+  void Draw( nt::Lerpable &toDraw, float alpha );
 
   /**
    * Clears graphical contents of window for another rendering.

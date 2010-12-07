@@ -111,9 +111,9 @@ void StateMachine::Step( float dt ) {
   m_runningState->HandleEvents();
 
   static sf::Event closeTest;
-  while ( nt::window::GetEvent( closeTest ) ) {
+  while ( window::GetEvent( closeTest ) ) {
     if ( closeTest.Type == sf::Event::Closed ) {
-      nt::window::Close();
+      window::Close();
     }
   }
 
@@ -292,5 +292,5 @@ int StateMachine::LuaAdjustCamSpeed( lua_State *L ) {
 void StateMachine::NextState() {
   m_runningState.reset( new State( m_nextStatePath, m_luaState ));
   m_runningState->Init();
-  nt::rsrc::ReleaseUnused();
+  rsrc::ReleaseUnused();
 }

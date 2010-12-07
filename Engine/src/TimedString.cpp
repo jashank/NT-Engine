@@ -1,6 +1,6 @@
 #include "TimedString.h"
 
-using namespace nt::core;
+namespace nt {
 
 /********************************
  * Constructors and Destructors
@@ -43,3 +43,4 @@ void TimedString::UpdatePrint() {
   }
 }
 
+} // namespace nt

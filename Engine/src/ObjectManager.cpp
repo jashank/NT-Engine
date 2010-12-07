@@ -12,6 +12,8 @@ extern "C" {
 #include "Utilities.h"
 #include "Vector.h"
 
+namespace nt {
+
 /*******************************
  * Comparison Functors
  ******************************/
@@ -52,7 +54,7 @@ namespace {
  **********************/
 ObjectManager::ObjectManager( 
   const TiXmlElement *root, 
-  const nt::core::IntRect &mapRect,
+  const IntRect &mapRect,
   lua_State *L 
 ) {
   LoadData( root, mapRect, L );
@@ -102,9 +104,9 @@ void ObjectManager::Update( float dt, const Camera &cam ) {
   for ( SetItr obj = set.begin(); obj != set.end(); ++obj ) {
     const intrObj_type &object = *obj;
     ObjectAttorney::UpdateAI( object, dt );
-    const nt::core::IntRect &lastTiles =
+    const IntRect &lastTiles =
       ObjectAttorney::GetLastTileRange( object );
-    const nt::core::IntRect &currTiles =
+    const IntRect &currTiles =
       ObjectAttorney::GetTileRange( object );
     m_objGrid->MoveElem( object, lastTiles, currTiles );
   }
@@ -113,7 +115,7 @@ void ObjectManager::Update( float dt, const Camera &cam ) {
   for ( unsigned int i = 0; i < m_toBeDestroyed.size(); ++i ) {
     const intrObj_type &delObj = m_toBeDestroyed[i];
     
-    const nt::core::IntRect &tiles =
+    const IntRect &tiles =
       ObjectAttorney::GetTileRange( delObj );
     m_objGrid->RemoveElem( delObj, tiles );
         
@@ -274,7 +276,7 @@ int ObjectManager::LuaGetNearestToObject( lua_State *L ) const {
   }
 
   const intrObj_type obj( pObj );
-  const nt::core::IntRect &tiles = ObjectAttorney::GetTileRange( obj ); 
+  const IntRect &tiles = ObjectAttorney::GetTileRange( obj ); 
   int tileX = tiles.topLeft.x;
   int tileY = tiles.topLeft.y;
 
@@ -396,11 +398,11 @@ int ObjectManager::LuaObjectBlockingTile( lua_State *L ) const {
 *********************************************/
 void ObjectManager::LoadData( 
   const TiXmlElement *root, 
-  nt::core::IntRect &mapRect,
+  const IntRect &mapRect,
   lua_State *L ) {
   int width = mapRect.GetWidth();
   int hight = mapRect.GetHeight();
-  m_objGrid.reset( new nt::core::RangeMatrix3D<intrObj_type>( width, height ));
+  m_objGrid.reset( new RangeMatrix3D<intrObj_type>( width, height ));
 
   const TiXmlElement *objType = root->FirstChildElement( "object" );
   if ( objType ) {
@@ -446,7 +448,7 @@ void ObjectManager::AddObject( const intrObj_type &obj ) {
   m_objTypes.insert( std::make_pair(
     ObjectAttorney::GetType( obj ), obj )); 
   
-  const nt::core::IntRect &tiles = ObjectAttorney::GetTileRange( obj );
+  const IntRect &tiles = ObjectAttorney::GetTileRange( obj );
   m_objGrid->AddElem( obj, tiles );
 }
 
@@ -514,7 +516,7 @@ Object *ObjectManager::NearestObject(
       continue;
     }
 
-    const nt::core::IntRect &tiles = ObjectAttorney::GetTileRange( obj );
+    const IntRect &tiles = ObjectAttorney::GetTileRange( obj );
     if ( tiles.Contains( x, y )) {
       return obj.get();
     }
@@ -547,9 +549,9 @@ Object *ObjectManager::NearestObject(
 void ObjectManager::UpdateCollisions( const intrObj_type &obj, const Camera &cam ) {
   int tileSize = nt::state::GetTileSize();
 
-  const nt::core::FloatRect &objRect = ObjectAttorney::GetRect( obj );
+  const FloatRect &objRect = ObjectAttorney::GetRect( obj );
 
-  nt::core::IntRect tileRange;
+  IntRect tileRange;
   tileRange.topLeft.x = ( objRect.topLeft.x / tileSize );
   tileRange.bottomRight.x = ( objRect.bottomRight.x / tileSize );
   tileRange.topLeft.y = ( objRect.topLeft.y / tileSize );
@@ -589,10 +591,12 @@ void ObjectManager::GetCamCoords(
   int &bRx, 
   int &bRy
 ) const {
-  const nt::core::IntRect &view = cam.GetAdjustedFocus( xadj, yadj );
+  const IntRect &view = cam.GetAdjustedFocus( xadj, yadj );
   tLx = view.topLeft.x;
   tLy = view.topLeft.y;
   bRx = view.bottomRight.x;
   bRy = view.bottomRight.y;
 }
+
+} // namespace nt
 

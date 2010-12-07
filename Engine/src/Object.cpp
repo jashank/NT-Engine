@@ -12,6 +12,8 @@ extern "C" {
 #include "Window.h"
 #include "tinyxml.h"
 
+namespace nt {
+
 int Object::numCreated = 0;
 
 /**********************************
@@ -208,7 +210,7 @@ void Object::UpdateAI( float dt ) {
 
 
 void Object::Draw( float alpha ) {
-  nt::window::Draw( m_sprite, alpha );
+  window::Draw( m_sprite, alpha );
   // nt::window::Draw( m_text );
 }
 
@@ -304,7 +306,7 @@ int Object::LuaSetRenderPriority( lua_State *L ) {
 
 int Object::LuaMove( lua_State *L ) {
   if( !m_moving ) {
-    nt::core::IntVec nextCoords;
+    IntVec nextCoords;
 
     switch ( m_direction ) {
       case UP: {
@@ -811,3 +813,4 @@ Object::Dir Object::GetOppositeDir( Dir dir ) {
   }
 }
 
+} // namespace nt

@@ -9,6 +9,8 @@
 #include "Utilities.h"
 #include "Vector.h"
 
+namespace nt {
+
 /************************************************
 Public Methods
 ************************************************/
@@ -22,7 +24,7 @@ bool AnimData::LoadFromFile( const std::string &filepath ) {
     TiXmlElement *sheet = root->FirstChildElement( "sheet" );
     do {
       const boost::shared_ptr<sf::Image> &loadedSheet =
-        nt::rsrc::LoadResource<sf::Image>( sheet->Attribute( "path" ));
+        rsrc::LoadResource<sf::Image>( sheet->Attribute( "path" ));
       if ( loadedSheet ) {
         // A strip
         TiXmlElement *elem = sheet->FirstChildElement();
@@ -70,14 +72,14 @@ float AnimData::GetFrameTime( int animIndex, int frameIndex ) const {
 }
 
 
-nt::core::IntVec AnimData::GetAnimPosition( int animIndex ) const {
+IntVec AnimData::GetAnimPosition( int animIndex ) const {
   if ( animIndex >= 0 && (unsigned int) animIndex < m_anims.size() ) {
-    return nt::core::IntVec( 
+    return IntVec( 
              m_anims[animIndex].frameRect.topLeft.x,
              m_anims[animIndex].frameRect.topLeft.y
            );
   } else {
-    return nt::core::IntVec( 0, 0 );
+    return IntVec( 0, 0 );
   }
 } 
 
@@ -114,7 +116,7 @@ int AnimData::GetNumFrames( int animIndex ) const {
 }
 
 
-nt::core::IntRect AnimData::GetFrameRect( 
+IntRect AnimData::GetFrameRect( 
   int animIndex, 
   int frameIndex 
 ) const {
@@ -122,7 +124,7 @@ nt::core::IntRect AnimData::GetFrameRect(
   if ( animIndex >= 0 && (unsigned int) animIndex < m_anims.size() ) {
     a = &m_anims[animIndex];
     if ( frameIndex > 0 && frameIndex < a->numFrames ) {
-      nt::core::IntRect rect = a->frameRect;
+      IntRect rect = a->frameRect;
       rect.topLeft.x += frameIndex * a->frameRect.GetWidth();
       rect.bottomRight.x = rect.topLeft.x + a->frameRect.GetWidth();
       return rect;
@@ -130,7 +132,7 @@ nt::core::IntRect AnimData::GetFrameRect(
       return a->frameRect;
     }
   } else {
-    return nt::core::IntRect( 0, 0, 0, 0 );
+    return IntRect( 0, 0, 0, 0 );
   }
 }
 
@@ -214,3 +216,4 @@ bool AnimData::ParseStrip(
   return true;
 }
 
+} // nt

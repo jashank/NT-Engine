@@ -8,7 +8,6 @@
 #include "Rect.h"
 
 namespace nt {
-namespace core {
 
 /**
  * 3D matrix without index checking.
@@ -148,12 +147,11 @@ class RangeMatrix3D {
   int m_rows; /** Rows in matrix. */
   boost::scoped_array<std::list<T> > m_mat;
 
-  nt::core::IntRect m_range; /** Range currently being iterated over. */
-  nt::core::IntVec m_rangeItr; /** Iterates over dimensions of range. */
+  IntRect m_range; /** Range currently being iterated over. */
+  IntVec m_rangeItr; /** Iterates over dimensions of range. */
   ZItr m_elemItr; /** Iterates over elements of a dimension. */
 };
 
-} // namespace core
 } // namespace nt
 
 #endif // MATRIX3D_H

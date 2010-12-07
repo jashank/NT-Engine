@@ -2,7 +2,6 @@
 #define VECTOR_H
 
 namespace nt {
-namespace core {
 
 /**
  * 3D Vector supporting various operations.
@@ -157,7 +156,6 @@ typedef Vector<float> FloatVec;
 //@}
  
 
-} // namespace core
 } // namespace nt
 
 #endif // VECTOR_H

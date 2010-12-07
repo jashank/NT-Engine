@@ -6,6 +6,8 @@
 #include "Utilities.h"
 #include "Window.h"
 
+namespace nt {
+
 /***************************
  * Initialize Extra Keys
  **************************/
@@ -106,7 +108,7 @@ TimedKey::TimedKey( std::string &keyString, bool repeat, float delay )
 
 
 void TimedKey::Update() {
-  if ( !nt::window::GetInput().IsKeyDown( m_kCode )) {
+  if ( !window::GetInput().IsKeyDown( m_kCode )) {
     m_pressed = false;
     m_activated = false;
     m_noRepeatActiv = false;
@@ -137,6 +139,8 @@ bool TimedKey::IsActivated() const {
     
 
 bool TimedKey::IsDown() const {
-  return nt::window::GetInput().IsKeyDown( m_kCode );
+  return window::GetInput().IsKeyDown( m_kCode );
 }
+
+} // namespace nt
 

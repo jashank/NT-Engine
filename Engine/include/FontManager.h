@@ -9,6 +9,8 @@
 
 class TiXmlElement;
 
+namespace nt {
+
 /**
  * Keeps track of fonts loaded in and names given to them. Allows
  * retrieval of fonts based on their name or path.
@@ -25,6 +27,8 @@ class FontManager : public NamePathManager<sf::Font> {
    */
   boost::shared_ptr<sf::Font> GetFont( const std::string &nameOrPath ) const;
 };
+
+} // namespace nt
 
 #endif // FONTMANAGER_H
 

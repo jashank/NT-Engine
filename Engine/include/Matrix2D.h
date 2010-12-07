@@ -4,7 +4,6 @@
 #include <boost/scoped_array.hpp>
 
 namespace nt {
-namespace core {
 
 /**
  * Simple 2D matrix with basic indicing and iteration operations.
@@ -79,7 +78,6 @@ class Matrix2D {
   boost::scoped_array<T> m_mat; /** Array representation of matrix. */
 };
 
-} // namespace core
 } // namespace nt
 
 #endif // MATRIX2D_H

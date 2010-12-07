@@ -3,6 +3,8 @@
 #include "ResourceLib.h"
 #include "Utilities.h"
 
+namespace nt {
+
 /******************************
  * Constructor and Destructor
  *****************************/
@@ -32,7 +34,7 @@ void NamePathManager<T>::LoadData( const TiXmlElement *root ) {
         }
         m_map.insert(
           typename map_type::value_type( 
-            key, nt::rsrc::LoadResource<T>( key.path )
+            key, rsrc::LoadResource<T>( key.path )
           )
         );
       } else {
@@ -57,3 +59,4 @@ boost::shared_ptr<T> NamePathManager<T>::GetVal(
   return boost::shared_ptr<T>();
 }
 
+} // namespace nt

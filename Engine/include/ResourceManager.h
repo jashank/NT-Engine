@@ -7,6 +7,8 @@
 
 #include <boost/shared_ptr.hpp>
 
+namespace nt {
+
 /**
  * String comparison functor used for std::map.
  */
@@ -77,6 +79,8 @@ private:
   Loader m_loader; /** ResourceManager's ResourceLoader. */
   map_type m_resources; /** Map containing 'file path/resource' pairs. */
 };
+
+} // namespace nt
 
 #include "ResourceManager.hpp"
 #endif

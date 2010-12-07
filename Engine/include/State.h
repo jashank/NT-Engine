@@ -15,6 +15,8 @@
 
 class lua_State;
 
+namespace nt {
+
 /**
  * A highly customizable construct representing a single "scene" in the
  * application. Each State has an XML file where the user specifies tile
@@ -179,6 +181,8 @@ class State {
    */
   std::string m_name; 
 };
+
+} // namespace nt
 
 #endif // STATE_H
 

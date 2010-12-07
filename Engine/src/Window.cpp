@@ -37,7 +37,7 @@ namespace window {
   }
 
 
-  void Draw( nt::graphics::Lerpable &toDraw, float alpha ) {
+  void Draw( nt::Lerpable &toDraw, float alpha ) {
     toDraw.Lerp( alpha );
     win.Draw( toDraw );
     toDraw.Unlerp();

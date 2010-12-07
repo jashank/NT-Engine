@@ -10,7 +10,6 @@ namespace sf {
 }
 
 namespace nt {
-namespace graphics {
 
 /**
  * An sf::Drawable object that can be linearly interpolated before
@@ -59,14 +58,13 @@ class Lerpable : public sf::Drawable {
    * Holds actual logical position while object's position is lerped for
    * rendering.
    */
-  nt::core::FloatVec m_logicPos;
+  FloatVec m_logicPos;
 
   /** Last (x,y) position drawable thing was in. */
-  nt::core::FloatVec m_lastPos;
+  FloatVec m_lastPos;
 };
 
-} // graphics
-} // nt
+} // namespace nt
 
 #endif // LERPABLE_H
 

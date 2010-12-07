@@ -7,7 +7,6 @@
 #include <SFML/System/Clock.hpp>
 
 namespace nt {
-  namespace core {
 
 /**
  * Provides same functionality as sf::String, but allows for timed on-screen
@@ -59,7 +58,6 @@ class TimedString : public sf::String {
   std::string m_buffer; 
 };
 
-} // namespace core
 } // namespace nt
 
 #endif // TIMED_STRING_H

@@ -13,6 +13,8 @@
 
 class TiXmlElement;
 
+namespace nt {
+
 /**
  * Registers and handles input specified in xml files that specify an
  * input list.
@@ -53,7 +55,7 @@ class InputHandler {
    */
   void ScanMouse( 
     const boost::function1<void, std::string&> &func, 
-    const nt::core::FloatRect &mouseArea 
+    const FloatRect &mouseArea 
   );
 
  private:
@@ -110,6 +112,8 @@ class InputHandler {
    */
   keymap_type m_prevKeys; 
 };
+
+} // namespace nt
 
 #endif // INPUT_HANDLER_H
 

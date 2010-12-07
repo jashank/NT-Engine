@@ -3,6 +3,8 @@
 
 #include <string>
 
+namespace nt {
+
 /**
  * Can be used for storing name/file path combinations. Overloads comparison
  * functionality to allow for comparing for equality via path or name. For
@@ -25,6 +27,8 @@ struct NamePath {
     return path < other.path && name < other.name;
   }
 };
+
+} // namespace nt
 
 #endif // NAME_PATH_H
 
