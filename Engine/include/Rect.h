@@ -30,14 +30,14 @@ struct Rect {
   ~Rect() {}
   
   /**
-   * @return Distance in pixels between leftmost x and rightmost x.
+   * @return Distance between leftmost x and rightmost x.
    */
   T GetWidth() const {
     return ( bottomRight.x - topLeft.x );
   }
 
   /**
-   * @return Distance in pixels between topmost y and bottommost y.
+   * @return Distance between topmost y and bottommost y.
    */
   T GetHeight() const {
     return ( bottomRight.y - topLeft.y );

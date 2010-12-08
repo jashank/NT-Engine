@@ -114,10 +114,12 @@ Object::Object(
   int tileX,
   int tileY,
   int strip,
+  int tileSize,
   lua_State *L
 )
  : 
-   m_creationNum( 0 ),
+   m_creationNum( ++numCreated ),
+   m_tileSize( tileSize ),
    m_references( 0 ),
    m_renderPriority( 0 ),
    m_moving( false ),
@@ -136,10 +138,8 @@ Object::Object(
   m_sprite.SetAnimation( strip );
   m_sprite.Play();
 
-  int tileDim = nt::state::GetTileSize();
-
-  float x = static_cast<float>( tileDim * tileX );
-  float y = static_cast<float>( tileDim * tileY ); 
+  float x = static_cast<float>( m_tileSize * tileX );
+  float y = static_cast<float>( m_tileSize * tileY ); 
 
   int height = m_sprite.GetFrameHeight();
   if ( height > tileDim ) {
@@ -156,8 +156,6 @@ Object::Object(
   m_lastTileRange = m_tileRange;
 
   InitLua();
-
-  m_creationNum = ++numCreated;
 }
 
 
@@ -395,7 +393,7 @@ int Object::LuaSetDir( lua_State *L ) {
     m_direction = dir;
   } else {
     if ( dir == GetOppositeDir( m_direction )) {
-      m_distance = nt::state::GetTileSize() - m_distance;
+      m_distance = m_tileSize - m_distance;
       m_direction = dir;
     } else {
       LogLuaErr( "Direction passed to SetDir will unalign Object: " + m_type );
@@ -682,8 +680,6 @@ void Object::InitLua() {
 
 
 void Object::MovementUpdate( float dt ) {
-  int tileSize = nt::state::GetTileSize();
-
   float distThisFrame = m_speed * dt;
   m_distance += distThisFrame;
 
@@ -711,7 +707,7 @@ void Object::MovementUpdate( float dt ) {
     default: {}
   }
 
-  if( m_distance >= tileSize ) {
+  if( m_distance >= m_tileSize ) {
     m_moving = false;
     Realign();
     m_distance = 0.0f;
@@ -725,7 +721,7 @@ void Object::MovementUpdate( float dt ) {
 void Object::Realign() {
   float diff = 0.0f;
   //Calculate the amount of distance to move back
-  diff = m_distance - nt::state::GetTileSize();
+  diff = m_distance - m_tileSize
 
   if ( diff > 0.f ) {
     //Find the correct direction to move back
@@ -765,12 +761,10 @@ void Object::Realign() {
 
 
 void Object::AdjustTileRange() {
-  int tileSize = nt::state::GetTileSize();
-
-  m_tileRange.topLeft.x = m_collisionRect.topLeft.x / tileSize;
-  m_tileRange.topLeft.y = m_collisionRect.topLeft.y / tileSize;
-  m_tileRange.bottomRight.x = m_collisionRect.bottomRight.x / tileSize;
-  m_tileRange.bottomRight.y = m_collisionRect.bottomRight.y / tileSize; 
+  m_tileRange.topLeft.x = m_collisionRect.topLeft.x / m_tileSize;
+  m_tileRange.topLeft.y = m_collisionRect.topLeft.y / m_tileSize;
+  m_tileRange.bottomRight.x = m_collisionRect.bottomRight.x / m_tileSize;
+  m_tileRange.bottomRight.y = m_collisionRect.bottomRight.y / m_tileSize;
 }
 
 

@@ -85,7 +85,6 @@ class Object {
     int tileX, 
     int tileY, 
     int strip,
-    const IntRect &mapRect,
     int tileSize,
     lua_State *L
    );
@@ -277,10 +276,13 @@ class Object {
    */
   static int numCreated;
 
+  /** Size of a tile in pixels. */
+  const int tileSize;
+
   /**
    * Nth Object created in app. For example, if this is 1, then this was 1st.
    */
-  int m_creationNum;
+  const int m_creationNum;
 
   /** References to this object in program. */
   int m_references;
@@ -435,6 +437,7 @@ class ObjectAttorney {
     int x, 
     int y, 
     int strip,
+    int tileSize,
     lua_State *L
   ) 
   { return new Object( filepath, x, y, strip, L ); }

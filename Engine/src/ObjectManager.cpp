@@ -65,10 +65,10 @@ ObjectManager::ObjectManager(
  * Public Methods
  ******************************/
 void ObjectManager::Init() {
-  int mapWidth = nt::state::GetMapWidth();
-  int mapHeight = nt::state::GetMapHeight();
+  int lastTileX = m_mapRect.GetWidth();
+  int lastTileY = m_mapRect.GetHeight();
 
-  m_objGrid->SetRange( 0, 0, mapWidth - 1, mapHeight - 1 );
+  m_objGrid->SetRange( 0, 0, lastTileX, lastTileY );
   std::set<intrObj_type, CreationCmp> set;
   FillSet( set );
   for ( SetItr obj = set.begin(); obj != set.end(); ++obj ) {
@@ -308,7 +308,7 @@ int ObjectManager::LuaGetObjectOnTile( lua_State *L ) const {
     type = lua_tostring( L, 3 );
   }
 
-  if ( nt::state::InRange( tileX, tileY )) {
+  if ( m_mapRect.Contains( tileX, tileY )) {
     if ( type == "" ) {
       Lunar<Object>::push( L, ObjectOnTile( tileX, tileY ));
     } else {
@@ -344,7 +344,7 @@ int ObjectManager::LuaGetObjectsOnTile( lua_State *L ) const {
     type = lua_tostring( L, 3 );
   }
 
-  if ( nt::state::InRange( tileX, tileY )) {
+  if ( m_mapRect.Contains( tileX, tileY )) {
     lua_newtable( L );
     int newTable = lua_gettop( L );
     int index = 1; // Lua table indices start at 1
@@ -385,7 +385,7 @@ int ObjectManager::LuaObjectBlockingTile( lua_State *L ) const {
   }
   int tileY = lua_tointeger( L, -1 );
 
-  if ( nt::state::InRange( tileX, tileY )) {
+  if ( m_mapRect.Contains( tileX, tileY )) {
     lua_pushboolean( L, ObjectBlockingTile( tileX, tileY ));
     return 1;
   } else {
@@ -400,9 +400,9 @@ int ObjectManager::LuaObjectBlockingTile( lua_State *L ) const {
 void ObjectManager::LoadData( 
   const TiXmlElement *root, 
   lua_State *L ) {
-  int width = m_mapRect.GetWidth();
-  int hight = m_mapRect.GetHeight();
-  m_objGrid.reset( new RangeMatrix3D<intrObj_type>( width, height ));
+  int matDimX = m_mapRect.GetWidth() + 1;
+  int matDimY = m_mapRect.GetHeight() + 1;
+  m_objGrid.reset( new RangeMatrix3D<intrObj_type>( matDimX, matDimY ));
 
   const TiXmlElement *objType = root->FirstChildElement( "object" );
   if ( objType ) {
@@ -499,8 +499,8 @@ Object *ObjectManager::NearestObject(
   int y, 
   Object *exclude 
 ) const {
-  int distanceX = nt::state::GetMapWidth();
-  int distanceY = nt::state::GetMapHeight();
+  int distanceX = m_mapRect.GetWidth();
+  int distanceY = m_mapRect.GetHeight();
 
   Object *nearestObj = NULL;
 
@@ -547,16 +547,14 @@ Object *ObjectManager::NearestObject(
 
 
 void ObjectManager::UpdateCollisions( const intrObj_type &obj, const Camera &cam ) {
-  int tileSize = nt::state::GetTileSize();
-
   const FloatRect &objRect = ObjectAttorney::GetRect( obj );
 
   IntRect tileRange;
-  tileRange.topLeft.x = ( objRect.topLeft.x / tileSize );
-  tileRange.bottomRight.x = ( objRect.bottomRight.x / tileSize );
-  tileRange.topLeft.y = ( objRect.topLeft.y / tileSize );
-  tileRange.bottomRight.y = ( objRect.bottomRight.y / tileSize );
-  nt::state::CullTileRect( tileRange );
+  tileRange.topLeft.x = ( objRect.topLeft.x / m_tileSize );
+  tileRange.bottomRight.x = ( objRect.bottomRight.x / m_tileSize );
+  tileRange.topLeft.y = ( objRect.topLeft.y / m_tileSize );
+  tileRange.bottomRight.y = ( objRect.bottomRight.y / m_tileSize );
+  FitRect( m_mapRect, tileRange );
 
   m_objGrid->SetRange( tileRange.topLeft.x, tileRange.topLeft.y,
                        tileRange.bottomRight.x, tileRange.bottomRight.y );

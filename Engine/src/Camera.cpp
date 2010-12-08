@@ -200,8 +200,8 @@ void Camera::SetOffset( int x, int y ) {
   IntRect destRect( m_view );
   destRect.Offset( x, y );
 
-  int farTileX = m_mapRect.GetWidth() - 1;
-  int farTileY = m_mapRect.GetHeight() - 1;
+  int farTileX = m_mapRect.GetWidth();
+  int farTileY = m_mapRect.GetHeight();
   int adjX = x;
   int adjY = y;
 
