@@ -3,7 +3,7 @@
 #include <cstdlib>
 
 #include "Utilities.h"
-#include "window::dow.h"
+#include "Window.h"
 
 extern "C" {
   #include "lua.h"
@@ -14,8 +14,11 @@ namespace nt {
 /******************************
  * Constructors and Destructors
  ******************************/
-Camera::Camera()
-  :m_moving( false ), m_speed( -1.0 ) {}
+Camera::Camera( const IntRect &mapRect, int tileSize )
+  :m_mapRect( mapRect ),
+   m_tileSize( tileSize ),
+   m_moving( false ), 
+   m_speed( -1.0 ) {}
 
 Camera::~Camera() { 
   window::ResetView();
@@ -24,11 +27,11 @@ Camera::~Camera() {
 /*****************************
  * Public Member Functions
  ****************************/
-void Camera::Update( float dt, int tileSize ) {
+void Camera::Update( float dt ) {
   if ( m_moving ) {
     // Camera should move instantly
     if ( m_speed < 0.0 ) {
-      m_view.Offset( m_offset.x / tileSize, m_offset.y / tileSize );
+      m_view.Offset( m_offset.x / m_tileSize, m_offset.y / m_tileSize );
       window::OffsetView( m_offset.x, m_offset.y );
 
       m_offset.x = m_offset.y = 0;
@@ -68,36 +71,32 @@ void Camera::Update( float dt, int tileSize ) {
       m_offset.x = m_offset.y = 0;
       m_distance.x = m_distance.y = 0.0;
     } else {
-      m_view.Offset( m_distance.x / tileSize, m_distance.y / tileSize );
+      m_view.Offset( m_distance.x / m_tileSize, m_distance.y / m_tileSize );
       window::OffsetView( viewOffX, viewOffY );
     }
   }
 }
 
 
-IntRect Camera::GetAdjustedFocus( 
-  int x, 
-  int y 
-  const IntRect &mapRect 
-) const {
+IntRect Camera::GetAdjustedFocus( int x, int y ) const {
   int topLeftX = m_view.topLeft.x - x;
   int topLeftY = m_view.topLeft.y - y;
   int bottomRightX = m_view.bottomRight.x + x;
   int bottomRightY = m_view.bottomRight.y + y;
 
   IntRect rect( topLeftX, topLeftY, bottomRightX, bottomRightY );
-  FitRect( mapRect, rect );
+  FitRect( m_mapRect, rect );
   return rect;
 }
 
 
-void Camera::Span( int xSpan, int ySpan, IntRect &mapRect ) {
+void Camera::Span( int xSpan, int ySpan ) {
   // Adjust span b/c tiles start at 0
   xSpan -= 1;
   ySpan -= 1;
 
   m_view.Scale( xSpan, ySpan );
-  CullRect( mapRect, m_view );
+  FitRect( m_mapRect, m_view );
 }
 
 /*****************************
@@ -118,7 +117,7 @@ int Camera::LuaSpan( lua_State *L, IntRect &mapRect ) {
 
   int width = lua_tointeger( L, -2 );
   int height = lua_tointeger( L, -1 );
-  Span( width, height, mapRect );
+  Span( width, height );
   return 0;
 }
 
@@ -201,8 +200,8 @@ void Camera::SetOffset( int x, int y ) {
   IntRect destRect( m_view );
   destRect.Offset( x, y );
 
-  int farTileX = nt::state::GetMapWidth() - 1;
-  int farTileY = nt::state::GetMapHeight() - 1;
+  int farTileX = m_mapRect.GetWidth() - 1;
+  int farTileY = m_mapRect.GetHeight() - 1;
   int adjX = x;
   int adjY = y;
 
@@ -218,9 +217,8 @@ void Camera::SetOffset( int x, int y ) {
     adjY = farTileY - m_view.bottomRight.y;
   }
     
-  int tileSize = nt::state::GetTileSize();
-  m_offset.x = adjX * tileSize;
-  m_offset.y = adjY * tileSize;
+  m_offset.x = adjX * m_tileSize;
+  m_offset.y = adjY * m_tileSize;
 }
 
 } // namespace nt

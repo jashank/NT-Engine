@@ -29,11 +29,13 @@ class ObjectManager {
    * Loads Objects in from <object> element of State file.
    * @param root <object> element
    * @param mapRect IntRect representing tile map.
+   * @param tileSize size of a tile in pixels.
    * @param L lua_State to use for script interaction.
    */
   ObjectManager( 
     const TiXmlElement *root, 
     const IntRect &mapRect, 
+    int tileSize,
     lua_State *L 
   ); 
 
@@ -126,7 +128,6 @@ class ObjectManager {
    */
   void LoadData( 
     const TiXmlElement *root, 
-    const IntRect &mapRect,
     lua_State *L 
   );
 
@@ -219,6 +220,12 @@ class ObjectManager {
    */
   template< typename Compare >
   void FillSet( std::set<intrObj_type, Compare> &set ) const;
+
+  /** IntRect representation of the tile map. */
+  const IntRect m_mapRect;
+
+  /** Size of a tile (width or height since perfect square) in pixels. */
+  const int m_tileSize;
 
   /**
    * Key is Object's type. Holds all Objects in the current State of that type.

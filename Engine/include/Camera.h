@@ -18,7 +18,7 @@ namespace nt {
  */
 class Camera {
  public:
-  Camera();
+  Camera( const IntRect &mapRect, int tileSize );
 
   /** Resets the window view. */
   ~Camera();
@@ -28,7 +28,7 @@ class Camera {
    * @param dt delta time - amount of time to step forward
    * @param tileSize size of a tile in pixels.
    */
-  void Update( float dt, int tileSize );
+  void Update( float dt );
 
   /**
    * Returns a modified rectangle representation of the Camera's current
@@ -41,25 +41,18 @@ class Camera {
    * rectangle's leftmost parameter would still be 0.
    * @param x number of tiles to extend in -x and +x directions
    * @param y number of tiles to extend in -y and +y directions
-   * @param mapRect rectangle representation of tile map size
    * @return Rectangle representation of Camera's current view with
    * adjustments made regarding arguments passed. Units in tiles.
    */
-  IntRect GetAdjustedFocus( 
-    int x, 
-    int y, 
-    const IntRect &mapRect 
-  ) const;
+  IntRect GetAdjustedFocus( int x, int y ) const;
 
   /**
    * Spans camera to view number of tiles passed in each direction.
    * For example, passing (5, 5) would have the camera view 5 tiles from 
    * the current leftmost tile in the x direction and 5 tiles from the
    * current topmost tile in the y direction.
-   * If span exceeds dimensions of mapRect then will automatically adjust
-   * to fit in maximum bounds.
    */
-  void Span( int xSpan, int ySpan, IntRect &mapRect );
+  void Span( int xSpan, int ySpan );
 
   //@{
   /**
@@ -67,7 +60,7 @@ class Camera {
    * that these all return the number of arguments that the caller should
    * return to Lua.
    */
-  int LuaSpan( lua_State *L, IntRect &mapRect );
+  int LuaSpan( lua_State *L );
 
   int LuaOffset( lua_State *L );
 
@@ -89,6 +82,12 @@ class Camera {
    */
   void SetOffset( int x, int y );
 
+  /** IntRect representation of tile map size. */
+  const IntRect m_mapRect;
+
+  /** Size of a tile (width or height) in pixels. */
+  const int m_tileSize;
+
   /** Whether camera is moving to a new position. */
   bool m_moving;
 
@@ -103,7 +102,6 @@ class Camera {
 
   /** Distance camera has traveled horizontally and vertically in pixels. */
   FloatVec m_distance;
-
 };
 
 } // namespace nt

@@ -32,7 +32,7 @@ void State::HandleEvents() {
 
 
 void State::Update( float dt ) {
-  m_camera.Update( dt, m_tileManager->GetTileSize() );
+  m_camera.Update( dt );
   m_tileManager->Update( dt );
   m_objectManager->Update( dt, m_camera );
 }
@@ -208,15 +208,17 @@ bool State::LoadFromFile( const std::string &filePath, lua_State *L ) {
       m_tileManager.reset( new TileManager( elem ));
 
       const IntRect &mapRect = m_tileManager->GetMapRect();
+      const int tileSize = m_tileManager->GetTileSize();
+
       m_camera.Span(
         mapRect.GetWidth() - 1,
         mapRect.GetHeight() - 1,
-        m_tileManager->GetMapRect()
+        mapRect
       );
 
       elem = root->FirstChildElement( "objects" );
       m_objectManager.reset( 
-        new ObjectManager( elem, m_tileManager->GetMapRect(), L )
+        new ObjectManager( elem, mapRect, tileSize, L )
       );
 
     } else {

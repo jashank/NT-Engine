@@ -77,6 +77,7 @@ class Object {
    * @param tileX x tile coordinate Object will start on.
    * @param tileY y tile coordinate Object will start on.
    * @param strip animation strip Object will begin with.
+   * @param 
    * @param L lua state that Object uses for default functions in script
    */
   Object( 
@@ -84,6 +85,8 @@ class Object {
     int tileX, 
     int tileY, 
     int strip,
+    const IntRect &mapRect,
+    int tileSize,
     lua_State *L
    );
 

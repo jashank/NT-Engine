@@ -55,9 +55,10 @@ namespace {
 ObjectManager::ObjectManager( 
   const TiXmlElement *root, 
   const IntRect &mapRect,
+  int tileSize,
   lua_State *L 
-) {
-  LoadData( root, mapRect, L );
+) : m_mapRect( mapRect ), m_tileSize( tileSize ) {
+  LoadData( root, L );
 }
 
 /*******************************
@@ -398,10 +399,9 @@ int ObjectManager::LuaObjectBlockingTile( lua_State *L ) const {
 *********************************************/
 void ObjectManager::LoadData( 
   const TiXmlElement *root, 
-  const IntRect &mapRect,
   lua_State *L ) {
-  int width = mapRect.GetWidth();
-  int hight = mapRect.GetHeight();
+  int width = m_mapRect.GetWidth();
+  int hight = m_mapRect.GetHeight();
   m_objGrid.reset( new RangeMatrix3D<intrObj_type>( width, height ));
 
   const TiXmlElement *objType = root->FirstChildElement( "object" );
@@ -418,7 +418,7 @@ void ObjectManager::LoadData(
             instance->QueryIntAttribute( "x", &x );
             instance->QueryIntAttribute( "y", &y );
             instance->QueryIntAttribute( "strip", &strip );
-            if ( mapRect.Contains( x, y ) && strip >= 0 ) {
+            if ( m_mapRect.Contains( x, y ) && strip >= 0 ) {
               const intrObj_type obj(
                 ObjectAttorney::Create( path, x, y , strip, L ));
               AddObject( obj );
