@@ -75,21 +75,9 @@ std::string StateMachine::m_nextStatePath = "";
 /*******************************
  * Constructors and Destructors
  ******************************/
-StateMachine::~StateMachine() {
-  // Objects need to unreference from lua
-  m_runningState.reset();
-
-  lua_close( m_luaState );
-  m_luaState = NULL;
-} 
-
-/*******************************
- * Public Member Functions
- ******************************/
-bool StateMachine::Setup( const std::string &filePath ) {
+StateMachine::StateMachine( const std::string &filePath ) {
   if ( !( m_luaState = luaL_newstate() )) {
     LogErr( "Couldn't create a lua state. Memory allocation error." );
-    return false;
   }
   luaL_openlibs( m_luaState );
   luaL_register( m_luaState, "State", m_luaStateFuncs );
@@ -101,10 +89,20 @@ bool StateMachine::Setup( const std::string &filePath ) {
 
   m_runningState.reset( new State( filePath, m_luaState ));
   m_runningState->Init();
-  return true;
 }
 
 
+StateMachine::~StateMachine() {
+  // Objects need to unreference from lua
+  m_runningState.reset();
+
+  lua_close( m_luaState );
+  m_luaState = NULL;
+} 
+
+/*******************************
+ * Public Member Functions
+ ******************************/
 // Should a goal be to move all nt::window stuff out of StateMachine?
 void StateMachine::Step( float dt ) {
   m_runningState->HandleEvents();

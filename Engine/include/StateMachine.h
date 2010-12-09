@@ -20,15 +20,8 @@ namespace nt {
  */
 class StateMachine {
  public:
-  StateMachine() {}
+  StateMachine( const std::string &filePath );
   ~StateMachine();
-
-  /**
-   * Sets up StateMachine with State located at path passed, and creates lua
-   * state for interaction between user and application. Returns true if
-   * State loaded in successfully, false otherwise.
-   */
-  bool Setup( const std::string &filePath ); 
 
   /**
    * "Steps" the machine, running it through a single update.
