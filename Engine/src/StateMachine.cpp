@@ -10,9 +10,10 @@ extern "C" {
 
 #include "Object.h" // To register Objects to Lua
 #include "ResourceLib.h"
-#include "State.h"
 #include "Utilities.h"
 #include "Window.h"
+
+namespace nt {
 
 /*****************
  * Static Members
@@ -34,9 +35,7 @@ const luaL_Reg StateMachine::m_luaMapFuncs[] = {
   { "GetNearestToObject", LuaGetNearestToObject },
   { "GetObjectOnTile", LuaGetObjectOnTile },
   { "GetObjectsOnTile", LuaGetObjectsOnTile },
-  { "ObjectBlockingTile", LuaObjectBlockingTile },
   { "GetTileInfo", LuaGetTileInfo },
-  { "TileIsCrossable", LuaTileIsCrossable },
   { "SetTile", LuaSetTile },
   { NULL, NULL }
 };
@@ -214,16 +213,8 @@ int StateMachine::LuaGetObjectsOnTile( lua_State *L ) {
   return m_runningState->LuaGetObjectsOnTile( L );
 }
 
-int StateMachine::LuaObjectBlockingTile( lua_State *L ) {
-  return m_runningState->LuaObjectBlockingTile( L );
-}
-
 int StateMachine::LuaGetTileInfo( lua_State *L ) {
   return m_runningState->LuaGetTileInfo( L );
-}
-
-int StateMachine::LuaTileIsCrossable( lua_State *L ) {
-  return m_runningState->LuaTileIsCrossable( L );
 }
 
 int StateMachine::LuaSetTile( lua_State *L ) {
@@ -294,3 +285,5 @@ void StateMachine::NextState() {
   m_runningState->Init();
   rsrc::ReleaseUnused();
 }
+
+} // namespace nt

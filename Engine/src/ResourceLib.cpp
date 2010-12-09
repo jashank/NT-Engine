@@ -8,6 +8,9 @@
 
 #include "AnimData.h"
 
+namespace nt {
+namespace rsrc {
+
 // All of the resources the engine holds
 namespace {
   ResourceManager<sf::Image> images;
@@ -17,9 +20,6 @@ namespace {
   ResourceManager<AnimData> anims;
 }
 
-
-namespace nt {
-namespace rsrc {
 
 template<>
 const boost::shared_ptr<sf::Image> &LoadResource<sf::Image>(

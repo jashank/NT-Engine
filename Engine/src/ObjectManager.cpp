@@ -58,6 +58,8 @@ ObjectManager::ObjectManager(
   int tileSize,
   lua_State *L 
 ) : m_mapRect( mapRect ), m_tileSize( tileSize ) {
+  Object::SetMapRect( mapRect );
+  Object::SetTileSize( tileSize );
   LoadData( root, L );
 }
 
@@ -77,7 +79,7 @@ void ObjectManager::Init() {
 }
 
 
-void ObjectManager::HandleEvents( const Camera & cam ) {
+void ObjectManager::HandleEvents( const Camera &cam ) {
   int tLx, tLy, bRx, bRy;
   GetCamCoords( cam, 1, 1, tLx, tLy, bRx, bRy );
 
@@ -102,9 +104,11 @@ void ObjectManager::Update( float dt, const Camera &cam ) {
   for ( SetItr obj = set.begin(); obj != set.end(); ++obj ) {
     UpdateCollisions( *obj, cam );
   }
+
   for ( SetItr obj = set.begin(); obj != set.end(); ++obj ) {
     const intrObj_type &object = *obj;
     ObjectAttorney::UpdateAI( object, dt );
+
     const IntRect &lastTiles =
       ObjectAttorney::GetLastTileRange( object );
     const IntRect &currTiles =
@@ -151,17 +155,6 @@ void ObjectManager::Render( float alpha, const Camera &cam )  {
   }
 }
 
-
-bool ObjectManager::ObjectBlockingTile( int x, int y ) const {
-  m_objGrid->SetRange( x, y, x, y );
-  while ( const intrObj_type *obj = m_objGrid->GetElem() ) {
-    if ( ObjectAttorney::BlockingTileRange( *obj )) {
-      return true;
-    }
-  }
-  return false;
-}
-
 /***************************************
  * Lua Functions
  * ************************************/
@@ -179,9 +172,10 @@ int ObjectManager::LuaCreateObject( lua_State *L ) {
   int tileX = lua_tointeger( L, -2 );
   int tileY = lua_tointeger( L, -1 );
 
-  if ( tileX >= 0 && tileY >= 0 ) {
+  if ( m_mapRect.Contains( tileX, tileY )) {
     const intrObj_type newObject(
-      ObjectAttorney::Create( path, tileX, tileY, 0, L ));
+      ObjectAttorney::Create( path, tileX, tileY, 0, L )
+    );
     AddObject( newObject );
     ObjectAttorney::Init( newObject );
     Lunar<Object>::push( L, newObject.get() );
@@ -371,29 +365,6 @@ int ObjectManager::LuaGetObjectsOnTile( lua_State *L ) const {
   return 0;
 }
 
-
-int ObjectManager::LuaObjectBlockingTile( lua_State *L ) const {
-  if ( !lua_isnumber( L, -2 ) ) {
-    LogLuaErr( "Number not passed to x position in ObjectBlockingTile" );
-    return 0;
-  }
-  int tileX = lua_tointeger( L, -2 );
-
-  if ( !lua_isnumber( L, -1 ) ) {
-    LogLuaErr( "Number not passed to y position in ObjectBlockingTile." );
-    return 0;
-  }
-  int tileY = lua_tointeger( L, -1 );
-
-  if ( m_mapRect.Contains( tileX, tileY )) {
-    lua_pushboolean( L, ObjectBlockingTile( tileX, tileY ));
-    return 1;
-  } else {
-    LogLuaErr( "Negative tile passed to ObjectBlockingTile" );
-    return 0;
-  }
-}
-
 /********************************************
   Private Methods
 *********************************************/
@@ -420,7 +391,8 @@ void ObjectManager::LoadData(
             instance->QueryIntAttribute( "strip", &strip );
             if ( m_mapRect.Contains( x, y ) && strip >= 0 ) {
               const intrObj_type obj(
-                ObjectAttorney::Create( path, x, y , strip, L ));
+                ObjectAttorney::Create( path, x, y, strip, L )
+              );
               AddObject( obj );
             } else {
               LogErr( 

@@ -14,7 +14,9 @@ extern "C" {
 
 namespace nt {
 
-int Object::numCreated = 0;
+int Object::m_numCreated = 0;
+IntRect Object::m_mapRect;
+int Object::m_tileSize = 0;
 
 /**********************************
  * Public
@@ -38,11 +40,9 @@ Lunar<Object>::RegType Object::methods[] = {
   { "GetType", &Object::LuaGetType },
   { "GetTile", &Object::LuaGetTile },
   { "GetTileRange", &Object::LuaGetTileRange },
-  { "BlockTileRange", &Object::LuaBlockTileRange },
   { "GetDir", &Object::LuaGetDir },
   { "SetDir", &Object::LuaSetDir },
   { "GetTable", &Object::LuaGetTable },
-  { "SetNoClip", &Object::LuaSetNoClip },
   { "ResetTimer", &Object::LuaResetTimer },
   { "GetElapsedTime", &Object::LuaGetElapsedTime },
   { "GetSpeed", &Object::LuaGetSpeed },
@@ -67,8 +67,6 @@ Object::Object( lua_State *L )
    m_references( 0 ),
    m_renderPriority( 0 ),
    m_moving( false ),
-   m_blockingTiles( false ),
-   m_noClip( false ),
    m_ptrCallScriptFunc( boost::bind( &Object::CallScriptFunc, this, _1 )),
    m_direction( UP ),
    m_distance( 0.0f ),
@@ -106,6 +104,16 @@ void Object::LuaRegister( lua_State *L ) {
   Lunar<Object>::Register( L );
 }
 
+
+void Object::SetMapRect( const IntRect &mapRect ) {
+  m_mapRect = mapRect;
+}
+
+
+void Object::SetTileSize( int tileSize ) {
+  m_tileSize = tileSize;
+}
+
 /***********************************************
  * Private
  **********************************************/
@@ -114,17 +122,13 @@ Object::Object(
   int tileX,
   int tileY,
   int strip,
-  int tileSize,
   lua_State *L
 )
  : 
-   m_creationNum( ++numCreated ),
-   m_tileSize( tileSize ),
+   m_creationNum( ++m_numCreated ),
    m_references( 0 ),
    m_renderPriority( 0 ),
    m_moving( false ),
-   m_blockingTiles( false ),
-   m_noClip( false ),
    m_ptrCallScriptFunc( boost::bind( &Object::CallScriptFunc, this, _1 )),
    m_direction( UP ),
    m_distance( 0.0f ),
@@ -142,9 +146,9 @@ Object::Object(
   float y = static_cast<float>( m_tileSize * tileY ); 
 
   int height = m_sprite.GetFrameHeight();
-  if ( height > tileDim ) {
+  if ( height > m_tileSize ) {
     //Take into account the sprites that are taller than a normal tile
-    y -= height - tileDim;
+    y -= height - m_tileSize;
   }
   m_sprite.SetStartingPos( x, y );
 
@@ -304,40 +308,39 @@ int Object::LuaSetRenderPriority( lua_State *L ) {
 
 int Object::LuaMove( lua_State *L ) {
   if( !m_moving ) {
-    IntVec nextCoords;
+    IntRect nextRange = m_tileRange;
 
     switch ( m_direction ) {
       case UP: {
-        nextCoords.x = m_tileRange.topLeft.x;
-        nextCoords.y = m_tileRange.topLeft.y - 1;
+        nextRange.Offset( 0, -1 );
         break;
       }
       case DOWN: {
-        nextCoords.x = m_tileRange.topLeft.x;
-        nextCoords.y = m_tileRange.bottomRight.y + 1;
+        nextRange.Offset( 0, 1 );
         break;
       }
       case LEFT: {
-        nextCoords.x = m_tileRange.topLeft.x - 1;
-        nextCoords.y = m_tileRange.topLeft.y;
+        nextRange.Offset( -1, 0 );
         break;
       }
       case RIGHT: {
-        nextCoords.x = m_tileRange.bottomRight.x + 1;
-        nextCoords.y = m_tileRange.topLeft.y;
+        nextRange.Offset( 1, 0 );
         break;
       }
       default: {}
     }
 
-    // Need to check if tile is on map because of no clip.
-    if ( m_noClip || nt::state::TileIsOpen( nextCoords.x, nextCoords.y )) {
+    int tX = nextRange.topLeft.x;
+    int tY = nextRange.topLeft.y;
+    int bX = nextRange.bottomRight.x;
+    int bY = nextRange.bottomRight.y;
+
+    if ( m_mapRect.Contains( tX, tY ) && m_mapRect.Contains( bX, bY )) {
       m_moving = true;
     }
-    lua_pushboolean( L, m_moving );
-    return 1;
   }
-  lua_pushboolean( L, true );
+
+  lua_pushboolean( L, m_moving );
   return 1;
 }
 
@@ -367,12 +370,6 @@ int Object::LuaGetTileRange( lua_State *L ) {
   lua_pushinteger( L, m_tileRange.bottomRight.x );
   lua_pushinteger( L, m_tileRange.bottomRight.y );
   return 4;
-}
-
-
-int Object::LuaBlockTileRange( lua_State *L ) {
-  m_blockingTiles = lua_toboolean( L, -1 );
-  return 0;
 }
 
 
@@ -408,16 +405,6 @@ int Object::LuaSetDir( lua_State *L ) {
 int Object::LuaGetTable( lua_State *L ) {
   lua_rawgeti( L, LUA_REGISTRYINDEX, m_id );
   return 1;
-}
-
-
-int Object::LuaSetNoClip( lua_State *L ) {
-  if ( lua_gettop( L ) == 0 ) {
-    LogLuaErr( "Nothing passed to SetNoClip in Object: " + m_type );
-    return 0;
-  }
-  m_noClip = lua_toboolean( L, -1 );
-  return 0;
 }
 
 
@@ -602,18 +589,6 @@ bool Object::LoadCollisionData( const std::string &filepath ) {
     m_collisionRect.Scale( width, height );
   }
 
-  TiXmlElement *tile = root->FirstChildElement( "tile" );
-  if ( tile ) {
-    const char *blockingTile = tile->Attribute( "block" );
-    if ( blockingTile ) {
-      m_blockingTiles = ( ToLowerCase( blockingTile ) == "true" );
-    } else {
-      LogErr( "No 'block' attribute specified for tile element in Object: " +
-              filepath );
-      return false;
-    }
-  }
-
   return true;
 }
 
@@ -721,7 +696,7 @@ void Object::MovementUpdate( float dt ) {
 void Object::Realign() {
   float diff = 0.0f;
   //Calculate the amount of distance to move back
-  diff = m_distance - m_tileSize
+  diff = m_distance - m_tileSize;
 
   if ( diff > 0.f ) {
     //Find the correct direction to move back

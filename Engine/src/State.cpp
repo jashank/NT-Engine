@@ -27,21 +27,21 @@ void State::Init() {
 
 
 void State::HandleEvents() {
-  m_objectManager->HandleEvents( m_camera );
+  m_objectManager->HandleEvents( *m_camera );
 }
 
 
 void State::Update( float dt ) {
-  m_camera.Update( dt );
+  m_camera->Update( dt );
   m_tileManager->Update( dt );
-  m_objectManager->Update( dt, m_camera );
+  m_objectManager->Update( dt, *m_camera );
 }
 
 
 void State::Render( float alpha ) {
   // The rendering order is important.
-  m_tileManager->Render( alpha, m_camera );
-  m_objectManager->Render( alpha, m_camera );
+  m_tileManager->Render( alpha, *m_camera );
+  m_objectManager->Render( alpha, *m_camera );
 }
 
 
@@ -102,16 +102,8 @@ int State::LuaGetObjectsOnTile( lua_State *L ) const {
   return m_objectManager->LuaGetObjectsOnTile( L );
 }
 
-int State::LuaObjectBlockingTile( lua_State *L ) const {
-  return m_objectManager->LuaObjectBlockingTile( L );
-}
-
 int State::LuaGetTileInfo( lua_State *L ) const {
   return m_tileManager->LuaGetTileInfo( L );
-}
-
-int State::LuaTileIsCrossable( lua_State *L ) const {
-  return m_tileManager->LuaTileIsCrossable( L );
 }
 
 int State::LuaSetTile( lua_State *L ) {
@@ -155,23 +147,23 @@ int State::LuaKeepMusicPlaying( lua_State *L ) {
 }
 
 int State::LuaSpanCam( lua_State *L ) {
-  return m_camera.LuaSpan( L );
+  return m_camera->LuaSpan( L );
 }
 
 int State::LuaOffsetCam( lua_State *L ) {
-  return m_camera.LuaOffset( L );
+  return m_camera->LuaOffset( L );
 }
 
 int State::LuaCenterCam( lua_State *L ) {
-  return m_camera.LuaSetCenter( L );
+  return m_camera->LuaSetCenter( L );
 }
 
 int State::LuaSetCamSpeed( lua_State *L ) {
-  return m_camera.LuaSetSpeed( L );
+  return m_camera->LuaSetSpeed( L );
 }
 
 int State::LuaAdjustCamSpeed( lua_State *L ) {
-  return m_camera.LuaAdjustSpeed( L );
+  return m_camera->LuaAdjustSpeed( L );
 }
 
 /**********************************
@@ -210,11 +202,7 @@ bool State::LoadFromFile( const std::string &filePath, lua_State *L ) {
       const IntRect &mapRect = m_tileManager->GetMapRect();
       const int tileSize = m_tileManager->GetTileSize();
 
-      m_camera.Span(
-        mapRect.GetWidth() - 1,
-        mapRect.GetHeight() - 1,
-        mapRect
-      );
+      m_camera.reset( new Camera( mapRect, tileSize ) );
 
       elem = root->FirstChildElement( "objects" );
       m_objectManager.reset( 

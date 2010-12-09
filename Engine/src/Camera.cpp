@@ -18,7 +18,10 @@ Camera::Camera( const IntRect &mapRect, int tileSize )
   :m_mapRect( mapRect ),
    m_tileSize( tileSize ),
    m_moving( false ), 
-   m_speed( -1.0 ) {}
+   m_speed( -1.0 ) {
+  Span( mapRect.GetWidth() + 1, mapRect.GetHeight() + 1 );
+}
+
 
 Camera::~Camera() { 
   window::ResetView();
@@ -102,7 +105,7 @@ void Camera::Span( int xSpan, int ySpan ) {
 /*****************************
  * Lua Functions
  ****************************/
-int Camera::LuaSpan( lua_State *L, IntRect &mapRect ) {
+int Camera::LuaSpan( lua_State *L ) {
   if ( m_moving ) {
     return 0;
   }

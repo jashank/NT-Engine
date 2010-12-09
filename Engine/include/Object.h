@@ -8,11 +8,14 @@
 #include <boost/function/function1.hpp>
 
 #include <boost/intrusive_ptr.hpp>
-class Object;
+namespace nt {
+  class Object;
+}
+
 // To declare functions as members of Object
 namespace boost {
-  void intrusive_ptr_add_ref( Object *obj );
-  void intrusive_ptr_release( Object * obj );
+  void intrusive_ptr_add_ref( nt::Object *obj );
+  void intrusive_ptr_release( nt::Object * obj );
 }
 
 #include <SFML/System/Clock.hpp>
@@ -59,6 +62,16 @@ class Object {
    */
   static Lunar<Object>::RegType methods[]; 
 
+  /**
+   * Let Objects know the current mapRect so they don't go out of bounds.
+   */
+  static void SetMapRect( const IntRect &mapRect );
+
+  /**
+   * Let Objects know the current tileSize.
+   */
+  static void SetTileSize( int tileSize );
+
  private:
   /**
    * Objects can only travel in 2 dimensions.
@@ -77,7 +90,6 @@ class Object {
    * @param tileX x tile coordinate Object will start on.
    * @param tileY y tile coordinate Object will start on.
    * @param strip animation strip Object will begin with.
-   * @param 
    * @param L lua state that Object uses for default functions in script
    */
   Object( 
@@ -85,7 +97,6 @@ class Object {
     int tileX, 
     int tileY, 
     int strip,
-    int tileSize,
     lua_State *L
    );
 
@@ -173,15 +184,11 @@ class Object {
 
   int LuaGetTileRange( lua_State *L );
 
-  int LuaBlockTileRange( lua_State *L );
-
   int LuaGetDir( lua_State *L );
 
   int LuaSetDir( lua_State *L );
 
   int LuaGetTable( lua_State *L );
-
-  int LuaSetNoClip( lua_State *L );
 
   int LuaResetTimer( lua_State *L );
 
@@ -274,10 +281,13 @@ class Object {
   /**
    * Number of total objects created thus far in application.
    */
-  static int numCreated;
+  static int m_numCreated;
+
+  /** IntRect representation of bounds of tile map. */
+  static IntRect m_mapRect;
 
   /** Size of a tile in pixels. */
-  const int tileSize;
+  static int m_tileSize;
 
   /**
    * Nth Object created in app. For example, if this is 1, then this was 1st.
@@ -299,17 +309,6 @@ class Object {
    * If true, keep moving in m_direction.
    */
   bool m_moving; 
-
-  /**
-   * If true, block other Objects from accessing tiles Object is on.
-   */
-  bool m_blockingTiles;
-
-  /**
-   * If true, allow this Object to pass through objects blocking tiles and
-   * non-crossable tiles.
-   */
-  bool m_noClip;
 
   /**
    * Pointer to CallScriptFunc method.
@@ -390,20 +389,24 @@ class Object {
   std::string m_type; 
 };
 
+} // namespace nt
+
 
 /** Intrusive pointer functions for Object. */
 namespace boost {
-  inline void intrusive_ptr_add_ref( Object *obj ) {
+  inline void intrusive_ptr_add_ref( nt::Object *obj ) {
     ++( obj->m_references );
   }
 
-  inline void intrusive_ptr_release( Object *obj ) {
+  inline void intrusive_ptr_release( nt::Object *obj ) {
     if ( --( obj->m_references ) == 0 ) {
       delete obj;
     }
   }
 }
 
+
+namespace nt {
 
 /**
  * Establishes Attorney-Client idiom between Object and ObjectManager. 
@@ -437,7 +440,6 @@ class ObjectAttorney {
     int x, 
     int y, 
     int strip,
-    int tileSize,
     lua_State *L
   ) 
   { return new Object( filepath, x, y, strip, L ); }
@@ -510,14 +512,6 @@ class ObjectAttorney {
   static const IntRect& GetLastTileRange( const intrObj_type &obj )
   { return obj->m_lastTileRange; }
   
-  /**
-   * Returns whether Object is blocking the tiles it is on.
-   * @param obj object to check
-   * @return true if obj is blocking tile, false otherwise
-   */
-  static int BlockingTileRange( const intrObj_type &obj )
-  { return obj->m_blockingTiles; }
- 
   /**
    * Returns the Object's type (name of it's XML file with .xml cut off)
    * @param obj object to retrieve type from

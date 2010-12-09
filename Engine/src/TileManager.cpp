@@ -79,19 +79,6 @@ const IntRect &TileManager::GetMapRect() const {
 }
 
 
-bool TileManager::TileIsCrossable( int x, int y )  const {
-  if ( m_mapRect.Contains( x, y )) { 
-    idMap_type::const_iterator itr = 
-      m_tileDataId.find( m_layout->Get( x, y ));
-
-    if ( itr != m_tileDataId.end() ) {
-      return ( itr->second->cid == CROSSABLE );
-    }
-  }
-  return false;
-}
-
-
 /********************************
  * Lua Functions
  * *****************************/
@@ -114,8 +101,7 @@ int TileManager::LuaGetTileInfo( lua_State *L ) const {
       lua_pushstring( L, tile->type.c_str() );
       lua_pushstring( L, tile->name.c_str() );
       lua_pushinteger( L,tile->id );
-      lua_pushinteger( L, tile->cid );
-      return 4;
+      return 3;
     } else {
       LogLuaErr( "Tile coordinate passed to GetTileInfo has no information." );
       return 0;
@@ -127,60 +113,27 @@ int TileManager::LuaGetTileInfo( lua_State *L ) const {
 }
 
 
-int TileManager::LuaTileIsCrossable( lua_State *L ) const {
-  if ( !lua_isnumber( L, -2 ) ) {
-    LogLuaErr( "Number not passed to x position in TileIsCrossable." );
-    return 0;
-  }
-  int tileX = lua_tointeger( L, -2 );
-
-  if ( !lua_isnumber( L, -1 ) ) {
-    LogLuaErr( "Number not passed to y position in TileIsCrossable." );
-    return 0;
-  }
-  int tileY = lua_tointeger( L, -1 );
- 
-  if ( m_mapRect.Contains( tileX, tileY )) {
-    lua_pushboolean( L, TileIsCrossable( tileX, tileY ));
-    return 1;
-  } else {
-    LogLuaErr( "Tile location not on map passed to TileIsCrossable" );
-    return 0;
-  }
-}
-
-
 int TileManager::LuaSetTile( lua_State *L ) {
-  if ( !lua_isnumber( L, -4 ) ) {
+  if ( !lua_isnumber( L, -3 ) ) {
     LogLuaErr( "Number not passed to x position in SetTile." );
     return 0;
   }
-  int tileX = lua_tointeger( L, -4 );
+  int tileX = lua_tointeger( L, -3 );
 
-  if ( !lua_isnumber( L, -3 ) ) {
+  if ( !lua_isnumber( L, -2 ) ) {
     LogLuaErr( "Number not passed to y position in SetTile." );
     return 0;
   }
-  int tileY = lua_tointeger( L, -3 );
+  int tileY = lua_tointeger( L, -2 );
 
-  if ( !lua_isstring( L, -2 ) ) {
+  if ( !lua_isstring( L, -1 ) ) {
     LogLuaErr( "String not passed to tile name in SetTile." );
     return 0;
   }
-  std::string tileName = lua_tostring( L, -2 );
-
-  if ( !lua_isnumber( L, -1 ) ) {
-    LogLuaErr( "Number not passed to collision ID in SetTile." );
-    return 0;
-  }
-  int collisionID = lua_tointeger( L, -1 );
-  
-  SetTile( tileX, tileY, tileName );
-  SetCollision( tileX, tileY, collisionID );
+  std::string tileName = lua_tostring( L, -1 );
 
   if ( m_mapRect.Contains( tileX, tileY )) {
     SetTile( tileX, tileY, tileName );
-    SetCollision( tileX, tileY, collisionID );
   } else {
     LogLuaErr( "Tile location not on map passed to SetTile" );
   }
@@ -262,7 +215,7 @@ bool TileManager::LoadTileLayout( const TiXmlElement *layout ) {
     ++itr;
   }  
 
-  m_mapRect.Scale( width, height );
+  m_mapRect.Scale( width - 1, height - 1 );
   m_numTiles = width * height;
 
   const char *layoutText = layout->GetText();
@@ -290,7 +243,6 @@ bool TileManager::LoadTileLayout( const TiXmlElement *layout ) {
 bool TileManager::LoadTileInfo( const TiXmlElement *strip ) {
   std::string tileName, tileType;
   int tileId = 0;
-  int tileCid = 0;
 
   const char *name = strip->Attribute( "name" );
   if ( name ) {
@@ -309,9 +261,8 @@ bool TileManager::LoadTileInfo( const TiXmlElement *strip ) {
   }
 
   strip->QueryIntAttribute( "id", &tileId );
-  strip->QueryIntAttribute( "cid", &tileCid );
 
-  Tile tile( tileType, tileName, tileId, tileCid );
+  Tile tile( tileType, tileName, tileId );
   m_tileDataName.insert(
     std::pair<std::string, Tile>( tileName, tile ));
   m_tileDataId.insert(
@@ -343,11 +294,5 @@ Tile *TileManager::GetTile( int x, int y ) const {
   return NULL;
 }
 
-
-void TileManager::SetCollision( int x, int y, int collisionId ) {
-  if ( m_mapRect.Contains( x, y )) {
-    m_tileDataId[m_layout->Get( x, y )]->cid = collisionId;
-  }
-}
-
 } // namespace nt
+

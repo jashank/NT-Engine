@@ -7,13 +7,12 @@ namespace nt {
 
 /**
  * A base definition of a tile which consists of type,
- * name, tile id (id) and collision id (cid).
+ * name, and tile id (id).
  */
 class Tile {
  public:
   Tile();
-  Tile( std::string type, std::string name, int id, int cid );
-  ~Tile();
+  Tile( std::string type, std::string name, int id );
 
   /**
    * Allows for grouping of multiple tiles into a single type.
@@ -31,12 +30,6 @@ class Tile {
    * Tile and have a clean tile layout in the State file.
    */
   int id; 
-
-  /**
-   * Collision ID of tile. A crossable tile has a collision ID of 0. Any other
-   * ID (typically 1) indicates that the tile is not crossable.
-   */
-  int cid;
 };
 
 } // namespace nt

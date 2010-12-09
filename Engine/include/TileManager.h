@@ -7,12 +7,15 @@
 #include <boost/scoped_array.hpp>
 #include <boost/scoped_ptr.hpp>
 
+#include "AnimSprite.h"
 #include "Matrix2D.h"
 #include "Rect.h"
 #include "Tile.h"
 
-class AnimSprite;
-class Camera;
+namespace nt {
+  class Camera;
+}
+
 class TiXmlElement;
 class lua_State;
 
@@ -56,14 +59,6 @@ class TileManager {
    */
   const IntRect &GetMapRect() const;
 
-  /**
-   * Checks to make sure coordinate passed is valid.
-   * @param x x tile coordinate to check.
-   * @param y y tile coordinate to check.
-   * @return True if tile at (x,y) can be crossed.
-   */
-  bool TileIsCrossable( int x, int y ) const;
-
   //@{
   /**
    * Lua-related functions. See State API documentaions for details. Note that
@@ -71,8 +66,6 @@ class TileManager {
    * return to Lua.
    */
   int LuaGetTileInfo( lua_State *L ) const;
-
-  int LuaTileIsCrossable( lua_State *L ) const;
 
   int LuaSetTile( lua_State *L );
   //@}
@@ -136,15 +129,6 @@ class TileManager {
    * no tile located at coordinate.
    */
   Tile *GetTile( int x, int y ) const;
-
-  /**
-   * Checks to make sure x,y coordinate exists on map.
-   * @param x x tile coordinate to change.
-   * @param y y tile coordinate to change.
-   * @param collisionId collision ID to set to tile. 0 is crossable, anything
-   * else is not crossable. 
-   */
-  void SetCollision( int x, int y, int collisionId );
 
   /**
    * Array of animated sprites for the different tiles.

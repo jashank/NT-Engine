@@ -93,11 +93,7 @@ class State {
 
   int LuaGetObjectsOnTile( lua_State *L ) const;
 
-  int LuaObjectBlockingTile( lua_State *L ) const;
-
   int LuaGetTileInfo( lua_State *L ) const;
-
-  int LuaTileIsCrossable( lua_State *L ) const;
 
   int LuaSetTile( lua_State *L );
 
@@ -148,7 +144,7 @@ class State {
   bool LoadFromFile( const std::string &filePath, lua_State *L );
 
   /** Camera that controls what is viewed in the State. */
-  Camera m_camera;
+  boost::scoped_ptr<Camera> m_camera;
 
   /** Manages all fonts loaded in this State. */
   boost::scoped_ptr<FontManager> m_fontManager;

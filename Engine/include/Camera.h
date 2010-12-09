@@ -18,6 +18,9 @@ namespace nt {
  */
 class Camera {
  public:
+  /**
+   * Camera is initialized to view the entire map.
+   */
   Camera( const IntRect &mapRect, int tileSize );
 
   /** Resets the window view. */

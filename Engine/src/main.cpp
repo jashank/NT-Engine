@@ -39,7 +39,7 @@ int main( int argc, char *argv[] ) {
       Config::GetScreenWidth(),
       Config::GetScreenHeight()
     );
-    StateMachine mach;
+    nt::StateMachine mach;
     mach.Setup( levelPath );
 
     const float dt = 1.0 / Config::GetFPS();

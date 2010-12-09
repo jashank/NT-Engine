@@ -9,6 +9,8 @@
 #include "ResourceLib.h"
 #include "Utilities.h"
 
+namespace nt {
+
 /************************************************
 Public Methods
 ************************************************/
@@ -206,5 +208,7 @@ void AnimSprite::Render( sf::RenderTarget &target ) const {
     glEnd();
   }
 }
+
+} // namespace nt
 
 

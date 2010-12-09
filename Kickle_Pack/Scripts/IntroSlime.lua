@@ -23,7 +23,7 @@ function IntroSlime:AI( slime )
       Util.SetAndPlay( slime, Util.DOWN )
       self.sitting = true
     else
-      slime:Move()
+      local test = slime:Move()
     end
   end
 end

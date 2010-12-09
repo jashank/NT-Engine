@@ -5,7 +5,8 @@
 
 #include <boost/scoped_ptr.hpp>
 
-class State;
+#include "State.h"
+
 class lua_State;
 class luaL_Reg;
 
@@ -76,11 +77,7 @@ class StateMachine {
 
   static int LuaGetObjectsOnTile( lua_State *L );
 
-  static int LuaObjectBlockingTile( lua_State *L );
-
   static int LuaGetTileInfo( lua_State *L );
-
-  static int LuaTileIsCrossable( lua_State *L );
 
   static int LuaSetTile( lua_State *L );
 

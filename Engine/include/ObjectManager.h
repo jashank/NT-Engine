@@ -12,7 +12,10 @@
 #include "Object.h"
 #include "RangeMatrix3D.h"
 
-class Camera;
+namespace nt {
+  class Camera;
+}
+
 class lua_State;
 class TiXmlElement;
 
@@ -66,12 +69,6 @@ class ObjectManager {
    */
   void Render( float alpha, const Camera &cam );
 
-  /**
-   * @return Whether there is an Object on tile coordinate passed that is
-   * blocking the tile.
-   */
-  bool ObjectBlockingTile( int x, int y ) const;
-
   //@{
   /**
    * Lua-related functions. See State API documentation for details. Note that
@@ -93,8 +90,6 @@ class ObjectManager {
   int LuaGetObjectOnTile( lua_State *L ) const ;
 
   int LuaGetObjectsOnTile( lua_State *L ) const ;
-
-  int LuaObjectBlockingTile( lua_State *L ) const ;
   //@}
 
  private:
