@@ -213,7 +213,7 @@ void Object::UpdateAI( float dt ) {
 
 void Object::Draw( float alpha ) {
   window::Draw( m_sprite, alpha );
-  // nt::window::Draw( m_text );
+  window::Draw( m_text, alpha );
 }
 
 /********************
@@ -467,7 +467,8 @@ int Object::LuaSetText( lua_State *L ) {
 
 
 int Object::LuaClearText( lua_State *L ) {
-  m_text.SetText( "" );
+  m_text.BufferText( "" );
+  m_text.StartPrint();
   return 0;
 }  
 

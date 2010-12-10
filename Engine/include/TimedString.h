@@ -3,19 +3,23 @@
 
 #include <string>
 
-#include <SFML/Graphics/String.hpp>
+#include <boost/shared_ptr.hpp>
+
+#include <SFML/Graphics/Font.hpp>
 #include <SFML/System/Clock.hpp>
+
+#include "Lerpable.h"
 
 namespace nt {
 
 /**
- * Provides same functionality as sf::String, but allows for timed on-screen
- * output of characters stored.
+ * Provides similar functionality to sf::String using a lot of code from
+ * SFML (particularly Render), but allows for timed on-screen output of 
+ * characters stored.
  */
-class TimedString : public sf::String {
+class TimedString : public Lerpable {
  public:
   TimedString();
-  ~TimedString() {}
 
   /**
    * Stores text in buffer for future output.
@@ -41,10 +45,22 @@ class TimedString : public sf::String {
    */
   void UpdatePrint();
 
- private:
   /**
-   * Time between output of characters.
+   * Sets size of string, default is 30 pt.
    */
+  void SetSize( float size );
+
+ private:
+  /** Overrides Lerpable's Render. */
+  void Render( sf::RenderTarget &target ) const;
+
+  /** Font that string is displayed in. */
+  boost::shared_ptr<const sf::Font> m_font;
+
+  /** Size of text, default 30 pt. */
+  float m_size;
+
+  /** Time between output of characters. */
   float m_printTime;
 
   /**
@@ -52,10 +68,11 @@ class TimedString : public sf::String {
    */
   sf::Clock m_timer;
 
-  /** 
-   * Buffer for characters before they are set to sf::String for rendering.
-   */
-  std::string m_buffer; 
+  /** Text stored that isn't ready to be output. */
+  std::string m_buffer;
+
+  /** Text to output to screen. */
+  std::string m_output;
 };
 
 } // namespace nt
