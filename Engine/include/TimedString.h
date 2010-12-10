@@ -46,6 +46,12 @@ class TimedString : public Lerpable {
   void UpdatePrint();
 
   /**
+   * Given a user-defined name of a font or the path to the font, sets
+   * the font for this string.
+   */
+  void SetFont( const std::string &fontName );
+
+  /**
    * Sets size of string, default is 30 pt.
    */
   void SetSize( float size );

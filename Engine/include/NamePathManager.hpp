@@ -12,11 +12,8 @@ template<class T>
 NamePathManager<T>::NamePathManager( const std::string &subElem )
   :m_subElem( subElem ) {}
 
-template<class T>
-NamePathManager<T>::~NamePathManager() {}
-
 /*********************
- * Protected Methods
+ * Public Methods
  ********************/
 template<class T>
 void NamePathManager<T>::LoadData( const TiXmlElement *root ) {
@@ -43,6 +40,12 @@ void NamePathManager<T>::LoadData( const TiXmlElement *root ) {
       }
     } while ( (subElem = subElem->NextSiblingElement( m_subElem.c_str() )) );
   }
+}
+
+
+template<class T>
+void NamePathManager<T>::Clear() {
+  m_map.clear();
 }
 
 

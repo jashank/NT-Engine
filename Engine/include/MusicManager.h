@@ -14,7 +14,7 @@ namespace nt {
  * Manages music in the state providing interface to perform various
  * actions on the music playing/to be played.
  */
-class MusicManager : public NamePathManager<sf::Music> {
+class MusicManager {
  public:
   /**
    * Loads data from <music> element of State file.
@@ -72,6 +72,9 @@ class MusicManager : public NamePathManager<sf::Music> {
    * Assumes music passed is not NULL.
    */
   void StopAndSet( sf::Music *music );
+
+  /** Holds all music loaded in. */
+  NamePathManager<sf::Music> m_music;
 
   /** If true, won't stop the music when manager is destroyed. */
   bool m_keepMusicPlaying;

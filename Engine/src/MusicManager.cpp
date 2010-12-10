@@ -13,10 +13,10 @@ namespace nt {
  * Constructor
  ****************************/ 
 MusicManager::MusicManager( const TiXmlElement *root )
-  :NamePathManager<sf::Music>( "song" ), 
+  :m_music( "song" ),
    m_keepMusicPlaying( false ), 
    m_currentMusic( NULL ) {
-  LoadData( root );
+  m_music.LoadData( root );
 }
 
 MusicManager::~MusicManager() {
@@ -153,7 +153,7 @@ int MusicManager::LuaKeepMusicPlaying( lua_State *L ) {
  * Private Methods
  *********************/
 sf::Music *MusicManager::GetMusic( const std::string &nameOrPath ) const {
-  return GetVal( nameOrPath ).get();
+  return m_music.GetVal( nameOrPath ).get();
 }
 
 

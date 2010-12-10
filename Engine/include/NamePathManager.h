@@ -16,8 +16,7 @@ namespace nt {
  * Holds map of NamePath/shared_ptr<T> pairs which can be loaded in from a 
  * State file. Each value in the map can be accessed via its name or path
  * to it. 
- * This is an abstract class, and T is assumed to be a resource (compiler
- * will complain if not).
+ * T is assumed to be a resource (compiler will complain if not).
  */
 template<class T>
 class NamePathManager {
@@ -27,10 +26,6 @@ class NamePathManager {
    * of state file. e.g. <song> is the sub-element in <music>.
    */
   NamePathManager( const std::string &subElem );
-  virtual ~NamePathManager() = 0;
-
- protected:
-  typedef std::map<const NamePath, boost::shared_ptr<T> > map_type;
 
   /**
    * Loads values in from root element of State XML file and searches root
@@ -39,10 +34,17 @@ class NamePathManager {
    */
   void LoadData( const TiXmlElement *root );
 
+  /**
+   * Clears out all resources and their associated NamePaths.
+   */
+  void Clear();
+
   /** Returns value matching name or path passed. */
   boost::shared_ptr<T> GetVal( const std::string &nameOrPath ) const;
 
  private:
+  typedef std::map<const NamePath, boost::shared_ptr<T> > map_type;
+
   map_type m_map;
 
   /** Sub element to search for in root element in LoadData. */

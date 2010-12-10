@@ -478,14 +478,9 @@ int Object::LuaSetTextFont( lua_State *L ) {
     LogLuaErr( "String not passed to SetTextFont for Object: " + m_type );
     return 0;
   }
-  /* 
-   * TODO MOVE RESPONSIBLITY TO TEXT
-  sf::Font *font =  nt::rsrc::LoadFont( lua_tostring( L, -1 ));
+  std::string font = lua_tostring( L, -1 );
+  m_text.SetFont( font );
 
-  if ( font ) {
-    m_text.SetFont( *font );
-  } 
-  */
   return 0;
 }
 

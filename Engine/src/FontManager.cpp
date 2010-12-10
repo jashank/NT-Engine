@@ -2,12 +2,21 @@
 
 namespace nt {
 
+/********************
+ * Static Members
+ *******************/
+NamePathManager<sf::Font> FontManager::m_fonts( "font" );
+
 /*************************
  * Constructor
  ************************/
-FontManager::FontManager( const TiXmlElement *root )
-  :NamePathManager<sf::Font>( "font" ) {
-  LoadData( root );
+FontManager::FontManager( const TiXmlElement *root ) {
+  m_fonts.LoadData( root );
+}
+
+
+FontManager::~FontManager() {
+  m_fonts.Clear();
 }
 
 /***********************
@@ -15,8 +24,8 @@ FontManager::FontManager( const TiXmlElement *root )
  **********************/
 boost::shared_ptr<sf::Font> FontManager::GetFont( 
   const std::string &nameOrPath 
-) const {
-  return GetVal( nameOrPath );
+) {
+  return m_fonts.GetVal( nameOrPath );
 }
 
 } // namespace nt

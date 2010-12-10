@@ -3,6 +3,8 @@
 #include <SFML/Graphics/Rect.hpp>
 #include <SFML/Window.hpp>
 
+#include "FontManager.h"
+
 namespace nt {
 
 /******************
@@ -41,6 +43,11 @@ void TimedString::UpdatePrint() {
     m_buffer.erase( 0, 1 );
     m_timer.Reset();
   }
+}
+
+
+void TimedString::SetFont( const std::string &fontName ) {
+  m_font = FontManager::GetFont( fontName );
 }
 
 
