@@ -11,12 +11,8 @@ NamePathManager<sf::Font> FontManager::m_fonts( "font" );
  * Constructor
  ************************/
 FontManager::FontManager( const TiXmlElement *root ) {
-  m_fonts.LoadData( root );
-}
-
-
-FontManager::~FontManager() {
   m_fonts.Clear();
+  m_fonts.LoadData( root );
 }
 
 /***********************

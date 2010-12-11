@@ -21,7 +21,6 @@ class FontManager {
    * Gets data from <font> element of State file.
    */
   FontManager( const TiXmlElement *root );
-  ~FontManager();
 
   /**
    * Retrieves font from the FontManager.
