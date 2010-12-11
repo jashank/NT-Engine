@@ -9,7 +9,6 @@ function TitleKickle:Init( kickle )
   Music.Play( "MenuTheme" )
 end
 
-
 -- temporary!!
 function TitleKickle:Play( kickle )
   State.LoadPath( "Kickle_Pack/States/GardenLand_A.xml" )

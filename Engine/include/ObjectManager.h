@@ -1,7 +1,6 @@
 #ifndef OBJECTMANAGER_H
 #define OBJECTMANAGER_H
 
-#include <map>
 #include <set>
 #include <string>
 #include <vector>

@@ -1,6 +1,7 @@
 #ifndef SOUNDMANAGER_H
 #define SOUNDMANAGER_H
 
+#include <list>
 #include <string>
 
 #include <SFML/Audio/Sound.hpp>
@@ -34,8 +35,8 @@ class SoundManager {
   /** Holds all sound buffers loaded in. */
   NamePathManager<sf::SoundBuffer> m_soundBuffers;
 
-  /** Sound currently playing. */
-  sf::Sound m_sound; 
+  /** Sounds currently playing. */
+  std::list<sf::Sound> m_sounds;
 };
 
 }

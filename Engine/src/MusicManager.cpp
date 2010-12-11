@@ -4,7 +4,6 @@ extern "C" {
   #include "lua.h"
 }
 
-#include "NamePath.h"
 #include "Utilities.h"
 
 namespace nt {

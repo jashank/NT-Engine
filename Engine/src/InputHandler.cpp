@@ -99,7 +99,7 @@ void InputHandler::ScanMouse(
     if ( msItr != m_mouseRegistry.end() ) {
       std::string funcName = msItr->second;
       func( funcName );
-    } 
+    }
   }
 }
 

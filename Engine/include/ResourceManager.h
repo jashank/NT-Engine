@@ -2,22 +2,12 @@
 #define RESOURCEMANAGER_H
 
 #include <algorithm>
-#include <map>
 #include <string>
 
 #include <boost/shared_ptr.hpp>
+#include <boost/unordered_map.hpp>
 
 namespace nt {
-
-/**
- * String comparison functor used for std::map.
- */
-struct strCmp {
-  bool operator()( const std::string &s1, const std::string &s2 ) const {
-    return s1.compare( s2 ) < 0;
-  }
-};
-
 
 /**
  * Loads data into resources stored in ResourceManager. Template parameter is
@@ -66,7 +56,7 @@ public:
 
 private:
   typedef boost::shared_ptr<Resource> shared_rsrc;
-  typedef std::map<const std::string, shared_rsrc, strCmp> map_type;
+  typedef boost::unordered_map<const std::string, shared_rsrc> map_type;
   
   //@{
   /**

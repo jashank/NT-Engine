@@ -24,16 +24,18 @@ void NamePathManager<T>::LoadData( const TiXmlElement *root ) {
       const char *path = subElem->Attribute( "path" );
 
       if ( path ) {
-        NamePath key;
-        key.path = path;
-        if ( name ) {
-          key.name = name;
-        }
-        m_map.insert(
-          typename map_type::value_type( 
-            key, rsrc::LoadResource<T>( key.path )
+        m_pathMap.insert(
+          typename pathMap_type::value_type(
+            path, rsrc::LoadResource<T>( path )
           )
         );
+        if ( name ) {
+          m_nameMap.insert(
+            typename nameMap_type::value_type(
+              name, path
+            )
+          );
+        }
       } else {
         LogErr( "Path not specified for element in State file." );
         break;
@@ -45,7 +47,8 @@ void NamePathManager<T>::LoadData( const TiXmlElement *root ) {
 
 template<class T>
 void NamePathManager<T>::Clear() {
-  m_map.clear();
+  m_nameMap.clear();
+  m_pathMap.clear();
 }
 
 
@@ -53,10 +56,26 @@ template<class T>
 boost::shared_ptr<T> NamePathManager<T>::GetVal( 
   const std::string &nameOrPath 
 ) const {
-  const NamePath key( nameOrPath, nameOrPath );
+  typename nameMap_type::const_iterator itr = m_nameMap.find( nameOrPath );
 
-  typename map_type::const_iterator itr = m_map.find( key );
-  if ( itr != m_map.end() ) {
+  if ( itr != m_nameMap.end() ) {
+    return GetPathVal( itr->second );
+  } else {
+    return GetPathVal( nameOrPath );
+  }
+}
+
+
+/*********************
+ Private Methods
+ ********************/
+template<class T>
+boost::shared_ptr<T> NamePathManager<T>::GetPathVal( 
+  const std::string &path 
+) const {
+  typename pathMap_type::const_iterator itr = m_pathMap.find( path );
+
+  if ( itr != m_pathMap.end() ) {
     return itr->second;
   }
   return boost::shared_ptr<T>();

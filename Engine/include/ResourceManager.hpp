@@ -61,7 +61,9 @@ const boost::shared_ptr<Resource>
 
   if ( m_loader.Load( filePath, rsrc )) {
     std::pair<typename map_type::iterator, bool> ret;
-    ret = m_resources.insert( std::make_pair( filePath, rsrc ));
+    ret = m_resources.insert( 
+      typename map_type::value_type( filePath, rsrc )
+    );
     return ret.first->second;
   }
 
