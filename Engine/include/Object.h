@@ -24,6 +24,7 @@ namespace boost {
 #include "InputHandler.h"
 #include "Lunar.h"
 #include "Rect.h"
+#include "SoundManager.h"
 #include "TimedString.h"
 
 class lua_State;
@@ -200,6 +201,8 @@ class Object {
 
   int LuaAdjustSpeed( lua_State *L );
 
+  int LuaPlaySound( lua_State *L );
+
   int LuaPrint( lua_State *L );
 
   int LuaSetText( lua_State *L );
@@ -305,35 +308,26 @@ class Object {
    */
   int m_renderPriority;
 
-  /**
-   * If true, keep moving in m_direction.
-   */
+  /** If true, keep moving in m_direction. */
   bool m_moving; 
 
-  /**
-   * Pointer to CallScriptFunc method.
-   */
+  /** Pointer to CallScriptFunc method. */
   const boost::function1<void, std::string&> m_ptrCallScriptFunc;
 
-  /**
-   * Direction Object is currently facing.
-   */
+  /** Direction Object is currently facing. */
   Dir m_direction; 
 
-  /**
-   * Distance traveled (in pixels) from last point of alignment on grid.
-   */
+  /** Distance traveled (in pixels) from last point of alignment on grid. */
   float m_distance; 
 
-  /**
-   * Speed in pixels per second.
-   */
+  /** Speed in pixels per second. */
   float m_speed; 
 
-  /**
-   * Handles input for Object.
-   */
+  /** Handles input for Object. */
   InputHandler m_input;
+
+  /** Holds sounds that Object can play. */
+  SoundManager m_sounds;
 
   /**
    * Unique key into Lua registry index that holds reference to Object's table 

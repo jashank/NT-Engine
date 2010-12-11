@@ -1,0 +1,44 @@
+#ifndef SOUNDMANAGER_H
+#define SOUNDMANAGER_H
+
+#include <string>
+
+#include <SFML/Audio/Sound.hpp>
+#include <SFML/Audio/SoundBuffer.hpp>
+
+#include "NamePathManager.h"
+
+class TiXmlElement;
+
+namespace nt {
+
+/**
+ * Keeps track of sounds loaded in and names given to them. Allows sound
+ * to be played based on their name or path.
+ */
+class SoundManager {
+ public:
+  SoundManager();
+
+  /**
+   * Loads data from <sound_effects> element of Object file.
+   */
+  void LoadData( const TiXmlElement *root );
+
+  /**
+   * Plays sound associated with name or path passed.
+   */
+  void Play( const std::string &nameOrPath );
+
+ private:
+  /** Holds all sound buffers loaded in. */
+  NamePathManager<sf::SoundBuffer> m_soundBuffers;
+
+  /** Sound currently playing. */
+  sf::Sound m_sound; 
+};
+
+}
+
+#endif // SOUNDMANAGER_H
+

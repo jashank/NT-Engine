@@ -48,6 +48,7 @@ Lunar<Object>::RegType Object::methods[] = {
   { "GetSpeed", &Object::LuaGetSpeed },
   { "SetSpeed", &Object::LuaSetSpeed },
   { "AdjustSpeed", &Object::LuaAdjustSpeed },
+  { "PlaySound", &Object::LuaPlaySound },
   { "Print", &Object::LuaPrint },
   { "ClearText", &Object::LuaClearText },
   { "SetText", &Object::LuaSetText },
@@ -449,6 +450,17 @@ int Object::LuaAdjustSpeed( lua_State *L ) {
 }
 
 
+int Object::LuaPlaySound( lua_State *L ) {
+  if ( !lua_isstring( L, -1 )) {
+    LogLuaErr( "String not passed to PlaySound for Object: " + m_type );
+    return 0;
+  }
+
+  m_sounds.Play( lua_tostring( L, -1 ));
+  return 0;
+}
+
+
 int Object::LuaPrint( lua_State *L ) {
   m_text.StartPrint();  
   return 0;
@@ -629,7 +641,11 @@ bool Object::LoadObjectData( const std::string &filepath ) {
     render->QueryIntAttribute( "priority", &m_renderPriority );
   }
 
-  //Load input data if there is any
+  TiXmlElement *sound = root->FirstChildElement( "sound_effects" );
+  if ( sound ) {
+    m_sounds.LoadData( sound );
+  }
+
   const TiXmlElement *inputListRoot = root->FirstChildElement( "input_list" );
   if ( inputListRoot ) {
     if ( !m_input.LoadInputList( inputListRoot )) {
