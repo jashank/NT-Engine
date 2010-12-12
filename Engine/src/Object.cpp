@@ -69,7 +69,7 @@ Object::Object( lua_State *L )
    m_renderPriority( 0 ),
    m_moving( false ),
    m_ptrCallScriptFunc( boost::bind( &Object::CallScriptFunc, this, _1 )),
-   m_direction( UP ),
+   m_dir( dir::North ),
    m_distance( 0.0f ),
    m_speed( 0.0f ),
    m_id( LUA_NOREF ),
@@ -131,7 +131,7 @@ Object::Object(
    m_renderPriority( 0 ),
    m_moving( false ),
    m_ptrCallScriptFunc( boost::bind( &Object::CallScriptFunc, this, _1 )),
-   m_direction( UP ),
+   m_dir( dir::North ),
    m_distance( 0.0f ),
    m_speed( 0.0f ),
    m_id( LUA_NOREF ),
@@ -767,30 +767,6 @@ void Object::CallScriptFunc( std::string funcName ) {
       lua_call( m_L, 2, 0 );
     }
     lua_settop( m_L, 0 );
-  }
-}
-
-
-Object::Dir Object::GetOppositeDir( Dir dir ) {
-  switch ( dir ) {
-    case UP: {
-      return DOWN;
-      break;
-    }
-    case DOWN: {
-      return UP;
-      break;
-    }
-    case LEFT: {
-      return RIGHT;
-      break;
-    }
-    case RIGHT: {
-      return LEFT;
-    }
-    default: {
-      return UP;
-    }
   }
 }
 

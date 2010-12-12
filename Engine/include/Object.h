@@ -21,6 +21,7 @@ namespace boost {
 #include <SFML/System/Clock.hpp>
 
 #include "AnimSprite.h"
+#include "Direction.h"
 #include "InputHandler.h"
 #include "Lunar.h"
 #include "Rect.h"
@@ -74,11 +75,6 @@ class Object {
   static void SetTileSize( int tileSize );
 
  private:
-  /**
-   * Objects can only travel in 2 dimensions.
-   */
-  enum Dir { UP, DOWN, LEFT, RIGHT };
-
   friend class ObjectAttorney;
 
   // Required to create intrusive pointers for Objects
@@ -273,11 +269,6 @@ class Object {
    */
   void CallScriptFunc( std::string funcName );
 
-  /**
-   * @return Opposite direction Object is traveling.
-   */
-  Dir GetOppositeDir( Dir dir );
-
   /***********************
    Private Data Members
   ***********************/
@@ -315,7 +306,7 @@ class Object {
   const boost::function1<void, std::string&> m_ptrCallScriptFunc;
 
   /** Direction Object is currently facing. */
-  Dir m_direction; 
+  dir::Direction m_dir; 
 
   /** Distance traveled (in pixels) from last point of alignment on grid. */
   float m_distance; 
