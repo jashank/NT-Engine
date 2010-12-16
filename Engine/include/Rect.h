@@ -1,14 +1,14 @@
 #ifndef RECT_H
 #define RECT_H
 
-#include "Vector.h"
+#include "Point.h"
 
 namespace nt {
 
 /**
  * Rectangle with (x,y) coordinates for top left and bottom right members.
  */ 
-template< typename T >
+template<typename T>
 struct Rect {
   Rect() {}
   /**
@@ -18,14 +18,14 @@ struct Rect {
    * @param bottom bottommost y-coordinate.
    */
   Rect( T left, T top, T right, T bottom ) 
-        : topLeft( left, top ), bottomRight( right, bottom ) {}
+        : topLeft( left, top, 0 ), bottomRight( right, bottom, 0 ) {}
 
   /**
-   * @param topLeft 2D Vector with coordinates for top left of rectangle.
-   * @param bottomRight 2D Vector with coordinates for bottom right of rectangle.
+   * @param topLeft Point with coordinates for top left of rectangle.
+   * @param bottomRight Point with coordinates for bottom right of rectangle.
    */
-  Rect( Vector<T> topLeftCorner, Vector<T> bottomRightCorner )
-        : topLeft( topLeftCorner ), bottomRight( bottomRightCorner ) {}
+  Rect( const Point<T> &topLeft, const Point<T> &bottomRight )
+        : topLeft( topLeft ), bottomRight( bottomRight ) {}
 
   ~Rect() {}
   
@@ -42,14 +42,6 @@ struct Rect {
   T GetHeight() const {
     return ( bottomRight.y - topLeft.y );
   }
-
-  /**
-   * @return Vector with (width,height) of rect.
-   */
-  Vector<T> GetSize() const {
-    return Vector<T>( GetWidth(), GetHeight() );
-  }
-
   /**
    * @return Area in pixels of the rectangle (width*height).
    */
@@ -58,12 +50,12 @@ struct Rect {
   } 
 
   /**
-   * @return Vector containing coordinates (x,y,z) of center of rectangle.
+   * @return Point containing coordinates of center of rectangle.
    */
-  Vector<T> GetCenter() const {
+  Point<T> GetCenter() const {
     T centerX = ( topLeft.x + bottomRight.x ) / 2;
     T centerY = ( topLeft.y + bottomRight.y ) / 2;
-    return Vector<T>( centerX, centerY );
+    return Point<T>( centerX, centerY, 0 );
   }
 
   /**
@@ -130,7 +122,7 @@ struct Rect {
   }
 
   /**
-   * Scales this Rect to new size. For example, passing a Vector of (3,5) will
+   * Scales this Rect to new size. For example, passing (3,5) will
    * make the Rect have a width of 3 and height of 5. Position of Rect doesn't
    * change.
    * @param x amount to scale width wise.
@@ -142,8 +134,8 @@ struct Rect {
   }
 
   /**
-   * Return true if topLeft and bottomRight are equal to other 
-   * Rect's members.
+   * Returns true if Rects are at the same position and have the
+   * same dimensions.
    */
   bool operator==( const Rect<T> &other ) const {
     return ( topLeft == other.topLeft && bottomRight == other.bottomRight );
@@ -157,8 +149,8 @@ struct Rect {
     return !( *this == other );
   }
 
-  Vector<T> topLeft;
-  Vector<T> bottomRight;
+  Point<T> topLeft;
+  Point<T> bottomRight;
 };
 
 //@{

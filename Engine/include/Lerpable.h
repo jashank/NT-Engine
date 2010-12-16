@@ -3,7 +3,7 @@
 
 #include <SFML/Graphics/Drawable.hpp>
 
-#include "Vector.h"
+#include "Point.h"
 
 namespace sf {
   class RenderTarget;
@@ -58,10 +58,10 @@ class Lerpable : public sf::Drawable {
    * Holds actual logical position while object's position is lerped for
    * rendering.
    */
-  FloatVec m_logicPos;
+  FloatPoint m_logicPos;
 
   /** Last (x,y) position drawable thing was in. */
-  FloatVec m_lastPos;
+  FloatPoint m_lastPos;
 };
 
 } // namespace nt

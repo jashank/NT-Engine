@@ -2,7 +2,6 @@
 #define CAMERA_H
 
 #include "Rect.h"
-#include "Vector.h"
 
 class lua_State;
 
@@ -101,10 +100,10 @@ class Camera {
   IntRect m_view;
 
   /** Holds offset values in pixels when user moves camera. */
-  IntVec m_offset;
+  IntPoint m_offset;
 
   /** Distance camera has traveled horizontally and vertically in pixels. */
-  FloatVec m_distance;
+  FloatPoint m_distance;
 };
 
 } // namespace nt

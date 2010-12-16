@@ -4,8 +4,6 @@
 #include <SFML/Graphics/Rect.hpp>
 #include <SFML/Window.hpp>
 
-#include "AnimData.h"
-#include "Rect.h"
 #include "ResourceLib.h"
 #include "Utilities.h"
 

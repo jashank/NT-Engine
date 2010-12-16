@@ -7,7 +7,6 @@
 #include <SFML/Graphics/Image.hpp>
 
 #include "Rect.h"
-#include "Vector.h"
 
 class TiXmlElement;
 
@@ -52,7 +51,7 @@ public:
    * @return (x,y) pixel coordinates of where the animation is located on the 
    * sheet it was drawn on. (0,0) if index is invalid.
    */
-  IntVec GetAnimPosition( int animIndex ) const;
+  IntPoint GetAnimPosition( int animIndex ) const;
 
   //@{
   /**

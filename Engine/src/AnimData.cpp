@@ -3,11 +3,9 @@
 #include <sstream>
 #include <stdexcept>
 
-#include "Rect.h"
 #include "ResourceLib.h"
 #include "tinyxml.h"
 #include "Utilities.h"
-#include "Vector.h"
 
 namespace nt {
 
@@ -72,16 +70,17 @@ float AnimData::GetFrameTime( int animIndex, int frameIndex ) const {
 }
 
 
-IntVec AnimData::GetAnimPosition( int animIndex ) const {
+IntPoint AnimData::GetAnimPosition( int animIndex ) const {
   if ( animIndex >= 0 && (unsigned int) animIndex < m_anims.size() ) {
-    return IntVec( 
+    return IntPoint( 
              m_anims[animIndex].frameRect.topLeft.x,
-             m_anims[animIndex].frameRect.topLeft.y
+             m_anims[animIndex].frameRect.topLeft.y,
+             0
            );
   } else {
-    return IntVec( 0, 0 );
+    return IntPoint( 0, 0, 0 );
   }
-} 
+}
 
 
 int AnimData::GetFrameWidth( int animIndex ) const {
