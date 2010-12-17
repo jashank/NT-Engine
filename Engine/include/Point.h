@@ -64,6 +64,37 @@ class Point {
   }
 
   /**
+   * Divide/assign coordinates of rhs by this Point.
+   * Checks for divide by 0, if one is to occur then the division for that
+   * coordinate is not performed (but the others still are).
+   */
+  Point<T> &operator/=( const Point<T> &rhs ) {
+    if ( this != &rhs ) {
+      if ( rhs.x != 0 ) x /= rhs.x;
+      if ( rhs.y != 0 ) y /= rhs.y;
+      if ( rhs.z != 0 ) z /= rhs.z;
+    }
+    return *this;
+  }
+
+  // Return new Points.
+  const Point<T> operator+( const Point<T> &rhs ) const {
+    return Point<T>(*this) += rhs;
+  }
+
+  const Point<T> operator-( const Point<T> &rhs ) const {
+    return Point<T>(*this) -= rhs;
+  }
+
+  const Point<T> operator*( const Point<T> &rhs ) const {
+    return Point<T>(*this) *= rhs;
+  }
+
+  const Point<T> operator/( const Point<T> &rhs ) const {
+    return Point<T>(*this) /= rhs;
+  }
+
+  /**
    * Returns true if all coordinates are equal. Not meant for floating point.
    */
   bool operator==( const Point<T> &rhs ) const {
@@ -78,19 +109,6 @@ class Point {
     return !( *this == rhs );
   }
 
-  /**
-   * Adds 
-  void operator+( const Point<T> &rhs ) const {
-
-  }
-
-  /**
-   * Multiples all coordinates by value passed.
-   */
-  Point<T> operator*( T rhs ) {
-    return Point<T>( x * rhs.x, y * rhs.y, z * rhs.z );
-  }
-
   T x;
   T y;
   T z;
@@ -102,3 +120,4 @@ typedef Point<float> FloatPoint;
 } // namespace nt
 
 #endif // POINT_H
+
