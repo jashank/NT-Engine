@@ -202,7 +202,21 @@ void Object::UpdateAI( float dt ) {
   m_text.UpdatePrint();
 
   if ( m_moving ) {
-    MovementUpdate( dt );
+    float distThisFrame = m_velVec.magnitude * dt;
+    m_distance -= distThisFrame;
+    if ( m_distance <= 0.0 ) {
+      m_moving = false;
+      distThisFrame += m_distance;
+    }
+
+    if ( dir::IsCardinal( m_velVec.direction )) {
+      MoveCardinally( distThisFrame );
+    } else {
+      MoveNonCardinally( distThisFrame );
+    }
+
+    m_lastTileRange = m_tileRange;
+    AdjustTileRange();
   } else {
     CallScriptFunc( "AI" );
   }
@@ -390,7 +404,7 @@ int Object::LuaSetDir( lua_State *L ) {
   if ( !m_moving ) {
     m_velVec.direction = dir;
   } else {
-    if ( dir == GetOppositeDir( m_velVec.direction )) {
+    if ( dir == dir::GetOpposite( m_velVec.direction )) {
 
       if ( dir::IsCardinal( dir )) {
         m_distance = m_tileSize - m_distance;
@@ -672,84 +686,65 @@ void Object::InitLua() {
 }
 
 
-void Object::MovementUpdate( float dt ) {
-  float distThisFrame = m_velVec.magnitude * dt;
-  m_distance -= distThisFrame;
+void Object::MoveCardinally( float distance ) {
+  float offsetX = 0.0;
+  float offsetY = 0.0;
 
-  switch( m_direction ) {
-    case UP: {
-      m_sprite.Move( 0.0f, -distThisFrame );
-      m_collisionRect.Offset( 0.0f, -distThisFrame );
+  switch ( m_velVec.direction ) {
+    case dir::North: {
+      offsetY = -distance;
       break;
     }
-    case DOWN: {
-      m_sprite.Move( 0.0f, distThisFrame );
-      m_collisionRect.Offset( 0.0f, distThisFrame );
+    case dir::South: {
+      offsetY = distance;
       break;
     }
-    case LEFT: {
-      m_sprite.Move( -distThisFrame, 0.0f );
-      m_collisionRect.Offset( -distThisFrame, 0.0f );
+    case dir::East: {
+      offsetX = distance;
       break;
     }
-    case RIGHT: {
-      m_sprite.Move( distThisFrame, 0.0f );
-      m_collisionRect.Offset( distThisFrame, 0.0f );
+    case dir::West: {
+      offsetX = -distance;
       break;
     }
     default: {}
   }
 
-  if( m_distance >= m_tileSize ) {
-    m_moving = false;
-    Realign();
-    m_distance = 0.0f;
-  }
-
-  m_lastTileRange = m_tileRange;
-  AdjustTileRange();
+  m_sprite.Move( offsetX, offsetY );
+  m_collisionRect.Offset( offsetX, offsetY );
 }
 
 
-void Object::Realign() {
-  float diff = 0.0f;
-  //Calculate the amount of distance to move back
-  diff = m_distance - m_tileSize;
+void Object::MoveNonCardinally( float distance ) {
+  float offsetX = 0.0;
+  float offsetY = 0.0;
 
-  if ( diff > 0.f ) {
-    //Find the correct direction to move back
-    switch( m_direction ) {
-      case UP: {
-        m_sprite.Move( 0.0f, diff );
-        m_collisionRect.Offset( 0.0f, diff );
-        break;
-      }
-      case DOWN: {
-        m_sprite.Move( 0.0f, -diff );
-        m_collisionRect.Offset( 0.0f, -diff );
-        break;
-      }
-      case LEFT: {
-        m_sprite.Move( diff, 0.0f );
-        m_collisionRect.Offset( diff, 0.0f );
-        break;
-      }
-      case RIGHT: {
-        m_sprite.Move( -diff, 0.0f );
-        m_collisionRect.Offset( -diff, 0.0f );
-        break;
-      }
-      default: {}
+  float compDist = sqrt(( distance * distance ) / 2.0);
+
+  switch ( m_velVec.direction ) {
+    case dir::Northeast: {
+      offsetX = compDist;
+      offsetY = -compDist;
+      break;
     }
+    case dir::Southeast: {
+      offsetX = offsetY = compDist;
+      break;
+    }
+    case dir::Southwest: {
+      offsetX = -compDist;
+      offsetY = compDist;
+      break;
+    }
+    case dir::Northwest: {
+      offsetX = offsetY = -compDist;
+      break;
+    }
+    default: {}
   }
 
-  float posX = m_sprite.GetPosition().x;
-  float posY = m_sprite.GetPosition().y;
-  m_sprite.SetPosition( round( posX ), round( posY ) );
-  m_collisionRect.topLeft.x = round( m_collisionRect.topLeft.x );
-  m_collisionRect.topLeft.y = round( m_collisionRect.topLeft.y );
-  m_collisionRect.bottomRight.x = round( m_collisionRect.bottomRight.x );
-  m_collisionRect.bottomRight.y = round( m_collisionRect.bottomRight.y );
+  m_sprite.Move( offsetX, offsetY );
+  m_collisionRect.Offset( offsetX, offsetY );
 }
 
 

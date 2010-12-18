@@ -14,7 +14,7 @@ namespace nt {
  * the resource type, which will be the same as the resource type of the 
  * ResourceManager.
  */
-template<typename Resource>
+template<typename T>
 struct ResourceLoader {
   /**
    * Loads data from filePath into resource passed. Returns true if operation
@@ -22,12 +22,12 @@ struct ResourceLoader {
    */
   bool Load(
     const std::string& filePath, 
-    boost::shared_ptr<Resource> &rsrc 
+    boost::shared_ptr<T> &rsrc 
   );
 };
 
 
-template<typename Resource, typename Loader = ResourceLoader< Resource > > 
+template<typename T, typename Loader = ResourceLoader<T> >
 class ResourceManager {
 public:
   ResourceManager() {}
@@ -46,7 +46,7 @@ public:
    * @param filePath path to file to load resource from.
    * @return Resource loaded in. If resource was already loaded, returns it.
    */
-  const boost::shared_ptr<Resource> &Load( const std::string &filePath );
+  const boost::shared_ptr<T> &Load( const std::string &filePath );
 
   /**
    * Releases unused resources, meaning resources that aren't being held by
@@ -55,7 +55,7 @@ public:
   void ReleaseUnused();
 
 private:
-  typedef boost::shared_ptr<Resource> shared_rsrc;
+  typedef boost::shared_ptr<T> shared_rsrc;
   typedef boost::unordered_map<const std::string, shared_rsrc> map_type;
   
   //@{

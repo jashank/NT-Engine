@@ -244,21 +244,20 @@ class Object {
   void InitLua();
 
   /**
-   * Updates movement of Object given its direction, speed, etc. Assumes that
-   * Object is currently moving.
-   * @param dt delta time - amount of time to step forward.
+   * Moves Object on screen by distance in direction Object
+   * is facing. Assumes that direction is a cardinal direction.
    */
-  void MovementUpdate( float dt );
+  void MoveCardinally( float distance );
 
   /**
-   * Realigns object if it has traveled past the center of the next tile it
-   * is traveling to. 
+   * Moves Object on screen by distance in direction Object
+   * is facing. Assumes that direction is not a cardinal direction.
    */
-  void Realign();
+  void MoveNonCardinally( float distance );
 
   /**
    * Adjusts the range of tiles that the Object is currently on based on its
-   * sprite.
+   * collision rectangle.
    */
   void AdjustTileRange();
 

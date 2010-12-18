@@ -4,10 +4,10 @@ math.randomseed( os.time() )
 local Util = {}
 
 -- Direction constants for Objects
-Util.UP = 0
-Util.DOWN = 1
-Util.LEFT = 2
+Util.UP = 1
 Util.RIGHT = 3
+Util.DOWN = 5
+Util.LEFT = 7
 
 -- Returns tile in direction passed relative to tile location passed
 function Util.GetTileInDir( dir, tileX, tileY )

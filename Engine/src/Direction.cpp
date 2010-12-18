@@ -10,7 +10,7 @@ bool IsCardinal( Direction dir ) {
 
 
 Direction GetOpposite( Direction dir ) {
-  return (dir + 4) % 8;
+  return static_cast<Direction>( (dir + 4) % 8 );
 }
 
 

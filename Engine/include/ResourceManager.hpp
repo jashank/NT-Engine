@@ -24,10 +24,10 @@ bool ResourceLoader<sf::Music>::Load(
 }
 
 
-template<typename Resource>
-bool ResourceLoader<Resource>::Load( 
+template<typename T>
+bool ResourceLoader<T>::Load( 
   const std::string &filePath,
-  boost::shared_ptr<Resource> &rsrc
+  boost::shared_ptr<T> &rsrc
 ) {
   if( !rsrc->LoadFromFile( filePath ) ) {
     LogErr( "Resource " + filePath + " not found." );
@@ -37,15 +37,15 @@ bool ResourceLoader<Resource>::Load(
 }
 
 
-template<typename Resource, typename Loader>
-ResourceManager< Resource, Loader >::~ResourceManager() {
+template<typename T, typename Loader>
+ResourceManager<T, Loader>::~ResourceManager() {
   m_resources.clear();
 }
 
 
-template<typename Resource, typename Loader>
-const boost::shared_ptr<Resource> 
-  &ResourceManager<Resource, Loader>::Load(
+template<typename T, typename Loader>
+const boost::shared_ptr<T> 
+  &ResourceManager<T, Loader>::Load(
   const std::string &filePath
 ) {
 
@@ -57,7 +57,7 @@ const boost::shared_ptr<Resource>
   }
 
   // Load resource and insert into map, then return it.
-  boost::shared_ptr<Resource> rsrc = boost::make_shared<Resource>();
+  boost::shared_ptr<T> rsrc = boost::make_shared<T>();
 
   if ( m_loader.Load( filePath, rsrc )) {
     std::pair<typename map_type::iterator, bool> ret;
@@ -71,8 +71,8 @@ const boost::shared_ptr<Resource>
 }
 
 
-template<typename Resource, typename Loader>
-void ResourceManager<Resource, Loader>::ReleaseUnused() {
+template<typename T, typename Loader>
+void ResourceManager<T, Loader>::ReleaseUnused() {
   for ( typename map_type::iterator rsrc = m_resources.begin(); 
         rsrc != m_resources.end(); ) {
     typename map_type::iterator erase_elem = rsrc++;
