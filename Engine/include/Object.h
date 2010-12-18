@@ -304,7 +304,10 @@ class Object {
   /** If true, keep moving in m_direction. */
   bool m_moving; 
 
-  /** Velocity vector containing Object's speed and direction. */
+  /** 
+   * Velocity vector containing Object's speed 
+   * (tiles per second) and direction. 
+   */
   FloatVec m_velVec;
 
   /** Pointer to CallScriptFunc method. */

@@ -202,7 +202,7 @@ void Object::UpdateAI( float dt ) {
   m_text.UpdatePrint();
 
   if ( m_moving ) {
-    float distThisFrame = m_velVec.magnitude * dt;
+    float distThisFrame = m_velVec.magnitude * m_tileSize * dt;
     m_distance -= distThisFrame;
     if ( m_distance <= 0.0 ) {
       m_moving = false;
