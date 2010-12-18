@@ -373,8 +373,27 @@ int Object::LuaGetType( lua_State *L ) {
 
 
 int Object::LuaGetTile( lua_State *L ) {
-  lua_pushinteger( L, m_tileRange.topLeft.x );
-  lua_pushinteger( L, m_tileRange.topLeft.y );
+  FloatPoint collisionCenter = m_collisionRect.GetCenter();
+
+  int tileX = 0;
+  int tileY = 0;
+
+  if ( m_tileRange.GetWidth() == 0 ) {
+    tileX = m_tileRange.topLeft.x;
+  } else {
+    float tileXf = collisionCenter.x / m_tileSize;
+    tileX = floor( tileXf + 0.5 );
+  }
+
+  if ( m_tileRange.GetHeight() == 0 ) {
+    tileY = m_tileRange.topLeft.y;
+  } else {
+    float tileYf = collisionCenter.y / m_tileSize;
+    tileY = floor( tileYf + 0.5 );
+  }
+
+  lua_pushinteger( L, tileX );
+  lua_pushinteger( L, tileY );
   return 2;
 }
 
@@ -653,7 +672,7 @@ bool Object::LoadObjectData( const std::string &filepath ) {
 
   TiXmlElement *speed = root->FirstChildElement( "speed" );
   if ( speed ) {
-    speed->QueryFloatAttribute( "pps", &m_velVec.magnitude );
+    speed->QueryFloatAttribute( "tps", &m_velVec.magnitude );
   }
 
   TiXmlElement *render = root->FirstChildElement( "render" );

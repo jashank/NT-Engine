@@ -16,13 +16,6 @@ function IceBreath:AI( icebreath )
   local tileType = Map.GetTileInfo( facingTileX, facingTileY )
   local otherObj = Map.GetObjectOnTile( facingTileX, facingTileY )
 
-  if tileType == "water" or
-     ( otherObj and otherObj:GetTable():IsFreezable() ) then
-    icebreath:SetNoClip( true )
-  else
-    icebreath:SetNoClip( false )
-  end
-
   if not icebreath:Move() then
     Map.DestroyObject( icebreath )
   end

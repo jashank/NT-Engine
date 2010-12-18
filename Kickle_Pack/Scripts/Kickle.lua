@@ -154,15 +154,10 @@ function Kickle:PerformAttack( kickle )
       end
     end
 
-    if (( Map.TileIsCrossable( tileX, tileY ) or
-          Map.GetTileInfo( tileX, tileY ) == "water" ) and
-          not Map.ObjectBlockingTile( tileX, tileY ) ) then
-      local iceBreath = Map.CreateObject(
-                         "Kickle_Pack/Objects/IceBreath.xml", tileX, tileY )
-      local iceBreathDir = kickle:GetDir()
-      iceBreath:SetDir( iceBreathDir )
-      Util.SetAndPlay( iceBreath, iceBreathDir )
-    end
+    local iceBreath = Map.CreateObject(
+                       "Kickle_Pack/Objects/IceBreath.xml", tileX, tileY )
+    iceBreath:SetDir( kickle:GetDir()  )
+    Util.SetAndPlay( iceBreath, 0 )
   end
 end
 

@@ -2,7 +2,7 @@
 <object>
   <animation path="Kickle_Pack/Animations/ChickenAnim.xml" />
   <script path="Kickle_Pack/Scripts/Chicken.lua" />
-  <speed pps="50" />
+  <speed tps="50" />
   <rect x="9" y="12" width="27" height="28" />
   <tile block="false" />
 </object>
