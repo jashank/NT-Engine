@@ -1,5 +1,5 @@
-#ifndef CONFIG_H
-#define CONFIG_H
+#ifndef NT_CONFIG_H
+#define NT_CONFIG_H
 
 /**
  * Retrieves information from game's config file (FPS, screen size, 
@@ -41,5 +41,5 @@ private:
   static float m_FPS;
 };
 
-#endif // CONFIG_H
+#endif // NT_CONFIG_H
 

@@ -1,5 +1,5 @@
-#ifndef DIRECTION_H
-#define DIRECTION_H
+#ifndef NT_DIRECTION_H
+#define NT_DIRECTION_H
 
 /**
  * Defines directions used in engine and provides utility functions.
@@ -21,7 +21,27 @@ bool IsCardinal( Direction dir );
  */
 Direction GetOpposite( Direction dir );
 
+/**
+ * Returns true if dir is Northward (North, Northeast, etc.)
+ */
+bool IsNorthward( Direction dir );
+
+/**
+ * Returns true if dir is Southward (South, Southwest, etc.)
+ */
+bool IsSouthward( Direction dir );
+
+/**
+ * Returns true if dir is Westward (West, Northwest, etc.)
+ */
+bool IsWestward( Direction dir );
+
+/**
+ * Returns true if dir is Eastward (East, Southeast, etc.)
+ */
+bool IsEastward( Direction dir );
+
 } // namespace dir
 } // namespace nt
 
-#endif // DIRECTION_H
+#endif // NT_DIRECTION_H

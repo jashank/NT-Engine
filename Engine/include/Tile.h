@@ -1,5 +1,5 @@
-#ifndef TILE_H
-#define TILE_H
+#ifndef NT_TILE_H
+#define NT_TILE_H
 
 #include <string>
 
@@ -34,5 +34,5 @@ class Tile {
 
 } // namespace nt
 
-#endif // TILE_H
+#endif // NT_TILE_H
 

@@ -1,5 +1,5 @@
-#ifndef POINT_H
-#define POINT_H
+#ifndef NT_POINT_H
+#define NT_POINT_H
 
 namespace nt {
 
@@ -7,7 +7,7 @@ namespace nt {
  * A 3 coordinate point...zzzz.
  */
 template<typename T>
-class Point {
+struct Point {
   // Make sure members are initialized on default construction.
   Point()
     :x(T()), y(T()), z(T()) {}
@@ -93,5 +93,5 @@ typedef Point<float> FloatPoint;
 
 } // namespace nt
 
-#endif // POINT_H
+#endif // NT_POINT_H
 

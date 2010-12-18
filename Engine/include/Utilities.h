@@ -1,5 +1,5 @@
-#ifndef UTILITIES_H
-#define UTILITIES_H
+#ifndef NT_UTILITIES_H
+#define NT_UTILITIES_H
 
 #include <cmath>
 
@@ -74,5 +74,5 @@ void LogErr( const std::string &msg );
  */
 void LogLuaErr( const std::string &msg );
 
-#endif // UTILITIES_H
+#endif // NT_UTILITIES_H
 

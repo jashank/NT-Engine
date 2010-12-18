@@ -1,5 +1,5 @@
-#ifndef OBJECTMANAGER_H
-#define OBJECTMANAGER_H
+#ifndef NT_OBJECTMANAGER_H
+#define NT_OBJECTMANAGER_H
 
 #include <set>
 #include <string>
@@ -247,5 +247,5 @@ void ObjectManager::FillSet( std::set<intrObj_type, Compare> &set ) const {
 
 } // namespace nt
 
-#endif // OBJECT_MANAGER_H
+#endif // NT_OBJECT_MANAGER_H
 

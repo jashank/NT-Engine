@@ -1,5 +1,5 @@
-#ifndef STATEMACHINE_H
-#define STATEMACHINE_H
+#ifndef NT_STATEMACHINE_H
+#define NT_STATEMACHINE_H
 
 #include <string>
 
@@ -139,5 +139,5 @@ class StateMachine {
 
 } // namespace nt
 
-#endif // STATEMACHINE_H
+#endif // NT_STATEMACHINE_H
 

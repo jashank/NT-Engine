@@ -1,5 +1,5 @@
-#ifndef ANIMSPRITE_H
-#define ANIMSPRITE_H
+#ifndef NT_ANIMSPRITE_H
+#define NT_ANIMSPRITE_H
 
 #include <string>
 
@@ -146,5 +146,5 @@ class AnimSprite : public Lerpable {
 
 } // namespace nt
 
-#endif // ANIMSPRITE_H
+#endif // NT_ANIMSPRITE_H
 

@@ -1,5 +1,5 @@
-#ifndef RESOURCEMANAGER_H
-#define RESOURCEMANAGER_H
+#ifndef NT_RESOURCEMANAGER_H
+#define NT_RESOURCEMANAGER_H
 
 #include <algorithm>
 #include <string>
@@ -73,5 +73,5 @@ private:
 } // namespace nt
 
 #include "ResourceManager.hpp"
-#endif
+#endif // NT_RESOURCEMANAGER_H
 

@@ -1,5 +1,5 @@
-#ifndef MUSIC_MANAGER_H
-#define MUSIC_MANAGER_H
+#ifndef NT_MUSIC_MANAGER_H
+#define NT_MUSIC_MANAGER_H
 
 #include <SFML/Audio/Music.hpp>
 
@@ -85,5 +85,5 @@ class MusicManager {
 
 } // namespace nt
 
-#endif // MUSIC_MANAGER_H
+#endif // NT_MUSIC_MANAGER_H
 

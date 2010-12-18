@@ -1,5 +1,5 @@
-#ifndef LERPABLE_H
-#define LERPABLE_H
+#ifndef NT_LERPABLE_H
+#define NT_LERPABLE_H
 
 #include <SFML/Graphics/Drawable.hpp>
 
@@ -66,5 +66,5 @@ class Lerpable : public sf::Drawable {
 
 } // namespace nt
 
-#endif // LERPABLE_H
+#endif // NT_LERPABLE_H
 

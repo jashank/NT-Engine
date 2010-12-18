@@ -1,5 +1,5 @@
-#ifndef INPUT_HANDLER_H
-#define INPUT_HANDLER_H
+#ifndef NT_INPUT_HANDLER_H
+#define NT_INPUT_HANDLER_H
 
 #include <string>
 #include <utility>
@@ -115,5 +115,5 @@ class InputHandler {
 
 } // namespace nt
 
-#endif // INPUT_HANDLER_H
+#endif // NT_INPUT_HANDLER_H
 

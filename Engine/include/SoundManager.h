@@ -1,5 +1,5 @@
-#ifndef SOUNDMANAGER_H
-#define SOUNDMANAGER_H
+#ifndef NT_SOUNDMANAGER_H
+#define NT_SOUNDMANAGER_H
 
 #include <list>
 #include <string>
@@ -41,5 +41,5 @@ class SoundManager {
 
 }
 
-#endif // SOUNDMANAGER_H
+#endif // NT_SOUNDMANAGER_H
 

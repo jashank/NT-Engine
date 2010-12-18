@@ -1,5 +1,5 @@
-#ifndef WINDOW_H
-#define WINDOW_H
+#ifndef NT_WINDOW_H
+#define NT_WINDOW_H
 
 #include <string>
 
@@ -84,5 +84,5 @@ namespace window {
 } // namespace window
 } // namespace nt
 
-#endif // WINDOW_H
+#endif // NT_WINDOW_H
 

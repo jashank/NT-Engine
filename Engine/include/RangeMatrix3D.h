@@ -1,5 +1,5 @@
-#ifndef MATRIX3D_H
-#define MATRIX3D_H
+#ifndef NT_MATRIX3D_H
+#define NT_MATRIX3D_H
 
 #include <list>
 
@@ -148,11 +148,11 @@ class RangeMatrix3D {
   boost::scoped_array<std::list<T> > m_mat;
 
   IntRect m_range; /** Range currently being iterated over. */
-  IntVec m_rangeItr; /** Iterates over dimensions of range. */
+  IntPoint m_rangeItr; /** Iterates over dimensions of range. */
   ZItr m_elemItr; /** Iterates over elements of a dimension. */
 };
 
 } // namespace nt
 
-#endif // MATRIX3D_H
+#endif // NT_MATRIX3D_H
 

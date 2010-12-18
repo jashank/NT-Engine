@@ -1,5 +1,5 @@
-#ifndef ANIMDATA_H
-#define ANIMDATA_H
+#ifndef NT_ANIMDATA_H
+#define NT_ANIMDATA_H
 
 #include <string>
 
@@ -133,7 +133,7 @@ private:
   std::vector<Animation> m_anims; /** Stores all animations. */
 };
 
-} // nt
+} // namespace nt
 
-#endif // ANIMDATA_H
+#endif // NT_ANIMDATA_H
 

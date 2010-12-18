@@ -1,5 +1,5 @@
-#ifndef TIMEDKEY_H
-#define TIMEDKEY_H
+#ifndef NT_TIMEDKEY_H
+#define NT_TIMEDKEY_H
 
 #include <map>
 #include <string>
@@ -77,5 +77,5 @@ class TimedKey {
 
 } // namespace nt
 
-#endif // TIMEDKEY_H
+#endif // NT_TIMEDKEY_H
 

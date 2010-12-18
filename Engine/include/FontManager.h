@@ -1,5 +1,5 @@
-#ifndef FONTMANAGER_H
-#define FONTMANAGER_H
+#ifndef NT_FONTMANAGER_H
+#define NT_FONTMANAGER_H
 
 #include <string>
 
@@ -34,5 +34,5 @@ class FontManager {
 
 } // namespace nt
 
-#endif // FONTMANAGER_H
+#endif // NT_FONTMANAGER_H
 

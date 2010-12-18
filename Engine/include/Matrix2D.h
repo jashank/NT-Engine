@@ -1,5 +1,5 @@
-#ifndef MATRIX2D_H
-#define MATRIX2D_H
+#ifndef NT_MATRIX2D_H
+#define NT_MATRIX2D_H
 
 #include <boost/scoped_array.hpp>
 
@@ -80,5 +80,5 @@ class Matrix2D {
 
 } // namespace nt
 
-#endif // MATRIX2D_H
+#endif // NT_MATRIX2D_H
 

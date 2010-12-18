@@ -1,5 +1,5 @@
-#ifndef STATE_H
-#define STATE_H
+#ifndef NT_STATE_H
+#define NT_STATE_H
 
 #include <string>
 #include <map>
@@ -180,5 +180,5 @@ class State {
 
 } // namespace nt
 
-#endif // STATE_H
+#endif // NT_STATE_H
 

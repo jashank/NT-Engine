@@ -1,13 +1,12 @@
 #include "Object.h"
 
+#include <cmath>
+
 #include <boost/bind/bind.hpp>
 extern "C" {
   #include "lualib.h"
 }
 
-#include <SFML/System/Vector2.hpp>
-
-#include "ResourceLib.h"
 #include "Utilities.h"
 #include "Window.h"
 #include "tinyxml.h"
@@ -17,6 +16,7 @@ namespace nt {
 int Object::m_numCreated = 0;
 IntRect Object::m_mapRect;
 int Object::m_tileSize = 0;
+float Object::m_diagTileDist = 0.0;
 
 /**********************************
  * Public
@@ -69,9 +69,7 @@ Object::Object( lua_State *L )
    m_renderPriority( 0 ),
    m_moving( false ),
    m_ptrCallScriptFunc( boost::bind( &Object::CallScriptFunc, this, _1 )),
-   m_dir( dir::North ),
    m_distance( 0.0f ),
-   m_speed( 0.0f ),
    m_id( LUA_NOREF ),
    m_L( NULL ) {
   if( !lua_isstring( L, -1 ) ) {
@@ -113,6 +111,7 @@ void Object::SetMapRect( const IntRect &mapRect ) {
 
 void Object::SetTileSize( int tileSize ) {
   m_tileSize = tileSize;
+  m_diagTileDist = sqrt( 2 * ( m_tileSize * m_tileSize ));
 }
 
 /***********************************************
@@ -131,9 +130,7 @@ Object::Object(
    m_renderPriority( 0 ),
    m_moving( false ),
    m_ptrCallScriptFunc( boost::bind( &Object::CallScriptFunc, this, _1 )),
-   m_dir( dir::North ),
    m_distance( 0.0f ),
-   m_speed( 0.0f ),
    m_id( LUA_NOREF ),
    m_L( L ) {
   if( !LoadObjectData( filepath ) ) {
@@ -311,25 +308,22 @@ int Object::LuaMove( lua_State *L ) {
   if( !m_moving ) {
     IntRect nextRange = m_tileRange;
 
-    switch ( m_direction ) {
-      case UP: {
-        nextRange.Offset( 0, -1 );
-        break;
-      }
-      case DOWN: {
-        nextRange.Offset( 0, 1 );
-        break;
-      }
-      case LEFT: {
-        nextRange.Offset( -1, 0 );
-        break;
-      }
-      case RIGHT: {
-        nextRange.Offset( 1, 0 );
-        break;
-      }
-      default: {}
+    int offsetX = 0;
+    int offsetY = 0;
+
+    if ( dir::IsNorthward( m_velVec.direction )) {
+      offsetY = -1;
+    } else if ( dir::IsSouthward( m_velVec.direction )) {
+      offsetY = 1;
     }
+
+    if ( dir::IsWestward( m_velVec.direction )) {
+      offsetX = -1;
+    } else if ( dir::IsEastward( m_velVec.direction )) {
+      offsetX = 1;
+    }
+
+    nextRange.Offset( offsetX, offsetY );
 
     int tX = nextRange.topLeft.x;
     int tY = nextRange.topLeft.y;
@@ -338,6 +332,12 @@ int Object::LuaMove( lua_State *L ) {
 
     if ( m_mapRect.Contains( tX, tY ) && m_mapRect.Contains( bX, bY )) {
       m_moving = true;
+
+      if ( dir::IsCardinal( m_velVec.direction )) {
+        m_distance = m_tileSize;
+      } else {
+        m_distance = m_diagTileDist;
+      }
     }
   }
 
@@ -375,7 +375,7 @@ int Object::LuaGetTileRange( lua_State *L ) {
 
 
 int Object::LuaGetDir( lua_State *L ) {
-  lua_pushinteger( L, m_direction );
+  lua_pushinteger( L, m_velVec.direction );
   return 1;
 }
 
@@ -386,19 +386,25 @@ int Object::LuaSetDir( lua_State *L ) {
     return 0;
   }
 
-  Dir dir = static_cast<Dir>( lua_tointeger( L, -1 ) );
+  dir::Direction dir = static_cast<dir::Direction>( lua_tointeger( L, -1 ) );
   if ( !m_moving ) {
-    m_direction = dir;
+    m_velVec.direction = dir;
   } else {
-    if ( dir == GetOppositeDir( m_direction )) {
-      m_distance = m_tileSize - m_distance;
-      m_direction = dir;
+    if ( dir == GetOppositeDir( m_velVec.direction )) {
+
+      if ( dir::IsCardinal( dir )) {
+        m_distance = m_tileSize - m_distance;
+      } else {
+        m_distance = m_diagTileDist - m_distance;
+      }
+
+      m_velVec.direction = dir;
     } else {
       LogLuaErr( "Direction passed to SetDir will unalign Object: " + m_type );
       return 0;
     }
   }  
-  lua_pushinteger( L, m_direction );
+  lua_pushinteger( L, m_velVec.direction );
   return 1;
 }
 
@@ -422,7 +428,7 @@ int Object::LuaGetElapsedTime( lua_State *L ) {
 
 
 int Object::LuaGetSpeed( lua_State *L ) {
-  lua_pushnumber( L, m_speed );
+  lua_pushnumber( L, m_velVec.magnitude );
   return 1;
 }
 
@@ -432,7 +438,7 @@ int Object::LuaSetSpeed( lua_State *L ) {
     LogLuaErr( "Number not passed to SetSpeed for Object: " + m_type );
     return 0;
   }
-  m_speed = lua_tonumber( L, -1 );
+  m_velVec.magnitude = lua_tonumber( L, -1 );
   return 0;
 }
 
@@ -442,9 +448,9 @@ int Object::LuaAdjustSpeed( lua_State *L ) {
     LogLuaErr( "Number not passed to AdjustSpeed for Object: " + m_type );
     return 0;
   }
-  m_speed += lua_tonumber( L, -1 );
-  if ( m_speed < 0.f ) {
-    m_speed = 0.f;
+  m_velVec.magnitude += lua_tonumber( L, -1 );
+  if ( m_velVec.magnitude < 0.f ) {
+    m_velVec.magnitude = 0.f;
   }
   return 0;
 }
@@ -633,7 +639,7 @@ bool Object::LoadObjectData( const std::string &filepath ) {
 
   TiXmlElement *speed = root->FirstChildElement( "speed" );
   if ( speed ) {
-    speed->QueryFloatAttribute( "pps", &m_speed );
+    speed->QueryFloatAttribute( "pps", &m_velVec.magnitude );
   }
 
   TiXmlElement *render = root->FirstChildElement( "render" );
@@ -667,8 +673,8 @@ void Object::InitLua() {
 
 
 void Object::MovementUpdate( float dt ) {
-  float distThisFrame = m_speed * dt;
-  m_distance += distThisFrame;
+  float distThisFrame = m_velVec.magnitude * dt;
+  m_distance -= distThisFrame;
 
   switch( m_direction ) {
     case UP: {

@@ -1,5 +1,5 @@
-#ifndef RECT_H
-#define RECT_H
+#ifndef NT_RECT_H
+#define NT_RECT_H
 
 #include "Point.h"
 
@@ -184,5 +184,5 @@ void FitRect( const Rect<T> &a, Rect<T> &b ) {
 
 } // namespace nt
 
-#endif // RECT_H
+#endif // NT_RECT_H
 

@@ -1,5 +1,5 @@
-#ifndef CAMERA_H
-#define CAMERA_H
+#ifndef NT_CAMERA_H
+#define NT_CAMERA_H
 
 #include "Rect.h"
 
@@ -108,5 +108,5 @@ class Camera {
 
 } // namespace nt
 
-#endif // CAMERA_H
+#endif // NT_CAMERA_H
 

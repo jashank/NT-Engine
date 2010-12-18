@@ -1,5 +1,5 @@
-#ifndef RESOURCELIB_H
-#define RESOURCELIB_H
+#ifndef NT_RESOURCELIB_H
+#define NT_RESOURCELIB_H
 
 #include <string>
 
@@ -33,5 +33,5 @@ namespace rsrc {
 } // namespace rsrc
 } // namespace nt
 
-#endif // RESOURCELIB_H
+#endif // NT_RESOURCELIB_H
 

@@ -1,5 +1,5 @@
-#ifndef OBJECT_H
-#define OBJECT_H
+#ifndef NT_OBJECT_H
+#define NT_OBJECT_H
 
 #include <algorithm>
 #include <list>
@@ -21,12 +21,12 @@ namespace boost {
 #include <SFML/System/Clock.hpp>
 
 #include "AnimSprite.h"
-#include "Direction.h"
 #include "InputHandler.h"
 #include "Lunar.h"
 #include "Rect.h"
 #include "SoundManager.h"
 #include "TimedString.h"
+#include "Vector.h"
 
 class lua_State;
 
@@ -283,6 +283,9 @@ class Object {
   /** Size of a tile in pixels. */
   static int m_tileSize;
 
+  /** Distance between the center of 2 tiles that are diagonally adjacent. */
+  static float m_diagTileDist;
+
   /**
    * Nth Object created in app. For example, if this is 1, then this was 1st.
    */
@@ -302,17 +305,14 @@ class Object {
   /** If true, keep moving in m_direction. */
   bool m_moving; 
 
+  /** Velocity vector containing Object's speed and direction. */
+  FloatVec m_velVec;
+
   /** Pointer to CallScriptFunc method. */
   const boost::function1<void, std::string&> m_ptrCallScriptFunc;
 
-  /** Direction Object is currently facing. */
-  dir::Direction m_dir; 
-
-  /** Distance traveled (in pixels) from last point of alignment on grid. */
+  /** Distance between the Object and the tile it is moving to. */
   float m_distance; 
-
-  /** Speed in pixels per second. */
-  float m_speed; 
 
   /** Handles input for Object. */
   InputHandler m_input;
@@ -545,5 +545,5 @@ class ObjectAttorney {
 
 } // namespace nt
 
-#endif // OBJECT_H
+#endif // NT_OBJECT_H
 

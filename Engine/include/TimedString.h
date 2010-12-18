@@ -1,5 +1,5 @@
-#ifndef TIMED_STRING_H
-#define TIMED_STRING_H
+#ifndef NT_TIMED_STRING_H
+#define NT_TIMED_STRING_H
 
 #include <string>
 
@@ -83,4 +83,4 @@ class TimedString : public Lerpable {
 
 } // namespace nt
 
-#endif // TIMED_STRING_H
+#endif // NT_TIMED_STRING_H

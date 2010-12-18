@@ -1,5 +1,5 @@
-#ifndef TILEMANAGER_H
-#define TILEMANAGER_H
+#ifndef NT_TILEMANAGER_H
+#define NT_TILEMANAGER_H
 
 #include <map>
 #include <string>
@@ -177,5 +177,5 @@ class TileManager {
 
 } // namespace nt
 
-#endif // TILEMANAGER_H
+#endif // NT_TILEMANAGER_H
 
