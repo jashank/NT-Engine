@@ -117,6 +117,12 @@ class MainWindow(QtGui.QMainWindow):
         self._quitAction = self._fileMenu.addAction('Quit')
         self._quitAction.setShortcut('Ctrl+Q')
 
+        # Edit Menu
+        self._editMenu = self.menuBar().addMenu("Edit")
+
+        # Help Menu
+        self._helpMenu = self.menuBar().addMenu("Help")
+
     def _connectComponents(self):
         """Connects interactions between components."""
         # Object Bar - Buttons 
@@ -153,7 +159,7 @@ class MainWindow(QtGui.QMainWindow):
         QtCore.QObject.connect(self._extrasButton, QtCore.SIGNAL('clicked()'),
             self._extras.exec_)
 
-        # Actions
+        # File Menu Actions
         QtCore.QObject.connect(self._newAction, QtCore.SIGNAL('triggered()'),
             self._new)
         QtCore.QObject.connect(self._saveAction, QtCore.SIGNAL('triggered()'),
@@ -269,4 +275,5 @@ class MainWindow(QtGui.QMainWindow):
             self._save()
 
         return True
+
 
