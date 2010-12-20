@@ -105,7 +105,7 @@ class MainWindow(QtGui.QMainWindow):
         self._extrasButton.setText('Extras')
 
         # File Menu
-        self._fileMenu = self.menuBar().addMenu("File")
+        self._fileMenu = self.menuBar().addMenu('File')
         self._newAction = self._fileMenu.addAction('New')
         self._newAction.setShortcut('Ctrl+N')
         self._loadAction = self._fileMenu.addAction('Open')
@@ -118,10 +118,14 @@ class MainWindow(QtGui.QMainWindow):
         self._quitAction.setShortcut('Ctrl+Q')
 
         # Edit Menu
-        self._editMenu = self.menuBar().addMenu("Edit")
+        self._editMenu = self.menuBar().addMenu('Edit')
+        self._undoAction = self._editMenu.addAction('Undo')
+        self._undoAction.setShortcut('Ctrl+Z')
 
         # Help Menu
-        self._helpMenu = self.menuBar().addMenu("Help")
+        self._helpMenu = self.menuBar().addMenu('Help')
+        self._licenseAction = self._helpMenu.addAction('License')
+        self._license = messages.License()
 
     def _connectComponents(self):
         """Connects interactions between components."""
@@ -170,6 +174,10 @@ class MainWindow(QtGui.QMainWindow):
             self._open)
         QtCore.QObject.connect(self._quitAction, QtCore.SIGNAL('triggered()'),
             self.close)
+
+        # Help Menu Actions
+        QtCore.QObject.connect(self._licenseAction,
+            QtCore.SIGNAL('triggered()'), self._license.exec_)
 
     def _layoutComponents(self):
         """Layout components onto a grid."""
