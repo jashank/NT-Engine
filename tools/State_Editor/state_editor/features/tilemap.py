@@ -20,7 +20,8 @@ along with the NT State Editor.  If not, see <http://www.gnu.org/licenses/>.
 #!/usr/bin/env python
 
 
-from collections import defaultdict
+from abc import ABCMeta, abstractmethod
+from collections import defaultdict, deque
 from PyQt4 import QtCore, QtGui
 
 
@@ -156,6 +157,33 @@ class TiledPixmap(QtGui.QGraphicsPixmapItem):
         return self._tile
 
 
+class MapAction(object):
+    """Abstract base class for actions that can occur on map."""
+    __metaclass__ = ABCMeta
+
+    @abstractmethod
+    def Undo(self): pass
+
+    @abstractmethod
+    def Redo(self): pass
+
+
+class TilePlace(MapAction):
+    """Action representing tile placement on map."""
+    def __init__(self, tile, x, y):
+        """Action initialized with tile that was placed and its position.
+
+        Arguments: tile - tile selected at time of placement
+                   x - x coordinate on grid where mouse was pressed
+                   y - y coordinate on grid where mouse was pressed
+        """
+        self._tile = tile
+        self._x = x
+        self._y = y
+
+    def Undo(self):
+
+
 class TileMap(QtGui.QGraphicsScene):
     """Grid for user to map tiles to a map for an NT State."""
     def __init__(self, parent = None):
@@ -165,6 +193,14 @@ class TileMap(QtGui.QGraphicsScene):
         # Map coordinates to tiles and lists of objects
         self._tileMapping = dict()
         self._objMapping = defaultdict(list)
+
+        # Stores last 100 actions that have taken place on the tile map
+        # from earliest to most recent
+        self._actions = deque(maxlen = 100)
+
+        # Stores last 100 undos that have taken place on tile map (for
+        # (redoing). Cleared anytime a new action occurs.
+        self._undos = deque(maxlen = 100)
 
         # Map dimensions in tiles
         self._mapWidth = 0
