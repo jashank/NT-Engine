@@ -39,7 +39,7 @@ class FontManager {
   /**
    * Gets data from <font> element of State file.
    */
-  FontManager( const TiXmlElement *root );
+  explicit FontManager( const TiXmlElement *root );
 
   /**
    * Retrieves font from the FontManager.

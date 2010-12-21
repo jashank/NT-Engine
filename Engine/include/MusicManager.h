@@ -38,7 +38,7 @@ class MusicManager {
   /**
    * Loads data from <music> element of State file.
    */
-  MusicManager( const TiXmlElement *root ); 
+  explicit MusicManager( const TiXmlElement *root ); 
   ~MusicManager();
 
   //@{

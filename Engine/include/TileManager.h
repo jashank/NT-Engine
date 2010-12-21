@@ -51,7 +51,7 @@ class TileManager {
   /**
    * Loads tile data from <tiles> element of State file.
    */
-  TileManager( const TiXmlElement *root );
+  explicit TileManager( const TiXmlElement *root );
 
   /**
    * Updates animations for tiles on screen.

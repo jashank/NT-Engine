@@ -244,7 +244,7 @@ class TileMap(QtGui.QGraphicsScene):
     def mouseMoveEvent(self, event):
         """Maps selected item (if any) to location on grid under cursor.
 
-        Only called if mouse is currently pressed. Overrides mouseMoeveEvent
+        Only called if mouse is currently pressed. Overrides mouseMoveEvent
         in QGraphicsScene.
 
         """

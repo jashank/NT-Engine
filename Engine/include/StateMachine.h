@@ -39,7 +39,7 @@ namespace nt {
  */
 class StateMachine {
  public:
-  StateMachine( const std::string &filePath );
+  explicit StateMachine( const std::string &filePath );
   ~StateMachine();
 
   /**

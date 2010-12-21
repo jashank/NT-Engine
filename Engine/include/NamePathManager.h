@@ -40,7 +40,7 @@ class NamePathManager {
    * Must specify sub-element to search for when loading data from element
    * of state file. e.g. <song> is the sub-element in <music>.
    */
-  NamePathManager( const std::string &subElem );
+  explicit NamePathManager( const std::string &subElem );
 
   /**
    * Loads values in from root element of State XML file and searches root
