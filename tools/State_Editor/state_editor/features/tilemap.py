@@ -170,18 +170,24 @@ class MapAction(object):
 
 class TilePlace(MapAction):
     """Action representing tile placement on map."""
-    def __init__(self, tile, x, y):
+    def __init__(self, tilemap, tile, x, y):
         """Action initialized with tile that was placed and its position.
 
         Arguments: tile - tile selected at time of placement
                    x - x coordinate on grid where mouse was pressed
                    y - y coordinate on grid where mouse was pressed
         """
+        self._map = tilemap
         self._tile = tile
         self._x = x
         self._y = y
 
     def Undo(self):
+        # Remove tile from position passed
+        pass
+
+    def Redo(self):
+        pass
 
 
 class TileMap(QtGui.QGraphicsScene):
@@ -304,7 +310,7 @@ class TileMap(QtGui.QGraphicsScene):
                     self.placeTile(pos, x, y)
 
         elif self._mousePressed == QtCore.Qt.RightButton:
-            self._removePlacement(pos)
+            self.removePlacement(pos)
 
     def setDims(self, tileSize, mapWidth, mapHeight):
         """Sets up grid given dimensions passed.
@@ -330,12 +336,12 @@ class TileMap(QtGui.QGraphicsScene):
             if self._mapWidth > mapWidth:
                 for x in range(mapWidth, self._mapWidth):
                     for y in range(0, self._mapHeight):
-                        self._removePlacementsAt(x, y)
+                        self.removePlacementsAt(x, y)
 
             if self._mapHeight > mapHeight:
                 for x in range(0, self._mapWidth):
                     for y in range(mapHeight, self._mapHeight):
-                        self._removePlacementsAt(x, y)
+                        self.removePlacementsAt(x, y)
 
             self._tileSize = tileSize
             self._mapWidth = mapWidth
@@ -387,8 +393,7 @@ class TileMap(QtGui.QGraphicsScene):
         """
         images = self.items(pos)
 
-        lines = [l for l in images if l.zValue() == self._zValLine]
-        if len(lines) > 0:
+        if (self._hasLine(images)):
             return
 
         point = self._coordToKey(x, y)
@@ -426,8 +431,8 @@ class TileMap(QtGui.QGraphicsScene):
         """
 
         images = self.items(pos)
-        lines = [l for l in images if l.zValue() == self._zValLine]
-        if len(lines) > 0:
+
+        if (self._hasLine(images)):
             return
 
         point = self._coordToKey(x, y)
@@ -446,7 +451,7 @@ class TileMap(QtGui.QGraphicsScene):
             tileImg.setZValue(self._zValTile)
             self.addItem(tileImg)
 
-    def _removePlacement(self, pos):
+    def removePlacement(self, pos):
         """Removes the top item under cursor from the grid and internally.
 
         Arguments: pos -- Position of cursor relative to scene
@@ -455,13 +460,12 @@ class TileMap(QtGui.QGraphicsScene):
         images = self.items(pos)
 
         if len(images) > 0:
-            lines = [l for l in images if l.zValue() == self._zValLine]
-            if len(lines) > 0:
+            if (self._hasLine(images)):
                 return
 
-            tile = images[0].getTile()
+            tileCoord = images[0].getTile()
             self.removeItem(images[0])
-            point = self._coordToKey(tile.x(), tile.y())
+            point = self._coordToKey(tileCoord.x(), tileCoord.y())
 
             objs = self._objMapping.get(point)
             if objs != None and len(objs) > 0:
@@ -472,7 +476,7 @@ class TileMap(QtGui.QGraphicsScene):
             if tile:
                 del self._tileMapping[point]
 
-    def _removePlacementsAt(self, x, y):
+    def removePlacementsAt(self, x, y):
         """Removes all items and images from coordinates on grid.
 
         Arguments: x -- x coordinate for removal, relative to tile grid
@@ -500,5 +504,16 @@ class TileMap(QtGui.QGraphicsScene):
 
         """
         return str(x) + "," + str(y)
+
+    def _hasLine(self, images):
+        """Returns true if there is a grid line in list of images passed."""
+        lines = [l for l in images if l.zValue() == self._zValLine]
+        if len(lines) > 0:
+            return 1
+
+        return False
+
+    def _removeTile(self, images, pos):
+        pass
 
 

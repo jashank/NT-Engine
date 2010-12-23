@@ -29,7 +29,7 @@ template<typename T>
 struct Point {
   // Make sure members are initialized on default construction.
   Point()
-    :x(T()), y(T()), z(T()) {}
+    :x(), y(), z() {}
 
   Point( T x, T y, T z )
     :x(x), y(y), z(z) {}
