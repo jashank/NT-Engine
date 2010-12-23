@@ -121,6 +121,8 @@ class MainWindow(QtGui.QMainWindow):
         self._editMenu = self.menuBar().addMenu('Edit')
         self._undoAction = self._editMenu.addAction('Undo')
         self._undoAction.setShortcut('Ctrl+Z')
+        self._redoAction = self._editMenu.addAction('Redo')
+        self._redoAction.setShortcut('Ctrl+Shift+Z')
 
         # Help Menu
         self._helpMenu = self.menuBar().addMenu('Help')
@@ -174,6 +176,10 @@ class MainWindow(QtGui.QMainWindow):
             self._open)
         QtCore.QObject.connect(self._quitAction, QtCore.SIGNAL('triggered()'),
             self.close)
+
+        # Edit Menu Actions
+        QtCore.QObject.connect(self._undoAction,
+            QtCore.SIGNAL('triggered()'), self._tileMap.undo)
 
         # Help Menu Actions
         QtCore.QObject.connect(self._licenseAction,

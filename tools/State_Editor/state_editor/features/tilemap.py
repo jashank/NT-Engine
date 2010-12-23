@@ -163,31 +163,29 @@ class MapAction(object):
     __metaclass__ = ABCMeta
 
     @abstractmethod
-    def Undo(self): pass
+    def undo(self): pass
 
     @abstractmethod
-    def Redo(self): pass
+    def redo(self): pass
 
 
 class TilePlace(MapAction):
     """Action representing tile placement on map."""
-    def __init__(self, tilemap, tile, x, y):
+    def __init__(self, tilemap, tile, pos):
         """Action initialized with tile that was placed and its position.
 
-        Arguments: tile - tile selected at time of placement
-                   x - x coordinate on grid where mouse was pressed
-                   y - y coordinate on grid where mouse was pressed
+        Arguments: tilemap - reference to tilemap in editor
+                   tile - tile selected at time of placement
+                   pos - position of where mouse was pressed on placement
         """
         self._map = tilemap
         self._tile = tile
-        self._x = x
-        self._y = y
+        self._pos = pos
 
-    def Undo(self):
-        # Remove tile from position passed
-        pass
+    def undo(self):
+        self._map.removePlacement(self._pos)
 
-    def Redo(self):
+    def redo(self):
         pass
 
 
@@ -230,6 +228,16 @@ class TileMap(QtGui.QGraphicsScene):
         self._zValLine = 2
         self._zValObj = 1
         self._zValTile = 0
+
+    def undo(self):
+        action = self._actions.pop()
+        action.undo()
+        self._undos.append(action)
+
+    def redo(self):
+        action = self._redos.pop()
+        action.redo()
+        self._actions.append(action)
 
     def clearPlacements(self):
         """Clears images from grid and stored items."""
@@ -440,6 +448,7 @@ class TileMap(QtGui.QGraphicsScene):
             tile = [t for t in images if t.zValue() == self._zValTile]
             if len(tile) > 0:
                 self.removeItem(tile[0])
+                # ADD A TILE REMOVAL ACTION HERE!!!!!!
 
             # Store actual tile internally, only placing its image on the grid
             self._tileMapping[point] = self._selection
@@ -449,6 +458,9 @@ class TileMap(QtGui.QGraphicsScene):
             tileImg.setPos(self._tileSize * x, self._tileSize * y)
             tileImg.setZValue(self._zValTile)
             self.addItem(tileImg)
+
+            tp = TilePlace(self, self._selection, pos)
+            self._addAction(tp)
 
     def removePlacement(self, pos):
         """Removes the top item under cursor from the grid and internally.
@@ -516,7 +528,13 @@ class TileMap(QtGui.QGraphicsScene):
 
         return False
 
-    def _removeTile(self, images, pos):
-        pass
+    def _addAction(self, action):
+        """Adds action to action deque.
+
+        Clears out undos deque because a redo shouldn't be able to take
+        place after a new action has occured.
+        """
+        self._actions.append(action)
+        self._undos.clear()
 
 
