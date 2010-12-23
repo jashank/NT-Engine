@@ -22,6 +22,7 @@ along with the NT State Editor.  If not, see <http://www.gnu.org/licenses/>.
 
 from abc import ABCMeta, abstractmethod
 from collections import defaultdict, deque
+from copy import deepcopy
 from PyQt4 import QtCore, QtGui
 
 
@@ -141,20 +142,20 @@ class FillButton(QtGui.QPushButton):
 
 
 class TiledPixmap(QtGui.QGraphicsPixmapItem):
-    """QGraphicsPixmapItem that holds a tile position."""
-    def __init__(self, x = -1, y = -1, parent = None):
+    """Holds tile position and an optional path for unique identification."""
+    def __init__(self, x, y, path = "", parent = None):
         """Initializes parent and tile member with arguments passed."""
         QtGui.QGraphicsPixmapItem.__init__(self, parent)
         self._tile = QtCore.QPoint(x, y)
-
-    def setTile(self, x, y):
-        """Sets tile position to integers passed."""
-        self._tile.setX(x)
-        self._tile.setY(y)
+        self._path = path
 
     def getTile(self):
         """Returns tile position as a QPoint."""
         return self._tile
+
+    def getPath(self):
+        """Returns path set for this pixmap."""
+        return self._path
 
 
 class MapAction(object):
@@ -408,9 +409,8 @@ class TileMap(QtGui.QGraphicsScene):
         # Store actual object internally, only placing its image on the grid
         self._objMapping[point].append(self._selection)
 
-        objImg = TiledPixmap()
+        objImg = TiledPixmap(x, y, self._selection.getPath())
         objImg.setPixmap(self._selection.pixmap().copy())
-        objImg.setTile(x, y)
 
         # Take object's height into account
         yPos = self._tileSize * y
@@ -444,9 +444,8 @@ class TileMap(QtGui.QGraphicsScene):
             # Store actual tile internally, only placing its image on the grid
             self._tileMapping[point] = self._selection
 
-            tileImg = TiledPixmap()
+            tileImg = TiledPixmap(x, y)
             tileImg.setPixmap(self._selection.pixmap().copy())
-            tileImg.setTile(x, y)
             tileImg.setPos(self._tileSize * x, self._tileSize * y)
             tileImg.setZValue(self._zValTile)
             self.addItem(tileImg)
@@ -463,14 +462,18 @@ class TileMap(QtGui.QGraphicsScene):
             if (self._hasLine(images)):
                 return
 
-            tileCoord = images[0].getTile()
-            self.removeItem(images[0])
+            img = images[0]
+            tileCoord = img.getTile()
+            self.removeItem(img)
             point = self._coordToKey(tileCoord.x(), tileCoord.y())
 
             objs = self._objMapping.get(point)
             if objs != None and len(objs) > 0:
-                self._objMapping[point].pop()
-                return
+                for o in objs:
+                    # Two of the same object can't be on the same tile
+                    if o.getPath() == img.getPath():
+                        objs.remove(o)
+                        return
 
             tile = self._tileMapping.get(point)
             if tile:
