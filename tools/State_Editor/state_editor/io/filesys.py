@@ -167,10 +167,7 @@ def load(workingPack, tilemap, dimsButton, objbar, tilebar, extras):
 
             obj = objbar.getObject(absPath, strip)
             if obj:
-                tilemap.setSelectionObject(obj)
-                # Add 1 to avoid grid lines
-                pos = QtCore.QPointF(x * size + 1, y * size + 1)
-                tilemap.placeObject(pos, x, y)
+                tilemap.placeObjectOnTile(x, y, obj)
 
     # Load Extras
     music = root.find('music')
