@@ -279,15 +279,10 @@ class TileMap(QtGui.QGraphicsScene):
 
             for i in range(0, self._mapWidth):
                 for j in range(0, self._mapHeight):
-                    pos = self.pointToPos(QtCore.QPoint(i, j))
-                    # +1 to avoid grid lines
-                    pos.setX(pos.x() + 1)
-                    pos.setY(pos.y() + 1)
-
                     if self._objSelected:
                         self.placeObjectOnTile(i, j)
                     elif self._tileSelected:
-                        self.placeTile(pos, i, j)
+                        self.placeTileOnTile(i, j)
 
     def mousePressEvent(self, event):
         """Responds to right and left mouse presses.
@@ -329,19 +324,15 @@ class TileMap(QtGui.QGraphicsScene):
 
             if self._selection != None and inGrid:
 
-                point = self.posToPoint(pos)
-
                 # Action additions are handled here so that actions can undo
                 # redo safely without creating new actions
                 if self._objSelected:
                     self.placeObjectAtPos(posX, posY)
                 elif self._tileSelected:
-                    (placed, oldTile) = \
-                        self.placeTile(pos, point.x(), point.y())
+                    (placed, oldTile) = self.placeTileAtPos(posX, posY)
                     if placed:
                         tp = TilePlace(self, oldTile, self._selection, pos)
                         self._addAction(tp)
-
 
         elif self._mousePressed == QtCore.Qt.RightButton:
             self.removePlacement(pos)
@@ -398,13 +389,21 @@ class TileMap(QtGui.QGraphicsScene):
                 self.addItem(line)
 
     def setSelectionObject(self, selection):
-        """Sets selection to QGraphicsItem passed. Assumes it is Object."""
+        """Sets selection to QGraphicsItem passed. Assumes it is Object.
+
+        This should NOT be called unless a user actually clicks on an object
+        in the Object Bar.
+        """
         self._objSelected = True
         self._tileSelected = False
         self._selection = selection
 
     def setSelectionTile(self, selection):
-        """Sets selection to QGraphicsItem passed. Assumes it is Tile."""
+        """Sets selection to QGraphicsItem passed. Assumes it is Tile.
+
+        This should NOT be called unless a user actually clicks on a tile
+        in the Tile Bar.
+        """
         self._tileSelected = True
         self._objSelected = False
         self._selection = selection
@@ -434,41 +433,21 @@ class TileMap(QtGui.QGraphicsScene):
         (posX, posY) = self._tileToPos(tX, tY)
         self._placeObject(posX, posY, tX, tY, obj)
 
-    def placeTile(self, pos, x, y):
-        """Places tile at grid coordinate (x,y).
+    def placeTileAtPos(self, posX, posY, tile = None):
+        """Places tile on tile located at scene position passed.
 
-        Arguments: pos -- Position of cursor relative to scene (QPointF)
-                   x -- x coordinate on grid
-                   y -- y coordinate on grid
-
-        Returns: 2 values. First is True if tile was placed, False if not.
-                 Second is the tile replaced, None if spot was blank.
+        If no tile is passed, defaults to current selection (if applicable).
         """
+        (tX, tY) = self._posToTile(posX, posY)
+        self._placeTile(posX, posY, tX, tY, tile)
 
-        images = self.items(pos)
+    def placeTileOnTile(self, tX, tY, tile = None):
+        """Places tile on tile coordinate passed.
 
-        if (self._hasLine(images)):
-            return (False, None)
-
-        key = self._tileToKey(x, y)
-        if self._tileMapping.get(key) != self._selection:
-            tiles = [t for t in images if t.zValue() == self._zValTile]
-            if len(tiles) > 0:
-                self.removeItem(tiles[0])
-
-            # Store actual tile internally, only placing its image on the grid
-            oldTile = self._tileMapping.get(key)
-            self._tileMapping[key] = self._selection
-
-            tileImg = TiledPixmap(x, y)
-            tileImg.setPixmap(self._selection.pixmap().copy())
-            tileImg.setPos(self._tileSize * x, self._tileSize * y)
-            tileImg.setZValue(self._zValTile)
-            self.addItem(tileImg)
-
-            return (True, oldTile)
-
-        return (False, None)
+        If no tile is passed, defaults to current selection (if applicable).
+        """
+        (posX, posY) = self._tileToPos(tX, tY)
+        self._placeTile(posX, posY, tX, tY, tile)
 
     def removePlacement(self, pos):
         """Removes the top item under cursor from the grid and internally.
@@ -575,6 +554,61 @@ class TileMap(QtGui.QGraphicsScene):
 
         objImg.setZValue(self._zValObj)
         self.addItem(objImg)
+
+    def _placeTile(self, posX, posY, tX, tY, tile = None):
+        """Places tile at tile coordinate passed.
+
+        Any tile already at the coordinate is replaced.
+
+        If no tile parameter then defaults to current selection if that
+        selection is a tile.
+
+        Returns early under the following conditions:
+            Scene position passed is located on a grid line.
+            No tile passed and current selection is not a tile.
+            Tile already at tile coordinate is same as tile being placed.
+
+        Arguments: posX - x scene coordinate
+                   posY - y scene coordinate
+                   tX - x tile coordinate
+                   tY - y tile coordinate
+                   tile - tile to place, defaults to current selection if
+                          current selection is a tile.
+
+        Returns: 2 values. First is True if tile was placed, False if not.
+                 Second is the tile replaced, None if spot was blank.
+        """
+        if (not tile):
+            if (self._tileSelected):
+                tile = self._selection
+            else:
+                return
+
+        pos = QtCore.QPointF(posX, posY)
+        images = self.items(pos)
+
+        if (self._hasLine(images)):
+            return (False, None)
+
+        key = self._tileToKey(tX, tY)
+        if self._tileMapping.get(key) != tile:
+            tiles = [t for t in images if t.zValue() == self._zValTile]
+            if len(tiles) > 0:
+                self.removeItem(tiles[0])
+
+            # Store actual tile internally, only placing its image on the grid
+            oldTile = self._tileMapping.get(key)
+            self._tileMapping[key] = tile
+
+            tileImg = TiledPixmap(x, y)
+            tileImg.setPixmap(tile.pixmap().copy())
+            tileImg.setPos(self._tileSize * x, self._tileSize * y)
+            tileImg.setZValue(self._zValTile)
+            self.addItem(tileImg)
+
+            return (True, oldTile)
+
+        return (False, None)
 
     def _tileToKey(self, tX, tY):
         """Given tile coord, returns string key for use in internal maps."""
