@@ -130,25 +130,18 @@ def load(workingPack, tilemap, dimsButton, objbar, tilebar, extras):
         # strip because there is whitespace on the ends
         tileIds = str(layout.text).strip().split(' ')
 
-        # Go from (1,1) to avoid grid lines
-        pos = QtCore.QPointF(1,1)
-
-        pointX = 0
-        pointY = 0
+        tX = 0
+        tY = 0
         for tid in tileIds:
             tid = int(tid)
             if tid != -1:
                 tile = tilebar.getTile(tid)
-                tilemap.setSelectionTile(tile)
-                tilemap.placeTile(pos, pointX, pointY)
+                tilemap.placeTile(tX, tY, tile)
 
-            pointX = pointX + 1
-            pos.setX(pos.x() + size)
-            if pointX >= mapWidth:
-                pointX = 0
-                pointY = pointY + 1
-                pos.setX(1)
-                pos.setY(pos.y() + size)
+            tX = tX + 1
+            if tX >= mapWidth:
+                tX = 0
+                tY = pointY + 1
 
     # Load Objects
     objects = root.find('objects')
