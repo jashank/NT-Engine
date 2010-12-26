@@ -178,23 +178,15 @@ class TilePlace(MapAction):
         self._pos = pos
 
     def undo(self):
-        pass
-        """
-        self._map.removePlacement(self._pos)
+        x = self._pos.x()
+        y = self._pos.y()
+
+        self._map.removeTileAtPos(x, y)
         if (self._oldTile):
-            self._map.setSelectionTile(self._oldTile)
-            point = self._map.posToPoint(self._pos)
-            self._map.placeTile(self._pos, point.x(), point.y())
-        """
+            self._map.placeTileAtPos(x, y, self._oldTile)
 
     def redo(self):
-        pass
-        """
-        point = self._map.posToPoint(self._pos)
-        self._map.setSelectionTile(self._newTile)
-        self._map.placeTile(self._pos, point.x(), point.y())
-        """
-
+        self._map.placeTileAtPos(self._pos.x(), self._pos.y(), self._newTile)
 
 class TileMap(QtGui.QGraphicsScene):
     """Grid for user to map tiles to a map for an NT State."""
@@ -245,8 +237,8 @@ class TileMap(QtGui.QGraphicsScene):
 
     def redo(self):
         """Redoes last undo."""
-        if (len(self._redos) > 0):
-            action = self._redos.pop()
+        if (len(self._undos) > 0):
+            action = self._undos.pop()
             action.redo()
             self._actions.append(action)
 
@@ -307,11 +299,10 @@ class TileMap(QtGui.QGraphicsScene):
 
         """
         pos = event.scenePos()
+        posX = pos.x()
+        posY = pos.y()
 
         if self._mousePressed == QtCore.Qt.LeftButton:
-            posX = pos.x()
-            posY = pos.y()
-
             inGrid = (posX >= 0 and posX < self._mapWidth * self._tileSize and
                       posY >= 0 and posY < self._mapHeight * self._tileSize)
 
@@ -328,7 +319,7 @@ class TileMap(QtGui.QGraphicsScene):
                         self._addAction(tp)
 
         elif self._mousePressed == QtCore.Qt.RightButton:
-            self.removePlacement(pos)
+            self.removeTopAtPos(posX, posY)
 
     def setDims(self, tileSize, mapWidth, mapHeight):
         """Sets up grid given dimensions passed.
@@ -354,12 +345,12 @@ class TileMap(QtGui.QGraphicsScene):
             if self._mapWidth > mapWidth:
                 for x in range(mapWidth, self._mapWidth):
                     for y in range(0, self._mapHeight):
-                        self.removePlacementsAt(x, y)
+                        self._clearTile(x, y)
 
             if self._mapHeight > mapHeight:
                 for x in range(0, self._mapWidth):
                     for y in range(mapHeight, self._mapHeight):
-                        self.removePlacementsAt(x, y)
+                        self._clearTile(x, y)
 
             self._tileSize = tileSize
             self._mapWidth = mapWidth
@@ -430,17 +421,23 @@ class TileMap(QtGui.QGraphicsScene):
         """Places tile on tile located at scene position passed.
 
         If no tile is passed, defaults to current selection (if applicable).
+
+        Returns: 2 values. First is True if tile was placed, False if not.
+                 Second is the tile replaced, None if spot was blank.
         """
         (tX, tY) = self._posToTile(posX, posY)
-        self._placeTile(posX, posY, tX, tY, tile)
+        return self._placeTile(posX, posY, tX, tY, tile)
 
     def placeTileOnTile(self, tX, tY, tile = None):
         """Places tile on tile coordinate passed.
 
         If no tile is passed, defaults to current selection (if applicable).
+
+        Returns: 2 values. First is True if tile was placed, False if not.
+                 Second is the tile replaced, None if spot was blank.
         """
         (posX, posY) = self._tileToPos(tX, tY)
-        self._placeTile(posX, posY, tX, tY, tile)
+        return self._placeTile(posX, posY, tX, tY, tile)
 
     def removeTopAtPos(self, posX, posY):
         """Removes the top item under the scene position passed.
@@ -457,7 +454,7 @@ class TileMap(QtGui.QGraphicsScene):
             self.removeItem(img)
             (tX, tY) = self._posToTile(posX, posY)
 
-            if (not self._removeObjectOnTile(tX, tY, image)):
+            if (not self._removeObjectOnTile(tX, tY, img)):
                 self._removeTileOnTile(tX, tY)
 
     def removeTopObjectAtPos(self, posX, posY):
@@ -498,29 +495,6 @@ class TileMap(QtGui.QGraphicsScene):
                     if img.getLabel() == "":
                         self.removeItem(img)
                         break
-
-    def _clearTile(self, tX, tY):
-        """Removes all items and images from coordinates on grid.
-
-        Arguments: x -- x coordinate for removal, relative to tile grid
-                   y -- y coordinate for removal, relative to tile grid
-
-        """
-        point = QtCore.QPoint(x, y)
-        pos = self.pointToPos(point)
-        rectArea = QtCore.QRectF(
-            pos.x(), pos.y(), self._tileSize, self._tileSize
-        )
-
-        key = self._tileToKey(x, y)
-
-        if key in self._tileMapping:
-            del self._tileMapping[pointKey]
-        if key in self._objMapping:
-            del self._objMapping[pointKey]
-
-        for item in self.items(rectArea):
-            self.removeItem(item)
 
     def _placeObject(self, posX, posY, tX, tY, obj = None):
         """Places obj at tile coordinate passed.
@@ -621,7 +595,7 @@ class TileMap(QtGui.QGraphicsScene):
 
             tileImg = TiledPixmap()
             tileImg.setPixmap(tile.pixmap().copy())
-            tileImg.setPos(self._tileSize * x, self._tileSize * y)
+            tileImg.setPos(self._tileSize * tX, self._tileSize * tY)
             tileImg.setZValue(self._zValTile)
             self.addItem(tileImg)
 
@@ -660,6 +634,25 @@ class TileMap(QtGui.QGraphicsScene):
             return True
 
         return False
+
+    def _clearTile(self, tX, tY):
+        """Removes lines, tile and all objects at tile location passed."""
+        rectArea = QtCore.QRectF(
+            x * self._tileSize,
+            y * self._tileSize,
+            self._tileSize,
+            self._tileSize
+        )
+
+        key = self._tileToKey(tX, tY)
+
+        if key in self._tileMapping:
+            del self._tileMapping[key]
+        if key in self._objMapping:
+            del self._objMapping[key]
+
+        for item in self.items(rectArea):
+            self.removeItem(item)
 
     def _tileToKey(self, tX, tY):
         """Given tile coord, returns string key for use in internal maps."""

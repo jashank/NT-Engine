@@ -136,12 +136,12 @@ def load(workingPack, tilemap, dimsButton, objbar, tilebar, extras):
             tid = int(tid)
             if tid != -1:
                 tile = tilebar.getTile(tid)
-                tilemap.placeTile(tX, tY, tile)
+                tilemap.placeTileOnTile(tX, tY, tile)
 
             tX = tX + 1
             if tX >= mapWidth:
                 tX = 0
-                tY = pointY + 1
+                tY = tY + 1
 
     # Load Objects
     objects = root.find('objects')

@@ -107,22 +107,22 @@ class MainWindow(QtGui.QMainWindow):
         # File Menu
         self._fileMenu = self.menuBar().addMenu('File')
         self._newAction = self._fileMenu.addAction('New')
-        self._newAction.setShortcut('Ctrl+N')
+        self._newAction.setShortcut(QtGui.QKeySequence.New)
         self._loadAction = self._fileMenu.addAction('Open')
-        self._loadAction.setShortcut('Ctrl+O')
+        self._loadAction.setShortcut(QtGui.QKeySequence.Open)
         self._saveAction = self._fileMenu.addAction('Save')
-        self._saveAction.setShortcut('Ctrl+S')
+        self._saveAction.setShortcut(QtGui.QKeySequence.Save)
         self._saveAsAction = self._fileMenu.addAction('Save As')
-        self._saveAsAction.setShortcut('Ctrl+Shift+S')
+        self._saveAsAction.setShortcut(QtGui.QKeySequence.SaveAs)
         self._quitAction = self._fileMenu.addAction('Quit')
-        self._quitAction.setShortcut('Ctrl+Q')
+        self._quitAction.setShortcut(QtGui.QKeySequence.Quit)
 
         # Edit Menu
         self._editMenu = self.menuBar().addMenu('Edit')
         self._undoAction = self._editMenu.addAction('Undo')
-        self._undoAction.setShortcut('Ctrl+Z')
+        self._undoAction.setShortcut(QtGui.QKeySequence.Undo)
         self._redoAction = self._editMenu.addAction('Redo')
-        self._redoAction.setShortcut('Ctrl+Shift+Z')
+        self._redoAction.setShortcut(QtGui.QKeySequence.Redo)
 
         # Help Menu
         self._helpMenu = self.menuBar().addMenu('Help')
@@ -180,6 +180,8 @@ class MainWindow(QtGui.QMainWindow):
         # Edit Menu Actions
         QtCore.QObject.connect(self._undoAction,
             QtCore.SIGNAL('triggered()'), self._tileMap.undo)
+        QtCore.QObject.connect(self._redoAction,
+            QtCore.SIGNAL('triggered()'), self._tileMap.redo)
 
         # Help Menu Actions
         QtCore.QObject.connect(self._licenseAction,
