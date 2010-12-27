@@ -164,29 +164,51 @@ class MapAction(object):
 
 class TilePlace(MapAction):
     """Action representing tile placement on map."""
-    def __init__(self, tilemap, oldTile, newTile, pos):
+    def __init__(self, tilemap, oldTile, newTile, posX, posY):
         """Action initialized with tile that was placed and its position.
 
         Arguments: tilemap - reference to tilemap in editor
                    oldTile - tile that was replaced by newTile (can be None)
                    newTile - tile selected at time of placement
-                   pos - position of where mouse was pressed on placement
+                   posX - x-coordinate of position of mouse press on placement
+                   posY - y-coordinate of position of mouse press on placement
         """
         self._map = tilemap
         self._oldTile = oldTile
         self._newTile = newTile
-        self._pos = pos
+        self._posX = posX
+        self._posY = posY
 
     def undo(self):
-        x = self._pos.x()
-        y = self._pos.y()
-
-        self._map.removeTileAtPos(x, y)
+        self._map.removeTileAtPos(self._posX, self._posY)
         if (self._oldTile):
-            self._map.placeTileAtPos(x, y, self._oldTile)
+            self._map.placeTileAtPos(self._posX, self._posY, self._oldTile)
 
     def redo(self):
-        self._map.placeTileAtPos(self._pos.x(), self._pos.y(), self._newTile)
+        self._map.placeTileAtPos(self._posX, self._posY, self._newTile)
+
+
+class ObjectPlace(MapAction):
+    """Action representing object placement on map."""
+    def __init__(self, tilemap, obj, tX, tY):
+        """Action initialized with Object placed and tile coordinates.
+
+        Arguments: tilemap - reference to tilemap in editor
+                   obj - Object that was placed
+                   tX - x coordinate of tile it was placed on
+                   tY - y coordinate of tile it was placed on
+        """
+        self._map = tilemap
+        self._obj = obj
+        self._tX = tX
+        self._tY = tY
+
+    def undo(self):
+        self._map.removeTopObjectOnTile(self._tX, self._tY)
+
+    def redo(self):
+        self._map.placeObjectOnTile(self._tX, self._tY, self._obj)
+
 
 class TileMap(QtGui.QGraphicsScene):
     """Grid for user to map tiles to a map for an NT State."""
@@ -311,11 +333,24 @@ class TileMap(QtGui.QGraphicsScene):
                 # Action additions are handled here so that actions can undo
                 # redo safely without creating new actions
                 if self._objSelected:
-                    self.placeObjectAtPos(posX, posY)
-                elif self._tileSelected:
-                    (placed, oldTile) = self.placeTileAtPos(posX, posY)
+                    placed = \
+                        self.placeObjectAtPos(posX, posY, self._selection)
                     if placed:
-                        tp = TilePlace(self, oldTile, self._selection, pos)
+                        (tX, tY) = self._posToTile(posX, posY)
+                        op = ObjectPlace(self, self._selection, tX, tY)
+                        self._addAction(op)
+
+                elif self._tileSelected:
+                    (placed, oldTile) = \
+                        self.placeTileAtPos(posX, posY, self._selection)
+                    if placed:
+                        tp = TilePlace(
+                                self,
+                                oldTile,
+                                self._selection,
+                                posX,
+                                posY
+                             )
                         self._addAction(tp)
 
         elif self._mousePressed == QtCore.Qt.RightButton:
@@ -401,26 +436,24 @@ class TileMap(QtGui.QGraphicsScene):
         return (self._tileSize, self._mapWidth, self._mapHeight,
                 self._tileMapping, self._objMapping)
 
-    def placeObjectAtPos(self, posX, posY, obj = None):
+    def placeObjectAtPos(self, posX, posY, obj):
         """Places obj on tile located at scene position passed.
 
-        If no obj is passed, defaults to current selection (if applicable).
+        Returns True if object was placed down.
         """
         (tX, tY) = self._posToTile(posX, posY)
-        self._placeObject(posX, posY, tX, tY, obj)
+        return self._placeObject(posX, posY, tX, tY, obj)
 
-    def placeObjectOnTile(self, tX, tY, obj = None):
+    def placeObjectOnTile(self, tX, tY, obj):
         """Places obj on tile coordinate passed.
 
-        If no obj is passed, defaults to current selection (if applicable).
+        Returns True if object was placed down.
         """
         (posX, posY) = self._tileToPos(tX, tY)
-        self._placeObject(posX, posY, tX, tY, obj)
+        return self._placeObject(posX, posY, tX, tY, obj)
 
-    def placeTileAtPos(self, posX, posY, tile = None):
+    def placeTileAtPos(self, posX, posY, tile):
         """Places tile on tile located at scene position passed.
-
-        If no tile is passed, defaults to current selection (if applicable).
 
         Returns: 2 values. First is True if tile was placed, False if not.
                  Second is the tile replaced, None if spot was blank.
@@ -428,12 +461,10 @@ class TileMap(QtGui.QGraphicsScene):
         (tX, tY) = self._posToTile(posX, posY)
         return self._placeTile(posX, posY, tX, tY, tile)
 
-    def placeTileOnTile(self, tX, tY, tile = None):
+    def placeTileOnTile(self, tX, tY, tile):
         """Places tile on tile coordinate passed.
 
-        If no tile is passed, defaults to current selection (if applicable).
-
-        Returns: 2 values. First is True if tile was placed, False if not.
+        Returns: 2 values. First is True if tile was placed.
                  Second is the tile replaced, None if spot was blank.
         """
         (posX, posY) = self._tileToPos(tX, tY)
@@ -480,6 +511,31 @@ class TileMap(QtGui.QGraphicsScene):
                 (tX, tY) = self._posToTile(posX, posY)
                 self._removeObjectOnTile(tX, tY, image)
 
+    def removeTopObjectOnTile(self, tX, tY):
+        """Removes top object at tile coordinate passed.
+
+        Object is removed visually and internally.
+        """
+        rectArea = QtCore.QRectF(
+            tX * self._tileSize,
+            tY * self._tileSize,
+            self._tileSize,
+            self._tileSize
+        )
+
+        images = self.items(rectArea)
+
+        if (len(images) > 0):
+            image = None
+            for i in images:
+                if i.zValue() != self._zValLine and i.getLabel() != "":
+                    image = i
+                    self.removeItem(i)
+                    break
+
+            if image:
+                self._removeObjectOnTile(tX, tY, image)
+
     def removeTileAtPos(self, posX, posY):
         """Removes tile (if one exists) at scene position passed."""
         images = self._imagesAtPos(posX, posY)
@@ -496,34 +552,27 @@ class TileMap(QtGui.QGraphicsScene):
                         self.removeItem(img)
                         break
 
-    def _placeObject(self, posX, posY, tX, tY, obj = None):
+    def _placeObject(self, posX, posY, tX, tY, obj):
         """Places obj at tile coordinate passed.
 
         Does nothing under the following conditions:
-            If no obj is passed then current editor selection is used. If that
-            selection is not an object, returns.
-
             If scene position passed is on a grid line.
-
             If obj has already been placed on the tile.
 
         Arguments: posX - x scene coordinate
                    posY - y scene coordinate
                    tX - x tile coordinate
                    tY - y tile coordinate
-                   obj - object to place, will try to default to the
-                         selected object if none was passed.
-        """
-        if (not obj):
-            if (self._objSelected):
-                obj = self._selection
-            else:
-                return
+                   obj - object to place
 
+        Returns: True if object was placed down, False if not which occurs
+                 when the scene position passed is on a grid line or the
+                 object was already on the tile.
+        """
         images = self._imagesAtPos(posX, posY)
 
         if (self._hasLine(images)):
-            return
+            return False
 
         key = self._tileToKey(tX, tY)
         # Don't allow multiples of the same object on a tile
@@ -531,7 +580,7 @@ class TileMap(QtGui.QGraphicsScene):
         if objs != None:
             clone = [o for o in objs if o.getPath() == obj.getPath()]
             if len(clone) > 0:
-                return
+                return False
 
         # Store actual object internally, only placing its image on the grid
         self._objMapping[key].append(obj)
@@ -549,35 +598,29 @@ class TileMap(QtGui.QGraphicsScene):
         objImg.setZValue(self._zValObj)
         self.addItem(objImg)
 
-    def _placeTile(self, posX, posY, tX, tY, tile = None):
+        return True
+
+    def _placeTile(self, posX, posY, tX, tY, tile):
         """Places tile at tile coordinate passed.
 
         Any tile already at the coordinate is replaced.
 
-        If no tile parameter then defaults to current selection if that
-        selection is a tile.
-
         Returns early under the following conditions:
             Scene position passed is located on a grid line.
-            No tile passed and current selection is not a tile.
             Tile already at tile coordinate is same as tile being placed.
 
         Arguments: posX - x scene coordinate
                    posY - y scene coordinate
                    tX - x tile coordinate
                    tY - y tile coordinate
-                   tile - tile to place, defaults to current selection if
-                          current selection is a tile.
+                   tile - tile to place
 
-        Returns: 2 values. First is True if tile was placed, False if not.
+        Returns: 2 values. First is True if tile was placed, False if not,
+                 which occurs when scene position passed is on a grid line or
+                 the tile at the tile coordinate is the same as the one being
+                 placed.
                  Second is the tile replaced, None if spot was blank.
         """
-        if (not tile):
-            if (self._tileSelected):
-                tile = self._selection
-            else:
-                return
-
         images = self._imagesAtPos(posX, posY)
 
         if (self._hasLine(images)):
@@ -638,8 +681,8 @@ class TileMap(QtGui.QGraphicsScene):
     def _clearTile(self, tX, tY):
         """Removes lines, tile and all objects at tile location passed."""
         rectArea = QtCore.QRectF(
-            x * self._tileSize,
-            y * self._tileSize,
+            tX * self._tileSize,
+            tY * self._tileSize,
             self._tileSize,
             self._tileSize
         )
@@ -652,7 +695,8 @@ class TileMap(QtGui.QGraphicsScene):
             del self._objMapping[key]
 
         for item in self.items(rectArea):
-            self.removeItem(item)
+            if item.zValue() != self._zValLine:
+                self.removeItem(item)
 
     def _tileToKey(self, tX, tY):
         """Given tile coord, returns string key for use in internal maps."""
