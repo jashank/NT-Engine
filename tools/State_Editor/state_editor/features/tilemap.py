@@ -276,6 +276,42 @@ class ObjectRemoveAction(MapAction):
         self._map.removeTopObjectOnTile(self._tX, self._tY)
 
 
+class ObjectFillAction(MapAction):
+    """Action representing object fill on map."""
+    def __init__(self, tilemap, existing, obj, mapWidth, mapHeight):
+        """Initializes action with information from before and after fill.
+
+        Arguments: tilemap - reference to tilemap in editor
+                   existing - list of tuples containing tile coordinates
+                              (like (4,5)) that specify where the object
+                              used to fill already was before the fill.
+                              should be ordered by x then y coordinate, e.g.
+                              [(3,4), (3,6), (4,7), (5,0)]
+                   obj - object used to fill
+                   mapWidth - width of the tile map in tiles
+                   mapHeight - height of the tile map in tiles
+        """
+        self._map = tilemap
+        self._existing = existing
+        self._obj = obj
+        self._mapWidth = mapWidth
+        self._mapHeight = mapHeight
+
+    def undo(self):
+        index = 0
+        for i in range(0, self._mapWidth):
+            for j in range(0, self._mapHeight):
+                if ( index < len(self._existing)):
+                    existsX = self._existing[index][0]
+                    existsY = self._existing[index][1]
+                    if (i == existsX and j == existsY):
+                        index = index + 1
+                        continue
+                self._map.removeTopObjectOnTile(i, j)
+
+    def redo(self):
+        self._map.objectFill(self._obj)
+
 class TileMap(QtGui.QGraphicsScene):
     """Grid for user to map tiles to a map for an NT State.
 
@@ -363,7 +399,15 @@ class TileMap(QtGui.QGraphicsScene):
             self._addAction(tf)
 
         elif self._objSelected:
-            self.objectFill(self._selection)
+            alreadyPlaced = self.objectFill(self._selection)
+            of = ObjectFillAction(
+                    self,
+                    alreadyPlaced,
+                    self._selection,
+                    self._mapWidth,
+                    self._mapHeight
+                 )
+            self._addAction(of)
 
     def tileFill(self, tile):
         """Fills map with tile passed."""
@@ -372,10 +416,21 @@ class TileMap(QtGui.QGraphicsScene):
                 self.placeTileOnTile(i, j, tile)
 
     def objectFill(self, obj):
-        """Fills map with object passed."""
+        """Fills map with object passed.
+
+        Returns a list of tuples containing tile coordinates that the object
+        wasn't placed on due to the object already being there.
+
+        For example, if obj is already on (3,5), the tuple (3,5) will be
+        added to the list that is returned.
+        """
+        alreadyPlaced = list()
         for i in range(0, self._mapWidth):
             for j in range(0, self._mapHeight):
-                self.placeObjectOnTile(i, j, obj)
+                if (not self.placeObjectOnTile(i, j, obj)):
+                   alreadyPlaced.append((i,j))
+
+        return alreadyPlaced
 
     def mousePressEvent(self, event):
         """Responds to right and left mouse presses.
@@ -441,8 +496,7 @@ class TileMap(QtGui.QGraphicsScene):
                         self._addAction(tp)
 
         elif self._mousePressed == QtCore.Qt.RightButton:
-            (removed, item, img) = self.removeTopAtPos(posX, posY)
-            (tX, tY) = self._posToTile(posX, posY)
+            (removed, item, img, tX, tY) = self.removeTopAtPos(posX, posY)
             if removed:
                 if img.zValue() == self._zValObj:
                     objr = ObjectRemoveAction(self, item, tX, tY)
@@ -570,58 +624,31 @@ class TileMap(QtGui.QGraphicsScene):
 
         Item is removed visually and internally.
 
-        Returns: 3 values. First is True if something was removed.
+        Returns: 5 values. First is True if something was removed.
                  Second is whatever was removed (object or tile, or None).
                  Third is image of object or tile removed, or None.
+                 Next 2 are tile coordinates (x,y) of the item removed,
+                 or None if none removed.
         """
         images = self._imagesAtPos(posX, posY)
 
         if (len(images) > 0):
             if (self._hasLine(images)):
-                return (False, None, None)
+                return (False, None, None, None, None)
 
             img = images[0]
             self.removeItem(img)
-            (tX, tY) = self._posToTile(posX, posY)
+
+            (tX, tY) = self._tileOfImage(img)
 
             (removed, obj) = self._removeStoredObjectOnTile(tX, tY, img)
             if not removed:
                 (removed, tile) = self._removeStoredTileOnTile(tX, tY)
-                return (removed, tile, img)
+                return (removed, tile, img, tX, tY)
             else:
-                return (removed, obj, img)
+                return (removed, obj, img, tX, tY)
 
-        return (False, None, None)
-
-    def removeTopObjectAtPos(self, posX, posY):
-        """Removes top object under the scene position passed.
-
-        Object is removed visually and internally.
-
-        Returns: 3 values. First is True if an object was removed.
-                 Second is the object removed, or None.
-                 Third is image of object removed, or None.
-        """
-        images = self._imagesAtPos(posX, posY)
-
-        if (len(images) > 0):
-            if (self._hasLine(images)):
-                return (False, None, None)
-
-            image = None
-            for i in images:
-                # All objects assign a label to their image
-                if i.getLabel() != "":
-                    image = i
-                    self.removeItem(i)
-                    break
-
-            if image:
-                (tX, tY) = self._posToTile(posX, posY)
-                (removed, obj) = self._removeStoredObjectOnTile(tX, tY, image)
-                return (removed, obj, image)
-
-        return (False, None, None)
+        return (False, None, None, None, None)
 
     def removeTopObjectOnTile(self, tX, tY):
         """Removes top object at tile coordinate passed.
@@ -654,16 +681,6 @@ class TileMap(QtGui.QGraphicsScene):
                 return (removed, obj, image)
 
         return (False, None, None)
-
-    def removeTileAtPos(self, posX, posY):
-        """Removes tile (if one exists) at scene position passed.
-
-        Returns: 3 values. First is True if tile was removed.
-                 Second is the tile removed, or None.
-                 Third is image of tile removed, or None.
-        """
-        (tX, tY) = self._posToTile(posX, posY)
-        return self._removeTileOnTile(tX, tY)
 
     def removeTileOnTile(self, tX, tY):
         """Removes tile (if one exists) at tile coordinate passed.
@@ -795,6 +812,8 @@ class TileMap(QtGui.QGraphicsScene):
         Returns: 2 values. First is True if an object was removed.
                  Second is the object removed (None if none removed)
         """
+        print tX
+        print tY
         key = self._tileToKey(tX, tY)
 
         objs = self._objMapping.get(key)
@@ -866,6 +885,25 @@ class TileMap(QtGui.QGraphicsScene):
         posX = tX * self._tileSize + 1
         posY = tY * self._tileSize + 1
         return (posX, posY)
+
+    def _tileOfImage(self, image):
+        """Returns coordinates of tile that image is on.
+
+        This function is necessary because images can span more than one
+        tile, but they really only exist on a single tile.
+
+        Tile coordinates are stored in a tuple: (x,y)
+        """
+        tilePos = image.scenePos()
+
+        height = image.pixmap().height()
+        width = image.pixmap().width()
+        if (height > self._tileSize or width > self._tileSize):
+            # Get bottom left corner because that will be location of
+            # actual tile
+            tilePos.setY(tilePos.y() + height - 1)
+
+        return self._posToTile(tilePos.x(), tilePos.y())
 
     def _imagesAtPos(self, posX, posY):
         """Returns list of images located at scene position passed."""
