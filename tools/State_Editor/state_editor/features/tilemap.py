@@ -210,6 +210,28 @@ class TileRemoveAction(MapAction):
         self._map.removeTileOnTile(self._tX, self._tY)
 
 
+class TileFillAction(MapAction):
+    """Action representing filling the map with a tile."""
+    def __init__(self, tilemap, oldTiles, newTile):
+        """Initializes action with information from before and after fill.
+
+        Arguments: tilemap - reference to tilemap in editor
+                   oldTiles - list of tuples representing the map before the
+                              fill. Each tuple should be of the format
+                              (tile, x tile coordinate, y tile coordinate)
+                   newTile - the tile that the map was filled with
+        """
+        self._map = tilemap
+        self._oldTiles = oldTiles
+        self._newTile = newTile
+
+    def undo(self):
+        for tup in self._oldTiles:
+            self._map.placeTileOnTile(tup[1], tup[2], tup[0])
+
+    def redo(self):
+        self._map.tileFill(self._newTile)
+
 class ObjectPlaceAction(MapAction):
     """Action representing object placement on map."""
     def __init__(self, tilemap, obj, tX, tY):
@@ -255,7 +277,12 @@ class ObjectRemoveAction(MapAction):
 
 
 class TileMap(QtGui.QGraphicsScene):
-    """Grid for user to map tiles to a map for an NT State."""
+    """Grid for user to map tiles to a map for an NT State.
+
+    Some functions in the map create undoable/redoable actions, and are
+    documented as such. If you do not wish for an action to be
+    undoable/redoable do not use those functions.
+    """
     def __init__(self, parent = None):
         """Initializes members to starting values."""
         QtGui.QGraphicsScene.__init__(self, parent)
@@ -318,22 +345,37 @@ class TileMap(QtGui.QGraphicsScene):
         self._objMapping.clear()
 
     def fill(self):
-        """Fills map with selected item."""
-        if self._selection != None:
+        """Fills map with selected item.
 
-            # Filling with a tile selection clears existing tiles
-            if self._tileSelected:
-                self._tileMapping.clear()
-                for item in self.items():
-                    if item.zValue() == self._zValTile:
-                        self.removeItem(item)
-
+        This function adds undoable and redoable actions.
+        """
+        if self._tileSelected:
+            oldTiles = list()
             for i in range(0, self._mapWidth):
                 for j in range(0, self._mapHeight):
-                    if self._objSelected:
-                        self.placeObjectOnTile(i, j)
-                    elif self._tileSelected:
-                        self.placeTileOnTile(i, j)
+                    key = self._tileToKey(i, j)
+                    tile = self._tileMapping.get(key)
+                    oldTiles.append((tile, i, j))
+
+            self.tileFill(self._selection)
+
+            tf = TileFillAction(self, oldTiles, self._selection)
+            self._addAction(tf)
+
+        elif self._objSelected:
+            self.objectFill(self._selection)
+
+    def tileFill(self, tile):
+        """Fills map with tile passed."""
+        for i in range(0, self._mapWidth):
+            for j in range(0, self._mapHeight):
+                self.placeTileOnTile(i, j, tile)
+
+    def objectFill(self, obj):
+        """Fills map with object passed."""
+        for i in range(0, self._mapWidth):
+            for j in range(0, self._mapHeight):
+                self.placeObjectOnTile(i, j, obj)
 
     def mousePressEvent(self, event):
         """Responds to right and left mouse presses.
@@ -361,7 +403,7 @@ class TileMap(QtGui.QGraphicsScene):
         """Maps selected item (if any) to location on grid under cursor.
 
         Only called if mouse is currently pressed. Overrides mouseMoveEvent
-        in QGraphicsScene.
+        in QGraphicsScene. This function adds undoable and redoable actions.
 
         """
         pos = event.scenePos()
