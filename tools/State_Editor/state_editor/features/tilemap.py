@@ -298,14 +298,16 @@ class ObjectFillAction(MapAction):
         self._mapHeight = mapHeight
 
     def undo(self):
-        index = 0
-        for i in range(0, self._mapWidth):
-            for j in range(0, self._mapHeight):
-                if ( index < len(self._existing)):
+        # Remove in reverse order that they were placed in order to avoid
+        # issues with objects overlapping on other tiles
+        index = len(self._existing) - 1
+        for i in range(self._mapWidth - 1, -1, -1):
+            for j in range(self._mapHeight -1, -1, -1):
+                if ( index >= 0):
                     existsX = self._existing[index][0]
                     existsY = self._existing[index][1]
                     if (i == existsX and j == existsY):
-                        index = index + 1
+                        index = index - 1
                         continue
                 self._map.removeTopObjectOnTile(i, j)
 
@@ -382,6 +384,11 @@ class TileMap(QtGui.QGraphicsScene):
 
     def fill(self):
         """Fills map with selected item.
+
+        Fill functions start from the top left corner of the map
+        and iterate across each row, going down a row after the
+        last column, eventually ending up at the bottom right
+        corner of the map.
 
         This function adds undoable and redoable actions.
         """
@@ -812,8 +819,6 @@ class TileMap(QtGui.QGraphicsScene):
         Returns: 2 values. First is True if an object was removed.
                  Second is the object removed (None if none removed)
         """
-        print tX
-        print tY
         key = self._tileToKey(tX, tY)
 
         objs = self._objMapping.get(key)
