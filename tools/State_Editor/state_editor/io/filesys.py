@@ -44,17 +44,8 @@ def save(workingPack, tilemap, extras, filename):
     Returns: Path to file that was saved to.
 
     """
-    size, mapWidth, mapHeight, tiles, objects = tilemap.currentState()
-    tilesPath = ''
-
-    # if there are tiles then grab one and see what its animation is
-    for tile in tiles.itervalues():
-        tilesPath = tile.getAnimPath()
-        break
-
-    tileElem = xmlout.createTiles(
-        workingPack, size, tilesPath, mapWidth, mapHeight, tiles)
-    objectElem = xmlout.createObjects(workingPack, objects)
+    tileElem = xmlout.createTiles(workingPack, tilemap)
+    objectElem = xmlout.createObjects(workingPack, tilemap)
 
     musicDict, portalsDict, fontsDict = extras.currentState()
     musicElem = xmlout.createPathName(workingPack, musicDict, 'music', 'song')

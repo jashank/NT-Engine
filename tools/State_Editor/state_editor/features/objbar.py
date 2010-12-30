@@ -40,24 +40,24 @@ class Object(QtGui.QGraphicsPixmapItem):
         """Default initialization."""
         QtGui.QGraphicsPixmapItem.__init__(self, parent)
 
-        self._animNum = 0
-        self._path = ""
+        self.animNum = 0
+        self.path = ""
 
     def setAnimNum(self, num):
         """Set animation number."""
-        self._animNum = num
+        self.animNum = num
 
     def setPath(self, path):
         """Set path to object file."""
-        self._path = path
+        self.path = path
 
     def getAnimNum(self):
         """Returns animation number."""
-        return self._animNum
+        return self.animNum
 
     def getPath(self):
         """Return path to object file."""
-        return self._path
+        return self.path
 
 
 class LoadObjectsButton(QtGui.QPushButton):

@@ -22,7 +22,6 @@ along with the NT State Editor.  If not, see <http://www.gnu.org/licenses/>.
 
 from abc import ABCMeta, abstractmethod
 from collections import defaultdict, deque
-from copy import deepcopy
 from PyQt4 import QtCore, QtGui
 
 
@@ -331,8 +330,8 @@ class TileMap(QtGui.QGraphicsScene):
         self._undos = deque(maxlen = 500)
 
         # Map dimensions in tiles
-        self._mapWidth = 0
-        self._mapHeight = 0
+        self.mapWidth = 0
+        self.mapHeight = 0
 
         # Button pressed on mouse, None if none pressed 
         self._mousePressed = None
@@ -345,12 +344,39 @@ class TileMap(QtGui.QGraphicsScene):
         self._selection = None
 
         # size == dimensions of tile, i.e. (size x size)
-        self._tileSize = 0
+        self.tileSize = 0
 
         # Z values of grid lines, objects, and tiles
         self._zValLine = 2
         self._zValObj = 1
         self._zValTile = 0
+
+    def getTile(self, tX, tY):
+        """Returns Tile located at tile coordinate passed.
+
+        Returns None if none at coordinate.
+        """
+        key = self._tileToKey(tX, tY)
+        tileAndImg = self._tileMapping.get(key)
+        if tileAndImg:
+            return tileAndImg[0]
+        else:
+            return None
+
+    def getObjects(self, tX, tY):
+        """Returns list of Objects located at tile coordinate passed.
+
+        Returns None if coordinate is currently cleared.
+        """
+        key = self._tileToKey(tX, tY)
+        objs = self._objMapping.get(key)
+        if objs:
+            objList = list()
+            for o in objs:
+                objList.append(o[0])
+            return objList
+        else:
+            return None
 
     def undo(self):
         """Undoes last action performed."""
@@ -382,8 +408,8 @@ class TileMap(QtGui.QGraphicsScene):
         """
         if self._tileSelected:
             oldTiles = list()
-            for i in range(0, self._mapWidth):
-                for j in range(0, self._mapHeight):
+            for i in range(0, self.mapWidth):
+                for j in range(0, self.mapHeight):
                     key = self._tileToKey(i, j)
                     tile = self._tileMapping.get(key)
                     oldTiles.append((tile, i, j))
@@ -399,15 +425,15 @@ class TileMap(QtGui.QGraphicsScene):
                     self,
                     alreadyPlaced,
                     self._selection,
-                    self._mapWidth,
-                    self._mapHeight
+                    self.mapWidth,
+                    self.mapHeight
                  )
             self._addAction(of)
 
     def tileFill(self, tile):
         """Fills map with tile passed."""
-        for i in range(0, self._mapWidth):
-            for j in range(0, self._mapHeight):
+        for i in range(0, self.mapWidth):
+            for j in range(0, self.mapHeight):
                 self.placeTileOnTile(i, j, tile)
 
     def objectFill(self, obj):
@@ -420,8 +446,8 @@ class TileMap(QtGui.QGraphicsScene):
         added to the list that is returned.
         """
         alreadyPlaced = list()
-        for i in range(0, self._mapWidth):
-            for j in range(0, self._mapHeight):
+        for i in range(0, self.mapWidth):
+            for j in range(0, self.mapHeight):
                 if (not self.placeObjectOnTile(i, j, obj)):
                    alreadyPlaced.append((i,j))
 
@@ -461,8 +487,8 @@ class TileMap(QtGui.QGraphicsScene):
         posY = pos.y()
 
         if self._mousePressed == QtCore.Qt.LeftButton:
-            inGrid = (posX >= 0 and posX < self._mapWidth * self._tileSize and
-                      posY >= 0 and posY < self._mapHeight * self._tileSize)
+            inGrid = (posX >= 0 and posX < self.mapWidth * self.tileSize and
+                      posY >= 0 and posY < self.mapHeight * self.tileSize)
 
             if self._selection != None and inGrid:
 
@@ -512,26 +538,26 @@ class TileMap(QtGui.QGraphicsScene):
 
         """
         if (tileSize >= 0 and mapWidth >= 0 and mapHeight >= 0 and
-           (tileSize != self._tileSize or mapWidth != self._mapWidth or
-            mapHeight != self._mapHeight)):
+           (tileSize != self.tileSize or mapWidth != self.mapWidth or
+            mapHeight != self.mapHeight)):
 
             for line in self.items():
                 if line.zValue() == self._zValLine:
                     self.removeItem(line)
 
-            if self._mapWidth > mapWidth:
-                for x in range(mapWidth, self._mapWidth):
-                    for y in range(0, self._mapHeight):
+            if self.mapWidth > mapWidth:
+                for x in range(mapWidth, self.mapWidth):
+                    for y in range(0, self.mapHeight):
                         self._clearTile(x, y)
 
-            if self._mapHeight > mapHeight:
-                for x in range(0, self._mapWidth):
-                    for y in range(mapHeight, self._mapHeight):
+            if self.mapHeight > mapHeight:
+                for x in range(0, self.mapWidth):
+                    for y in range(mapHeight, self.mapHeight):
                         self._clearTile(x, y)
 
-            self._tileSize = tileSize
-            self._mapWidth = mapWidth
-            self._mapHeight = mapHeight
+            self.tileSize = tileSize
+            self.mapWidth = mapWidth
+            self.mapHeight = mapHeight
 
             gridWidth = tileSize * mapWidth
             gridHeight = tileSize * mapHeight
@@ -568,15 +594,6 @@ class TileMap(QtGui.QGraphicsScene):
         self._tileSelected = True
         self._objSelected = False
         self._selection = selection
-
-    def currentState(self):
-        """Returns all data relevant to map's current state.
-
-        Returns: tile size, map width, map height, tile mapping, object mapping.
-
-        """
-        return (self._tileSize, self._mapWidth, self._mapHeight,
-                self._tileMapping, self._objMapping)
 
     def placeObjectAtPos(self, posX, posY, obj):
         """Places obj on tile located at scene position passed.
@@ -712,9 +729,9 @@ class TileMap(QtGui.QGraphicsScene):
 
         # Take object's height into account
         (posX, posY) = (self._tileToPos(tX, tY))
-        posY = self._tileSize * tY
-        if objImg.pixmap().height() > self._tileSize:
-            posY -= (objImg.pixmap().height() - self._tileSize)
+        posY = self.tileSize * tY
+        if objImg.pixmap().height() > self.tileSize:
+            posY -= (objImg.pixmap().height() - self.tileSize)
         objImg.setPos(posX, posY)
 
         objImg.setZValue(self._zValObj)
@@ -763,7 +780,7 @@ class TileMap(QtGui.QGraphicsScene):
 
             tileImg = QtGui.QGraphicsPixmapItem()
             tileImg.setPixmap(tile.pixmap().copy())
-            tileImg.setPos(self._tileSize * tX, self._tileSize * tY)
+            tileImg.setPos(self.tileSize * tX, self.tileSize * tY)
             tileImg.setZValue(self._zValTile)
             self.addItem(tileImg)
 
@@ -798,8 +815,8 @@ class TileMap(QtGui.QGraphicsScene):
 
         Tile coordinates are stored in a tuple: (x,y)
         """
-        tX = int(posX / self._tileSize)
-        tY = int(posY / self._tileSize)
+        tX = int(posX / self.tileSize)
+        tY = int(posY / self.tileSize)
         return (tX, tY)
 
     def _tileToPos(self, tX, tY):
@@ -809,8 +826,8 @@ class TileMap(QtGui.QGraphicsScene):
         to not be on a grid line.
         """
         # Add 1 to get off of grid line
-        posX = tX * self._tileSize + 1
-        posY = tY * self._tileSize + 1
+        posX = tX * self.tileSize + 1
+        posY = tY * self.tileSize + 1
         return (posX, posY)
 
     def _imagesAtPos(self, posX, posY):

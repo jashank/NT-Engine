@@ -28,47 +28,43 @@ from state_editor.features.objbar import Object
 from state_editor.features.tilebar import Tile
 
 
-def createTiles(workingPack, size, path, mapWidth, mapHeight, tileMapping):
+def createTiles(workingPack, tilemap):
     """Returns <tiles> element for NT State file.
 
     Arguments: workingPack -- Path to pack user is working with
-               size -- size of a tile in pixels (i.e. 48 would be 48x48)
-               path -- path to animation file for tiles, can be None
-               mapWidth -- width of map in tiles
-               mapHeight -- height of map in tiles
-               tileMapping -- dictionary containing (coord,Tile) pairs. A Tile
-                   is defined in the tilebar file, and a coord is a coordinate
-                   on the map in the form of a string like '3,5' or '23,2'
+               tilemap -- tilemap in editor
 
     Returns: An Element instance from ElementTree for <tiles>
-
     """
     root = ElementTree.Element("tiles")
 
-    sz = ElementTree.SubElement(root, "size", {'px':str(size)})
+    sz = ElementTree.SubElement(root, "size", {'px':str(tilemap.tileSize)})
 
-    # Won't necessarily be a path to tile animation file
-    relPath = ''
-    if path:
-        relPath = relPathToPack(workingPack, path)
-
-    anim = ElementTree.SubElement(root, "animation", {'path':relPath})
-
-    layout = ElementTree.SubElement(root, "layout",
-        {'width':str(mapWidth), 'height':str(mapHeight)})
     layoutText = []
     hasTiles = False
+    tileAnimPath = ""
 
     # output by row
     for y in range(0, mapHeight):
         for x in range(0, mapWidth):
-            key = str(x) + "," + str(y)
-            tile = tileMapping.get(key)
-            if not tile:
-                layoutText.append('-1')
-            else:
+            tile = tilemap.getTile(x, y)
+            if tile:
                 layoutText.append(str(tile.getId()))
+                if tileAnimPath == "":
+                    tileAnimPath = tile.getAnimPath()
                 hasTiles = True
+            else:
+                layoutText.append('-1')
+
+    # Won't necessarily be a path to tile animation file
+    relPath = ""
+    if tileAnimPath != "":
+        relPath = relPathToPack(workingPack, tileAnimPath)
+
+    anim = ElementTree.SubElement(root, "animation", {'path':relPath})
+
+    layout = ElementTree.SubElement(root, "layout",
+        {'width':str(tilemap.mapWidth), 'height':str(tilemap.mapHeight)})
 
     # Don't bother outputting a layout unless there is at least one tile
     if hasTiles:
@@ -76,41 +72,38 @@ def createTiles(workingPack, size, path, mapWidth, mapHeight, tileMapping):
 
     return root
 
-def createObjects(workingPack, objMapping):
+def createObjects(workingPack, tilemap):
     """Returns <objects> element for NT State file.
 
     Arguments: workingPack -  Path to pack user is working with
-               objMapping -- dictionary containing (coord,list of Objects). An
-                   Object is defined in the objbar file, and a coord is a
-                   coordinate on the map in the form of a string like '3,5'
-                   or '23,2'
+               tilemap - tilemap in editor
 
     Returns: An Element instance from ElementTree for <objects>
-
     """
     root = ElementTree.Element('objects')
 
-    # Reverse mapping to get (Object path, coords/object animation strip)
-    invMapping = defaultdict(list)
-    for coord, objects in objMapping.iteritems():
-        for obj in objects:
-            invMapping[obj.getPath()].append([coord, str(obj.getAnimNum())])
+    # Store objects in dictionary 
+    # (Object path, list[tuple(x coord, y coord, animation strip)])
+    objs = defaultdict(list)
+    for x in range(tilemap.mapWidth):
+        for y in range(tilemap.mapHeight):
+            objsAtCoord = tilemap.getObjects(x, y)
+            if objsAtCoord:
+                for o in objsAtCoord:
+                    objs[o.path].append(x, y, o.animNum)
 
-    for objPath, instances in invMapping.iteritems():
-        relPath = relPathToPack(workingPack, objPath)
+    for k,v in objs:
+        relPath = relPathToPack(workingPack, k)
         objElem = ElementTree.Element('object', {'path':relPath})
 
-        for inst in instances:
-            splitCoords = inst[0].split(',')
-            instElem = ElementTree.Element('inst',
-                {'x':splitCoords[0], 'y':splitCoords[1],
-                 'strip':inst[1]})
+        for o in v:
+            instElem = ElementTree.Element('inst', 'x':o[0], 'y':o[1],
+                        'strip':o[2])
             objElem.append(instElem)
 
         root.append(objElem)
 
     return root
-
 
 def createPathName(workingPack, pathNameDict, parentStr, subElemStr):
     """Used for music, portals, and fonts part of State file.
