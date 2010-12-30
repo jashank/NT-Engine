@@ -141,16 +141,6 @@ class FillButton(QtGui.QPushButton):
         self.emit(QtCore.SIGNAL('fill'))
 
 
-class TiledPixmap(QtGui.QGraphicsPixmapItem):
-    """Holds optional label for unique identification."""
-    def __init__(self, label = "", parent = None):
-        QtGui.QGraphicsPixmapItem.__init__(self, parent)
-        self._label = label
-
-    def getLabel(self):
-        return self._label
-
-
 class MapAction(object):
     """Abstract base class for actions that can occur on map."""
     __metaclass__ = ABCMeta
@@ -300,6 +290,7 @@ class ObjectFillAction(MapAction):
     def undo(self):
         # Remove in reverse order that they were placed in order to avoid
         # issues with objects overlapping on other tiles
+        # TODO -- DON'T NEED TO DO THIS AFTER CHANGE
         index = len(self._existing) - 1
         for i in range(self._mapWidth - 1, -1, -1):
             for j in range(self._mapHeight -1, -1, -1):
@@ -325,7 +316,9 @@ class TileMap(QtGui.QGraphicsScene):
         """Initializes members to starting values."""
         QtGui.QGraphicsScene.__init__(self, parent)
 
-        # Map coordinates to tiles and lists of objects
+        # Map coordinates to tuples of tiles/pixmaps and lists of 
+        # objects/pixmaps. For example, a tile would be stored as
+        # the tuple (tile, tile's image)
         self._tileMapping = dict()
         self._objMapping = defaultdict(list)
 
@@ -384,11 +377,6 @@ class TileMap(QtGui.QGraphicsScene):
 
     def fill(self):
         """Fills map with selected item.
-
-        Fill functions start from the top left corner of the map
-        and iterate across each row, going down a row after the
-        last column, eventually ending up at the bottom right
-        corner of the map.
 
         This function adds undoable and redoable actions.
         """
@@ -481,18 +469,16 @@ class TileMap(QtGui.QGraphicsScene):
                 # Action additions are handled here so that actions can undo
                 # redo safely without creating new actions
                 if self._objSelected:
-                    placed = \
+                    (placed, tX, tY) = \
                         self.placeObjectAtPos(posX, posY, self._selection)
                     if placed:
-                        (tX, tY) = self._posToTile(posX, posY)
                         op = ObjectPlaceAction(self, self._selection, tX, tY)
                         self._addAction(op)
 
                 elif self._tileSelected:
-                    (placed, oldTile) = \
+                    (placed, oldTile, tX, tY) = \
                         self.placeTileAtPos(posX, posY, self._selection)
                     if placed:
-                        (tX, tY) = self._posToTile(posX, posY)
                         tp = TilePlaceAction(
                                 self,
                                 oldTile,
@@ -595,10 +581,12 @@ class TileMap(QtGui.QGraphicsScene):
     def placeObjectAtPos(self, posX, posY, obj):
         """Places obj on tile located at scene position passed.
 
-        Returns True if object was placed down.
+        Returns: 3 values. First is True if object was place down.
+                 Second and third are tile coordinates of placement.
         """
         (tX, tY) = self._posToTile(posX, posY)
-        return self._placeObject(posX, posY, tX, tY, obj)
+        placed = self._placeObject(posX, posY, tX, tY, obj)
+        return (placed, tX, tY)
 
     def placeObjectOnTile(self, tX, tY, obj):
         """Places obj on tile coordinate passed.
@@ -611,11 +599,13 @@ class TileMap(QtGui.QGraphicsScene):
     def placeTileAtPos(self, posX, posY, tile):
         """Places tile on tile located at scene position passed.
 
-        Returns: 2 values. First is True if tile was placed, False if not.
+        Returns: 4 values. First is True if tile was placed, False if not.
                  Second is the tile replaced, None if spot was blank.
+                 Third and fourth are tile coordinates of placement.
         """
         (tX, tY) = self._posToTile(posX, posY)
-        return self._placeTile(posX, posY, tX, tY, tile)
+        (placed, oldTile) = self._placeTile(posX, posY, tX, tY, tile)
+        return (placed, oldTile, tX, tY)
 
     def placeTileOnTile(self, tX, tY, tile):
         """Places tile on tile coordinate passed.
@@ -643,17 +633,13 @@ class TileMap(QtGui.QGraphicsScene):
             if (self._hasLine(images)):
                 return (False, None, None, None, None)
 
-            img = images[0]
-            self.removeItem(img)
+            (tX, tY) = self._posToTile(posX, posY)
 
-            (tX, tY) = self._tileOfImage(img)
-
-            (removed, obj) = self._removeStoredObjectOnTile(tX, tY, img)
+            (removed, item, img) = self.removeTopObjectOnTile(tX, tY)
             if not removed:
-                (removed, tile) = self._removeStoredTileOnTile(tX, tY)
-                return (removed, tile, img, tX, tY)
-            else:
-                return (removed, obj, img, tX, tY)
+                (removed, item, img) = self.removeTileOnTile(tX, tY)
+
+            return (removed, item, img, tX, tY)
 
         return (False, None, None, None, None)
 
@@ -666,26 +652,12 @@ class TileMap(QtGui.QGraphicsScene):
                  Second is the object removed, or None.
                  Third is image of object removed, or None.
         """
-        rectArea = QtCore.QRectF(
-            tX * self._tileSize,
-            tY * self._tileSize,
-            self._tileSize,
-            self._tileSize
-        )
-
-        images = self.items(rectArea)
-
-        if (len(images) > 0):
-            image = None
-            for i in images:
-                if i.zValue() != self._zValLine and i.getLabel() != "":
-                    image = i
-                    self.removeItem(i)
-                    break
-
-            if image:
-                (removed, obj) = self._removeStoredObjectOnTile(tX, tY, image)
-                return (removed, obj, image)
+        key = self._tileToKey(tX, tY)
+        objs = self._objMapping.get(key)
+        if objs != None and len(objs) > 0:
+            (obj, img) = objs.pop()
+            self.removeItem(img)
+            return (True, obj, img)
 
         return (False, None, None)
 
@@ -696,26 +668,12 @@ class TileMap(QtGui.QGraphicsScene):
                  Second is the tile removed, or None.
                  Third is image of tile removed, or None.
         """
-        rectArea = QtCore.QRectF(
-            tX * self._tileSize,
-            tY * self._tileSize,
-            self._tileSize,
-            self._tileSize
-        )
-
-        images = self.items(rectArea)
-
-        if (len(images) > 0):
-            image = None
-            for i in images:
-                if i.zValue() != self._zValLine and i.getLabel() == "":
-                    image = i
-                    self.removeItem(i)
-                    break
-
-            if image:
-                (removed, tile) = self._removeStoredTileOnTile(tX, tY)
-                return (removed, tile, image)
+        key = self._tileToKey(tX, tY)
+        tileAndImg = self._tileMapping.get(key)
+        if tileAndImg:
+            self.removeItem(tileAndImg[1])
+            del self._tileMapping[key]
+            return (True, tileAndImg[0], tileAndImg[1])
 
         return (False, None, None)
 
@@ -745,14 +703,11 @@ class TileMap(QtGui.QGraphicsScene):
         # Don't allow multiples of the same object on a tile
         objs = self._objMapping.get(key)
         if objs != None:
-            clone = [o for o in objs if o.getPath() == obj.getPath()]
+            clone = [o for o in objs if o[0].getPath() == obj.getPath()]
             if len(clone) > 0:
                 return False
 
-        # Store actual object internally, only placing its image on the grid
-        self._objMapping[key].append(obj)
-
-        objImg = TiledPixmap(obj.getPath())
+        objImg = QtGui.QGraphicsPixmapItem()
         objImg.setPixmap(obj.pixmap().copy())
 
         # Take object's height into account
@@ -764,6 +719,9 @@ class TileMap(QtGui.QGraphicsScene):
 
         objImg.setZValue(self._zValObj)
         self.addItem(objImg)
+
+        # Store object and image internally as a tuple
+        self._objMapping[key].append((obj, objImg))
 
         return True
 
@@ -794,78 +752,42 @@ class TileMap(QtGui.QGraphicsScene):
             return (False, None)
 
         key = self._tileToKey(tX, tY)
-        if self._tileMapping.get(key) != tile:
-            tiles = [t for t in images if t.zValue() == self._zValTile]
-            if len(tiles) > 0:
-                self.removeItem(tiles[0])
+        tileAndImg = self._tileMapping.get(key)
 
-            # Store actual tile internally, only placing its image on the grid
-            oldTile = self._tileMapping.get(key)
-            self._tileMapping[key] = tile
+        sameTile = False
+        if tileAndImg != None:
+            sameTile = (tileAndImg[0] != tile)
 
-            tileImg = TiledPixmap()
+        if not sameTile:
+            (removed, oldTile, img) = self.removeTileOnTile(tX, tY)
+
+            tileImg = QtGui.QGraphicsPixmapItem()
             tileImg.setPixmap(tile.pixmap().copy())
             tileImg.setPos(self._tileSize * tX, self._tileSize * tY)
             tileImg.setZValue(self._zValTile)
             self.addItem(tileImg)
 
+            self._tileMapping[key] = (tile, tileImg)
+
             return (True, oldTile)
-
-        return (False, None)
-
-    def _removeStoredObjectOnTile(self, tX, tY, image):
-        """Removes Object on tile internally that matches the image label.
-
-        Returns: 2 values. First is True if an object was removed.
-                 Second is the object removed (None if none removed)
-        """
-        key = self._tileToKey(tX, tY)
-
-        objs = self._objMapping.get(key)
-        if objs != None and len(objs) > 0:
-            for o in objs:
-                if o.getPath() == image.getLabel():
-                    objs.remove(o)
-                    # Two of the same object can't be on the same tile
-                    # so return
-                    return (True, o)
-
-        return (False, None)
-
-    def _removeStoredTileOnTile(self, tX, tY):
-        """Removes Tile internally at tile location passed.
-
-        Returns: 2 values. First is True if tile was removed.
-                 Second is the tile removed (None if none removed)
-        """
-        key = self._tileToKey(tX, tY)
-
-        tile = self._tileMapping.get(key)
-        if tile:
-            del self._tileMapping[key]
-            return (True, tile)
 
         return (False, None)
 
     def _clearTile(self, tX, tY):
         """Removes lines, tile and all objects at tile location passed."""
-        rectArea = QtCore.QRectF(
-            tX * self._tileSize,
-            tY * self._tileSize,
-            self._tileSize,
-            self._tileSize
-        )
-
         key = self._tileToKey(tX, tY)
 
-        if key in self._tileMapping:
+        tileAndImg = self._tileMapping.get(key)
+        if tileAndImg:
+            self.removeItem(tileAndImg[1])
             del self._tileMapping[key]
-        if key in self._objMapping:
-            del self._objMapping[key]
 
-        for item in self.items(rectArea):
-            if item.zValue() != self._zValLine:
-                self.removeItem(item)
+        objs = self._objMapping.get(key)
+        if objs:
+            if len(objs) > 0:
+                for objAndImg in objs:
+                    self.removeItem(objAndImg[1])
+            del objs[key]
 
     def _tileToKey(self, tX, tY):
         """Given tile coord, returns string key for use in internal maps."""
@@ -890,25 +812,6 @@ class TileMap(QtGui.QGraphicsScene):
         posX = tX * self._tileSize + 1
         posY = tY * self._tileSize + 1
         return (posX, posY)
-
-    def _tileOfImage(self, image):
-        """Returns coordinates of tile that image is on.
-
-        This function is necessary because images can span more than one
-        tile, but they really only exist on a single tile.
-
-        Tile coordinates are stored in a tuple: (x,y)
-        """
-        tilePos = image.scenePos()
-
-        height = image.pixmap().height()
-        width = image.pixmap().width()
-        if (height > self._tileSize or width > self._tileSize):
-            # Get bottom left corner because that will be location of
-            # actual tile
-            tilePos.setY(tilePos.y() + height - 1)
-
-        return self._posToTile(tilePos.x(), tilePos.y())
 
     def _imagesAtPos(self, posX, posY):
         """Returns list of images located at scene position passed."""
