@@ -22,6 +22,7 @@ along with the NT State Editor.  If not, see <http://www.gnu.org/licenses/>.
 
 from abc import ABCMeta, abstractmethod
 from collections import defaultdict, deque
+from sys import maxint
 from PyQt4 import QtCore, QtGui
 
 
@@ -216,7 +217,10 @@ class TileFillAction(MapAction):
 
     def undo(self):
         for tup in self._oldTiles:
-            self._map.placeTileOnTile(tup[1], tup[2], tup[0])
+            if tup[0]:
+                self._map.placeTileOnTile(tup[1], tup[2], tup[0])
+            else:
+                self._map.removeTileOnTile(tup[1], tup[2])
 
     def redo(self):
         self._map.tileFill(self._newTile)
@@ -267,7 +271,7 @@ class ObjectRemoveAction(MapAction):
 
 class ObjectFillAction(MapAction):
     """Action representing object fill on map."""
-    def __init__(self, tilemap, existing, obj, mapWidth, mapHeight):
+    def __init__(self, tilemap, existing, obj):
         """Initializes action with information from before and after fill.
 
         Arguments: tilemap - reference to tilemap in editor
@@ -277,32 +281,26 @@ class ObjectFillAction(MapAction):
                               should be ordered by x then y coordinate, e.g.
                               [(3,4), (3,6), (4,7), (5,0)]
                    obj - object used to fill
-                   mapWidth - width of the tile map in tiles
-                   mapHeight - height of the tile map in tiles
         """
         self._map = tilemap
         self._existing = existing
         self._obj = obj
-        self._mapWidth = mapWidth
-        self._mapHeight = mapHeight
 
     def undo(self):
-        # Remove in reverse order that they were placed in order to avoid
-        # issues with objects overlapping on other tiles
-        # TODO -- DON'T NEED TO DO THIS AFTER CHANGE
-        index = len(self._existing) - 1
-        for i in range(self._mapWidth - 1, -1, -1):
-            for j in range(self._mapHeight -1, -1, -1):
-                if ( index >= 0):
+        index = 0
+        for i in range(self._map.mapWidth):
+            for j in range(self._map.mapHeight):
+               if (index < len(self._existing)):
                     existsX = self._existing[index][0]
                     existsY = self._existing[index][1]
                     if (i == existsX and j == existsY):
-                        index = index - 1
+                        index = index + 1
                         continue
-                self._map.removeTopObjectOnTile(i, j)
+               self._map.removeTopObjectOnTile(i,j)
 
     def redo(self):
         self._map.objectFill(self._obj)
+
 
 class TileMap(QtGui.QGraphicsScene):
     """Grid for user to map tiles to a map for an NT State.
@@ -348,7 +346,8 @@ class TileMap(QtGui.QGraphicsScene):
 
         # Z values of grid lines, objects, and tiles
         self._zValLine = 2
-        self._zValObj = 1
+        self._baseZValObj = 1
+        self._zValObj = self._baseZValObj
         self._zValTile = 0
 
     def getTile(self, tX, tY):
@@ -421,13 +420,7 @@ class TileMap(QtGui.QGraphicsScene):
 
         elif self._objSelected:
             alreadyPlaced = self.objectFill(self._selection)
-            of = ObjectFillAction(
-                    self,
-                    alreadyPlaced,
-                    self._selection,
-                    self.mapWidth,
-                    self.mapHeight
-                 )
+            of = ObjectFillAction(self, alreadyPlaced, self._selection)
             self._addAction(of)
 
     def tileFill(self, tile):
@@ -517,7 +510,7 @@ class TileMap(QtGui.QGraphicsScene):
         elif self._mousePressed == QtCore.Qt.RightButton:
             (removed, item, img, tX, tY) = self.removeTopAtPos(posX, posY)
             if removed:
-                if img.zValue() == self._zValObj:
+                if img.zValue() >= self._baseZValObj:
                     objr = ObjectRemoveAction(self, item, tX, tY)
                     self._addAction(objr)
                 elif img.zValue() == self._zValTile:
@@ -735,7 +728,18 @@ class TileMap(QtGui.QGraphicsScene):
         objImg.setPos(posX, posY)
 
         objImg.setZValue(self._zValObj)
+        self._zValObj = self._zValObj + 1
         self.addItem(objImg)
+
+        # There was a bug where when multiple items were removed, the next
+        # object placed wouldn't respect insertion order and thus would be 
+        # rendered under any objects it was placed on top of. I couldn't find
+        # the cause, I suspect it is either a misunderstanding on my part or a
+        # bug in the Qt removeItem algorithm, but either way this is a hacky
+        # fix.
+        self._zValObj = self._zValObj + 1
+        if self._zValObj == maxint:
+            self._zValObj = 1
 
         # Store object and image internally as a tuple
         self._objMapping[key].append((obj, objImg))
