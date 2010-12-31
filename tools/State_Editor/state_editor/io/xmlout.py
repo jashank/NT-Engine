@@ -45,13 +45,13 @@ def createTiles(workingPack, tilemap):
     tileAnimPath = ""
 
     # output by row
-    for y in range(0, mapHeight):
-        for x in range(0, mapWidth):
+    for y in range(0, tilemap.mapHeight):
+        for x in range(0, tilemap.mapWidth):
             tile = tilemap.getTile(x, y)
             if tile:
-                layoutText.append(str(tile.getId()))
+                layoutText.append(str(tile.ID))
                 if tileAnimPath == "":
-                    tileAnimPath = tile.getAnimPath()
+                    tileAnimPath = tile.animPath
                 hasTiles = True
             else:
                 layoutText.append('-1')
@@ -90,15 +90,15 @@ def createObjects(workingPack, tilemap):
             objsAtCoord = tilemap.getObjects(x, y)
             if objsAtCoord:
                 for o in objsAtCoord:
-                    objs[o.path].append(x, y, o.animNum)
+                    objs[o.path].append((x, y, o.animNum))
 
-    for k,v in objs:
+    for k,v in objs.iteritems():
         relPath = relPathToPack(workingPack, k)
         objElem = ElementTree.Element('object', {'path':relPath})
 
         for o in v:
             instElem = ElementTree.Element('inst',
-                {'x':o[0], 'y':o[1], 'strip':o[2]}
+                {'x':str(o[0]), 'y':str(o[1]), 'strip':str(o[2])}
             )
             objElem.append(instElem)
 

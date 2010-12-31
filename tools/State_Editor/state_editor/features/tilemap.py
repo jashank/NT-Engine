@@ -773,7 +773,7 @@ class TileMap(QtGui.QGraphicsScene):
 
         sameTile = False
         if tileAndImg != None:
-            sameTile = (tileAndImg[0] != tile)
+            sameTile = (tileAndImg[0] == tile)
 
         if not sameTile:
             (removed, oldTile, img) = self.removeTileOnTile(tX, tY)
