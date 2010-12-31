@@ -201,17 +201,17 @@ class Extras(QtGui.QDialog):
         layout.addWidget(self._ok)
         self.setLayout(layout)
 
-    def currentState(self):
-        """Returns data relevant to current state of Extras.
+    def getMusic(self):
+        """Returns dictionary containing (path,name) pairs for music."""
+        return self._tabs.widget(0).getDataDict()
 
-        Returns: (path, name) dictionaries for music, portals, and fonts.
+    def getPortals(self):
+        """Returns dictionary containing (path,name) pairs for portals."""
+        return self._tabs.widget(1).getDataDict()
 
-        """
-        musicDict = self._tabs.widget(0).getDataDict()
-        portalsDict = self._tabs.widget(1).getDataDict()
-        fontsDict = self._tabs.widget(2).getDataDict()
-
-        return musicDict, portalsDict, fontsDict
+    def getFonts(self):
+        """Returns dictionary containing (path,name) pairs for fonts."""
+        return self._tabs.widget(2).getDataDict()
 
     def addSong(self, path, name):
         """Adds song to music tab.

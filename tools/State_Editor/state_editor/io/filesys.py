@@ -47,10 +47,15 @@ def save(workingPack, tilemap, extras, filename):
     tileElem = xmlout.createTiles(workingPack, tilemap)
     objectElem = xmlout.createObjects(workingPack, tilemap)
 
-    musicDict, portalsDict, fontsDict = extras.currentState()
-    musicElem = xmlout.createPathName(workingPack, musicDict, 'music', 'song')
-    portalElem = xmlout.createPathName(workingPack, portalsDict, 'portals', 'port')
-    fontElem = xmlout.createPathName(workingPack, fontsDict, 'fonts', 'font')
+    musicElem = xmlout.createPathName(
+        workingPack, extras.getMusic(), 'music', 'song'
+    )
+    portalElem = xmlout.createPathName(
+        workingPack, extras.getPortals(), 'portals', 'port'
+    )
+    fontElem = xmlout.createPathName(
+        workingPack, extras.getFonts(), 'fonts', 'font'
+    )
 
     stateElem = xmlout.createState(tileElem, objectElem, musicElem, portalElem,
         fontElem)

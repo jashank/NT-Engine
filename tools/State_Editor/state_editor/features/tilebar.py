@@ -29,36 +29,12 @@ from state_editor.io.fileop import subInPath
 class Tile(QtGui.QGraphicsPixmapItem):
     """Item with id member for state file output."""
     def __init__(self, parent = None):
-        """idAttr is set to -1 because it implies a null tile."""
+        """ID is set to -1 because it implies a null tile."""
         QtGui.QGraphicsPixmapItem.__init__(self, parent)
 
-        self._animPath = ""
-        self._idAttr = -1
-        self._size = 0
-
-    def getAnimPath(self):
-        """Returns animation path to where tile is defined."""
-        return self._animPath
-
-    def getId(self):
-        """Returns id of tile."""
-        return self._idAttr
-
-    def getSize(self):
-        """Returns size of this tile."""
-        return self._size
-
-    def setAnimPath(self, path):
-        """Sets animation path where this tile is defined."""
-        self._animPath = path
-
-    def setId(self, idNum):
-        """Sets id of this tile."""
-        self._idAttr = idNum
-
-    def setSize(self, size):
-        """Sets size of this tile."""
-        self._size = size
+        self.animPath = ""
+        self.ID = -1
+        self.size = 0
 
 
 class LoadTilesButton(QtGui.QPushButton):
@@ -149,14 +125,13 @@ class TileBar(bar.Bar):
 
             for strip in strips:
                 tile = Tile()
-                tile.setAnimPath(self._tilesPath)
-                tileId = int(strip.get('id'))
-                tile.setId(tileId)
-                self._tileIds[tileId] = tile
+                tile.animPath = self._tilesPath
+                tile.ID = int(strip.get('id'))
+                self._tileIds[tile.ID] = tile
 
                 bar.clipFromSheet(sheetImg, strip, tile)
 
-                tile.setSize(tile.pixmap().width())
+                tile.size = tile.pixmap().width()
                 lnX, lnY = bar.setForBar(posX, posY, self._defOpacity, tile)
 
                 self.addItem(tile)

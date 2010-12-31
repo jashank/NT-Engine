@@ -315,6 +315,13 @@ class TileMap(QtGui.QGraphicsScene):
         """Initializes members to starting values."""
         QtGui.QGraphicsScene.__init__(self, parent)
 
+        # Map dimensions in tiles
+        self.mapWidth = 0
+        self.mapHeight = 0
+
+        # size == dimensions of tile, i.e. (size x size)
+        self.tileSize = 0
+
         # Map coordinates to tuples of tiles/pixmaps and lists of 
         # objects/pixmaps. For example, a tile would be stored as
         # the tuple (tile, tile's image)
@@ -329,10 +336,6 @@ class TileMap(QtGui.QGraphicsScene):
         # (redoing). Cleared anytime a new action occurs.
         self._undos = deque(maxlen = 500)
 
-        # Map dimensions in tiles
-        self.mapWidth = 0
-        self.mapHeight = 0
-
         # Button pressed on mouse, None if none pressed 
         self._mousePressed = None
 
@@ -342,9 +345,6 @@ class TileMap(QtGui.QGraphicsScene):
 
         # Current Object or Tile selected for mapping
         self._selection = None
-
-        # size == dimensions of tile, i.e. (size x size)
-        self.tileSize = 0
 
         # Z values of grid lines, objects, and tiles
         self._zValLine = 2
@@ -720,7 +720,7 @@ class TileMap(QtGui.QGraphicsScene):
         # Don't allow multiples of the same object on a tile
         objs = self._objMapping.get(key)
         if objs != None:
-            clone = [o for o in objs if o[0].getPath() == obj.getPath()]
+            clone = [o for o in objs if o[0].path == obj.path]
             if len(clone) > 0:
                 return False
 

@@ -97,8 +97,9 @@ def createObjects(workingPack, tilemap):
         objElem = ElementTree.Element('object', {'path':relPath})
 
         for o in v:
-            instElem = ElementTree.Element('inst', 'x':o[0], 'y':o[1],
-                        'strip':o[2])
+            instElem = ElementTree.Element('inst',
+                {'x':o[0], 'y':o[1], 'strip':o[2]}
+            )
             objElem.append(instElem)
 
         root.append(objElem)

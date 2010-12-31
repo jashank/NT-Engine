@@ -43,22 +43,6 @@ class Object(QtGui.QGraphicsPixmapItem):
         self.animNum = 0
         self.path = ""
 
-    def setAnimNum(self, num):
-        """Set animation number."""
-        self.animNum = num
-
-    def setPath(self, path):
-        """Set path to object file."""
-        self.path = path
-
-    def getAnimNum(self):
-        """Returns animation number."""
-        return self.animNum
-
-    def getPath(self):
-        """Return path to object file."""
-        return self.path
-
 
 class LoadObjectsButton(QtGui.QPushButton):
     """When pressed, opens dialog for user to load object(s) from file(s).
@@ -131,7 +115,7 @@ class ObjectBar(bar.Bar):
         """
         objs = self._objDict.get(path)
         for obj in objs:
-            if obj.getAnimNum() == animNum:
+            if obj.animNum == animNum:
                 return obj
 
         return None
@@ -194,8 +178,8 @@ class ObjectBar(bar.Bar):
             for strip in strips:
                 obj = Object()
                 self._objDict[filepath].append(obj)
-                obj.setPath(filepath)
-                obj.setAnimNum(animNum)
+                obj.path = filepath
+                obj.animNum = animNum
 
                 tipSuffix = ''
                 if objIsAnimated:
